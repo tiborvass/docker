@@ -1,10 +1,14 @@
-package docker
+package sysinit
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/dotcloud/docker/netlink"
 	"github.com/dotcloud/docker/utils"
+	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"os/exec"
 	"strconv"
@@ -17,7 +21,14 @@ func setupNetworking(gw string) {
 	if gw == "" {
 		return
 	}
-	if _, err := ip("route", "add", "default", "via", gw); err != nil {
+
+	ip := net.ParseIP(gw)
+	if ip == nil {
+		log.Fatalf("Unable to set up networking, %s is not a valid IP", gw)
+		return
+	}
+
+	if err := netlink.AddDefaultGw(ip); err != nil {
 		log.Fatalf("Unable to set up networking: %v", err)
 	}
 }
@@ -27,7 +38,9 @@ func setupWorkingDirectory(workdir string) {
 	if workdir == "" {
 		return
 	}
-	syscall.Chdir(workdir)
+	if err := syscall.Chdir(workdir); err != nil {
+		log.Fatalf("Unable to change dir to %v: %v", workdir, err)
+	}
 }
 
 // Takes care of dropping privileges to the desired user
@@ -58,9 +71,18 @@ func changeUser(u string) {
 }
 
 // Clear environment pollution introduced by lxc-start
-func cleanupEnv(env ListOpts) {
+func cleanupEnv() {
 	os.Clearenv()
-	for _, kv := range env {
+	var lines []string
+	content, err := ioutil.ReadFile("/.dockerenv")
+	if err != nil {
+		log.Fatalf("Unable to load environment variables: %v", err)
+	}
+	err = json.Unmarshal(content, &lines)
+	if err != nil {
+		log.Fatalf("Unable to unmarshal environment variables: %v", err)
+	}
+	for _, kv := range lines {
 		parts := strings.SplitN(kv, "=", 2)
 		if len(parts) == 1 {
 			parts = append(parts, "")
@@ -86,19 +108,16 @@ func executeProgram(name string, args []string) {
 // up the environment before running the actual process
 func SysInit() {
 	if len(os.Args) <= 1 {
-		fmt.Println("You should not invoke docker-init manually")
+		fmt.Println("You should not invoke dockerinit manually")
 		os.Exit(1)
 	}
 	var u = flag.String("u", "", "username or uid")
 	var gw = flag.String("g", "", "gateway address")
 	var workdir = flag.String("w", "", "workdir")
 
-	var flEnv ListOpts
-	flag.Var(&flEnv, "e", "Set environment variables")
-
 	flag.Parse()
 
-	cleanupEnv(flEnv)
+	cleanupEnv()
 	setupNetworking(*gw)
 	setupWorkingDirectory(*workdir)
 	changeUser(*u)
