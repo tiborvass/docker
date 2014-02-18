@@ -1,8 +1,9 @@
-package docker
+package links
 
 import (
 	"fmt"
 	"github.com/dotcloud/docker/engine"
+	"github.com/dotcloud/docker/nat"
 	"path"
 	"strings"
 )
@@ -12,31 +13,28 @@ type Link struct {
 	ChildIP          string
 	Name             string
 	ChildEnvironment []string
-	Ports            []Port
+	Ports            []nat.Port
 	IsEnabled        bool
 	eng              *engine.Engine
 }
 
-func NewLink(parent, child *Container, name string, eng *engine.Engine) (*Link, error) {
-	if parent.ID == child.ID {
-		return nil, fmt.Errorf("Cannot link to self: %s == %s", parent.ID, child.ID)
-	}
-	if !child.State.IsRunning() {
-		return nil, fmt.Errorf("Cannot link to a non running container: %s AS %s", child.Name, name)
-	}
+func NewLink(parentIP, childIP, name string, env []string, exposedPorts map[nat.Port]struct{}, eng *engine.Engine) (*Link, error) {
 
-	ports := make([]Port, len(child.Config.ExposedPorts))
-	var i int
-	for p := range child.Config.ExposedPorts {
+	var (
+		i     int
+		ports = make([]nat.Port, len(exposedPorts))
+	)
+
+	for p := range exposedPorts {
 		ports[i] = p
 		i++
 	}
 
 	l := &Link{
 		Name:             name,
-		ChildIP:          child.NetworkSettings.IPAddress,
-		ParentIP:         parent.NetworkSettings.IPAddress,
-		ChildEnvironment: child.Config.Env,
+		ChildIP:          childIP,
+		ParentIP:         parentIP,
+		ChildEnvironment: env,
 		Ports:            ports,
 		eng:              eng,
 	}
@@ -85,14 +83,14 @@ func (l *Link) ToEnv() []string {
 }
 
 // Default port rules
-func (l *Link) getDefaultPort() *Port {
-	var p Port
+func (l *Link) getDefaultPort() *nat.Port {
+	var p nat.Port
 	i := len(l.Ports)
 
 	if i == 0 {
 		return nil
 	} else if i > 1 {
-		sortPorts(l.Ports, func(ip, jp Port) bool {
+		nat.Sort(l.Ports, func(ip, jp nat.Port) bool {
 			// If the two ports have the same number, tcp takes priority
 			// Sort in desc order
 			return ip.Int() < jp.Int() || (ip.Int() == jp.Int() && strings.ToLower(ip.Proto()) == "tcp")
