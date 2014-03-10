@@ -16,11 +16,9 @@ import (
 )
 
 var (
-	ErrInvalidWorkingDirectory     = fmt.Errorf("The working directory is invalid. It needs to be an absolute path.")
-	ErrConflictAttachDetach        = fmt.Errorf("Conflicting options: -a and -d")
-	ErrConflictDetachAutoRemove    = fmt.Errorf("Conflicting options: --rm and -d")
-	ErrConflictNetworkHostname     = fmt.Errorf("Conflicting options: -h and the network mode (--net)")
 	ErrConflictHostNetworkAndLinks = fmt.Errorf("Conflicting options: --net=host can't be used with links. This would result in undefined behavior.")
+	ErrConflictNetworkHostname     = fmt.Errorf("Conflicting options: -h and the network mode (--net)")
+	ErrInvalidWorkingDirectory     = fmt.Errorf("The working directory is invalid. It needs to be an absolute path.")
 )
 
 //FIXME Only used in tests
@@ -55,8 +53,6 @@ func parseRun(cmd *flag.FlagSet, args []string, sysInfo *sysinfo.SysInfo) (*Conf
 		flCapAdd      opts.ListOpts
 		flCapDrop     opts.ListOpts
 
-		flAutoRemove      = cmd.Bool([]string{"#rm", "-rm"}, false, "Automatically remove the container when it exits (incompatible with -d)")
-		flDetach          = cmd.Bool([]string{"d", "-detach"}, false, "Detached mode: run container in the background and print new container ID")
 		flNetwork         = cmd.Bool([]string{"#n", "#-networking"}, true, "Enable networking for this container")
 		flPrivileged      = cmd.Bool([]string{"#privileged", "-privileged"}, false, "Give extended privileges to this container")
 		flPublishAll      = cmd.Bool([]string{"P", "-publish-all"}, false, "Publish all exposed ports to the host interfaces")
@@ -71,15 +67,13 @@ func parseRun(cmd *flag.FlagSet, args []string, sysInfo *sysinfo.SysInfo) (*Conf
 		flCpuShares       = cmd.Int64([]string{"c", "-cpu-shares"}, 0, "CPU shares (relative weight)")
 		flCpuset          = cmd.String([]string{"-cpuset"}, "", "CPUs in which to allow execution (0-3, 0,1)")
 		flNetMode         = cmd.String([]string{"-net"}, "bridge", "Set the Network mode for the container\n'bridge': creates a new network stack for the container on the docker bridge\n'none': no networking for this container\n'container:<name|id>': reuses another container network stack\n'host': use the host network stack inside the container.  Note: the host mode gives the container full access to local system services such as D-bus and is therefore considered insecure.")
-		// For documentation purpose
-		_ = cmd.Bool([]string{"#sig-proxy", "-sig-proxy"}, true, "Proxy received signals to the process (even in non-TTY mode). SIGCHLD, SIGSTOP, and SIGKILL are not proxied.")
-		_ = cmd.String([]string{"#name", "-name"}, "", "Assign a name to the container")
 	)
 
 	cmd.Var(&flAttach, []string{"a", "-attach"}, "Attach to STDIN, STDOUT or STDERR.")
 	cmd.Var(&flVolumes, []string{"v", "-volume"}, "Bind mount a volume (e.g., from the host: -v /host:/container, from Docker: -v /container)")
 	cmd.Var(&flLinks, []string{"#link", "-link"}, "Add link to another container in the form of name:alias")
 	cmd.Var(&flDevices, []string{"-device"}, "Add a host device to the container (e.g. --device=/dev/sdc:/dev/xvdc)")
+
 	cmd.Var(&flEnv, []string{"e", "-env"}, "Set environment variables")
 	cmd.Var(&flEnvFile, []string{"-env-file"}, "Read in a line delimited file of environment variables")
 
@@ -103,15 +97,15 @@ func parseRun(cmd *flag.FlagSet, args []string, sysInfo *sysinfo.SysInfo) (*Conf
 	}
 
 	// Validate input params
-	if *flDetach && flAttach.Len() > 0 {
-		return nil, nil, cmd, ErrConflictAttachDetach
-	}
 	if *flWorkingDir != "" && !path.IsAbs(*flWorkingDir) {
 		return nil, nil, cmd, ErrInvalidWorkingDirectory
 	}
-	if *flDetach && *flAutoRemove {
-		return nil, nil, cmd, ErrConflictDetachAutoRemove
-	}
+
+	var (
+		attachStdin  = flAttach.Get("stdin")
+		attachStdout = flAttach.Get("stdout")
+		attachStderr = flAttach.Get("stderr")
+	)
 
 	if *flNetMode != "bridge" && *flNetMode != "none" && *flHostname != "" {
 		return nil, nil, cmd, ErrConflictNetworkHostname
@@ -122,13 +116,11 @@ func parseRun(cmd *flag.FlagSet, args []string, sysInfo *sysinfo.SysInfo) (*Conf
 	}
 
 	// If neither -d or -a are set, attach to everything by default
-	if flAttach.Len() == 0 && !*flDetach {
-		if !*flDetach {
-			flAttach.Set("stdout")
-			flAttach.Set("stderr")
-			if *flStdin {
-				flAttach.Set("stdin")
-			}
+	if flAttach.Len() == 0 {
+		attachStdout = true
+		attachStderr = true
+		if *flStdin {
+			attachStdin = true
 		}
 	}
 
@@ -245,9 +237,9 @@ func parseRun(cmd *flag.FlagSet, args []string, sysInfo *sysinfo.SysInfo) (*Conf
 		Memory:          flMemory,
 		CpuShares:       *flCpuShares,
 		Cpuset:          *flCpuset,
-		AttachStdin:     flAttach.Get("stdin"),
-		AttachStdout:    flAttach.Get("stdout"),
-		AttachStderr:    flAttach.Get("stderr"),
+		AttachStdin:     attachStdin,
+		AttachStdout:    attachStdout,
+		AttachStderr:    attachStderr,
 		Env:             envVariables,
 		Cmd:             runCmd,
 		Image:           image,
