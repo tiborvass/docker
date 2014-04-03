@@ -23,11 +23,24 @@ var rootPlugins = []string{
 
 var (
 	flX bool
+	flPing bool
 )
 
 func main() {
+	flag.BoolVar(&flPing, "p", false, "ping the builtin beam endpoint")
 	flag.BoolVar(&flX, "x", false, "print commands as they are being executed")
 	flag.Parse()
+	if flPing {
+		bootstrap := os.NewFile(3, "beam")
+		conn, err := beam.FileConn(bootstrap)
+		if err != nil {
+			Fatal(err)
+		}
+		bootstrap.Close()
+		conn.Send(data.Empty().Set("hello", "beautiful", "beautiful", "world").Bytes(), nil)
+		conn.CloseWrite()
+		return
+	}
 	if flag.NArg() == 0{
 		if term.IsTerminal(0) {
 			// No arguments, stdin is terminal --> interactive mode
@@ -285,6 +298,8 @@ func GetHandler(name string) Handler {
 		return CmdConnect
 	} else if name == "openfile" {
 		return CmdOpenfile
+	} else if name == "spawn" {
+		return CmdSpawn
 	}
 	return nil
 }

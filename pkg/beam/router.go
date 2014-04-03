@@ -101,6 +101,11 @@ func (route *Route) Tee(dst Sender) *Route {
 	return route
 }
 
+func (r *Route) Filter(f func([]byte, *os.File) bool) *Route {
+	r.rules = append(r.rules, f)
+	return r
+}
+
 func (r *Route) KeyStartsWith(k string, beginning ...string) *Route {
 	r.rules = append(r.rules, func(payload []byte, attachment *os.File) bool {
 		values := data.Message(payload).Get(k)
