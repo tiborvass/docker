@@ -24,29 +24,26 @@ var rootPlugins = []string{
 var (
 	flX bool
 	flPing bool
+	introspect beam.ReceiveSender = beam.Devnull()
 )
 
 func main() {
-	flag.BoolVar(&flPing, "p", false, "ping the builtin beam endpoint")
+	fd3 := os.NewFile(3, "beam-introspect")
+	if introsp, err := beam.FileConn(fd3); err == nil {
+		introspect = introsp
+		Logf("introspection enabled\n")
+	} else {
+		Logf("introspection disabled\n")
+	}
+	fd3.Close()
 	flag.BoolVar(&flX, "x", false, "print commands as they are being executed")
 	flag.Parse()
-	if flPing {
-		bootstrap := os.NewFile(3, "beam")
-		conn, err := beam.FileConn(bootstrap)
-		if err != nil {
-			Fatal(err)
-		}
-		bootstrap.Close()
-		conn.Send(data.Empty().Set("hello", "beautiful", "beautiful", "world").Bytes(), nil)
-		conn.CloseWrite()
-		return
-	}
 	if flag.NArg() == 0{
 		if term.IsTerminal(0) {
 			// No arguments, stdin is terminal --> interactive mode
 			input := bufio.NewScanner(os.Stdin)
 			for {
-				os.Stdout.Write([]byte("beamsh> "))
+				fmt.Printf("[%d] beamsh> ", os.Getpid())
 				if !input.Scan() {
 					break
 				}
@@ -116,11 +113,34 @@ func executeRootScript(script []*dockerscript.Command) error {
 		lastCmd.Children = script
 		script = []*dockerscript.Command{rootCmd}
 	}
-	handlers, err := Handlers()
+	handlers, err := Handlers(introspect)
 	if err != nil {
 		return err
 	}
 	defer handlers.Close()
+	var tasks sync.WaitGroup
+	defer func() {
+		Debugf("Waiting for introspection...\n")
+		tasks.Wait()
+		Debugf("DONE Waiting for introspection\n")
+	}()
+	if introspect != nil {
+		tasks.Add(1)
+		go func() {
+			Debugf("starting introspection\n")
+			defer Debugf("done with introspection\n")
+			defer tasks.Done()
+			introspect.Send(data.Empty().Set("cmd", "log", "stdout").Set("message", "introspection worked!").Bytes(), nil)
+			Debugf("XXX starting reading introspection messages\n")
+			r := beam.NewRouter(handlers)
+			r.NewRoute().All().Handler(func(p []byte, a *os.File) error {
+				Logf("[INTROSPECTION] %s\n", beam.MsgDesc(p, a))
+				return handlers.Send(p, a)
+			})
+			n, err := beam.Copy(r, introspect)
+			Debugf("XXX done reading %d introspection messages: %v\n", n, err)
+		}()
+	}
 	if err := executeScript(handlers, script); err != nil {
 		return err
 	}
@@ -201,7 +221,7 @@ func executeCommand(out beam.Sender, cmd *dockerscript.Command) error {
 type Handler func([]string, io.Writer, io.Writer, beam.Receiver, beam.Sender)
 
 
-func Handlers() (*beam.UnixConn, error) {
+func Handlers(sink beam.Sender) (*beam.UnixConn, error) {
 	var tasks sync.WaitGroup
 	pub, priv, err := beam.USocketPair()
 	if err != nil {
@@ -215,15 +235,16 @@ func Handlers() (*beam.UnixConn, error) {
 			priv.CloseWrite()
 			Debugf("[handlers] done closewrite() on endpoint\n")
 		}()
-		for {
-			Debugf("[handlers] waiting for next job...\n")
-			payload, conn, err := beam.ReceiveConn(priv)
-			Debugf("[handlers] ReceiveConn() returned %v\n", err)
+		r := beam.NewRouter(sink)
+		r.NewRoute().HasAttachment().KeyIncludes("type", "job").Handler(func(payload []byte, attachment *os.File) error {
+			conn, err := beam.FileConn(attachment)
 			if err != nil {
-				return
+				attachment.Close()
+				return err
 			}
+			// attachment.Close()
 			tasks.Add(1)
-			go func(payload []byte, conn *beam.UnixConn) {
+			go func() {
 				defer tasks.Done()
 				defer func() {
 					Debugf("[handlers] '%s' closewrite\n", payload)
@@ -252,8 +273,10 @@ func Handlers() (*beam.UnixConn, error) {
 				Debugf("[handlers] calling %s\n", strings.Join(cmd, " "))
 				handler(cmd, stdout, stderr, beam.Receiver(conn), beam.Sender(conn))
 				Debugf("[handlers] returned: %s\n", strings.Join(cmd, " "))
-			}(payload, conn)
-		}
+			}()
+			return nil
+		})
+		beam.Copy(r, priv)
 		Debugf("[handlers] waiting for all tasks\n")
 		tasks.Wait()
 		Debugf("[handlers] all tasks returned\n")

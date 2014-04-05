@@ -198,7 +198,7 @@ func CmdExec(args []string, stdout, stderr io.Writer, in beam.Receiver, out beam
 	cmd := exec.Command(args[1], args[2:]...)
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
-	cmd.Stdin = os.Stdin
+	//cmd.Stdin = os.Stdin
 	local, remote, err := beam.SocketPair()
 	if err != nil {
 		fmt.Fprintf(stderr, "%v\n", err)
@@ -214,65 +214,13 @@ func CmdExec(args []string, stdout, stderr io.Writer, in beam.Receiver, out beam
 	local.Close()
 	cmd.ExtraFiles = append(cmd.ExtraFiles, remote)
 
-	// Copy messages from <in> to <chin>
-	chin := make(chan *Msg)
-	go func() {
-		defer Debugf("done copying to chin\n")
-		defer close(chin)
-		for {
-			p, a, err := in.Receive()
-			if err != nil {
-				return
-			}
-			chin<-&Msg{p, a}
-		}
-	}()
-
-	// Copy messages from <chin> to <chin2>
-	chin2 := make(chan *Msg)
-	stop := make(chan struct{})
-	go func() {
-		defer Debugf("done copying to chin2\n")
-		var done bool
-		for {
-			select {
-				case msg, ok := <-chin: {
-					if !ok {
-						if !done {
-							close(chin2)
-						}
-						return
-					}
-					if done {
-						if msg.attachment != nil {
-							msg.attachment.Close()
-						}
-					} else {
-						chin2<-msg
-					}
-				}
-				case <-stop: {
-					done = true
-					close(chin2)
-				}
-			}
-		}
-	}()
-
 	var tasks sync.WaitGroup
 	tasks.Add(1)
 	go func() {
 		defer Debugf("done copying to child\n")
 		defer tasks.Done()
 		defer child.CloseWrite()
-		for msg := range chin2 {
-			if err := child.Send(msg.payload, msg.attachment); err != nil {
-				if msg.attachment != nil {
-					msg.attachment.Close()
-				}
-				return
-			}
-		}
+		beam.Copy(child, in)
 	}()
 
 	tasks.Add(1)
@@ -289,7 +237,6 @@ func CmdExec(args []string, stdout, stderr io.Writer, in beam.Receiver, out beam
 	// We can close both ends of the socket without worrying about data stuck in the buffer,
 	// because unix socket writes are fully synchronous.
 	child.Close()
-	close(stop)
 	tasks.Wait()
 	var status string
 	if execErr != nil {
@@ -303,7 +250,11 @@ func CmdExec(args []string, stdout, stderr io.Writer, in beam.Receiver, out beam
 func CmdTrace(args []string, stdout, stderr io.Writer, in beam.Receiver, out beam.Sender) {
 	r := beam.NewRouter(out)
 	r.NewRoute().All().Handler(func(payload []byte, attachment *os.File) error {
-		fmt.Printf("===> %s\n", beam.MsgDesc(payload, attachment))
+		var sfd string = "nil"
+		if attachment != nil {
+			sfd = fmt.Sprintf("%d", attachment.Fd())
+		}
+		fmt.Printf("===> %s [%s]\n", data.Message(payload).Pretty(), sfd)
 		out.Send(payload, attachment)
 		return nil
 	})
