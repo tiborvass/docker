@@ -7,6 +7,7 @@ import (
 	"github.com/dotcloud/docker/pkg/beam/data"
 	"github.com/dotcloud/docker/pkg/dockerscript"
 	"github.com/dotcloud/docker/pkg/term"
+	"github.com/tiborvass/uniline"
 	"io"
 	"net"
 	"net/url"
@@ -40,14 +41,12 @@ func main() {
 	if flag.NArg() == 0 {
 		if term.IsTerminal(0) {
 			// No arguments, stdin is terminal --> interactive mode
-			input := bufio.NewScanner(os.Stdin)
-			for {
-				fmt.Printf("[%d] beamsh> ", os.Getpid())
-				if !input.Scan() {
-					break
-				}
+			input := uniline.DefaultScanner()
+			prompt := fmt.Sprintf("[%d] beamsh> ", os.Getpid())
+			for input.Scan(prompt) {
 				line := input.Text()
 				if len(line) != 0 {
+					input.AddToHistory(line)
 					cmd, err := dockerscript.Parse(strings.NewReader(line))
 					if err != nil {
 						fmt.Fprintf(os.Stderr, "error: %v\n", err)
