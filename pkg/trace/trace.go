@@ -44,7 +44,7 @@ func Error(err error) error {
 		return err
 	}
 	pc := make([]uintptr, MAX_DEPTH)
-	n := runtime.Callers(2, pc) // skip=2 because we don't care about runtime.Callers nor NewError
+	n := runtime.Callers(2, pc) // skip=2 because we don't care about runtime.Callers nor Error
 	n -= 2                      // because we don't care about runtime.main nor runtime.goexit
 	st := make(stack, n)
 	for i := n - 1; i > 0; i-- { // i > 0 because we have to set the err field for i == 0 (see after loop)
@@ -60,7 +60,7 @@ func Error(err error) error {
 func Wrap(wrap string, err error) error {
 	st, ok := err.(stack)
 	if !ok {
-		return New(fmt.Errorf("%s: %v", wrap, err))
+		return Error(fmt.Errorf("%s: %v", wrap, err))
 	}
 	pc := make([]uintptr, MAX_DEPTH)
 	n := runtime.Callers(2, pc)
