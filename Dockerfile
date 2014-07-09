@@ -44,6 +44,7 @@ RUN	apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq \
 	lxc=1.0* \
 	mercurial \
 	pandoc \
+	parallel \
 	reprepro \
 	ruby1.9.1 \
 	ruby1.9.1-dev \
@@ -102,6 +103,3 @@ ENTRYPOINT	["hack/dind"]
 
 # Upload docker source
 ADD	.	/go/src/github.com/dotcloud/docker
-
-# TODO: Put in the apt-get install at the top (didn't want to do a cache miss only for this)
-RUN apt-get install -yq parallel
