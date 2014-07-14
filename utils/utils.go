@@ -884,14 +884,16 @@ func ValidateContextDirectory(srcPath string) error {
 			return nil
 		}
 
-		if _, err := os.Stat(filePath); err != nil && os.IsPermission(err) {
-			finalError = fmt.Errorf("can't stat '%s'", filePath)
-			return err
-		}
-		// skip checking if symlinks point to non-existing files, such symlinks can be useful
-		lstat, err := os.Lstat(filePath)
-		if err != nil || lstat.Mode()&os.ModeSymlink == os.ModeSymlink {
-			return err
+		if _, err := os.Stat(filePath); err != nil {
+			if os.IsNotExist(err) {
+				// skip checking if symlinks point to non-existing files, such symlinks can be useful
+				if lstat, err := os.Lstat(filePath); err == nil && lstat.Mode()&os.ModeSymlink == os.ModeSymlink {
+					return nil
+				}
+			} else if os.IsPermission(err) {
+				finalError = fmt.Errorf("can't stat '%s': %v", filePath, err)
+				return err
+			}
 		}
 
 		if !f.IsDir() {
