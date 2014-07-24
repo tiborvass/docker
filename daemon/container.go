@@ -15,8 +15,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/docker/libcontainer/devices"
-	"github.com/docker/libcontainer/label"
 	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/graphdriver"
@@ -30,6 +28,8 @@ import (
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/utils/broadcastwriter"
+	"github.com/docker/libcontainer/devices"
+	"github.com/docker/libcontainer/label"
 )
 
 const DefaultPathEnv = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

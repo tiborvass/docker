@@ -12,7 +12,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/libcontainer/label"
 	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
@@ -34,6 +33,7 @@ import (
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/utils/broadcastwriter"
+	"github.com/docker/libcontainer/label"
 )
 
 // Set the max depth to the aufs default that most

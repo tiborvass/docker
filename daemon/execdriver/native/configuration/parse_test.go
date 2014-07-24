@@ -3,8 +3,8 @@ package configuration
 import (
 	"testing"
 
-	"github.com/docker/libcontainer/security/capabilities"
 	"github.com/tiborvass/docker/daemon/execdriver/native/template"
+	"github.com/docker/libcontainer/security/capabilities"
 )
 
 // Checks whether the expected capability is specified in the capabilities.

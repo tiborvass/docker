@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/docker/libcontainer/netlink"
 	"github.com/tiborvass/docker/daemon/networkdriver"
 	"github.com/tiborvass/docker/daemon/networkdriver/ipallocator"
 	"github.com/tiborvass/docker/daemon/networkdriver/portallocator"
@@ -17,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/pkg/iptables"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/libcontainer/netlink"
 )
 
 const (

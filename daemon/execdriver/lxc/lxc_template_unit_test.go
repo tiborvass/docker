@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/libcontainer/devices"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/docker/libcontainer/devices"
 )
 
 func TestLXCConfig(t *testing.T) {
