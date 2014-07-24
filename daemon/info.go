@@ -6,6 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
 	"github.com/tiborvass/docker/registry"
@@ -30,7 +31,7 @@ func (daemon *Daemon) CmdInfo(job *engine.Job) engine.Status {
 		operatingSystem = s
 	}
 	if inContainer, err := operatingsystem.IsContainerized(); err != nil {
-		utils.Errorf("Could not determine if daemon is containerized: %v", err)
+		log.Errorf("Could not determine if daemon is containerized: %v", err)
 		operatingSystem += " (error determining if containerized)"
 	} else if inContainer {
 		operatingSystem += " (containerized)"

@@ -32,6 +32,7 @@ import (
 
 	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/tiborvass/docker/pkg/log"
 	mountpk "github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libcontainer/label"
@@ -209,7 +210,7 @@ func (a *Driver) Remove(id string) error {
 	defer a.Unlock()
 
 	if a.active[id] != 0 {
-		utils.Errorf("Warning: removing active id %s\n", id)
+		log.Errorf("Warning: removing active id %s\n", id)
 	}
 
 	// Make sure the dir is umounted first
@@ -378,7 +379,7 @@ func (a *Driver) Cleanup() error {
 
 	for _, id := range ids {
 		if err := a.unmount(id); err != nil {
-			utils.Errorf("Unmounting %s: %s", utils.TruncateID(id), err)
+			log.Errorf("Unmounting %s: %s", utils.TruncateID(id), err)
 		}
 	}
 

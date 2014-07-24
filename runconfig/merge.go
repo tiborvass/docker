@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/nat"
-	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/pkg/log"
 )
 
 func Merge(userConf, imageConf *Config) error {
@@ -50,7 +50,7 @@ func Merge(userConf, imageConf *Config) error {
 	}
 	if len(imageConf.PortSpecs) > 0 {
 		// FIXME: I think we can safely remove this. Leaving it for now for the sake of reverse-compat paranoia.
-		utils.Debugf("Migrating image port specs to containter: %s", strings.Join(imageConf.PortSpecs, ", "))
+		log.Debugf("Migrating image port specs to containter: %s", strings.Join(imageConf.PortSpecs, ", "))
 		if userConf.ExposedPorts == nil {
 			userConf.ExposedPorts = make(nat.PortSet)
 		}

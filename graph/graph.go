@@ -16,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -64,7 +65,7 @@ func (graph *Graph) restore() error {
 		}
 	}
 	graph.idIndex = truncindex.NewTruncIndex(ids)
-	utils.Debugf("Restored %d elements", len(dir))
+	log.Debugf("Restored %d elements", len(dir))
 	return nil
 }
 
