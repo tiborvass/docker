@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/utils"
 )
 
 // Installer is a standard interface for objects which can "install" themselves

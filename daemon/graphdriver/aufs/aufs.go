@@ -31,10 +31,10 @@ import (
 	"syscall"
 
 	"github.com/docker/libcontainer/label"
-	"github.com/dotcloud/docker/archive"
-	"github.com/dotcloud/docker/daemon/graphdriver"
-	mountpk "github.com/dotcloud/docker/pkg/mount"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/archive"
+	"github.com/tiborvass/docker/daemon/graphdriver"
+	mountpk "github.com/tiborvass/docker/pkg/mount"
+	"github.com/tiborvass/docker/utils"
 )
 
 var (

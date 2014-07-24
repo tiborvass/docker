@@ -1,7 +1,7 @@
 package aufs
 
 import (
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/utils"
 	"os/exec"
 	"syscall"
 )

@@ -2,11 +2,11 @@ package graph
 
 import (
 	"bytes"
-	"github.com/dotcloud/docker/daemon/graphdriver"
-	_ "github.com/dotcloud/docker/daemon/graphdriver/vfs" // import the vfs driver so it is used in the tests
-	"github.com/dotcloud/docker/image"
-	"github.com/dotcloud/docker/utils"
-	"github.com/dotcloud/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
+	"github.com/tiborvass/docker/daemon/graphdriver"
+	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // import the vfs driver so it is used in the tests
+	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 	"io"
 	"os"
 	"path"

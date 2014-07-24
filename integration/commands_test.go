@@ -11,11 +11,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dotcloud/docker/api/client"
-	"github.com/dotcloud/docker/daemon"
-	"github.com/dotcloud/docker/engine"
-	"github.com/dotcloud/docker/pkg/term"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/term"
+	"github.com/tiborvass/docker/utils"
 )
 
 func closeWrap(args ...io.Closer) error {

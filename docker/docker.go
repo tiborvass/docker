@@ -12,15 +12,15 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/dotcloud/docker/api"
-	"github.com/dotcloud/docker/api/client"
-	"github.com/dotcloud/docker/builtins"
-	"github.com/dotcloud/docker/dockerversion"
-	"github.com/dotcloud/docker/engine"
-	"github.com/dotcloud/docker/opts"
-	flag "github.com/dotcloud/docker/pkg/mflag"
-	"github.com/dotcloud/docker/sysinit"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/builtins"
+	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/opts"
+	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/sysinit"
+	"github.com/tiborvass/docker/utils"
 )
 
 const (
@@ -154,7 +154,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		// handle the pidfile early. https://github.com/dotcloud/docker/issues/6973
+		// handle the pidfile early. https://github.com/docker/docker/issues/6973
 		if len(*pidfile) > 0 {
 			job := eng.Job("initserverpidfile", *pidfile)
 			if err := job.Run(); err != nil {
@@ -291,7 +291,7 @@ func checkKernelAndArch() error {
 	// Unfortunately we can't test for the feature "does not cause a kernel panic"
 	// without actually causing a kernel panic, so we need this workaround until
 	// the circumstances of pre-3.8 crashes are clearer.
-	// For details see http://github.com/dotcloud/docker/issues/407
+	// For details see http://github.com/docker/docker/issues/407
 	if k, err := utils.GetKernelVersion(); err != nil {
 		log.Printf("WARNING: %s\n", err)
 	} else {

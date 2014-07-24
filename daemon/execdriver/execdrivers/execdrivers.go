@@ -2,10 +2,10 @@ package execdrivers
 
 import (
 	"fmt"
-	"github.com/dotcloud/docker/daemon/execdriver"
-	"github.com/dotcloud/docker/daemon/execdriver/lxc"
-	"github.com/dotcloud/docker/daemon/execdriver/native"
-	"github.com/dotcloud/docker/pkg/sysinfo"
+	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/tiborvass/docker/daemon/execdriver/lxc"
+	"github.com/tiborvass/docker/daemon/execdriver/native"
+	"github.com/tiborvass/docker/pkg/sysinfo"
 	"path"
 )
 

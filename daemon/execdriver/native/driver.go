@@ -20,9 +20,9 @@ import (
 	"github.com/docker/libcontainer/cgroups/systemd"
 	"github.com/docker/libcontainer/namespaces"
 	"github.com/docker/libcontainer/syncpipe"
-	"github.com/dotcloud/docker/daemon/execdriver"
-	"github.com/dotcloud/docker/pkg/system"
-	"github.com/dotcloud/docker/pkg/term"
+	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/tiborvass/docker/pkg/system"
+	"github.com/tiborvass/docker/pkg/term"
 )
 
 const (

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dotcloud/docker/pkg/term"
-	"github.com/dotcloud/docker/pkg/units"
+	"github.com/tiborvass/docker/pkg/term"
+	"github.com/tiborvass/docker/pkg/units"
 )
 
 type JSONError struct {

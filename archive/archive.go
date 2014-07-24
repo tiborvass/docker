@@ -16,9 +16,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/dotcloud/docker/pkg/system"
-	"github.com/dotcloud/docker/utils"
-	"github.com/dotcloud/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
+	"github.com/tiborvass/docker/pkg/system"
+	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 )
 
 type (

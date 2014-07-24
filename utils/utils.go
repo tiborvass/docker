@@ -22,7 +22,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dotcloud/docker/dockerversion"
+	"github.com/tiborvass/docker/dockerversion"
 )
 
 type KeyValuePair struct {

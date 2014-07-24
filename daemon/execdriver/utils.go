@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/docker/libcontainer/security/capabilities"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/utils"
 )
 
 func TweakCapabilities(basics, adds, drops []string) ([]string, error) {

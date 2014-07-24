@@ -5,7 +5,7 @@ import (
 	"text/template"
 
 	"github.com/docker/libcontainer/label"
-	"github.com/dotcloud/docker/daemon/execdriver"
+	"github.com/tiborvass/docker/daemon/execdriver"
 )
 
 const LxcTemplate = `
