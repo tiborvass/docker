@@ -1,9 +1,9 @@
 package portmapper
 
 import (
-	"github.com/dotcloud/docker/daemon/networkdriver/portallocator"
-	"github.com/dotcloud/docker/pkg/iptables"
-	"github.com/dotcloud/docker/pkg/proxy"
+	"github.com/tiborvass/docker/daemon/networkdriver/portallocator"
+	"github.com/tiborvass/docker/pkg/iptables"
+	"github.com/tiborvass/docker/pkg/proxy"
 	"net"
 	"testing"
 )

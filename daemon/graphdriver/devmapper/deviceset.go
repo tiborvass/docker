@@ -18,10 +18,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/tiborvass/docker/pkg/units"
+	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libcontainer/label"
-	"github.com/dotcloud/docker/daemon/graphdriver"
-	"github.com/dotcloud/docker/pkg/units"
-	"github.com/dotcloud/docker/utils"
 )
 
 var (

@@ -23,8 +23,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dotcloud/docker/dockerversion"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/utils"
 )
 
 var (

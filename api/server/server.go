@@ -22,14 +22,14 @@ import (
 
 	"code.google.com/p/go.net/websocket"
 
-	"github.com/dotcloud/docker/api"
-	"github.com/dotcloud/docker/engine"
-	"github.com/dotcloud/docker/pkg/listenbuffer"
-	"github.com/dotcloud/docker/pkg/systemd"
-	"github.com/dotcloud/docker/pkg/user"
-	"github.com/dotcloud/docker/pkg/version"
-	"github.com/dotcloud/docker/registry"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/listenbuffer"
+	"github.com/tiborvass/docker/pkg/systemd"
+	"github.com/tiborvass/docker/pkg/user"
+	"github.com/tiborvass/docker/pkg/version"
+	"github.com/tiborvass/docker/registry"
+	"github.com/tiborvass/docker/utils"
 	"github.com/gorilla/mux"
 )
 

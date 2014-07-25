@@ -3,10 +3,10 @@
 package daemon
 
 import (
-	"github.com/dotcloud/docker/daemon/graphdriver"
-	"github.com/dotcloud/docker/daemon/graphdriver/aufs"
-	"github.com/dotcloud/docker/graph"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/tiborvass/docker/daemon/graphdriver/aufs"
+	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/utils"
 )
 
 // Given the graphdriver ad, if it is aufs, then migrate it.

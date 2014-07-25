@@ -1,7 +1,7 @@
 package registry
 
 import (
-	"github.com/dotcloud/docker/engine"
+	"github.com/tiborvass/docker/engine"
 )
 
 // Service exposes registry capabilities in the standard Engine

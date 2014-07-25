@@ -5,9 +5,9 @@ import (
 	"mime"
 	"strings"
 
-	"github.com/dotcloud/docker/engine"
-	"github.com/dotcloud/docker/pkg/version"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/version"
+	"github.com/tiborvass/docker/utils"
 )
 
 const (

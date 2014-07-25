@@ -2,8 +2,8 @@ package links
 
 import (
 	"fmt"
-	"github.com/dotcloud/docker/engine"
-	"github.com/dotcloud/docker/nat"
+	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/nat"
 	"path"
 	"strings"
 )

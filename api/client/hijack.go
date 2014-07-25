@@ -11,10 +11,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/dotcloud/docker/api"
-	"github.com/dotcloud/docker/dockerversion"
-	"github.com/dotcloud/docker/pkg/term"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/pkg/term"
+	"github.com/tiborvass/docker/utils"
 )
 
 func (cli *DockerCli) dial() (net.Conn, error) {

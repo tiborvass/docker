@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dotcloud/docker/pkg/iptables"
+	"github.com/tiborvass/docker/pkg/iptables"
 )
 
 func TestEtcHostsRegularFile(t *testing.T) {

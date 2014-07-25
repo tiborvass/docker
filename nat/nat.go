@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/utils"
 )
 
 const (
