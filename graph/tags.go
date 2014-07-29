@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -72,7 +73,7 @@ func (store *TagStore) reload() error {
 func (store *TagStore) LookupImage(name string) (*image.Image, error) {
 	// FIXME: standardize on returning nil when the image doesn't exist, and err for everything else
 	// (so we can pass all errors here)
-	repos, tag := utils.ParseRepositoryTag(name)
+	repos, tag := parsers.ParseRepositoryTag(name)
 	if tag == "" {
 		tag = DEFAULTTAG
 	}

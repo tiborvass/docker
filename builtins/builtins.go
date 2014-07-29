@@ -8,9 +8,9 @@ import (
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/server"
-	"github.com/tiborvass/docker/utils"
 )
 
 func Register(eng *engine.Engine) error {
@@ -68,7 +68,7 @@ func dockerVersion(job *engine.Job) engine.Status {
 	v.Set("GoVersion", runtime.Version())
 	v.Set("Os", runtime.GOOS)
 	v.Set("Arch", runtime.GOARCH)
-	if kernelVersion, err := utils.GetKernelVersion(); err == nil {
+	if kernelVersion, err := kernel.GetKernelVersion(); err == nil {
 		v.Set("KernelVersion", kernelVersion.String())
 	}
 	if _, err := v.WriteTo(job.Stdout); err != nil {

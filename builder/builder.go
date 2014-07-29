@@ -23,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/registry"
@@ -86,7 +87,7 @@ func (b *buildFile) CmdFrom(name string) error {
 	image, err := b.daemon.Repositories().LookupImage(name)
 	if err != nil {
 		if b.daemon.Graph().IsNotExist(err) {
-			remote, tag := utils.ParseRepositoryTag(name)
+			remote, tag := parsers.ParseRepositoryTag(name)
 			pullRegistryAuth := b.authConfig
 			if len(b.configFile.Configs) > 0 {
 				// The request came with a full auth config file, we prefer to use that
