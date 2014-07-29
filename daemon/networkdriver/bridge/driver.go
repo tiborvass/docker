@@ -15,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/iptables"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
+	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libcontainer/netlink"
 )
@@ -306,7 +307,7 @@ func createBridge(bridgeIP string) error {
 }
 
 func createBridgeIface(name string) error {
-	kv, err := utils.GetKernelVersion()
+	kv, err := kernel.GetKernelVersion()
 	// only set the bridge's mac address if the kernel version is > 3.3
 	// before that it was not supported
 	setBridgeMacAddr := err == nil && (kv.Kernel >= 3 && kv.Major >= 3)

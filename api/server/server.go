@@ -25,6 +25,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/listenbuffer"
+	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/systemd"
 	"github.com/tiborvass/docker/pkg/user"
 	"github.com/tiborvass/docker/pkg/version"
@@ -484,7 +485,7 @@ func postImagesCreate(eng *engine.Engine, version version.Version, w http.Respon
 	}
 	if image != "" { //pull
 		if tag == "" {
-			image, tag = utils.ParseRepositoryTag(image)
+			image, tag = parsers.ParseRepositoryTag(image)
 		}
 		metaHeaders := map[string][]string{}
 		for k, v := range r.Header {
@@ -498,7 +499,7 @@ func postImagesCreate(eng *engine.Engine, version version.Version, w http.Respon
 		job.SetenvJson("authConfig", authConfig)
 	} else { //import
 		if tag == "" {
-			repo, tag = utils.ParseRepositoryTag(repo)
+			repo, tag = parsers.ParseRepositoryTag(repo)
 		}
 		job = eng.Job("import", r.Form.Get("fromSrc"), repo, tag)
 		job.Stdin.Add(r.Body)

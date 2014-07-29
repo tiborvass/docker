@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
+	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/runconfig"
@@ -724,7 +725,7 @@ func (daemon *Daemon) RegisterLink(parent, child *Container, alias string) error
 func (daemon *Daemon) RegisterLinks(container *Container, hostConfig *runconfig.HostConfig) error {
 	if hostConfig != nil && hostConfig.Links != nil {
 		for _, l := range hostConfig.Links {
-			parts, err := utils.PartParser("name:alias", l)
+			parts, err := parsers.PartParser("name:alias", l)
 			if err != nil {
 				return err
 			}
