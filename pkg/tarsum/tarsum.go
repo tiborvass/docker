@@ -1,16 +1,18 @@
-package utils
+package tarsum
 
 import (
 	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
-	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 	"hash"
 	"io"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 )
 
 type TarSum struct {
@@ -168,11 +170,11 @@ func (ts *TarSum) Sum(extra []byte) string {
 		h.Write(extra)
 	}
 	for _, sum := range sums {
-		Debugf("-->%s<--", sum)
+		utils.Debugf("-->%s<--", sum)
 		h.Write([]byte(sum))
 	}
 	checksum := "tarsum+sha256:" + hex.EncodeToString(h.Sum(nil))
-	Debugf("checksum processed: %s", checksum)
+	utils.Debugf("checksum processed: %s", checksum)
 	return checksum
 }
 
