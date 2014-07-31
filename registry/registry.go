@@ -27,6 +27,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
+	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -639,7 +640,7 @@ func (r *Registry) PushImageLayerRegistry(imgID string, layer io.Reader, registr
 
 	utils.Debugf("[registry] Calling PUT %s", registry+"images/"+imgID+"/layer")
 
-	tarsumLayer := &utils.TarSum{Reader: layer}
+	tarsumLayer := &tarsum.TarSum{Reader: layer}
 	h := sha256.New()
 	h.Write(jsonRaw)
 	h.Write([]byte{'\n'})

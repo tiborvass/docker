@@ -26,6 +26,7 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -50,7 +51,7 @@ type buildFile struct {
 	config     *runconfig.Config
 
 	contextPath string
-	context     *utils.TarSum
+	context     *tarsum.TarSum
 
 	verbose      bool
 	utilizeCache bool
@@ -555,7 +556,7 @@ func (b *buildFile) runContextCommand(args string, allowRemote bool, allowDecomp
 		if err != nil {
 			return err
 		}
-		tarSum := &utils.TarSum{Reader: r, DisableCompression: true}
+		tarSum := &tarsum.TarSum{Reader: r, DisableCompression: true}
 		if _, err := io.Copy(ioutil.Discard, tarSum); err != nil {
 			return err
 		}
@@ -777,7 +778,7 @@ func (b *buildFile) Build(context io.Reader) (string, error) {
 		return "", err
 	}
 
-	b.context = &utils.TarSum{Reader: decompressedStream, DisableCompression: true}
+	b.context = &tarsum.TarSum{Reader: decompressedStream, DisableCompression: true}
 	if err := archive.Untar(b.context, tmpdirPath, nil); err != nil {
 		return "", err
 	}
