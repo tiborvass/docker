@@ -10,6 +10,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/sysinit"
 )
 
@@ -39,6 +40,7 @@ func mainDaemon() {
 	}
 
 	eng := engine.New()
+	signal.Trap(eng.Shutdown)
 	// Load builtins
 	if err := builtins.Register(eng); err != nil {
 		log.Fatal(err)
