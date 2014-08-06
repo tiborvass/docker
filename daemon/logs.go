@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/pkg/tailfile"
 
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/jsonlog"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -89,7 +90,7 @@ func (daemon *Daemon) ContainerLogs(job *engine.Job) engine.Status {
 			}
 			dec := json.NewDecoder(cLog)
 			for {
-				l := &utils.JSONLog{}
+				l := &jsonlog.JSONLog{}
 
 				if err := dec.Decode(l); err == io.EOF {
 					break
@@ -115,13 +116,13 @@ func (daemon *Daemon) ContainerLogs(job *engine.Job) engine.Status {
 		if stdout {
 			stdoutPipe := container.StdoutLogPipe()
 			go func() {
-				errors <- utils.WriteLog(stdoutPipe, job.Stdout, format)
+				errors <- jsonlog.WriteLog(stdoutPipe, job.Stdout, format)
 			}()
 		}
 		if stderr {
 			stderrPipe := container.StderrLogPipe()
 			go func() {
-				errors <- utils.WriteLog(stderrPipe, job.Stderr, format)
+				errors <- jsonlog.WriteLog(stderrPipe, job.Stderr, format)
 			}()
 		}
 		err := <-errors
