@@ -26,6 +26,7 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
@@ -35,7 +36,6 @@ import (
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/utils/broadcastwriter"
 	"github.com/docker/libcontainer/label"
 )
 
