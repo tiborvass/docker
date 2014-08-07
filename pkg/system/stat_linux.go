@@ -4,10 +4,20 @@ import (
 	"syscall"
 )
 
-func GetLastAccess(stat *syscall.Stat_t) syscall.Timespec {
-	return stat.Atim
+type unixTime syscall.Timespec
+
+func (ut unixTime) Unix() int64 {
+	return int64(syscall.Timespec(ut).Sec)
 }
 
-func GetLastModification(stat *syscall.Stat_t) syscall.Timespec {
-	return stat.Mtim
+func (ut unixTime) Nanosecond() int {
+	return int(syscall.Timespec(ut).Nsec)
+}
+
+func GetLastAccess(stat *syscall.Stat_t) Time {
+	return unixTime(stat.Atim)
+}
+
+func GetLastModification(stat *syscall.Stat_t) Time {
+	return unixTime(stat.Mtim)
 }

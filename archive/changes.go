@@ -46,15 +46,10 @@ func (change *Change) String() string {
 // precision, which is problematic when we apply changes via tar
 // files, we handle this by comparing for exact times, *or* same
 // second count and either a or b having exactly 0 nanoseconds
-func sameFsTime(a, b time.Time) bool {
+func sameFsTime(a, b system.Time) bool {
 	return a == b ||
 		(a.Unix() == b.Unix() &&
 			(a.Nanosecond() == 0 || b.Nanosecond() == 0))
-}
-
-func sameFsTimeSpec(a, b syscall.Timespec) bool {
-	return a.Sec == b.Sec &&
-		(a.Nsec == b.Nsec || a.Nsec == 0 || b.Nsec == 0)
 }
 
 func Changes(layers []string, rw string) ([]Change, error) {
@@ -205,7 +200,7 @@ func (info *FileInfo) addChanges(oldInfo *FileInfo, changes *[]Change) {
 				oldStat.Rdev != newStat.Rdev ||
 				// Don't look at size for dirs, its not a good measure of change
 				(oldStat.Size != newStat.Size && oldStat.Mode&syscall.S_IFDIR != syscall.S_IFDIR) ||
-				!sameFsTimeSpec(system.GetLastModification(oldStat), system.GetLastModification(newStat)) ||
+				!sameFsTime(system.GetLastModification(oldStat), system.GetLastModification(newStat)) ||
 				bytes.Compare(oldChild.capability, newChild.capability) != 0 {
 				change := Change{
 					Path: newChild.path(),
