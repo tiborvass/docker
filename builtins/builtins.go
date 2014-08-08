@@ -11,7 +11,6 @@ import (
 	"github.com/tiborvass/docker/events"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/server"
 )
 
 func Register(eng *engine.Engine) error {
@@ -54,9 +53,6 @@ func remote(eng *engine.Engine) error {
 // These components should be broken off into plugins of their own.
 //
 func daemon(eng *engine.Engine) error {
-	if err := eng.Register("initserver", server.InitServer); err != nil {
-		return err
-	}
 	return eng.Register("init_networkdriver", bridge.InitDriver)
 }
 
