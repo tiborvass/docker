@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/tiborvass/docker/sysinit"
+	_ "github.com/tiborvass/docker/daemon/execdriver/lxc"
+	_ "github.com/tiborvass/docker/daemon/execdriver/native"
+	"github.com/tiborvass/docker/reexec"
 )
 
 func main() {
 	// Running in init mode
-	sysinit.SysInit()
-	return
+	reexec.Init()
 }
