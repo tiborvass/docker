@@ -17,7 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
+	// "syscall"
 
 	"github.com/docker/docker/dockerversion"
 )
@@ -615,7 +615,7 @@ func ReadSymlinkedDirectory(path string) (string, error) {
 
 // TreeSize walks a directory tree and returns its total size in bytes.
 func TreeSize(dir string) (size int64, err error) {
-	data := make(map[uint64]struct{})
+	//data := make(map[uint64]struct{})
 	err = filepath.Walk(dir, func(d string, fileInfo os.FileInfo, e error) error {
 		// Ignore directory sizes
 		if fileInfo == nil {
@@ -627,6 +627,7 @@ func TreeSize(dir string) (size int64, err error) {
 			return nil
 		}
 
+/*
 		// Check inode to handle hard links correctly
 		inode := fileInfo.Sys().(*syscall.Stat_t).Ino
 		// inode is not a uint64 on all platforms. Cast it to avoid issues.
@@ -635,7 +636,7 @@ func TreeSize(dir string) (size int64, err error) {
 		}
 		// inode is not a uint64 on all platforms. Cast it to avoid issues.
 		data[uint64(inode)] = struct{}{}
-
+*/
 		size += s
 
 		return nil

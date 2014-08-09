@@ -12,10 +12,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	gosignal "os/signal"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/docker/docker/api"
 	"github.com/docker/docker/dockerversion"
@@ -222,7 +220,7 @@ func (cli *DockerCli) monitorTtySize(id string) error {
 	cli.resizeTty(id)
 
 	sigchan := make(chan os.Signal, 1)
-	gosignal.Notify(sigchan, syscall.SIGWINCH)
+	notifyWinch(sigchan)
 	go func() {
 		for _ = range sigchan {
 			cli.resizeTty(id)

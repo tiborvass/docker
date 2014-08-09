@@ -7,6 +7,6 @@ import (
 )
 
 // TempDir returns the default directory to use for temporary files.
-func TempDir(rootdir string) (string error) {
+func TempDir(rootdir string) (string, error) {
 	return os.TempDir(), nil
 }
