@@ -10,6 +10,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/sysinit"
 )
 
@@ -39,17 +40,10 @@ func mainDaemon() {
 	}
 
 	eng := engine.New()
+	signal.Trap(eng.Shutdown)
 	// Load builtins
 	if err := builtins.Register(eng); err != nil {
 		log.Fatal(err)
-	}
-
-	// handle the pidfile early. https://github.com/docker/docker/issues/6973
-	if len(*pidfile) > 0 {
-		job := eng.Job("initserverpidfile", *pidfile)
-		if err := job.Run(); err != nil {
-			log.Fatal(err)
-		}
 	}
 
 	// load the daemon in the background so we can immediately start
