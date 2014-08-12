@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/graphdb"
+	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
@@ -201,7 +202,7 @@ func (daemon *Daemon) register(container *Container, updateSuffixarray bool) err
 	if container.Config.OpenStdin {
 		container.stdin, container.stdinPipe = io.Pipe()
 	} else {
-		container.stdinPipe = utils.NopWriteCloser(ioutil.Discard) // Silently drop stdin
+		container.stdinPipe = ioutils.NopWriteCloser(ioutil.Discard) // Silently drop stdin
 	}
 	// done
 	daemon.containers.Add(container.ID, container)
@@ -965,7 +966,7 @@ func (daemon *Daemon) Diff(container *Container) (archive.Archive, error) {
 	if err != nil {
 		return nil, err
 	}
-	return utils.NewReadCloserWrapper(archive, func() error {
+	return ioutils.NewReadCloserWrapper(archive, func() error {
 		err := archive.Close()
 		daemon.driver.Put(container.ID)
 		return err

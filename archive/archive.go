@@ -18,6 +18,7 @@ import (
 
 	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
+	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/utils"
@@ -107,7 +108,7 @@ func CompressStream(dest io.WriteCloser, compression Compression) (io.WriteClose
 
 	switch compression {
 	case Uncompressed:
-		return utils.NopWriteCloser(dest), nil
+		return ioutils.NopWriteCloser(dest), nil
 	case Gzip:
 		return gzip.NewWriter(dest), nil
 	case Bzip2, Xz:
