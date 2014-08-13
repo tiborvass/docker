@@ -6,12 +6,11 @@ import (
 
 	"github.com/tiborvass/docker/daemon/networkdriver/portallocator"
 	"github.com/tiborvass/docker/pkg/iptables"
-	"github.com/tiborvass/docker/pkg/proxy"
 )
 
 func init() {
 	// override this func to mock out the proxy server
-	newProxy = proxy.NewStubProxy
+	NewProxy = NewMockProxyCommand
 }
 
 func reset() {
