@@ -1,11 +1,12 @@
 package portmapper
 
 import (
+	"net"
+	"testing"
+
 	"github.com/tiborvass/docker/daemon/networkdriver/portallocator"
 	"github.com/tiborvass/docker/pkg/iptables"
 	"github.com/tiborvass/docker/pkg/proxy"
-	"net"
-	"testing"
 )
 
 func init() {
@@ -138,7 +139,7 @@ func TestMapAllPortsSingleInterface(t *testing.T) {
 		}
 
 		if _, err := Map(srcAddr1, dstIp1, portallocator.BeginPortRange); err == nil {
-			t.Fatal("Port %d should be bound but is not", portallocator.BeginPortRange)
+			t.Fatalf("Port %d should be bound but is not", portallocator.BeginPortRange)
 		}
 
 		for _, val := range hosts {
