@@ -101,8 +101,10 @@ func (cli *DockerCli) hijack(method, path string, setRawTerminal bool, in io.Rea
 
 	sendStdin := utils.Go(func() error {
 		if in != nil {
-			io.Copy(rwc, in)
-			log.Debugf("[hijack] End of stdin")
+			go func() {
+				io.Copy(rwc, in)
+				log.Debugf("[hijack] End of stdin")
+			}()
 		}
 		if tcpc, ok := rwc.(*net.TCPConn); ok {
 			if err := tcpc.CloseWrite(); err != nil {
