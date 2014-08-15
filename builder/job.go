@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/archive"
-	"github.com/tiborvass/docker/builder/evaluator"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -86,7 +85,7 @@ func (b *BuilderJob) CmdBuild(job *engine.Job) engine.Status {
 
 	sf := utils.NewStreamFormatter(job.GetenvBool("json"))
 
-	opts := &evaluator.BuildOpts{
+	opts := &BuildOpts{
 		Daemon: b.Daemon,
 		Engine: b.Engine,
 		OutStream: &utils.StdoutFormater{
