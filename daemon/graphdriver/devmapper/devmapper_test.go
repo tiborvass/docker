@@ -1,9 +1,9 @@
-// +build linux,amd64
+// +build linux
 
 package devmapper
 
 import (
-	"github.com/dotcloud/docker/daemon/graphdriver/graphtest"
+	"github.com/tiborvass/docker/daemon/graphdriver/graphtest"
 	"testing"
 )
 

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dotcloud/docker/api/client"
+	"github.com/tiborvass/docker/api/client"
 )
 
 const (

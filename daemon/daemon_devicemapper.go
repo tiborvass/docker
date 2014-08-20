@@ -3,5 +3,5 @@
 package daemon
 
 import (
-	_ "github.com/dotcloud/docker/daemon/graphdriver/devmapper"
+	_ "github.com/tiborvass/docker/daemon/graphdriver/devmapper"
 )
