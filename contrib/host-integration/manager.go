@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/dotcloud/docker"
+	"github.com/tiborvass/docker"
 	"os"
 	"strings"
 	"text/template"

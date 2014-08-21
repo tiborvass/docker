@@ -1,7 +1,7 @@
 package docker
 
 import (
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/utils"
 	"runtime"
 	"testing"
 )

@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/dotcloud/docker/archive"
-	"github.com/dotcloud/docker/pkg/mount"
+	"github.com/tiborvass/docker/archive"
+	"github.com/tiborvass/docker/pkg/mount"
 )
 
 type FsMagic uint64

@@ -12,13 +12,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dotcloud/docker/archive"
-	"github.com/dotcloud/docker/daemon/graphdriver"
-	"github.com/dotcloud/docker/dockerversion"
-	"github.com/dotcloud/docker/image"
-	"github.com/dotcloud/docker/pkg/truncindex"
-	"github.com/dotcloud/docker/runconfig"
-	"github.com/dotcloud/docker/utils"
+	"github.com/tiborvass/docker/archive"
+	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/log"
+	"github.com/tiborvass/docker/pkg/truncindex"
+	"github.com/tiborvass/docker/runconfig"
+	"github.com/tiborvass/docker/utils"
 )
 
 // A Graph is a store for versioned filesystem images and the relationship between them.
@@ -64,7 +65,7 @@ func (graph *Graph) restore() error {
 		}
 	}
 	graph.idIndex = truncindex.NewTruncIndex(ids)
-	utils.Debugf("Restored %d elements", len(dir))
+	log.Debugf("Restored %d elements", len(dir))
 	return nil
 }
 

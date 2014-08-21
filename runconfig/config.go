@@ -1,8 +1,8 @@
 package runconfig
 
 import (
-	"github.com/dotcloud/docker/engine"
-	"github.com/dotcloud/docker/nat"
+	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/nat"
 )
 
 // Note: the Config structure should hold only portable information about the container.
