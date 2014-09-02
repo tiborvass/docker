@@ -30,6 +30,7 @@ import (
 	"github.com/tiborvass/docker/builder/parser"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -161,6 +162,10 @@ func (b *Builder) Run(context io.Reader) (string, error) {
 
 	if b.image == "" {
 		return "", fmt.Errorf("No image was generated. Is your Dockerfile empty?\n")
+	}
+
+	if err := os.RemoveAll(b.contextPath); err != nil {
+		log.Debugf("[BUILDER] failed to remove temporary context: %s", err)
 	}
 
 	fmt.Fprintf(b.OutStream, "Successfully built %s\n", utils.TruncateID(b.image))
