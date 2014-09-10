@@ -7,13 +7,13 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/tailfile"
 
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/jsonlog"
+	"github.com/tiborvass/docker/utils"
 )
 
 func (daemon *Daemon) ContainerLogs(job *engine.Job) engine.Status {
@@ -35,7 +35,7 @@ func (daemon *Daemon) ContainerLogs(job *engine.Job) engine.Status {
 		return job.Errorf("You must choose at least one stream")
 	}
 	if times {
-		format = time.RFC3339Nano
+		format = utils.RFC3339NanoFixed
 	}
 	if tail == "" {
 		tail = "all"
