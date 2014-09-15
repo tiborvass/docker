@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/pkg/timeutils"
 )
 
 // This used to work, it test a log of PageSize-1 (gh#4851)
@@ -104,7 +104,7 @@ func TestLogsTimestamps(t *testing.T) {
 
 	for _, l := range lines {
 		if l != "" {
-			_, err := time.Parse(utils.RFC3339NanoFixed+" ", ts.FindString(l))
+			_, err := time.Parse(timeutils.RFC3339NanoFixed+" ", ts.FindString(l))
 			if err != nil {
 				t.Fatalf("Failed to parse timestamp from %v: %v", l, err)
 			}

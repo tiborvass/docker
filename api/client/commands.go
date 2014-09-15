@@ -34,6 +34,7 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/pkg/units"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -1650,7 +1651,7 @@ func (cli *DockerCli) CmdEvents(args ...string) error {
 		loc = time.FixedZone(time.Now().Zone())
 	)
 	var setTime = func(key, value string) {
-		format := utils.RFC3339NanoFixed
+		format := timeutils.RFC3339NanoFixed
 		if len(value) < len(format) {
 			format = format[:len(value)]
 		}
