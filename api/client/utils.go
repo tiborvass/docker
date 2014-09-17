@@ -22,6 +22,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/log"
+	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
@@ -174,7 +175,7 @@ func (cli *DockerCli) streamHelper(method, path string, setRawTerminal bool, in 
 		if setRawTerminal {
 			_, err = io.Copy(stdout, resp.Body)
 		} else {
-			_, err = utils.StdCopy(stdout, stderr, resp.Body)
+			_, err = stdcopy.StdCopy(stdout, stderr, resp.Body)
 		}
 		log.Debugf("[stream] End of stdout")
 		return err

@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/log"
+	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/utils"
 )
@@ -96,7 +97,7 @@ func (cli *DockerCli) hijack(method, path string, setRawTerminal bool, in io.Rea
 			if setRawTerminal && stdout != nil {
 				_, err = io.Copy(stdout, br)
 			} else {
-				_, err = utils.StdCopy(stdout, stderr, br)
+				_, err = stdcopy.StdCopy(stdout, stderr, br)
 			}
 			log.Debugf("[hijack] End of stdout")
 			return err

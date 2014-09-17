@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/pkg/listenbuffer"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/systemd"
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/registry"
@@ -399,8 +400,8 @@ func getContainersLogs(eng *engine.Engine, version version.Version, w http.Respo
 	outStream = utils.NewWriteFlusher(w)
 
 	if c.GetSubEnv("Config") != nil && !c.GetSubEnv("Config").GetBool("Tty") && version.GreaterThanOrEqualTo("1.6") {
-		errStream = utils.NewStdWriter(outStream, utils.Stderr)
-		outStream = utils.NewStdWriter(outStream, utils.Stdout)
+		errStream = stdcopy.NewStdWriter(outStream, stdcopy.Stderr)
+		outStream = stdcopy.NewStdWriter(outStream, stdcopy.Stdout)
 	} else {
 		errStream = outStream
 	}
@@ -843,8 +844,8 @@ func postContainersAttach(eng *engine.Engine, version version.Version, w http.Re
 	fmt.Fprintf(outStream, "HTTP/1.1 200 OK\r\nContent-Type: application/vnd.docker.raw-stream\r\n\r\n")
 
 	if c.GetSubEnv("Config") != nil && !c.GetSubEnv("Config").GetBool("Tty") && version.GreaterThanOrEqualTo("1.6") {
-		errStream = utils.NewStdWriter(outStream, utils.Stderr)
-		outStream = utils.NewStdWriter(outStream, utils.Stdout)
+		errStream = stdcopy.NewStdWriter(outStream, stdcopy.Stderr)
+		outStream = stdcopy.NewStdWriter(outStream, stdcopy.Stdout)
 	} else {
 		errStream = outStream
 	}
@@ -1091,8 +1092,8 @@ func postContainerExecStart(eng *engine.Engine, version version.Version, w http.
 
 		fmt.Fprintf(outStream, "HTTP/1.1 200 OK\r\nContent-Type: application/vnd.docker.raw-stream\r\n\r\n")
 		if !job.GetenvBool("Tty") && version.GreaterThanOrEqualTo("1.6") {
-			errStream = utils.NewStdWriter(outStream, utils.Stderr)
-			outStream = utils.NewStdWriter(outStream, utils.Stdout)
+			errStream = stdcopy.NewStdWriter(outStream, stdcopy.Stderr)
+			outStream = stdcopy.NewStdWriter(outStream, stdcopy.Stdout)
 		} else {
 			errStream = outStream
 		}
