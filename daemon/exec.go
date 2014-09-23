@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strings"
 	"sync"
 
 	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/tiborvass/docker/daemon/execdriver/lxc"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -101,6 +103,10 @@ func (d *Daemon) getActiveContainer(name string) (*Container, error) {
 func (d *Daemon) ContainerExecCreate(job *engine.Job) engine.Status {
 	if len(job.Args) != 1 {
 		return job.Errorf("Usage: %s [options] container command [args]", job.Name)
+	}
+
+	if strings.HasPrefix(d.execDriver.Name(), lxc.DriverName) {
+		return job.Error(lxc.ErrExec)
 	}
 
 	var name = job.Args[0]
