@@ -18,10 +18,11 @@ import (
 
 	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
+	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/pools"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/utils"
 )
 
 type (
@@ -370,7 +371,7 @@ func TarWithOptions(srcPath string, options *TarOptions) (io.ReadCloser, error) 
 					return nil
 				}
 
-				skip, err := utils.Matches(relFilePath, options.Excludes)
+				skip, err := fileutils.Matches(relFilePath, options.Excludes)
 				if err != nil {
 					log.Debugf("Error matching %s", relFilePath, err)
 					return err
@@ -581,7 +582,7 @@ func CopyFileWithTar(src, dst string) (err error) {
 	}
 
 	r, w := io.Pipe()
-	errC := utils.Go(func() error {
+	errC := promise.Go(func() error {
 		defer w.Close()
 
 		srcF, err := os.Open(src)

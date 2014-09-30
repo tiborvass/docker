@@ -18,9 +18,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon"
 	imagepkg "github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/promise"

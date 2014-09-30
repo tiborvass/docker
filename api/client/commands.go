@@ -23,12 +23,12 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/opts"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/log"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"

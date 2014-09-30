@@ -7,9 +7,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/log"
 )
 
