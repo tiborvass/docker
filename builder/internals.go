@@ -23,6 +23,7 @@ import (
 	imagepkg "github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/tarsum"
@@ -516,7 +517,7 @@ func (b *Builder) create() (*daemon.Container, error) {
 func (b *Builder) run(c *daemon.Container) error {
 	var errCh chan error
 	if b.Verbose {
-		errCh = utils.Go(func() error {
+		errCh = promise.Go(func() error {
 			// FIXME: call the 'attach' job so that daemon.Attach can be made private
 			//
 			// FIXME (LK4D4): Also, maybe makes sense to call "logs" job, it is like attach

@@ -27,6 +27,7 @@ import (
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/networkfs/etchosts"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -1117,7 +1118,7 @@ func (container *Container) waitForStart() error {
 	// process or until the process is running in the container
 	select {
 	case <-container.monitor.startSignal:
-	case err := <-utils.Go(container.monitor.Start):
+	case err := <-promise.Go(container.monitor.Start):
 		return err
 	}
 
