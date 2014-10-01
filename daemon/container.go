@@ -16,17 +16,18 @@ import (
 	"github.com/docker/libcontainer/devices"
 	"github.com/docker/libcontainer/label"
 
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/links"
 	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/networkfs/etchosts"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -1119,7 +1120,7 @@ func (container *Container) waitForStart() error {
 	// process or until the process is running in the container
 	select {
 	case <-container.monitor.startSignal:
-	case err := <-utils.Go(container.monitor.Start):
+	case err := <-promise.Go(container.monitor.Start):
 		return err
 	}
 

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/volumes"

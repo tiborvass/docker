@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tiborvass/docker/archive"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/utils"

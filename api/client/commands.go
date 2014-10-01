@@ -23,16 +23,17 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/opts"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/log"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/pkg/timeutils"
@@ -648,7 +649,7 @@ func (cli *DockerCli) CmdStart(args ...string) error {
 		v.Set("stdout", "1")
 		v.Set("stderr", "1")
 
-		cErr = utils.Go(func() error {
+		cErr = promise.Go(func() error {
 			return cli.hijack("POST", "/containers/"+cmd.Arg(0)+"/attach?"+v.Encode(), tty, in, cli.out, cli.err, nil, nil)
 		})
 	}
@@ -2220,7 +2221,7 @@ func (cli *DockerCli) CmdRun(args ...string) error {
 			}
 		}
 
-		errCh = utils.Go(func() error {
+		errCh = promise.Go(func() error {
 			return cli.hijack("POST", "/containers/"+runResult.Get("Id")+"/attach?"+v.Encode(), config.Tty, in, out, stderr, hijacked, nil)
 		})
 	} else {
@@ -2477,7 +2478,7 @@ func (cli *DockerCli) CmdExec(args ...string) error {
 			stderr = cli.err
 		}
 	}
-	errCh = utils.Go(func() error {
+	errCh = promise.Go(func() error {
 		return cli.hijack("POST", "/exec/"+execID+"/start", execConfig.Tty, in, out, stderr, hijacked, execConfig)
 	})
 

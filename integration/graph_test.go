@@ -2,11 +2,11 @@ package docker
 
 import (
 	"errors"
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/utils"
 	"io"
 	"io/ioutil"

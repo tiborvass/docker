@@ -6,7 +6,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/tiborvass/docker/archive"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/mount"
 )
 

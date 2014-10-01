@@ -15,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/log"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
@@ -254,7 +255,7 @@ func (container *Container) Exec(execConfig *execConfig) error {
 
 	// We use a callback here instead of a goroutine and an chan for
 	// syncronization purposes
-	cErr := utils.Go(func() error { return container.monitorExec(execConfig, callback) })
+	cErr := promise.Go(func() error { return container.monitorExec(execConfig, callback) })
 
 	// Exec should not return until the process is actually running
 	select {
