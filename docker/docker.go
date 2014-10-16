@@ -5,13 +5,13 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/pkg/log"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reexec"
 	"github.com/tiborvass/docker/utils"
@@ -104,7 +104,7 @@ func main() {
 	if err := cli.Cmd(flag.Args()...); err != nil {
 		if sterr, ok := err.(*utils.StatusError); ok {
 			if sterr.Status != "" {
-				log.Println(sterr.Status)
+				log.Infof("%s", sterr.Status)
 			}
 			os.Exit(sterr.StatusCode)
 		}
