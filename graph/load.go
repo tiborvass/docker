@@ -7,9 +7,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/tiborvass/docker/archive"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/log"
 )
 
@@ -118,7 +118,7 @@ func (s *TagStore) recursiveLoad(eng *engine.Engine, address, tmpImageDir string
 				}
 			}
 		}
-		if err := s.graph.Register(imageJson, layer, img); err != nil {
+		if err := s.graph.Register(img, imageJson, layer); err != nil {
 			return err
 		}
 	}
