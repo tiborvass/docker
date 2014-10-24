@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/daemon"
-	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libtrust"

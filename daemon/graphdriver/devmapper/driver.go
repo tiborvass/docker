@@ -8,8 +8,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/tiborvass/docker/daemon/graphdriver"
 	log "github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/units"
 )

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/tiborvass/docker/daemon/graphdriver"
 	log "github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/utils"
 )
 

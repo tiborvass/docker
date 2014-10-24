@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
-	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libtrust"

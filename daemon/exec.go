@@ -9,12 +9,12 @@ import (
 	"strings"
 	"sync"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/lxc"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"

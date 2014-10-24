@@ -10,9 +10,9 @@ import (
 	"strings"
 	"syscall"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/pkg/archive"
-	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/volumes"
 )
