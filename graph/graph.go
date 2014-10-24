@@ -16,7 +16,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"

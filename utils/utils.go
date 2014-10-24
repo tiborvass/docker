@@ -23,7 +23,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 type KeyValuePair struct {

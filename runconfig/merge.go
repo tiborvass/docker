@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/nat"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 func Merge(userConf, imageConf *Config) error {

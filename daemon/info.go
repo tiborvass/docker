@@ -6,7 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
 	"github.com/tiborvass/docker/registry"

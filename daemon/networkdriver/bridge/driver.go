@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/daemon/networkdriver/portmapper"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/iptables"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/docker/libcontainer/netlink"

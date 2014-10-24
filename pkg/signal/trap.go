@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"syscall"
 
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 // Trap sets up a simplified signal "trap", appropriate for common

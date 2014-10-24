@@ -6,7 +6,7 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/daemon/graphdriver/aufs"
 	"github.com/tiborvass/docker/graph"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 // Given the graphdriver ad, if it is aufs, then migrate it.

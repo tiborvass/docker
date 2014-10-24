@@ -10,7 +10,7 @@ import (
 
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/tailfile"
 	"github.com/tiborvass/docker/pkg/timeutils"
 )

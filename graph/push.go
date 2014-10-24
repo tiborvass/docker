@@ -9,7 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 )

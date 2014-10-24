@@ -3,6 +3,7 @@
 package main
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builtins"
 	"github.com/tiborvass/docker/daemon"
@@ -10,7 +11,6 @@ import (
 	_ "github.com/tiborvass/docker/daemon/execdriver/native"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
-	"github.com/tiborvass/docker/pkg/log"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
 )

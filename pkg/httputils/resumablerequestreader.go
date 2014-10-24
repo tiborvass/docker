@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 type resumableRequestReader struct {

@@ -5,8 +5,8 @@ import (
 	"mime"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/version"
 )

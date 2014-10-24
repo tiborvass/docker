@@ -14,6 +14,7 @@ import (
 
 	"github.com/docker/libcontainer/label"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
 	"github.com/tiborvass/docker/daemon/execdriver/lxc"
@@ -29,7 +30,6 @@ import (
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
@@ -304,7 +304,7 @@ func (daemon *Daemon) restore() error {
 	)
 
 	if !debug {
-		log.Infof("Loading containers: ")
+		log.Infof("Loading containers: start.")
 	}
 	dir, err := ioutil.ReadDir(daemon.repository)
 	if err != nil {
@@ -392,7 +392,8 @@ func (daemon *Daemon) restore() error {
 	}
 
 	if !debug {
-		log.Infof(": done.")
+		fmt.Println()
+		log.Infof("Loading containers: done.")
 	}
 
 	return nil

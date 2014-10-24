@@ -23,10 +23,10 @@ import (
 	"github.com/docker/libcontainer/user"
 	"github.com/gorilla/mux"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/listenbuffer"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/systemd"

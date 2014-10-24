@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 // BroadcastWriter accumulate multiple io.WriteCloser by stream.
