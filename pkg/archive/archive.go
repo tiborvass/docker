@@ -18,8 +18,8 @@ import (
 
 	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/fileutils"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/system"

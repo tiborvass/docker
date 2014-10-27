@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/utils"
 )

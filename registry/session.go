@@ -17,8 +17,8 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/httputils"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/utils"
 )

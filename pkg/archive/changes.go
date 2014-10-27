@@ -12,7 +12,7 @@ import (
 
 	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/system"
 )

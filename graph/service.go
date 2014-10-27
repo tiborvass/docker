@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
-	"github.com/tiborvass/docker/pkg/log"
 )
 
 func (s *TagStore) Install(eng *engine.Engine) error {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/tiborvass/docker/pkg/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 const (

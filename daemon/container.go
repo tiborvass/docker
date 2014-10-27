@@ -17,6 +17,7 @@ import (
 	"github.com/docker/libcontainer/devices"
 	"github.com/docker/libcontainer/label"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
@@ -25,7 +26,6 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/networkfs/etchosts"
 	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
 	"github.com/tiborvass/docker/pkg/promise"
