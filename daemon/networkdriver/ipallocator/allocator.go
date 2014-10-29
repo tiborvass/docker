@@ -6,8 +6,8 @@ import (
 	"net"
 	"sync"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/networkdriver"
-	"github.com/tiborvass/docker/pkg/log"
 )
 
 // allocatedMap is thread-unsafe set of allocated IP
