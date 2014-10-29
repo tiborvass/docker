@@ -32,6 +32,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/log"
 	mountpk "github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/utils"
@@ -304,7 +305,7 @@ func (a *Driver) Diff(id, parent string) (archive.Archive, error) {
 }
 
 func (a *Driver) applyDiff(id string, diff archive.ArchiveReader) error {
-	return archive.Untar(diff, path.Join(a.rootPath(), "diff", id), nil)
+	return chrootarchive.Untar(diff, path.Join(a.rootPath(), "diff", id), nil)
 }
 
 // DiffSize calculates the changes between the specified id
