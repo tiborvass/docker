@@ -11,7 +11,7 @@ import (
 	"runtime"
 
 	"github.com/tiborvass/docker/daemon/execdriver"
-	"github.com/tiborvass/docker/reexec"
+	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/docker/libcontainer"
 	"github.com/docker/libcontainer/namespaces"
 )

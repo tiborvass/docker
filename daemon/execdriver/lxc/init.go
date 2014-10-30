@@ -13,7 +13,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/tiborvass/docker/reexec"
+	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/docker/libcontainer/netlink"
 )
 
