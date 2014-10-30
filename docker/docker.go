@@ -13,7 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/dockerversion"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/reexec"
+	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/utils"
 )
 
