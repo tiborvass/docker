@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/registry"
 )
 
 const CanDaemon = true
@@ -33,8 +34,14 @@ func mainDaemon() {
 	}
 	eng := engine.New()
 	signal.Trap(eng.Shutdown)
+
 	// Load builtins
 	if err := builtins.Register(eng); err != nil {
+		log.Fatal(err)
+	}
+
+	// load registry service
+	if err := registry.NewService(daemonCfg.InsecureRegistries).Install(eng); err != nil {
 		log.Fatal(err)
 	}
 
