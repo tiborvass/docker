@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
@@ -59,7 +58,7 @@ func (b *BuilderJob) CmdBuild(job *engine.Job) engine.Status {
 	if remoteURL == "" {
 		context = ioutil.NopCloser(job.Stdin)
 	} else if utils.IsGIT(remoteURL) {
-		if !strings.HasPrefix(remoteURL, "git://") {
+		if !utils.ValidGitTransport(remoteURL) {
 			remoteURL = "https://" + remoteURL
 		}
 		root, err := ioutil.TempDir("", "docker-build-git")
