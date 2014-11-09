@@ -1,9 +1,166 @@
-Solomon Hykes <solomon@docker.com> (@shykes)
-Victor Vieux <vieux@docker.com> (@vieux)
-Michael Crosby <michael@crosbymichael.com> (@crosbymichael)
-.mailmap: Tianon Gravi <admwiggin@gmail.com> (@tianon)
-.travis.yml: Tianon Gravi <admwiggin@gmail.com> (@tianon)
-AUTHORS: Tianon Gravi <admwiggin@gmail.com> (@tianon)
-Dockerfile: Tianon Gravi <admwiggin@gmail.com> (@tianon)
-Makefile: Tianon Gravi <admwiggin@gmail.com> (@tianon)
-.dockerignore: Tianon Gravi <admwiggin@gmail.com> (@tianon)
+# See ./project/MAINTAINERS.md for details
+
+
+# Ideally, the BDFL role is like the Queen of England: awesome crown, but not
+# an actual operational role day-to-day. The real job of a BDFL is to NEVER GO AWAY.
+# Every other rule can change, perhaps drastically so, but the BDFL will always
+# be there, preserving the philosophy and principles of the project, and keeping
+# ultimate authority over its fate. This gives us great flexibility in experimenting
+# with various governance models, knowing that we can always press the "reset" button
+# without fear of fragmentation or deadlock. See the US congress for a counter-example.
+
+bdfl = "shykes"
+
+
+[Architects]
+
+# The Architects are responsible for the overall integrity of the technical architecture
+# across all subsystems, and the consistency of APIs and UI.
+# 
+# Changes to UI, public APIs and overall architecture (for example a plugin system) must
+# be approved by the architects.
+
+	people = [
+		"shykes"
+	]
+
+
+[Core maintainers]
+
+# The Core maintainers are the ghostbusters of the project: when there's a problem others
+# can't solve, they show up and fix it with bizarre devices and weaponry.
+# They have final say on technical implementation and coding style.
+# They are ultimately responsible for quality in all its forms: usability polish,
+# bugfixes, performance, stability, etc. When ownership  can cleanly be passed to
+# a subsystem, they are responsible for doing so and holding the
+# subsystem maintainers accountable. If ownership is unclear, they are the de facto owners.
+
+
+	people = [
+		"tibor",
+		"jfrazelle",
+		"crosbymichael",
+		"vieux",
+		"backjlack",
+		"erikh"
+	]
+
+	lead = "crosbymichael"
+
+
+[Operators]
+
+# The operators make sure the trains run on time. They are responsible for overall operations
+# of the project. This includes facilitating communication between all the participants; helping
+# newcomers get involved and become successful contributors and maintainers; tracking the schedule
+# of releases; managing the relationship with downstream distributions and upstream dependencies;
+# define measures of success for the project and measure progress; Devise and implement tools and
+# processes which make contributors and maintainers happier and more efficient.
+
+	[Operators.security]
+
+		people = [
+			"erw"
+		]
+
+	[Operators.monthly meetings]
+
+		people = [
+			"sven",
+			"tianon"
+		]
+		
+
+[Subsystems]
+
+# As the project grows, it gets separated into well-defined subsystems. Each subsystem
+# has a dedicated group of maintainers, which are responsible for its quali
+# dedicated to that subsytem. This "cellular division" is the primary mechanism
+# for scaling maintenance of the project as it grows.
+# 
+# The maintainers of each subsytem are responsible for:
+# 
+# 1. Exposing a clear road map for improving their subsystem.
+# 2. Deliver prompt feedback and decisions on pull requests affecting their subsystem.
+# 3. Be available to anyone with questions, bug reports, criticism etc.
+#   on their component. This includes IRC, GitHub requests and the mailing
+#   list.
+# 4. Make sure their subsystem respects the philosophy, design and
+#   road map of the project.
+
+	[Subsystems.Documentation]
+
+		people = [
+			"sven",
+			"fredlf",
+			"james"
+		]
+
+		lead = "fredlf"
+
+		mustreview = [
+			"docker/docs/"
+		]
+
+	[Subsystems.libcontainer]
+
+		people = [
+			"crosbymichael",
+			"vmarmol"
+		]
+
+		lead = "crosbymichael"
+
+		mustreview = [
+			"libcontainer/"
+		]
+
+	[Subsystems.registry]
+
+		people = [
+			"samalba",
+			"dmp42",
+			"joffrey"
+		]
+
+		lead = "dmp42"
+
+		mustreview = [
+			"registry/"
+		]
+
+	[Subsystems.build tools]
+
+		people = [
+			"shykes",
+			"tianon"
+		]
+
+		lead = "tianon"
+
+		mustreview = [
+			"docker/project/make.sh",
+			"docker/project/make"
+		]
+
+	[Subsystem.remote api]
+
+		people = [
+			"vieux"
+		]
+
+
+[people]
+
+# A reference list of all people associated with the project.
+# All other sections should refer to people by their canonical key
+# in the people section.
+
+	[people.shykes]
+
+	Name = "Solomon Hykes"
+	Email = "solomon@docker.com"
+	Github = "shykes"
+
+	# ADD YOURSELF HERE
+
