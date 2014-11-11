@@ -7,7 +7,12 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/reexec"
 )
+
+func init() {
+	reexec.Init()
+}
 
 func TestChrootTarUntar(t *testing.T) {
 	tmpdir, err := ioutil.TempDir("", "docker-TestChrootTarUntar")
