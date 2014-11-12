@@ -18,6 +18,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/nat"
@@ -652,7 +653,7 @@ func TestRestore(t *testing.T) {
 	if err := container3.Run(); err != nil {
 		t.Fatal(err)
 	}
-	container2.SetStopped(0)
+	container2.SetStopped(&execdriver.ExitStatus{0, false})
 }
 
 func TestDefaultContainerName(t *testing.T) {
