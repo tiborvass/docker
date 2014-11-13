@@ -14,12 +14,12 @@ import (
 	gosignal "os/signal"
 	"strconv"
 	"strings"
-	"syscall"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
@@ -238,7 +238,7 @@ func (cli *DockerCli) monitorTtySize(id string, isExec bool) error {
 	cli.resizeTty(id, isExec)
 
 	sigchan := make(chan os.Signal, 1)
-	gosignal.Notify(sigchan, syscall.SIGWINCH)
+	gosignal.Notify(sigchan, signal.SIGWINCH)
 	go func() {
 		for _ = range sigchan {
 			cli.resizeTty(id, isExec)
