@@ -168,3 +168,11 @@ bdfl = "shykes"
 	Email = "arnaud@docker.com"
 	Github = "icecrime"
 
+	[people.erikh]
+
+	Name = "Erik Hollensbe"
+	Email = "erik@docker.com"
+	Github = "erikh"
+
+	# ADD YOURSELF HERE
+
