@@ -189,4 +189,8 @@ bdfl = "shykes"
 	Github = "vbatts"
 
 	# ADD YOURSELF HERE
+	[people.sven]
+	Name = "Sven Dowideit"
+	Email = "SvenDowideit@home.org.au"
+	GitHub = "SvenDowideit"
 
