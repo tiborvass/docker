@@ -38,13 +38,14 @@ bdfl = "shykes"
 
 
 	people = [
-		"tibor",
-		"jfrazelle",
-		"crosbymichael",
-		"vieux",
 		"backjlack",
+		"crosbymichael",
+		"erikh"
 		"erikh",
+		"jfrazelle",
+		"tibor",
 		"vbatts"
+		"vieux",
 	]
 
 	lead = "crosbymichael"
@@ -93,9 +94,9 @@ bdfl = "shykes"
 	[Subsystems.Documentation]
 
 		people = [
-			"sven",
 			"fredlf",
 			"james"
+			"sven",
 		]
 
 		lead = "fredlf"
@@ -120,10 +121,10 @@ bdfl = "shykes"
 	[Subsystems.registry]
 
 		people = [
-			"samalba",
 			"dmp42",
 			"vbatts",
 			"joffrey"
+			"samalba",
 		]
 
 		lead = "dmp42"
@@ -159,39 +160,35 @@ bdfl = "shykes"
 # All other sections should refer to people by their canonical key
 # in the people section.
 
-	[people.shykes]
-
-	Name = "Solomon Hykes"
-	Email = "solomon@docker.com"
-	Github = "shykes"
-
-	[people.icecrime]
-
-	Name = "Arnaud Porterie"
-	Email = "arnaud@docker.com"
-	Github = "icecrime"
+	# ADD YOURSELF HERE IN ALPHABETICAL ORDER
 
 	[people.erikh]
-
 	Name = "Erik Hollensbe"
 	Email = "erik@docker.com"
 	Github = "erikh"
 
-	[people.vieux]
+	[people.icecrime]
+	Name = "Arnaud Porterie"
+	Email = "arnaud@docker.com"
+	Github = "icecrime"
 
-	Name = "Victor Vieux"
-	Email = "vieux@docker.com"
-	Github = "vieux"
+	[people.shykes]
+	Name = "Solomon Hykes"
+	Email = "solomon@docker.com"
+	Github = "shykes"
 
-	[people.vbatts]
-
-	Name = "Vincent Batts"
-	Email = "vbatts@redhat.com"
-	Github = "vbatts"
-
-	# ADD YOURSELF HERE
 	[people.sven]
 	Name = "Sven Dowideit"
 	Email = "SvenDowideit@home.org.au"
 	GitHub = "SvenDowideit"
+
+	[people.vbatts]
+	Name = "Vincent Batts"
+	Email = "vbatts@redhat.com"
+	Github = "vbatts"
+
+	[people.vieux]
+	Name = "Victor Vieux"
+	Email = "vieux@docker.com"
+	Github = "vieux"
 
