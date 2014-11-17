@@ -168,6 +168,11 @@ bdfl = "shykes"
 	Email = "solomon@docker.com"
 	Github = "shykes"
 
+	[people.tibor]
+	Name = "Tibor Vass"
+	Email = "tibor@docker.com"
+	Github = "tiborvass"
+
 	[people.vieux]
 	Name = "Victor Vieux"
 	Email = "vieux@docker.com"
