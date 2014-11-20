@@ -1,24 +1,18 @@
 package bridge
 
 import (
-	"fmt"
-	"io/ioutil"
 	"net"
-	"os"
 	"strconv"
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/docker/docker/daemon/networkdriver"
 	"github.com/docker/docker/daemon/networkdriver/ipallocator"
 	"github.com/docker/docker/daemon/networkdriver/portallocator"
 	"github.com/docker/docker/daemon/networkdriver/portmapper"
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/nat"
+	"github.com/docker/docker/network"
 	"github.com/docker/docker/pkg/iptables"
-	"github.com/docker/docker/pkg/networkfs/resolvconf"
-	"github.com/docker/docker/pkg/parsers/kernel"
-	"github.com/docker/libcontainer/netlink"
 )
 
 const (
@@ -79,95 +73,17 @@ var (
 )
 
 func InitDriver(job *engine.Job) engine.Status {
-	var (
-		network        *net.IPNet
-		enableIPTables = job.GetenvBool("EnableIptables")
-		icc            = job.GetenvBool("InterContainerCommunication")
-		ipMasq         = job.GetenvBool("EnableIpMasq")
-		ipForward      = job.GetenvBool("EnableIpForward")
-		bridgeIP       = job.Getenv("BridgeIP")
-		fixedCIDR      = job.Getenv("FixedCIDR")
-	)
-
+	iface := job.Getenv("BridgeIface")
+	bridgeIp, bridgeNet, err := net.ParseCIDR(job.Getenv("BridgeNet"))
+	if err != nil {
+		return job.Error(err)
+	}
+	bridgeNet.IP = bridgeIp
 	if defaultIP := job.Getenv("DefaultBindingIP"); defaultIP != "" {
 		defaultBindingIP = net.ParseIP(defaultIP)
 	}
-
-	bridgeIface = job.Getenv("BridgeIface")
-	usingDefaultBridge := false
-	if bridgeIface == "" {
-		usingDefaultBridge = true
-		bridgeIface = DefaultNetworkBridge
-	}
-
-	addr, err := networkdriver.GetIfaceAddr(bridgeIface)
-	if err != nil {
-		// If we're not using the default bridge, fail without trying to create it
-		if !usingDefaultBridge {
-			return job.Error(err)
-		}
-		// If the bridge interface is not found (or has no address), try to create it and/or add an address
-		if err := configureBridge(bridgeIP); err != nil {
-			return job.Error(err)
-		}
-
-		addr, err = networkdriver.GetIfaceAddr(bridgeIface)
-		if err != nil {
-			return job.Error(err)
-		}
-		network = addr.(*net.IPNet)
-	} else {
-		network = addr.(*net.IPNet)
-		// validate that the bridge ip matches the ip specified by BridgeIP
-		if bridgeIP != "" {
-			bip, _, err := net.ParseCIDR(bridgeIP)
-			if err != nil {
-				return job.Error(err)
-			}
-			if !network.IP.Equal(bip) {
-				return job.Errorf("bridge ip (%s) does not match existing bridge configuration %s", network.IP, bip)
-			}
-		}
-	}
-
-	// Configure iptables for link support
-	if enableIPTables {
-		if err := setupIPTables(addr, icc, ipMasq); err != nil {
-			return job.Error(err)
-		}
-	}
-
-	if ipForward {
-		// Enable IPv4 forwarding
-		if err := ioutil.WriteFile("/proc/sys/net/ipv4/ip_forward", []byte{'1', '\n'}, 0644); err != nil {
-			job.Logf("WARNING: unable to enable IPv4 forwarding: %s\n", err)
-		}
-	}
-
-	// We can always try removing the iptables
-	if err := iptables.RemoveExistingChain("DOCKER"); err != nil {
-		return job.Error(err)
-	}
-
-	if enableIPTables {
-		chain, err := iptables.NewChain("DOCKER", bridgeIface)
-		if err != nil {
-			return job.Error(err)
-		}
-		portmapper.SetIptablesChain(chain)
-	}
-
-	bridgeNetwork = network
-	if fixedCIDR != "" {
-		_, subnet, err := net.ParseCIDR(fixedCIDR)
-		if err != nil {
-			return job.Error(err)
-		}
-		log.Debugf("Subnet: %v", subnet)
-		if err := ipallocator.RegisterSubnet(bridgeNetwork, subnet); err != nil {
-			return job.Error(err)
-		}
-	}
+	bridgeIface = iface
+	bridgeNetwork = bridgeNet
 
 	// https://github.com/docker/docker/issues/2768
 	job.Eng.Hack_SetGlobalVar("httpapi.bridgeIP", bridgeNetwork.IP)
@@ -379,7 +295,7 @@ func Allocate(job *engine.Job) engine.Status {
 
 	// If no explicit mac address was given, generate a random one.
 	if mac, err = net.ParseMAC(job.Getenv("RequestedMac")); err != nil {
-		mac = generateMacAddr(ip)
+		mac = network.GenerateMacAddr(ip)
 	}
 
 	out := engine.Env{}
