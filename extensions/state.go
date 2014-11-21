@@ -15,15 +15,15 @@ type GitState struct {
 // GitStateFromFolder returns a ready-to-use GitState.
 // The same folder can be used for different stores identified by storeName
 // storeName can not contain slashes, as it could be mistaken for a subdirectory.
-func GitStateFromFolder(folder, storeName string) (GitState, error) {
+func GitStateFromFolder(folder, storeName string) (*GitState, error) {
 	if strings.Contains(storeName, "/") {
-		return fmt.Errorf("Slashes are not allowed in storeName: %q", storeName)
+		return nil, fmt.Errorf("Slashes are not allowed in storeName: %q", storeName)
 	}
 	db, err := libpack.OpenOrInit(folder, "refs/heads/"+storeName)
 	if err != nil {
-		return GitState{}, err
+		return &GitState{}, err
 	}
-	return GitState{db: db}, nil
+	return &GitState{db: db}, nil
 }
 
 // Close releases resources for the underlying db.
