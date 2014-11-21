@@ -88,6 +88,7 @@ type Daemon struct {
 	repository     string
 	sysInitPath    string
 	containers     *contStore
+	networks       *net.Networks
 	execCommands   *execStore
 	graph          *graph.Graph
 	repositories   *graph.TagStore
@@ -139,6 +140,9 @@ func (daemon *Daemon) Install(eng *engine.Engine) error {
 		return err
 	}
 	if err := daemon.trustStore.Install(eng); err != nil {
+		return err
+	}
+	if err := daemon.networks.Install(eng); err != nil {
 		return err
 	}
 	// FIXME: this hack is necessary for legacy integration tests to access
@@ -436,6 +440,7 @@ func (daemon *Daemon) generateIdAndName(name string) (string, string, error) {
 		id  = utils.GenerateRandomID()
 	)
 
+	// FIXME: names are now associated with networks
 	if name == "" {
 		if name, err = daemon.generateNewName(id); err != nil {
 			return "", "", err
@@ -556,15 +561,12 @@ func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error 
 	return err
 }
 
-func (daemon *Daemon) newContainer(name string, config *runconfig.Config, img *image.Image) (*Container, error) {
+func (daemon *Daemon) newContainer(netid, epid string, config *runconfig.Config, img *image.Image) (*Container, error) {
 	var (
 		id  string
 		err error
 	)
-	id, name, err = daemon.generateIdAndName(name)
-	if err != nil {
-		return nil, err
-	}
+	id := utils.GenerateRandomID()
 
 	daemon.generateHostname(id, config)
 	entrypoint, args := daemon.getEntrypointAndArgs(config.Entrypoint, config.Cmd)
@@ -579,13 +581,35 @@ func (daemon *Daemon) newContainer(name string, config *runconfig.Config, img *i
 		hostConfig:      &runconfig.HostConfig{},
 		Image:           img.ID, // Always use the resolved image id
 		NetworkSettings: &NetworkSettings{},
-		Name:            name,
+		// FIXME #networking2.0: name is not a property of the container, but of
+		// network endpoints: each container may be connected to N endpoints
+		// on M networks.
+		Name:            "THIS FIELD IS DEPRECATED AND YOU SHOULD NOT SEE IT",
 		Driver:          daemon.driver.String(),
 		ExecDriver:      daemon.execDriver.Name(),
 		State:           NewState(),
 		execCommands:    newExecStore(),
 	}
 	container.root = daemon.containerRoot(container.ID)
+
+	// By default join a network under the specified name
+	if netid == "" {
+		netid = daemon.networks.Default()
+	}
+	n, err := daemon.networks.Get(netid)
+	if err != nil {
+		return nil, err
+	}
+	// FIXME: we don't need the entire container root, just its namespace.
+	// For this we need the persistent namespace patch from lk4d4 and icecrime.
+	// (Otherwise the namespace is not created until the process is started),
+	// and it is lost when the process terminates.
+	// For now we assume the netns will be available at $ROOT/netns
+	if err := n.AddEndpoint(container.root + "/netns", name); err != nil {
+		return nil, err
+	}
+
+	err = parseSecurityOpt(container, config)
 	return container, err
 }
 
@@ -826,6 +850,11 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	}
 
 	volumes, err := volumes.NewRepository(path.Join(config.Root, "volumes"), volumesDriver)
+	if err != nil {
+		return nil, err
+	}
+
+	networks, err := net.New()
 	if err != nil {
 		return nil, err
 	}
