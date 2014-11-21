@@ -562,6 +562,7 @@ func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error 
 	return err
 }
 
+// FIXME: @lk4d4 / @icecrime
 type NetContainerShim struct {
 	*Container
 }
@@ -866,6 +867,8 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	if err != nil {
 		return nil, err
 	}
+	networks.Set("default", net.NewNetwork())
+	networks.SetDefault("default")
 
 	log.Debugf("Creating repository list")
 	repositories, err := graph.NewTagStore(path.Join(config.Root, "repositories-"+driver.String()), g, config.Mirrors, config.InsecureRegistries)
