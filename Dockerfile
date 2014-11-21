@@ -32,6 +32,7 @@ RUN	apt-get update && apt-get install -y \
 	automake \
 	btrfs-tools \
 	build-essential \
+	cmake \
 	curl \
 	dpkg-sig \
 	git \
@@ -42,6 +43,7 @@ RUN	apt-get update && apt-get install -y \
 	lxc=1.0* \
 	mercurial \
 	parallel \
+	pkg-config \
 	reprepro \
 	ruby1.9.1 \
 	ruby1.9.1-dev \
@@ -94,6 +96,9 @@ RUN	curl -sSL -o /cirros.tar.gz https://github.com/ewindisch/docker-cirros/raw/1
 
 # Setup s3cmd config
 RUN	/bin/echo -e '[default]\naccess_key=$AWS_ACCESS_KEY\nsecret_key=$AWS_SECRET_KEY' > $HOME/.s3cfg
+
+# Get libgit2
+RUN go get -d github.com/libgit2/git2go && cd /go/src/github.com/libgit2/git2go && git submodule update --init && make install
 
 # Set user.email so crosbymichael's in-container merge commits go smoothly
 RUN	git config --global user.email 'docker-dummy@example.com'
