@@ -65,7 +65,7 @@ func TestState(t *testing.T) {
 
 type expecter struct {
 	*testing.T
-	s GitState
+	s *GitState
 }
 
 func (t expecter) list(root string, expect []string, errs ...error) {
