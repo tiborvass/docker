@@ -14,6 +14,9 @@ type Controller struct {
 	endpoints map[core.DID]Endpoint
 	state     state.State
 	mutex     sync.Mutex
+	// Containers at creation time will create an Endpoint on the default
+	// network identified by this ID.
+	DefaultNetworkID core.DID
 }
 
 func NewController(s state.State, driver Driver) (*Controller, error) {
@@ -23,6 +26,30 @@ func NewController(s state.State, driver Driver) (*Controller, error) {
 		networks:  map[core.DID]Network{},
 		endpoints: map[core.DID]Endpoint{},
 	}, nil
+}
+
+func (c *Controller) Restore(s state.State) error {
+	// FIXME netdriver: not yet implemented
+
+	// Load default network, creating one if it doesn't exist.
+	/*
+	defaultNetSettings, err := s.GetObj("/default")
+	if os.IsNotExist(err) { // no default network created
+		defaultNet, err := c.NewNetwork()
+		if err != nil {
+			return err
+		}
+		s.Set("/default/id", defaultNet.Id)
+		if err := s.Commit(); err != nil {
+
+		}
+	}
+	// Set DefaultNetworkId
+	*/
+
+	// Load list of networks
+	// Call drivers.Restore
+	return nil
 }
 
 func (c *Controller) ListNetworks() []core.DID {

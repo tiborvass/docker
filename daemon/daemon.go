@@ -107,8 +107,8 @@ type Daemon struct {
 	execDriver     execdriver.Driver
 	trustStore     *trust.TrustStore
 
-	networking    *net.Service
-	netController *network.Controller
+	networks	*network.Controller
+	sandboxes	*sandbox.Controller
 }
 
 // Install installs daemon capabilities to eng.
@@ -139,6 +139,13 @@ func (daemon *Daemon) Install(eng *engine.Engine) error {
 		"execCreate":        daemon.ContainerExecCreate,
 		"execStart":         daemon.ContainerExecStart,
 		"execResize":        daemon.ContainerExecResize,
+		"net_create":        daemon.CmdNetCreate,
+		"net_export":        daemon.CmdNetExport,
+		"net_import":        daemon.CmdNetImport,
+		"net_join":          daemon.CmdNetJoin,
+		"net_ls":            daemon.CmdNetLs,
+		"net_leave":         daemon.CmdNetLeave,
+		"net_rm":            daemon.CmdNetRm,
 	} {
 		if err := eng.Register(name, method); err != nil {
 			return err
@@ -290,6 +297,17 @@ func (daemon *Daemon) LogToDisk(src *broadcastwriter.BroadcastWriter, dst, strea
 }
 
 func (daemon *Daemon) restore() error {
+	// Restore network subsystem
+	// FIXME: actually extract the state of the network subsystem
+	var networkState state.State
+	if err := daemon.networks.Restore(networkState); err != nil {
+		return err
+	}
+
+	// FIXME: All of the below should be encapsulated in SandboxController.Restore
+	// FIXME: daemon should become an "orchestrator" which only dispatches
+	// Restore to specialized components: networks, sandboxes, filesystems, images...
+	// Probably 99% of the legacy code below could be moved to `sandboxes.Restore`
 	var (
 		debug         = (os.Getenv("DEBUG") != "" || os.Getenv("TEST") != "")
 		currentDriver = daemon.driver.String()
@@ -824,23 +842,10 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		state             state.State
 		sandboxController sandbox.Controller
 	)
-	netController, err := network.NewController(state, netDriver)
+	networks, err := network.NewController(state, netDriver)
 	if err != nil {
 		return nil, err
 	}
-	defaultNet, err := netController.NewNetwork()
-	if err != nil {
-		return nil, err
-	}
-
-	// FIXME:networking Proper place for this? It would probably better in the
-	// Install method with other services, but then we would have to pass the
-	// netController and sandboxController later on.
-	networking := net.New(netController, sandboxController)
-	if err := networking.Install(eng); err != nil {
-		return nil, err
-	}
-	networking.DefaultNetworkID = defaultNet.Id()
 
 	daemon := &Daemon{
 		ID:             trustKey.PublicKey().KeyID(),
@@ -859,8 +864,7 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		execDriver:     ed,
 		eng:            eng,
 		trustStore:     t,
-		networking:     networking,
-		netController:  netController,
+		networks:       networks,
 	}
 
 	getContainer := func(name string) (net.Container, error) {

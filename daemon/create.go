@@ -141,7 +141,8 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	////////////////////////////
 	// By default join a network under the specified name
 
-	netid := daemon.networking.DefaultNetworkID
+	// FIXME netdriver: should this be a method?
+	netid := daemon.networks.DefaultNetworkID
 	defaultNet, err := daemon.networks.Get(netid)
 	if err != nil {
 		return nil, nil, err
