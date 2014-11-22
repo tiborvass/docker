@@ -38,6 +38,7 @@ type Tree interface {
 	Walk(func(key string, entry Value)) error
 	Add(key string, overlay Tree) (Tree, error)
 	Substract(key string, whiteout Tree) (Tree, error)
+	Scope(key string) (Tree, error)
 	Pipeline() Pipeline
 }
 
@@ -49,6 +50,7 @@ type Pipeline interface {
 	Remove(key string) Pipeline
 	Add(key string, overlay Tree) Pipeline
 	Substract(key string, whiteout Tree) Pipeline
+	Scope(key string) Pipeline
 }
 
 type StateDriver interface {
