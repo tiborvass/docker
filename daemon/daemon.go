@@ -862,6 +862,22 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		networking:     networking,
 		netController:  netController,
 	}
+
+	getContainer := func(name string) (net.Container, error) {
+		c, err := daemon.GetByName(name)
+		if err != nil {
+			return nil, err
+		}
+		return &NetContainerShim{c}, nil
+	}
+	networks, err := net.New(getContainer, "")
+	if err != nil {
+		return nil, err
+	}
+	networks.Set("default", net.NewNetwork())
+	networks.SetDefault("default")
+	daemon.networks = networks
+
 	if err := daemon.restore(); err != nil {
 		return nil, err
 	}
