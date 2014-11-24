@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/tarsum"
+	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 )
@@ -215,7 +216,7 @@ func calcCopyInfo(b *Builder, cmdName string, cInfos *[]*copyInfo, origPath stri
 	origPath = strings.TrimPrefix(origPath, "./")
 
 	// In the remote/URL case, download it and gen its hashcode
-	if utils.IsURL(origPath) {
+	if urlutil.IsURL(origPath) {
 		if !allowRemote {
 			return fmt.Errorf("Source can't be a URL for %s", cmdName)
 		}

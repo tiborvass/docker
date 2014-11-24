@@ -38,6 +38,7 @@ import (
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/pkg/units"
+	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -115,13 +116,13 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 		} else {
 			context = ioutil.NopCloser(buf)
 		}
-	} else if utils.IsURL(cmd.Arg(0)) && (!utils.IsGIT(cmd.Arg(0)) || !hasGit) {
+	} else if urlutil.IsURL(cmd.Arg(0)) && (!urlutil.IsGitURL(cmd.Arg(0)) || !hasGit) {
 		isRemote = true
 	} else {
 		root := cmd.Arg(0)
-		if utils.IsGIT(root) {
+		if urlutil.IsGitURL(root) {
 			remoteURL := cmd.Arg(0)
-			if !utils.ValidGitTransport(remoteURL) {
+			if !urlutil.IsGitTransport(remoteURL) {
 				remoteURL = "https://" + remoteURL
 			}
 
