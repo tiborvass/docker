@@ -3,167 +3,139 @@ package net
 import (
 	"fmt"
 
-	e "github.com/docker/docker/engine"
+	"github.com/docker/docker/core"
+	"github.com/docker/docker/engine"
+	"github.com/docker/docker/network"
+	"github.com/docker/docker/sandbox"
 )
 
-type Networks struct {
-	//FIXME
-	nets           map[string]*Network
-	defaultNetwork string
-}
-
-func New(root string) (*Networks, error) {
-	// FIXME: instead of passing root, daemon could pass a pre-allocated
-	// State. Then other subsystems could start using State... :)
-	// One step at a time.
-	return &Networks{
-		nets: make(map[string]*Network),
-	}, nil
-}
-
-func (n *Networks) SetDefault(netid string) {
-	n.defaultNetwork = netid
-}
-
-func (n *Networks) Default() string {
-	return n.defaultNetwork
-}
-
-func (n *Networks) Get(netid string) (*Network, error) {
-	// FIXME
-	net, ok := n.nets[netid]
-	if !ok {
-		return nil, fmt.Errorf("No such network: %s", netid)
-	}
-	return net, nil
-}
-
-func (n *Networks) Set(netid string, net *Network) {
-	n.nets[netid] = net
-}
-
-type Network struct {
-	endpoints map[string]*Endpoint
-	services  map[string]*Service
-}
-
-type Container interface {
-	NSPath() string
-	PortSet
-}
-
-func NewNetwork() *Network {
-	return &Network{
-		endpoints: make(map[string]*Endpoint),
-		services:  make(map[string]*Service),
+func New(netController *network.Controller, sandboxController sandbox.Controller) *Service {
+	return &Service{
+		netController:     netController,
+		sandboxController: sandboxController,
 	}
 }
-
-func (n *Network) AddEndpoint(c Container, name string, replace bool) (*Endpoint, error) {
-	if name == "" {
-		// FIXME: generate and reserve a random name
-	}
-	// FIXME: check for name conflict, look at <replace> to determine behavior.
-	ep := &Endpoint{
-		name: name,
-		c:    c,
-	}
-	// FIXME: here, go over extensions, call AddEndpoint, place interfaces
-	// in ns, apply configuration, etc.
-	// Perhaps this could be abstracted by execdriver, but we can worry about that
-	// later.
-	n.endpoints[name] = ep
-	return ep, nil
-}
-
-type Endpoint struct {
-	name string
-	addr []IP
-	c    Container
-	// FIXME: per-endpoint port filtering as an advanced feature?
-}
-
-type IP string
 
 type Service struct {
-	name    string
-	backend *Endpoint
-	proto   string // "tcp" or "udp"
-	port    uint16
+	// Containers at creation time will create an Endpoint on the default
+	// network identified by this ID.
+	DefaultNetworkID core.DID
+
+	// Controllers provide access to the collection of networks, and the
+	// collection of sandboxes. Joining a network is drawing a line between a
+	// given sandbox and a given sandbox.
+	netController     *network.Controller
+	sandboxController sandbox.Controller
 }
 
-type PortSet interface {
-	// FIXME
-	// This holds a set of ports within the universe of tcp and udp
-	// ports
-
-	// This is similar to daemon/networkdriver/portallocator/protoMap
-	// but without the baggage.
-}
-
-func (n *Networks) Install(eng *e.Engine) error {
-	eng.Register("net_create", n.CmdCreate)
-	eng.Register("net_rm", n.CmdRm)
-	eng.Register("net_ls", n.CmdLs)
-	eng.Register("net_join", n.CmdJoin)
-	eng.Register("net_leave", n.CmdLeave)
-	eng.Register("net_import", n.CmdImport)
-	eng.Register("net_export", n.CmdExport)
+func (s *Service) Install(eng *engine.Engine) error {
+	for name, handler := range map[string]engine.Handler{
+		"net_create": s.CmdCreate,
+		"net_export": s.CmdExport,
+		"net_import": s.CmdImport,
+		"net_join":   s.CmdJoin,
+		"net_ls":     s.CmdLs,
+		"net_leave":  s.CmdLeave,
+		"net_rm":     s.CmdRm,
+	} {
+		if err := eng.Register(name, handler); err != nil {
+			return fmt.Errorf("failed to register %q: %v\n", name, err)
+		}
+	}
 	return nil
 }
 
-func (n *Networks) CmdCreate(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdCreate(job *engine.Job) engine.Status {
+	if len(job.Args) != 1 {
+		return job.Errorf("usage: %s NAME", job.Name)
 	}
-	// FIXME
-	return e.StatusOK
+
+	// FIXME What do we do with user provided name?
+	// Store in Service? Store in NetController?
+	netw, err := s.netController.NewNetwork()
+	if err != nil {
+		return job.Error(err)
+	}
+	job.Printf("%v\n", netw.Id())
+	return engine.StatusOK
 }
 
-func (n *Networks) CmdLs(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdLs(job *engine.Job) engine.Status {
+	netw := s.netController.ListNetworks()
+	table := engine.NewTable("Name", len(netw))
+	for _, netid := range netw {
+		item := &engine.Env{}
+		item.Set("ID", string(netid))
 	}
-	// FIXME
-	return e.StatusOK
+
+	if _, err := table.WriteTo(job.Stdout); err != nil {
+		return job.Error(err)
+	}
+	return engine.StatusOK
 }
 
-func (n *Networks) CmdRm(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdRm(job *engine.Job) engine.Status {
+	if len(job.Args) != 1 {
+		return job.Errorf("usage: %s NAME", job.Name)
 	}
-	// FIXME
-	return e.StatusOK
+
+	if err := s.netController.RemoveNetwork(core.DID(job.Args[0])); err != nil {
+		return job.Error(err)
+	}
+	return engine.StatusOK
 }
 
-func (n *Networks) CmdJoin(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdJoin(job *engine.Job) engine.Status {
+	if len(job.Args) != 3 {
+		return job.Errorf("usage: %s NETWORK CONTAINER NAME", job.Name)
 	}
-	// FIXME
-	return e.StatusOK
+
+	net, err := s.netController.GetNetwork(core.DID(job.Args[0]))
+	if err != nil {
+		return job.Error(err)
+	}
+
+	// FIXME The provided CONTAINER could be the 'user facing ID'. but not
+	// necessarily the sandbox ID itself: we're keeping things simple herengine.
+	sandbox, err := s.sandboxController.Get(core.DID(job.Args[1]))
+	if err != nil {
+		return job.Error(err)
+	}
+
+	if _, err := net.Link(sandbox, job.Args[2], false); err != nil {
+		return job.Error(err)
+	}
+	return engine.StatusOK
 }
 
-func (n *Networks) CmdLeave(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdLeave(job *engine.Job) engine.Status {
+	if len(job.Args) != 2 {
+		return job.Errorf("usage: %s NETWORK NAME", job.Name)
 	}
-	// FIXME
-	return e.StatusOK
+
+	net, err := s.netController.GetNetwork(core.DID(job.Args[0]))
+	if err != nil {
+		return job.Error(err)
+	}
+
+	if err := net.Unlink(job.Args[1]); err != nil {
+		return job.Error(err)
+	}
+	return engine.StatusOK
 }
 
-func (n *Networks) CmdImport(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdImport(job *engine.Job) engine.Status {
+	if len(job.Args) != 1 {
+		return job.Errorf("usage: %s NAME", job.Name)
 	}
 	// FIXME
-	return e.StatusOK
+	return engine.StatusOK
 }
 
-func (n *Networks) CmdExport(j *e.Job) e.Status {
-	if len(j.Args) != 1 {
-		return j.Errorf("usage: %s NAME", j.Name)
+func (s *Service) CmdExport(job *engine.Job) engine.Status {
+	if len(job.Args) != 1 {
+		return job.Errorf("usage: %s NAME", job.Name)
 	}
 	// FIXME
-	return e.StatusOK
+	return engine.StatusOK
 }

@@ -1,21 +1,28 @@
 package simplebridge
 
-import "errors"
+import (
+	"errors"
+
+	c "github.com/docker/docker/core"
+	"github.com/docker/docker/network"
+	"github.com/docker/docker/sandbox"
+	"github.com/docker/docker/state"
+)
 
 type BridgeDriver struct {
-	endpoints map[DID]network.Endpoint
-	network   map[DID]network.Network
+	endpoints map[c.DID]network.Endpoint
+	network   map[c.DID]network.Network
 }
 
 // discovery driver? should it be hooked here or in the core?
-func (d *BridgeDriver) Link(s sandbox.Sandbox, id DID, name string, replace bool) (*network.Endpoint, error) {
+func (d *BridgeDriver) Link(s sandbox.Sandbox, id c.DID, name string, replace bool) (*network.Endpoint, error) {
 	ep, err := d.network[id].configureEndpoint()
 	if err != nil {
 		return nil, err
 	}
 
-	mutex.Lock()
-	defer mutex.Unlock()
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
 
 	if _, ok := d.endpoints[name]; ok && !replace {
 		return errors.New("Endpoint %q already taken", name)
@@ -34,22 +41,22 @@ func (d *BridgeDriver) Unlink(name string) error {
 	return n.destroyInterface(d.endpoints[name])
 }
 
-func (d *BridgeDriver) AddNetwork(id DID, s state.State) error {
+func (d *BridgeDriver) AddNetwork(id c.DID, s state.State) error {
 	net := &BridgeManager{id: id}
 	if err := net.createBridge(s); err != nil { // use state here for parameters
 		return nil, err
 	}
 
-	mutex.Lock()
+	d.mutex.Lock()
 	d.networks[id] = net
-	mutex.Unlock()
+	d.mutex.Unlock()
 	return nil
 }
 
-func (d *BridgeDriver) RemoveNetwork(id DID, s state.State) error {
-	mutex.Lock()
+func (d *BridgeDriver) RemoveNetwork(id c.DID, s state.State) error {
+	d.mutex.Lock()
 	net, ok := d.networks[id]
-	mutex.Unlock()
+	d.mutex.Unlock()
 
 	if !ok {
 		return errors.New("Network %q doesn't exist for this driver", id)

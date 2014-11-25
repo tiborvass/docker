@@ -16,6 +16,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/docker/api"
+	"github.com/docker/docker/core"
 	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/docker/daemon/execdriver/execdrivers"
 	"github.com/docker/docker/daemon/execdriver/lxc"
@@ -25,11 +26,11 @@ import (
 	"github.com/docker/docker/daemon/networkdriver/portallocator"
 	"github.com/docker/docker/dockerversion"
 	"github.com/docker/docker/engine"
+	"github.com/docker/docker/extensions/simplebridge"
 	"github.com/docker/docker/graph"
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/net"
 	"github.com/docker/docker/network"
-	"github.com/docker/docker/network/veth"
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/docker/pkg/broadcastwriter"
 	"github.com/docker/docker/pkg/graphdb"
@@ -40,6 +41,8 @@ import (
 	"github.com/docker/docker/pkg/sysinfo"
 	"github.com/docker/docker/pkg/truncindex"
 	"github.com/docker/docker/runconfig"
+	"github.com/docker/docker/sandbox"
+	"github.com/docker/docker/state"
 	"github.com/docker/docker/trust"
 	"github.com/docker/docker/utils"
 	"github.com/docker/docker/volumes"
@@ -91,7 +94,6 @@ type Daemon struct {
 	repository     string
 	sysInitPath    string
 	containers     *contStore
-	networks       *net.Networks
 	execCommands   *execStore
 	graph          *graph.Graph
 	repositories   *graph.TagStore
@@ -104,7 +106,9 @@ type Daemon struct {
 	driver         graphdriver.Driver
 	execDriver     execdriver.Driver
 	trustStore     *trust.TrustStore
-	networkDriver  network.Driver
+
+	networking    *net.Service
+	netController *network.Controller
 }
 
 // Install installs daemon capabilities to eng.
@@ -146,9 +150,7 @@ func (daemon *Daemon) Install(eng *engine.Engine) error {
 	if err := daemon.trustStore.Install(eng); err != nil {
 		return err
 	}
-	if err := daemon.networks.Install(eng); err != nil {
-		return err
-	}
+
 	// FIXME: this hack is necessary for legacy integration tests to access
 	// the daemon object.
 	eng.Hack_SetGlobalVar("httpapi.daemon", daemon)
@@ -300,7 +302,7 @@ func (daemon *Daemon) restore() error {
 	if err != nil {
 		return err
 	}
-	for _, v := dir {
+	for _, v := range dir {
 		id := v.Name()
 		container, err := daemon.load(id)
 		if !debug {
@@ -325,7 +327,7 @@ func (daemon *Daemon) restore() error {
 	if daemon.config.AutoRestart {
 		log.Debugf("Restarting containers...")
 
-		for _, container := range daemon.Containers.List() {
+		for _, container := range daemon.containers.List() {
 			if container.hostConfig.RestartPolicy.Name == "always" ||
 				(container.hostConfig.RestartPolicy.Name == "on-failure" && container.ExitCode != 0) {
 				log.Debugf("Starting container %s", container.ID)
@@ -338,7 +340,7 @@ func (daemon *Daemon) restore() error {
 	}
 
 	// FIXME: do we really need to do this in a separate loop?
-	for _, c := range daemon.Containers.List() {
+	for _, c := range daemon.containers.List() {
 		c.registerVolumes()
 	}
 
@@ -513,6 +515,7 @@ func (ncs *NetContainerShim) NSPath() string {
 // There are already 2 other methods (Daemon.ContainerCreate and Daemon.Create) which
 // compete over initializing a container. We don't need a 3d competitor.
 func (daemon *Daemon) newContainer(netid, name string, config *runconfig.Config, img *image.Image) (*Container, error) {
+	return nil, nil
 }
 
 func (daemon *Daemon) createRootfs(container *Container, img *image.Image) error {
@@ -756,13 +759,6 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		return nil, err
 	}
 
-	networks, err := net.New("")
-	if err != nil {
-		return nil, err
-	}
-	networks.Set("default", net.NewNetwork())
-	networks.SetDefault("default")
-
 	log.Debugf("Creating repository list")
 	repositories, err := graph.NewTagStore(path.Join(config.Root, "repositories-"+driver.String()), g, config.Mirrors, config.InsecureRegistries)
 	if err != nil {
@@ -776,33 +772,6 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	t, err := trust.NewTrustStore(trustDir)
 	if err != nil {
 		return nil, fmt.Errorf("could not create trust store: %s", err)
-	}
-
-	var netDriver network.Driver
-
-	if !config.DisableNetwork {
-		netCfg := veth.Config{
-			Iface:          config.BridgeIface,
-			EnableIPTables: config.EnableIptables,
-			ICC:            config.InterContainerCommunication,
-			IPMasq:         config.EnableIpMasq,
-			IPForward:      config.EnableIpForward,
-			CIDR:           config.BridgeIP,
-			FixedCIDR:      config.FixedCIDR,
-		}
-		bridge, err := veth.New(netCfg)
-		if err != nil {
-			return nil, err
-		}
-		job := eng.Job("init_networkdriver")
-		job.Setenv("BridgeIface", bridge.Iface)
-		job.Setenv("BridgeNet", bridge.Net.String())
-		job.Setenv("DefaultBindingIP", config.DefaultIp.String())
-
-		if err := job.Run(); err != nil {
-			return nil, err
-		}
-		netDriver = bridge
 	}
 
 	graphdbPath := path.Join(config.Root, "linkgraph.db")
@@ -842,11 +811,41 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		return nil, err
 	}
 
+	// FIXME:networking This should be (for the moment) a simpleBridge.BridgeDriver
+	// FIXME:networking At what point should we create the default network?
+	var netDriver network.Driver
+	netDriver = &simplebridge.BridgeDriver{
+		endpoints: make(map[core.DID]network.Endpoint),
+		network:   make(map[core.DID]network.Network),
+	}
+
+	// FIXME:networking Proper initialization
+	var (
+		state             state.State
+		sandboxController sandbox.Controller
+	)
+	netController, err := network.NewController(state, netDriver)
+	if err != nil {
+		return nil, err
+	}
+	defaultNet, err := netController.NewNetwork()
+	if err != nil {
+		return nil, err
+	}
+
+	// FIXME:networking Proper place for this? It would probably better in the
+	// Install method with other services, but then we would have to pass the
+	// netController and sandboxController later on.
+	networking := net.New(netController, sandboxController)
+	if err := networking.Install(eng); err != nil {
+		return nil, err
+	}
+	networking.DefaultNetworkID = defaultNet.Id()
+
 	daemon := &Daemon{
 		ID:             trustKey.PublicKey().KeyID(),
 		repository:     daemonRepo,
 		containers:     &contStore{s: make(map[string]*Container)},
-		networks:       networks,
 		execCommands:   newExecStore(),
 		graph:          g,
 		repositories:   repositories,
@@ -860,7 +859,8 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		execDriver:     ed,
 		eng:            eng,
 		trustStore:     t,
-		networkDriver:  netDriver,
+		networking:     networking,
+		netController:  netController,
 	}
 	if err := daemon.restore(); err != nil {
 		return nil, err

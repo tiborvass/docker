@@ -18,6 +18,7 @@ import (
 	"github.com/docker/libcontainer/label"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/docker/docker/core"
 	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/image"
@@ -96,6 +97,9 @@ type Container struct {
 	activeLinks  map[string]*links.Link
 	monitor      *containerMonitor
 	execCommands *execStore
+
+	// FIXME:networking Mapping networks to allocated endpoints.
+	Endpoints map[core.DID][]core.DID
 }
 
 func (container *Container) FromDisk() error {
@@ -333,7 +337,6 @@ func (container *Container) Start() (err error) {
 		return err
 	}
 
-
 	/////////////// rEPLACE THIS WITH CALLS TO NETWORK CONTROLLER
 	if err := container.initializeNetworking(); err != nil {
 		return err
@@ -349,8 +352,6 @@ func (container *Container) Start() (err error) {
 	// -> which part of that is done by NetController vs Orchestrator?
 
 	////////////////////////
-
-
 
 	container.verifyDaemonSettings()
 	if err := container.prepareVolumes(); err != nil {
@@ -505,9 +506,7 @@ func (container *Container) AllocateNetwork() error {
 		}
 	}
 
-	// 
-
-
+	//
 
 	var (
 		portSpecs = make(nat.PortSet)
@@ -706,7 +705,24 @@ func (container *Container) Stop(seconds int) error {
 			return err
 		}
 	}
-	return container.daemon.networkDriver.RemoveEndpoint(container.ID)
+
+	// 3. Clean up every allocated network endpoints.
+	// Failure to remove endpoins are silently ignored to avoid preventing the
+	// container from stopping.
+	for netid, endpoints := range container.Endpoints {
+		for _, epid := range endpoints {
+			var err error
+			var net network.Network
+			if net, err = container.daemon.netController.GetNetwork(netid); err == nil {
+				err = net.Unlink(string(epid))
+			}
+			if err != nil {
+				log.Errorf("Failed to remove endpoint %q for container %q: %v", epid, container.ID, err)
+			}
+		}
+	}
+
+	return nil
 }
 
 func (container *Container) Restart(seconds int) error {

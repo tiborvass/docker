@@ -10,13 +10,14 @@ import (
 	"strings"
 	"syscall"
 
+	// FIXME:networking Should libcontainer depend on docker/pkg?
+	"github.com/docker/docker/pkg/netlink"
 	"github.com/docker/libcontainer"
 	"github.com/docker/libcontainer/apparmor"
 	"github.com/docker/libcontainer/console"
 	"github.com/docker/libcontainer/ipc"
 	"github.com/docker/libcontainer/label"
 	"github.com/docker/libcontainer/mount"
-	"github.com/docker/libcontainer/netlink"
 	"github.com/docker/libcontainer/network"
 	"github.com/docker/libcontainer/security/capabilities"
 	"github.com/docker/libcontainer/security/restrict"

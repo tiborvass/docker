@@ -1,16 +1,22 @@
 package simplebridge
 
-import "net"
+import (
+	"net"
+
+	c "github.com/docker/docker/core"
+	"github.com/docker/docker/network"
+	"github.com/docker/docker/state"
+)
 
 type BridgeManager struct {
-	id         DID
+	id         c.DID
 	bridgeName string
 	hairpin    bool
 
 	// other internal configuration
 }
 
-func (m *BridgeManager) Id() DID {
+func (m *BridgeManager) Id() c.DID {
 	return m.id
 }
 

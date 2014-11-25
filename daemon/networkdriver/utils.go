@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/docker/libcontainer/netlink"
+	"github.com/docker/docker/pkg/netlink"
 )
 
 var (

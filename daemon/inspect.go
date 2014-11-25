@@ -2,7 +2,6 @@ package daemon
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/runconfig"

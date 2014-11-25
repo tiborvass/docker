@@ -89,16 +89,19 @@ func (daemon *Daemon) Containers(job *engine.Job) engine.Status {
 		// So instead of "all containers with name <NAME>", the filter now means
 		//               "all containers linked to any network endpoint named <NAME>"
 		var nameMatch bool
-		for _, epid := range container.Endpoints {
-			ep, err := daemon.networks.GetEndpoint(epid)
-			if err != nil {
-				return err
-			}
-			if psFilters.Match("name", ep.Name()) {
-				nameMatch = true
-				break
+		for _, endpoints := range container.Endpoints {
+			for _, epid := range endpoints {
+				ep, err := daemon.netController.GetEndpoint(epid)
+				if err != nil {
+					return err
+				}
+				if psFilters.Match("name", ep.Name()) {
+					nameMatch = true
+					break
+				}
 			}
 		}
+
 		if !nameMatch {
 			return nil
 		}

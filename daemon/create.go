@@ -2,11 +2,14 @@ package daemon
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/graph"
+	"github.com/docker/docker/nat"
 	"github.com/docker/docker/pkg/parsers"
 	"github.com/docker/docker/runconfig"
+	"github.com/docker/docker/utils"
 	"github.com/docker/libcontainer/label"
 )
 
@@ -69,7 +72,7 @@ func (daemon *Daemon) ContainerCreate(job *engine.Job) engine.Status {
 // Create creates a new container from the given configuration with a given name.
 func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.HostConfig, name string) (*Container, []string, error) {
 	var (
-		warnings  []string
+		warnings []string
 	)
 
 	// FIXME: installing images should be done out of band.
@@ -99,17 +102,17 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 		hostConfig:      &runconfig.HostConfig{},
 		Image:           img.ID, // Always use the resolved image id
 		NetworkSettings: &NetworkSettings{},
-		Driver:       daemon.driver.String(),
-		ExecDriver:   daemon.execDriver.Name(),
-		State:        NewState(),
-		execCommands: newExecStore(),
+		Driver:          daemon.driver.String(),
+		ExecDriver:      daemon.execDriver.Name(),
+		State:           NewState(),
+		execCommands:    newExecStore(),
 	}
 	// FIXME: find a clean home for this.
 	if config.Hostname == "" {
 		config.Hostname = c.ID[:12]
 	}
 	c.Path, c.Args = daemon.getEntrypointAndArgs(config.Entrypoint, config.Cmd)
-	c.root = daemon.containerRoot(container.ID)
+	c.root = daemon.containerRoot(c.ID)
 
 	// FIXME: move this into exec driver
 	if err := parseSecurityOpt(c, config); err != nil {
@@ -138,10 +141,7 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	////////////////////////////
 	// By default join a network under the specified name
 
-	netid, err := daemon.networks.Default()
-	if err != nil {
-		return nil, nil, err
-	}
+	netid := daemon.networking.DefaultNetworkID
 	defaultNet, err := daemon.networks.Get(netid)
 	if err != nil {
 		return nil, nil, err
@@ -162,13 +162,13 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	}
 	for _, iface := range ifaces {
 		// FIXME: execdriver must implement a new method AddIface
-		if err := daemon.execdriver.AddIface(iface, container.ID); err != nil {
+		if err := daemon.execdriver.AddIface(iface, c.ID); err != nil {
 			return nil, nil, err
 		}
 	}
 
 	// Expose ports on the new endpoint
-	if container.Config.ExposedPorts != nil {
+	if c.Config.ExposedPorts != nil {
 		for _, port := range config.ExposedPorts {
 			if err := ep.Expose(port, false); err != nil {
 				return nil, nil, err
@@ -177,8 +177,8 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	}
 
 	// *Publish* particular ports as requested in HostConfig
-	if container.hostConfig.PortBindings != nil {
-		for p, b := range container.hostConfig.PortBindings {
+	if c.hostConfig.PortBindings != nil {
+		for p, b := range c.hostConfig.PortBindings {
 			bindings[p] = []nat.PortBinding{}
 			for _, bb := range b {
 				if err := ep.Expose(p, true); err != nil {
@@ -188,10 +188,10 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 		}
 	}
 
-	if err := container.ToDisk(); err != nil {
+	if err := c.ToDisk(); err != nil {
 		return nil, nil, err
 	}
-	return container, warnings, nil
+	return c, warnings, nil
 }
 func (daemon *Daemon) GenerateSecurityOpt(ipcMode runconfig.IpcMode) ([]string, error) {
 	if ipcMode.IsHost() {

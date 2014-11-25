@@ -13,8 +13,9 @@ import (
 	"strings"
 	"syscall"
 
+	// FIXME:networking Should libcontainer depend on docker/pkg?
+	"github.com/docker/docker/pkg/netlink"
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/docker/libcontainer/netlink"
 )
 
 // Args provided to the init function for a driver

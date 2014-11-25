@@ -1,11 +1,14 @@
 package bridge
 
 import (
+	"fmt"
 	"net"
+	"os"
 	"strconv"
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/docker/docker/daemon/networkdriver"
 	"github.com/docker/docker/daemon/networkdriver/ipallocator"
 	"github.com/docker/docker/daemon/networkdriver/portallocator"
 	"github.com/docker/docker/daemon/networkdriver/portmapper"
@@ -13,6 +16,9 @@ import (
 	"github.com/docker/docker/nat"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/pkg/iptables"
+	"github.com/docker/docker/pkg/netlink"
+	"github.com/docker/docker/pkg/networkfs/resolvconf"
+	"github.com/docker/docker/pkg/parsers/kernel"
 )
 
 const (
