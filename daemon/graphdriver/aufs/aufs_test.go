@@ -11,12 +11,17 @@ import (
 
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/reexec"
 )
 
 var (
 	tmpOuter = path.Join(os.TempDir(), "aufs-tests")
 	tmp      = path.Join(tmpOuter, "aufs")
 )
+
+func init() {
+	reexec.Init()
+}
 
 func testInit(dir string, t *testing.T) graphdriver.Driver {
 	d, err := Init(dir, nil)

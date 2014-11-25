@@ -1,3 +1,5 @@
+// +build linux
+
 package graph
 
 import (
@@ -11,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/chrootarchive"
 )
 
 // Loads a set of images into the repository. This is the complementary of ImageExport.
@@ -53,7 +56,7 @@ func (s *TagStore) CmdLoad(job *engine.Job) engine.Status {
 		excludes[i] = k
 		i++
 	}
-	if err := archive.Untar(repoFile, repoDir, &archive.TarOptions{Excludes: excludes}); err != nil {
+	if err := chrootarchive.Untar(repoFile, repoDir, &archive.TarOptions{Excludes: excludes}); err != nil {
 		return job.Error(err)
 	}
 
