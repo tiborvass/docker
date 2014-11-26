@@ -75,7 +75,6 @@ type Container struct {
 	Name           string
 	Driver         string
 	ExecDriver     string
-	Interfaces     []network.Interface
 
 	command *execdriver.Command
 	StreamConfig
@@ -713,7 +712,7 @@ func (container *Container) Stop(seconds int) error {
 		for _, epid := range endpoints {
 			var err error
 			var net network.Network
-			if net, err = container.daemon.netController.GetNetwork(netid); err == nil {
+			if net, err = container.daemon.extensions.Networks().GetNetwork(netid); err == nil {
 				err = net.Unlink(string(epid))
 			}
 			if err != nil {

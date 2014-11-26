@@ -91,7 +91,7 @@ func (daemon *Daemon) Containers(job *engine.Job) engine.Status {
 		var nameMatch bool
 		for _, endpoints := range container.Endpoints {
 			for _, epid := range endpoints {
-				ep, err := daemon.netController.GetEndpoint(epid)
+				ep, err := daemon.extensions.Networks().GetEndpoint(epid)
 				if err != nil {
 					return err
 				}

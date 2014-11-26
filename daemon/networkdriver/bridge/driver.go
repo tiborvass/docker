@@ -14,7 +14,6 @@ import (
 	"github.com/docker/docker/daemon/networkdriver/portmapper"
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/nat"
-	"github.com/docker/docker/network"
 	"github.com/docker/docker/pkg/iptables"
 	"github.com/docker/docker/pkg/netlink"
 	"github.com/docker/docker/pkg/networkfs/resolvconf"
@@ -301,7 +300,7 @@ func Allocate(job *engine.Job) engine.Status {
 
 	// If no explicit mac address was given, generate a random one.
 	if mac, err = net.ParseMAC(job.Getenv("RequestedMac")); err != nil {
-		mac = network.GenerateMacAddr(ip)
+		mac = generateMacAddr(ip)
 	}
 
 	out := engine.Env{}

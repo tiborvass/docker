@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/docker/docker/core"
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/graph"
-	"github.com/docker/docker/nat"
+	"github.com/docker/docker/network"
 	"github.com/docker/docker/pkg/parsers"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
@@ -69,6 +70,38 @@ func (daemon *Daemon) ContainerCreate(job *engine.Job) engine.Status {
 	return engine.StatusOK
 }
 
+func (daemon *Daemon) attachContainerToDefaultNetwork(cid, name string) (network.Endpoint, error) {
+	// Retrieve the default network that the new container should be joining.
+	netid := daemon.extensions.Networks().DefaultNetworkID
+	defaultNet, err := daemon.extensions.Networks().GetNetwork(netid)
+	if err != nil {
+		return nil, err
+	}
+
+	// Retrieve the Sandbox corresponding to the starting container.
+	sandbox, err := daemon.extensions.Sandboxes().Get(core.DID(cid))
+	if err != nil {
+		return nil, err
+	}
+
+	// Link the sandbox to the network, thus creating a new endpoint with the
+	// provided name.
+	// FIXME:networking Do we need Link() to return the Endpoint?
+	ep, err := defaultNet.Link(sandbox, name, false /* replace */)
+	if err != nil {
+		return nil, err
+	}
+
+	// FIXME:networking This should be in network.NetController
+	//for _, iface := range ifaces {
+	//	if err := sandbox.AddIface(iface); err != nil {
+	//		return nil, nil, err
+	//	}
+	//}
+
+	return ep, nil
+}
+
 // Create creates a new container from the given configuration with a given name.
 func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.HostConfig, name string) (*Container, []string, error) {
 	var (
@@ -96,8 +129,6 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 		// FIXME: we should generate the ID here instead of receiving it as an argument
 		ID:              utils.GenerateRandomID(),
 		Created:         time.Now().UTC(),
-		Path:            config.Entrypoint,
-		Args:            args, //FIXME: de-duplicate from config
 		Config:          config,
 		hostConfig:      &runconfig.HostConfig{},
 		Image:           img.ID, // Always use the resolved image id
@@ -115,8 +146,10 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	c.root = daemon.containerRoot(c.ID)
 
 	// FIXME: move this into exec driver
-	if err := parseSecurityOpt(c, config); err != nil {
-		return nil, nil, err
+	if hostConfig != nil {
+		if err := parseSecurityOpt(c, hostConfig); err != nil {
+			return nil, nil, err
+		}
 	}
 
 	// FIXME: Register relies on the concept of a single container name.
@@ -134,44 +167,16 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 		return nil, nil, err
 	}
 
-	////////////////////////////
-	//////////////////////////// BEGIN NEW NETWORKING HOOK
-	// Here we allocate an endpoint for this container on the default network.
-	// This replaces any consideration of "container name"
-	////////////////////////////
 	// By default join a network under the specified name
-
-	// FIXME netdriver: should this be a method?
-	netid := daemon.networks.DefaultNetworkID
-	defaultNet, err := daemon.networks.Get(netid)
+	ep, err := daemon.attachContainerToDefaultNetwork(c.ID, name)
 	if err != nil {
 		return nil, nil, err
-	}
-
-	// FIXME: we don't need the entire container root, just its namespace.
-	// For this we need the persistent namespace patch from lk4d4 and icecrime.
-	// (Otherwise the namespace is not created until the process is started),
-	// and it is lost when the process terminates.
-	// For now we assume the netns will be available at $ROOT/netns
-	//
-	// Note: it's ok if name is "". AddEndpoint is responsible for generating a
-	// locally unique name in that case (ie "sad_einstein").
-	//
-	ep, ifaces, err := defaultNet.AddEndpoint(name, false)
-	if err != nil {
-		return nil, nil, err
-	}
-	for _, iface := range ifaces {
-		// FIXME: execdriver must implement a new method AddIface
-		if err := daemon.execdriver.AddIface(iface, c.ID); err != nil {
-			return nil, nil, err
-		}
 	}
 
 	// Expose ports on the new endpoint
 	if c.Config.ExposedPorts != nil {
-		for _, port := range config.ExposedPorts {
-			if err := ep.Expose(port, false); err != nil {
+		for port, _ := range config.ExposedPorts {
+			if err := ep.Expose(port.String(), false); err != nil {
 				return nil, nil, err
 			}
 		}
@@ -180,11 +185,15 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	// *Publish* particular ports as requested in HostConfig
 	if c.hostConfig.PortBindings != nil {
 		for p, b := range c.hostConfig.PortBindings {
-			bindings[p] = []nat.PortBinding{}
+			if err := ep.Expose(p.String(), true); err != nil {
+				return nil, nil, err
+			}
+
+			// FIXME:networking Port is published at the network driver level,
+			// but we are missing the host behaviour: should we rely on
+			// daemon/networkdriver/portmapper/ in a first version?
 			for _, bb := range b {
-				if err := ep.Expose(p, true); err != nil {
-					return nil, nil, err
-				}
+				_ = bb
 			}
 		}
 	}

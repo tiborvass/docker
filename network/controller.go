@@ -9,6 +9,7 @@ import (
 )
 
 type Controller struct {
+	// FIXME:networking This probably should be a driver list
 	driver    Driver
 	networks  map[core.DID]Network
 	endpoints map[core.DID]Endpoint
@@ -19,32 +20,42 @@ type Controller struct {
 	DefaultNetworkID core.DID
 }
 
-func NewController(s state.State, driver Driver) (*Controller, error) {
+func NewController(s state.State) *Controller {
 	return &Controller{
 		state:     s,
-		driver:    driver,
 		networks:  map[core.DID]Network{},
 		endpoints: map[core.DID]Endpoint{},
-	}, nil
+	}
+}
+
+// FIXME:networking
+func (c *Controller) AddDriver(driver Driver) error {
+	c.driver = driver
+	return nil
+}
+
+// FIXME:networking
+func (c *Controller) HasDriver() bool {
+	return c.driver != nil
 }
 
 func (c *Controller) Restore(s state.State) error {
-	// FIXME netdriver: not yet implemented
+	// FIXME:networking not yet implemented
 
 	// Load default network, creating one if it doesn't exist.
 	/*
-	defaultNetSettings, err := s.GetObj("/default")
-	if os.IsNotExist(err) { // no default network created
-		defaultNet, err := c.NewNetwork()
-		if err != nil {
-			return err
-		}
-		s.Set("/default/id", defaultNet.Id)
-		if err := s.Commit(); err != nil {
+		defaultNetSettings, err := s.GetObj("/default")
+		if os.IsNotExist(err) { // no default network created
+			defaultNet, err := c.NewNetwork()
+			if err != nil {
+				return err
+			}
+			s.Set("/default/id", defaultNet.Id)
+			if err := s.Commit(); err != nil {
 
+			}
 		}
-	}
-	// Set DefaultNetworkId
+		// Set DefaultNetworkId
 	*/
 
 	// Load list of networks
@@ -130,4 +141,7 @@ type Network interface {
 // and reachable over IP by other endpoints on the same network.
 type Endpoint interface {
 	Name() string
+
+	// FIXME:networking Should we take nat.Port string format (i.e.: "80/tcp")?
+	Expose(portspec string, publish bool) error
 }

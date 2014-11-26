@@ -26,11 +26,10 @@ import (
 	"github.com/docker/docker/daemon/networkdriver/portallocator"
 	"github.com/docker/docker/dockerversion"
 	"github.com/docker/docker/engine"
+	"github.com/docker/docker/extensions"
 	"github.com/docker/docker/extensions/simplebridge"
 	"github.com/docker/docker/graph"
 	"github.com/docker/docker/image"
-	"github.com/docker/docker/net"
-	"github.com/docker/docker/network"
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/docker/pkg/broadcastwriter"
 	"github.com/docker/docker/pkg/graphdb"
@@ -41,7 +40,6 @@ import (
 	"github.com/docker/docker/pkg/sysinfo"
 	"github.com/docker/docker/pkg/truncindex"
 	"github.com/docker/docker/runconfig"
-	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
 	"github.com/docker/docker/trust"
 	"github.com/docker/docker/utils"
@@ -106,9 +104,7 @@ type Daemon struct {
 	driver         graphdriver.Driver
 	execDriver     execdriver.Driver
 	trustStore     *trust.TrustStore
-
-	networks	*network.Controller
-	sandboxes	*sandbox.Controller
+	extensions     *extensions.Controller
 }
 
 // Install installs daemon capabilities to eng.
@@ -297,11 +293,27 @@ func (daemon *Daemon) LogToDisk(src *broadcastwriter.BroadcastWriter, dst, strea
 }
 
 func (daemon *Daemon) restore() error {
-	// Restore network subsystem
 	// FIXME: actually extract the state of the network subsystem
-	var networkState state.State
-	if err := daemon.networks.Restore(networkState); err != nil {
+	var state state.State
+	if err := daemon.extensions.Restore(state); err != nil {
 		return err
+	}
+
+	// FIXME:networking Find a proper place for this.
+	// If we had no previous known state and no network extension loaded,
+	// install the defaut one.
+	networks := daemon.extensions.Networks()
+	if !networks.HasDriver() {
+		if err := daemon.extensions.Install(core.DID("simpledbridge"), &simplebridge.Extension{}); err != nil {
+			return fmt.Errorf("failed to install default network driver \"simplebridge\": %v", err)
+		}
+
+		// Create a default network for the default driver.
+		if net, err := networks.NewNetwork(); err != nil {
+			return fmt.Errorf("failed to create default network using default driver: %v", err)
+		} else {
+			networks.DefaultNetworkID = net.Id()
+		}
 	}
 
 	// FIXME: All of the below should be encapsulated in SandboxController.Restore
@@ -520,15 +532,6 @@ func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error 
 	return err
 }
 
-// FIXME: @lk4d4 / @icecrime
-type NetContainerShim struct {
-	*Container
-}
-
-func (ncs *NetContainerShim) NSPath() string {
-	return ncs.Container.root + "/netns"
-}
-
 // FIXME: FFS only create the data structure here.
 // There are already 2 other methods (Daemon.ContainerCreate and Daemon.Create) which
 // compete over initializing a container. We don't need a 3d competitor.
@@ -667,6 +670,9 @@ func NewDaemon(config *Config, eng *engine.Engine) (*Daemon, error) {
 }
 
 func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error) {
+	// FIXME:networking Needs proper instantiation
+	var state state.State
+
 	if config.Mtu == 0 {
 		config.Mtu = getDefaultNetworkMtu()
 	}
@@ -829,24 +835,6 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		return nil, err
 	}
 
-	// FIXME:networking This should be (for the moment) a simpleBridge.BridgeDriver
-	// FIXME:networking At what point should we create the default network?
-	var netDriver network.Driver
-	netDriver = &simplebridge.BridgeDriver{
-		endpoints: make(map[core.DID]network.Endpoint),
-		network:   make(map[core.DID]network.Network),
-	}
-
-	// FIXME:networking Proper initialization
-	var (
-		state             state.State
-		sandboxController sandbox.Controller
-	)
-	networks, err := network.NewController(state, netDriver)
-	if err != nil {
-		return nil, err
-	}
-
 	daemon := &Daemon{
 		ID:             trustKey.PublicKey().KeyID(),
 		repository:     daemonRepo,
@@ -864,27 +852,13 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		execDriver:     ed,
 		eng:            eng,
 		trustStore:     t,
-		networks:       networks,
+		extensions:     extensions.NewController(state),
 	}
-
-	getContainer := func(name string) (net.Container, error) {
-		c, err := daemon.GetByName(name)
-		if err != nil {
-			return nil, err
-		}
-		return &NetContainerShim{c}, nil
-	}
-	networks, err := net.New(getContainer, "")
-	if err != nil {
-		return nil, err
-	}
-	networks.Set("default", net.NewNetwork())
-	networks.SetDefault("default")
-	daemon.networks = networks
 
 	if err := daemon.restore(); err != nil {
 		return nil, err
 	}
+
 	// Setup shutdown handlers
 	// FIXME: can these shutdown handlers be registered closer to their source?
 	eng.OnShutdown(func() {

@@ -10,5 +10,5 @@ type Driver interface {
 	RemoveNetwork(netid string, netstate state.State) error
 
 	Link(netid, name string, sb sandbox.Sandbox, replace bool, netstate state.State) (Endpoint, error)
-	Unlink(netid, name string) error
+	Unlink(netid, name string, sb sandbox.Sandbox) error
 }

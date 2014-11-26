@@ -59,6 +59,10 @@ func (p Port) Int() int {
 	return port
 }
 
+func (p Port) String() string {
+	return string(p)
+}
+
 // Splits a port in the format of proto/port
 func SplitProtoPort(rawPort string) (string, string) {
 	parts := strings.Split(rawPort, "/")
