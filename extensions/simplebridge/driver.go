@@ -29,9 +29,14 @@ func (d *BridgeDriver) endpointNames() []string {
 
 // discovery driver? should it be hooked here or in the core?
 func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace bool) (network.Endpoint, error) {
-	ep := &BridgeEndpoint{}
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
+	if _, ok := d.networks[id]; !ok {
+		return nil, fmt.Errorf("No network for id %q", id)
+	}
+
+	ep := &BridgeEndpoint{network: d.networks[id]}
 
 	if _, ok := d.endpoints[name]; ok && !replace {
 		return nil, fmt.Errorf("Endpoint %q already taken", name)
@@ -39,7 +44,7 @@ func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace
 
 	d.endpoints[name] = ep
 
-	if err := d.createInterface(ep); err != nil { // or something
+	if err := ep.configure(s); err != nil {
 		return nil, err
 	}
 
@@ -47,12 +52,26 @@ func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace
 }
 
 func (d *BridgeDriver) Unlink(name string) error {
-	return d.destroyInterface(d.endpoints[name])
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+
+	ep, ok := d.endpoints[name]
+	if !ok {
+		return fmt.Errorf("No endpoint for name %q", name)
+	}
+
+	if err := ep.deconfigure(); err != nil {
+		return err
+	}
+
+	delete(d.endpoints, name)
+
+	return nil
 }
 
 func (d *BridgeDriver) AddNetwork(id core.DID, s state.State) (network.Network, error) {
 	bridge, err := d.createBridge(s)
-	if err != nil { // use state here for parameters
+	if err != nil {
 		return nil, err
 	}
 

@@ -144,4 +144,5 @@ type Endpoint interface {
 
 	// FIXME:networking Should we take nat.Port string format (i.e.: "80/tcp")?
 	Expose(portspec string, publish bool) error
+	Network() Network
 }

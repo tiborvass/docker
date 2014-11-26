@@ -14,13 +14,26 @@ type BridgeNetwork struct {
 }
 
 type BridgeEndpoint struct {
-	InterfaceName string
-	HWAddr        string
-	MTU           uint
+	interfaceName string
+	hwAddr        string
+	mtu           uint
+	network       *BridgeNetwork
 }
 
 func (b *BridgeEndpoint) Name() string {
-	return b.InterfaceName
+	return b.interfaceName
+}
+
+func (b *BridgeEndpoint) Network() network.Network {
+	return b.network
+}
+
+func (b *BridgeEndpoint) configure(s sandbox.Sandbox) error {
+	return nil
+}
+
+func (b *BridgeEndpoint) deconfigure() error {
+	return nil
 }
 
 func (b *BridgeNetwork) Id() core.DID {
@@ -32,11 +45,11 @@ func (b *BridgeNetwork) List() []string {
 }
 
 func (b *BridgeNetwork) Link(s sandbox.Sandbox, name string, replace bool) (network.Endpoint, error) {
-	return b.driver.Link(s, "default", name, replace) // FIXME for now
+	return b.driver.Link(s, b.ID, name, replace)
 }
 
 func (b *BridgeNetwork) Unlink(name string) error {
-	return b.driver.Unlink("default")
+	return b.driver.Unlink(name)
 }
 
 func (b *BridgeNetwork) destroy(s state.State) error { return nil }
