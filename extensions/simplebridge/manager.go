@@ -1,12 +1,6 @@
 package simplebridge
 
-import (
-	"net"
-
-	c "github.com/docker/docker/core"
-	"github.com/docker/docker/network"
-	"github.com/docker/docker/state"
-)
+import c "github.com/docker/docker/core"
 
 type BridgeManager struct {
 	id         c.DID
@@ -22,24 +16,4 @@ func (m *BridgeManager) Id() c.DID {
 
 func (m *BridgeManager) String() string {
 	return string(m.Id())
-}
-
-func (m *BridgeManager) configureEndpoint() (*network.Endpoint, error) {
-	return &network.Endpoint{iface: net.InterfaceByName("eth0")}
-}
-
-func (m *BridgeManager) createBridge(s state.State) error {
-	return nil
-}
-
-func (m *BridgeManager) destroyBridge(s state.State) error {
-	return nil
-}
-
-func (m *BridgeManager) createInterface(ep *network.Endpoint) error {
-	return nil
-}
-
-func (m *BridgeManager) destroyInterface(ep *network.Endpoint) error {
-	return nil
 }

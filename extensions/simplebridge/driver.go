@@ -1,31 +1,40 @@
 package simplebridge
 
 import (
-	"errors"
+	"fmt"
+	"sync"
 
-	c "github.com/docker/docker/core"
+	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
 )
 
 type BridgeDriver struct {
-	endpoints map[c.DID]network.Endpoint
-	network   map[c.DID]network.Network
+	endpoints map[string]*BridgeEndpoint
+	networks  map[core.DID]*BridgeNetwork
+	mutex     sync.Mutex
+}
+
+func (d *BridgeDriver) endpointNames() []string {
+	retval := []string{}
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+	for key := range d.endpoints {
+		retval = append(retval, key)
+	}
+
+	return retval
 }
 
 // discovery driver? should it be hooked here or in the core?
-func (d *BridgeDriver) Link(s sandbox.Sandbox, id c.DID, name string, replace bool) (*network.Endpoint, error) {
-	ep, err := d.network[id].configureEndpoint()
-	if err != nil {
-		return nil, err
-	}
-
+func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace bool) (network.Endpoint, error) {
+	ep := &BridgeEndpoint{}
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
 	if _, ok := d.endpoints[name]; ok && !replace {
-		return errors.New("Endpoint %q already taken", name)
+		return nil, fmt.Errorf("Endpoint %q already taken", name)
 	}
 
 	d.endpoints[name] = ep
@@ -38,29 +47,34 @@ func (d *BridgeDriver) Link(s sandbox.Sandbox, id c.DID, name string, replace bo
 }
 
 func (d *BridgeDriver) Unlink(name string) error {
-	return n.destroyInterface(d.endpoints[name])
+	return d.destroyInterface(d.endpoints[name])
 }
 
-func (d *BridgeDriver) AddNetwork(id c.DID, s state.State) error {
-	net := &BridgeManager{id: id}
-	if err := net.createBridge(s); err != nil { // use state here for parameters
+func (d *BridgeDriver) AddNetwork(id core.DID, s state.State) (network.Network, error) {
+	bridge, err := d.createBridge(s)
+	if err != nil { // use state here for parameters
 		return nil, err
 	}
 
 	d.mutex.Lock()
-	d.networks[id] = net
+	d.networks[id] = bridge
 	d.mutex.Unlock()
-	return nil
+	return bridge, nil
 }
 
-func (d *BridgeDriver) RemoveNetwork(id c.DID, s state.State) error {
+func (d *BridgeDriver) RemoveNetwork(id core.DID, s state.State) error {
 	d.mutex.Lock()
-	net, ok := d.networks[id]
-	d.mutex.Unlock()
-
+	defer d.mutex.Unlock()
+	bridge, ok := d.networks[id]
 	if !ok {
-		return errors.New("Network %q doesn't exist for this driver", id)
+		return fmt.Errorf("Network %q doesn't exist", id)
 	}
 
-	return net.destroyBridge(s)
+	return bridge.destroy(s)
+}
+
+func (d *BridgeDriver) createInterface(ep *BridgeEndpoint) error  { return nil }
+func (d *BridgeDriver) destroyInterface(ep *BridgeEndpoint) error { return nil }
+func (d *BridgeDriver) createBridge(s state.State) (*BridgeNetwork, error) {
+	return &BridgeNetwork{driver: d}, nil
 }

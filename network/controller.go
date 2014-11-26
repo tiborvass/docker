@@ -119,7 +119,7 @@ type Network interface {
 	Id() core.DID
 
 	// List returns the IDs of available networks
-	List() ([]core.DID, error)
+	List() []string
 
 	// Link makes the specified sandbox reachable as a named endpoint on the network.
 	// If the endpoint already exists, the call will either fail (replace=false), or
