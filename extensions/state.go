@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/docker/libpack"
-	"github.com/docker/libpack/backends/dummy"
+	"github.com/tiborvass/libpack"
+	"github.com/tiborvass/libpack/backends/dummy"
 )
 
 const _DEBUG = true
