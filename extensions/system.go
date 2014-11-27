@@ -1,31 +1,15 @@
 package extensions
 
-import c "github.com/docker/docker/core"
+import "github.com/docker/docker/network"
 
-type ExtensionController interface {
-	// Available returns the identifiers of available extensions
-	Available() ([]c.DID, error)
-
-	// Enabled returns the identifiers of enabled extensions
-	Enabled() ([]c.DID, error)
-
-	// Disabled returns the identifiers of disabled extensions
-	Disabled([]c.DID, error)
-
-	Get(id c.DID) (Extension, error)
-
-	// Enable enables the specified extension, allowing it to interact with
-	// the core and hook into its lifecycle.
-	Enable(id c.DID) error
-
-	// Disable disables the specified extension, removing its hooks from
-	// the core lifecycle.
-	Disable(id c.DID) error
+type Core interface {
+	RegisterNetworkDriver(driver network.Driver, name string) error
+	UnregisterNetworkDriver(name string) error
 }
 
 // An extension is a object which can extend the capabilities of Docker by
 // hooking into various points of its lifecycle: networking, storage, sandboxing,
-// logging etc.
+// logging etcore.
 type Extension interface {
 	// Install is called when the extension is first installed.
 	// The extension should use it for one-time initialization of resources which

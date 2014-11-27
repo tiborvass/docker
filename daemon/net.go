@@ -1,8 +1,6 @@
 package daemon
 
 import (
-	"fmt"
-
 	"github.com/docker/docker/core"
 	"github.com/docker/docker/engine"
 )
@@ -14,7 +12,7 @@ func (d *Daemon) CmdNetCreate(job *engine.Job) engine.Status {
 
 	// FIXME What do we do with user provided name?
 	// Store in Service? Store in NetController?
-	netw, err := d.networks.NewNetwork()
+	netw, err := d.extensions.Networks().NewNetwork()
 	if err != nil {
 		return job.Error(err)
 	}
@@ -23,7 +21,7 @@ func (d *Daemon) CmdNetCreate(job *engine.Job) engine.Status {
 }
 
 func (d *Daemon) CmdNetLs(job *engine.Job) engine.Status {
-	netw := d.networks.ListNetworks()
+	netw := d.extensions.Networks().ListNetworks()
 	table := engine.NewTable("Name", len(netw))
 	for _, netid := range netw {
 		item := &engine.Env{}
@@ -41,7 +39,7 @@ func (d *Daemon) CmdNetRm(job *engine.Job) engine.Status {
 		return job.Errorf("usage: %s NAME", job.Name)
 	}
 
-	if err := d.networks.RemoveNetwork(core.DID(job.Args[0])); err != nil {
+	if err := d.extensions.Networks().RemoveNetwork(core.DID(job.Args[0])); err != nil {
 		return job.Error(err)
 	}
 	return engine.StatusOK
@@ -52,14 +50,14 @@ func (d *Daemon) CmdNetJoin(job *engine.Job) engine.Status {
 		return job.Errorf("usage: %s NETWORK CONTAINER NAME", job.Name)
 	}
 
-	net, err := d.networks.GetNetwork(core.DID(job.Args[0]))
+	net, err := d.extensions.Networks().GetNetwork(core.DID(job.Args[0]))
 	if err != nil {
 		return job.Error(err)
 	}
 
 	// FIXME The provided CONTAINER could be the 'user facing ID'. but not
 	// necessarily the sandbox ID itself: we're keeping things simple herengine.
-	sandbox, err := d.sandboxes.Get(core.DID(job.Args[1]))
+	sandbox, err := d.extensions.Sandboxes().Get(core.DID(job.Args[1]))
 	if err != nil {
 		return job.Error(err)
 	}
@@ -75,7 +73,7 @@ func (d *Daemon) CmdNetLeave(job *engine.Job) engine.Status {
 		return job.Errorf("usage: %s NETWORK NAME", job.Name)
 	}
 
-	net, err := d.networks.GetNetwork(core.DID(job.Args[0]))
+	net, err := d.extensions.Networks().GetNetwork(core.DID(job.Args[0]))
 	if err != nil {
 		return job.Error(err)
 	}
