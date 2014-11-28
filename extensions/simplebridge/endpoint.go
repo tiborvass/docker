@@ -1,16 +1,9 @@
 package simplebridge
 
 import (
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 )
-
-type BridgeNetwork struct {
-	Bridge string
-	ID     core.DID
-	driver *BridgeDriver
-}
 
 type BridgeEndpoint struct {
 	interfaceName string

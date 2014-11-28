@@ -7,6 +7,12 @@ import (
 	"github.com/docker/docker/state"
 )
 
+type BridgeNetwork struct {
+	Bridge string
+	ID     core.DID
+	driver *BridgeDriver
+}
+
 func (b *BridgeNetwork) Id() core.DID {
 	return b.ID
 }
