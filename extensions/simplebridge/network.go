@@ -5,10 +5,12 @@ import (
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
+
+	"github.com/vishvananda/netlink"
 )
 
 type BridgeNetwork struct {
-	Bridge string
+	bridge *netlink.Bridge
 	ID     core.DID
 	driver *BridgeDriver
 }
@@ -29,4 +31,6 @@ func (b *BridgeNetwork) Unlink(name string) error {
 	return b.driver.Unlink(name)
 }
 
-func (b *BridgeNetwork) destroy(s state.State) error { return nil }
+func (b *BridgeNetwork) destroy(s state.State) error {
+	return netlink.LinkDel(b.bridge)
+}

@@ -8,6 +8,8 @@ import (
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
+
+	"github.com/vishvananda/netlink"
 )
 
 type BridgeDriver struct {
@@ -95,5 +97,14 @@ func (d *BridgeDriver) RemoveNetwork(id core.DID, s state.State) error {
 func (d *BridgeDriver) createInterface(ep *BridgeEndpoint) error  { return nil }
 func (d *BridgeDriver) destroyInterface(ep *BridgeEndpoint) error { return nil }
 func (d *BridgeDriver) createBridge(s state.State) (*BridgeNetwork, error) {
-	return &BridgeNetwork{driver: d}, nil
+	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: "docker0"}}
+
+	if err := netlink.LinkAdd(dockerbridge); err != nil {
+		return nil, err
+	}
+
+	return &BridgeNetwork{
+		bridge: dockerbridge,
+		driver: d,
+	}, nil
 }
