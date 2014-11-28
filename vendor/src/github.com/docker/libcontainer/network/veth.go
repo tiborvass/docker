@@ -1,12 +1,11 @@
 // +build linux
 
-// FIXME:networking Suppress this file
 package network
 
 import (
 	"fmt"
 
-	"github.com/docker/docker/pkg/netlink"
+	"github.com/docker/libcontainer/netlink"
 	"github.com/docker/libcontainer/utils"
 )
 
