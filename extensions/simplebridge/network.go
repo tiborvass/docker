@@ -28,6 +28,10 @@ func (b *BridgeEndpoint) Network() network.Network {
 	return b.network
 }
 
+func (b *BridgeEndpoint) Expose(portspec string, publish bool) error {
+	return nil
+}
+
 func (b *BridgeEndpoint) configure(s sandbox.Sandbox) error {
 	return nil
 }
