@@ -15,18 +15,30 @@ import (
 type BridgeDriver struct {
 	endpoints map[string]*BridgeEndpoint
 	networks  map[core.DID]*BridgeNetwork
+	state     state.State
 	mutex     sync.Mutex
 }
 
 func (d *BridgeDriver) endpointNames() []string {
 	retval := []string{}
+
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
 	for key := range d.endpoints {
 		retval = append(retval, key)
 	}
 
 	return retval
+}
+
+func NewBridgeDriver(s state.State) *BridgeDriver {
+	return &BridgeDriver{
+		state:     s,
+		endpoints: map[string]*BridgeEndpoint{},
+		networks:  map[core.DID]*BridgeNetwork{},
+		mutex:     sync.Mutex{},
+	}
 }
 
 // discovery driver? should it be hooked here or in the core?
@@ -72,7 +84,7 @@ func (d *BridgeDriver) Unlink(name string) error {
 }
 
 func (d *BridgeDriver) AddNetwork(id core.DID, s state.State) (network.Network, error) {
-	bridge, err := d.createBridge(s)
+	bridge, err := d.createBridge(string(id), s)
 	if err != nil {
 		return nil, err
 	}
@@ -96,12 +108,12 @@ func (d *BridgeDriver) RemoveNetwork(id core.DID, s state.State) error {
 
 func (d *BridgeDriver) createInterface(ep *BridgeEndpoint) error  { return nil }
 func (d *BridgeDriver) destroyInterface(ep *BridgeEndpoint) error { return nil }
-func (d *BridgeDriver) createBridge(s state.State) (*BridgeNetwork, error) {
-	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: "docker0"}}
+func (d *BridgeDriver) createBridge(id string, s state.State) (*BridgeNetwork, error) {
+	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
-	if err := netlink.LinkAdd(dockerbridge); err != nil {
-		return nil, err
-	}
+	// XXX: we DO NOT check the error here. this is deliberate so we can be a
+	// part of journal replay.
+	netlink.LinkAdd(dockerbridge)
 
 	return &BridgeNetwork{
 		bridge: dockerbridge,
