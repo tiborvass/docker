@@ -9,7 +9,7 @@ import (
 )
 
 func create(driver *simplebridge.BridgeDriver) error {
-	if _, err := driver.AddNetwork("test", nil); err != nil {
+	if _, err := driver.AddNetwork("test"); err != nil {
 		return err
 	}
 
@@ -17,7 +17,7 @@ func create(driver *simplebridge.BridgeDriver) error {
 }
 
 func destroy(driver *simplebridge.BridgeDriver) error {
-	if err := driver.RemoveNetwork("test", nil); err != nil {
+	if err := driver.RemoveNetwork("test"); err != nil {
 		panic(err)
 	}
 
@@ -43,7 +43,10 @@ func main() {
 	}
 
 	mystate := state.Load()
-	driver := simplebridge.NewBridgeDriver(mystate)
+	driver := &simplebridge.BridgeDriver{}
+	if err := driver.Restore(mystate); err != nil {
+		throw(err)
+	}
 
 	switch os.Args[1] {
 	case "create":

@@ -2,6 +2,8 @@ package simplebridge
 
 import (
 	"fmt"
+	"path"
+	"strconv"
 	"sync"
 
 	"github.com/docker/docker/core"
@@ -32,13 +34,92 @@ func (d *BridgeDriver) endpointNames() []string {
 	return retval
 }
 
-func NewBridgeDriver(s state.State) *BridgeDriver {
-	return &BridgeDriver{
-		state:     s,
-		endpoints: map[string]*BridgeEndpoint{},
-		networks:  map[core.DID]*BridgeNetwork{},
-		mutex:     sync.Mutex{},
+func (d *BridgeDriver) Restore(s state.State) error {
+	d.state = s
+	d.endpoints = map[string]*BridgeEndpoint{}
+	d.networks = map[core.DID]*BridgeNetwork{}
+
+	return d.loadFromState()
+}
+
+func (d *BridgeDriver) loadFromState() error {
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+
+	if err := d.loadNetworksFromState(); err != nil {
+		return err
 	}
+
+	return d.loadEndpointsFromState()
+}
+
+func (d *BridgeDriver) loadEndpointsFromState() error {
+	// XXX: locking happens in loadFromState
+	endpoints, err := d.state.List("endpoints")
+	if err != nil {
+		return err
+	}
+
+	for _, endpoint := range endpoints {
+		iface, err := d.state.Get(path.Join("endpoints", endpoint, "interfaceName"))
+		if err != nil {
+			return err
+		}
+
+		networkId, err := d.state.Get(path.Join("endpoints", endpoint, "networkId"))
+		if err != nil {
+			return err
+		}
+
+		hwAddr, err := d.state.Get(path.Join("endpoints", endpoint, "hwAddr"))
+		if err != nil {
+			return err
+		}
+
+		mtu, err := d.state.Get(path.Join("endpoints", endpoint, "mtu"))
+		if err != nil {
+			return err
+		}
+
+		mtuInt, err := strconv.ParseUint(mtu, 10, 32)
+		if err != nil {
+			return err
+		}
+
+		d.endpoints[endpoint] = &BridgeEndpoint{
+			interfaceName: iface,
+			hwAddr:        hwAddr,
+			mtu:           uint(mtuInt),
+			network:       d.networks[core.DID(networkId)],
+		}
+	}
+
+	return nil
+}
+
+func (d *BridgeDriver) loadNetworksFromState() error {
+	// XXX: locking happens in loadFromState
+	networks, err := d.state.List("networks")
+	if err != nil {
+		return err
+	}
+
+	for _, network := range networks {
+		bridge, err := d.state.Get(path.Join("networks", network, "bridgeInterface"))
+		if err != nil {
+			return err
+		}
+
+		bridgeLink := &netlink.Bridge{netlink.LinkAttrs{Name: bridge}}
+
+		d.networks[core.DID(network)] = &BridgeNetwork{
+			bridge: bridgeLink,
+			ID:     core.DID(network),
+			driver: d,
+		}
+	}
+
+	return nil
 }
 
 // discovery driver? should it be hooked here or in the core?
@@ -83,8 +164,8 @@ func (d *BridgeDriver) Unlink(name string) error {
 	return nil
 }
 
-func (d *BridgeDriver) AddNetwork(id core.DID, s state.State) (network.Network, error) {
-	bridge, err := d.createBridge(string(id), s)
+func (d *BridgeDriver) AddNetwork(id core.DID) (network.Network, error) {
+	bridge, err := d.createBridge(string(id))
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +176,7 @@ func (d *BridgeDriver) AddNetwork(id core.DID, s state.State) (network.Network, 
 	return bridge, nil
 }
 
-func (d *BridgeDriver) RemoveNetwork(id core.DID, s state.State) error {
+func (d *BridgeDriver) RemoveNetwork(id core.DID) error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	bridge, ok := d.networks[id]
@@ -103,17 +184,21 @@ func (d *BridgeDriver) RemoveNetwork(id core.DID, s state.State) error {
 		return fmt.Errorf("Network %q doesn't exist", id)
 	}
 
-	return bridge.destroy(s)
+	return bridge.destroy()
 }
 
 func (d *BridgeDriver) createInterface(ep *BridgeEndpoint) error  { return nil }
 func (d *BridgeDriver) destroyInterface(ep *BridgeEndpoint) error { return nil }
-func (d *BridgeDriver) createBridge(id string, s state.State) (*BridgeNetwork, error) {
+func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
-	// XXX: we DO NOT check the error here. this is deliberate so we can be a
-	// part of journal replay.
-	netlink.LinkAdd(dockerbridge)
+	if err := netlink.LinkAdd(dockerbridge); err != nil {
+		return nil, err
+	}
+
+	if _, err := d.state.Set(path.Join("networks", id, "bridgeInterface"), id); err != nil {
+		return nil, err
+	}
 
 	return &BridgeNetwork{
 		bridge: dockerbridge,

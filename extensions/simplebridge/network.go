@@ -1,10 +1,12 @@
 package simplebridge
 
 import (
+	"fmt"
+	"path"
+
 	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
-	"github.com/docker/docker/state"
 
 	"github.com/vishvananda/netlink"
 )
@@ -31,6 +33,11 @@ func (b *BridgeNetwork) Unlink(name string) error {
 	return b.driver.Unlink(name)
 }
 
-func (b *BridgeNetwork) destroy(s state.State) error {
+func (b *BridgeNetwork) destroy() error {
+	fmt.Println(b.ID)
+	if _, err := b.driver.state.Remove(path.Join("networks", string(b.ID))); err != nil {
+		return err
+	}
+
 	return netlink.LinkDel(b.bridge)
 }

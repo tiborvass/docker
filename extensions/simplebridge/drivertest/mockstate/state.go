@@ -2,11 +2,12 @@ package mockstate
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"sync"
 
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/state"
 )
 
@@ -15,10 +16,49 @@ type State struct {
 	mutex sync.Mutex
 }
 
-type Tree struct{}
+func (s *State) Add(key string, overlay state.Tree) (state.Tree, error)       { return nil, nil }
+func (s *State) Walk(func(key string, entry state.Value)) error               { return nil }
+func (s *State) Mkdir(key string) (state.Tree, error)                         { return nil, nil }
+func (s *State) Diff(other state.Tree) (added, removed state.Tree)            { return nil, nil }
+func (s *State) Subtract(key string, whiteout state.Tree) (state.Tree, error) { return nil, nil }
+func (s *State) Pipeline() state.Pipeline                                     { return nil }
 
-func (s *State) Scope(id core.DID) state.State {
-	return s
+func (s *State) Remove(key string) (state.Tree, error) {
+	for thiskey := range s.State {
+		if ok, _ := path.Match(path.Join(key, "*"), thiskey); ok {
+			delete(s.State, thiskey)
+		}
+	}
+	return s, nil
+}
+
+func (s *State) List(dir string) ([]string, error) {
+	result := []string{}
+
+	for key := range s.State {
+		fmt.Println(dir, " ", key)
+		thisdir := path.Dir(key)
+
+		dirok, _ := path.Match(path.Join(dir, "*"), thisdir)
+		fileok, _ := path.Match(path.Join(dir, "*"), key)
+
+		if !dirok && !fileok {
+			fmt.Println("skipping")
+			continue
+		} else if !dirok {
+			fmt.Println("appending", key)
+			result = append(result, path.Base(key))
+		} else {
+			fmt.Println("appending", thisdir)
+			result = append(result, path.Base(thisdir))
+		}
+	}
+
+	return result, nil
+}
+
+func (s *State) Scope(id string) (state.Tree, error) {
+	return s, nil
 }
 
 func (s *State) Save() error {
@@ -68,12 +108,13 @@ func Load() *State {
 func (s *State) Get(id string) (string, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+	fmt.Println(id, " ", s.State[id])
 	return s.State[id], nil
 }
 
-func (s *State) Set(key, val string) (Tree, error) {
+func (s *State) Set(key, val string) (state.Tree, error) {
 	s.mutex.Lock()
 	s.State[key] = val
 	s.mutex.Unlock()
-	return Tree{}, nil
+	return s, nil
 }
