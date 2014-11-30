@@ -2,7 +2,6 @@ package mockstate
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -36,20 +35,16 @@ func (s *State) List(dir string) ([]string, error) {
 	result := []string{}
 
 	for key := range s.State {
-		fmt.Println(dir, " ", key)
 		thisdir := path.Dir(key)
 
 		dirok, _ := path.Match(path.Join(dir, "*"), thisdir)
 		fileok, _ := path.Match(path.Join(dir, "*"), key)
 
 		if !dirok && !fileok {
-			fmt.Println("skipping")
 			continue
 		} else if !dirok {
-			fmt.Println("appending", key)
 			result = append(result, path.Base(key))
 		} else {
-			fmt.Println("appending", thisdir)
 			result = append(result, path.Base(thisdir))
 		}
 	}
@@ -108,7 +103,6 @@ func Load() *State {
 func (s *State) Get(id string) (string, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	fmt.Println(id, " ", s.State[id])
 	return s.State[id], nil
 }
 

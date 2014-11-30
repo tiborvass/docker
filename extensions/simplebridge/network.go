@@ -1,7 +1,6 @@
 package simplebridge
 
 import (
-	"fmt"
 	"path"
 
 	"github.com/docker/docker/core"
@@ -34,7 +33,6 @@ func (b *BridgeNetwork) Unlink(name string) error {
 }
 
 func (b *BridgeNetwork) destroy() error {
-	fmt.Println(b.ID)
 	if _, err := b.driver.state.Remove(path.Join("networks", string(b.ID))); err != nil {
 		return err
 	}
