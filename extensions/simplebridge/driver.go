@@ -20,6 +20,10 @@ type BridgeDriver struct {
 	mutex     sync.Mutex
 }
 
+func (d *BridgeDriver) GetNetwork(id string) network.Network {
+	return d.networks[id]
+}
+
 func (d *BridgeDriver) endpointNames() []string {
 	retval := []string{}
 
@@ -73,10 +77,7 @@ func (d *BridgeDriver) loadEndpoint(endpoint string) (*BridgeEndpoint, error) {
 		return nil, err
 	}
 
-	mtuInt, err := strconv.ParseUint(mtu, 10, 32)
-	if err != nil {
-		return nil, err
-	}
+	mtuInt, _ := strconv.ParseUint(mtu, 10, 32)
 
 	return &BridgeEndpoint{
 		interfaceName: iface,
@@ -169,7 +170,9 @@ func (d *BridgeDriver) Unlink(netid, name string, sb sandbox.Sandbox) error {
 		return err
 	}
 
-	delete(d.endpoints, name)
+	if _, err := d.state.Remove(path.Join("endpoints", name)); err != nil {
+		return err
+	}
 
 	return nil
 }
