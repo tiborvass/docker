@@ -7,9 +7,9 @@ import (
 
 type Driver interface {
 	Restore(netstate state.State) error
-	AddNetwork(netid string, netstate state.State) error
-	RemoveNetwork(netid string, netstate state.State) error
+	AddNetwork(netid string) error
+	RemoveNetwork(netid string) error
 
-	Link(netid, name string, sb sandbox.Sandbox, replace bool, netstate state.State) (Endpoint, error)
+	Link(netid, name string, sb sandbox.Sandbox, replace bool) (Endpoint, error)
 	Unlink(netid, name string, sb sandbox.Sandbox) error
 }

@@ -12,12 +12,16 @@ import (
 
 type BridgeNetwork struct {
 	bridge *netlink.Bridge
-	ID     core.DID
+	ID     string
 	driver *BridgeDriver
 }
 
+func (b *BridgeNetwork) Driver() network.Driver {
+	return b.driver
+}
+
 func (b *BridgeNetwork) Id() core.DID {
-	return b.ID
+	return core.DID(b.ID)
 }
 
 func (b *BridgeNetwork) List() []string {
@@ -25,15 +29,15 @@ func (b *BridgeNetwork) List() []string {
 }
 
 func (b *BridgeNetwork) Link(s sandbox.Sandbox, name string, replace bool) (network.Endpoint, error) {
-	return b.driver.Link(s, b.ID, name, replace)
+	return b.driver.Link(b.ID, name, s, replace)
 }
 
 func (b *BridgeNetwork) Unlink(name string) error {
-	return b.driver.Unlink(name)
+	return b.driver.Unlink(b.ID, name, nil)
 }
 
 func (b *BridgeNetwork) destroy() error {
-	if _, err := b.driver.state.Remove(path.Join("networks", string(b.ID))); err != nil {
+	if _, err := b.driver.state.Remove(path.Join("networks", b.ID)); err != nil {
 		return err
 	}
 

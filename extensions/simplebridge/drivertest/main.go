@@ -9,7 +9,7 @@ import (
 )
 
 func create(driver *simplebridge.BridgeDriver) error {
-	if _, err := driver.AddNetwork("test"); err != nil {
+	if err := driver.AddNetwork("test"); err != nil {
 		return err
 	}
 

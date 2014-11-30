@@ -85,7 +85,7 @@ func (c *Controller) RemoveNetwork(id core.DID) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if err := c.driver.RemoveNetwork(string(id), c.state); err != nil {
+	if err := c.driver.RemoveNetwork(string(id)); err != nil {
 		return err
 	}
 
@@ -96,7 +96,7 @@ func (c *Controller) RemoveNetwork(id core.DID) error {
 
 func (c *Controller) NewNetwork() (Network, error) {
 	did := core.DID("") // core.GenerateDID() // func Generatecore.DID() core.DID { return core.DID(uuid.New()) }
-	err := c.driver.AddNetwork(string(did), c.state)
+	err := c.driver.AddNetwork(string(did))
 	if err != nil {
 		return nil, err
 	}

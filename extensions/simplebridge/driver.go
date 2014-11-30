@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
@@ -16,7 +15,7 @@ import (
 
 type BridgeDriver struct {
 	endpoints map[string]*BridgeEndpoint
-	networks  map[core.DID]*BridgeNetwork
+	networks  map[string]*BridgeNetwork
 	state     state.State
 	mutex     sync.Mutex
 }
@@ -37,7 +36,7 @@ func (d *BridgeDriver) endpointNames() []string {
 func (d *BridgeDriver) Restore(s state.State) error {
 	d.state = s
 	d.endpoints = map[string]*BridgeEndpoint{}
-	d.networks = map[core.DID]*BridgeNetwork{}
+	d.networks = map[string]*BridgeNetwork{}
 
 	return d.loadFromState()
 }
@@ -53,6 +52,40 @@ func (d *BridgeDriver) loadFromState() error {
 	return d.loadEndpointsFromState()
 }
 
+func (d *BridgeDriver) loadEndpoint(endpoint string) (*BridgeEndpoint, error) {
+	iface, err := d.state.Get(path.Join("endpoints", endpoint, "interfaceName"))
+	if err != nil {
+		return nil, err
+	}
+
+	networkId, err := d.state.Get(path.Join("endpoints", endpoint, "networkId"))
+	if err != nil {
+		return nil, err
+	}
+
+	hwAddr, err := d.state.Get(path.Join("endpoints", endpoint, "hwAddr"))
+	if err != nil {
+		return nil, err
+	}
+
+	mtu, err := d.state.Get(path.Join("endpoints", endpoint, "mtu"))
+	if err != nil {
+		return nil, err
+	}
+
+	mtuInt, err := strconv.ParseUint(mtu, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BridgeEndpoint{
+		interfaceName: iface,
+		hwAddr:        hwAddr,
+		mtu:           uint(mtuInt),
+		network:       d.networks[networkId],
+	}, nil
+}
+
 func (d *BridgeDriver) loadEndpointsFromState() error {
 	// XXX: locking happens in loadFromState
 	endpoints, err := d.state.List("endpoints")
@@ -61,37 +94,12 @@ func (d *BridgeDriver) loadEndpointsFromState() error {
 	}
 
 	for _, endpoint := range endpoints {
-		iface, err := d.state.Get(path.Join("endpoints", endpoint, "interfaceName"))
+		ep, err := d.loadEndpoint(endpoint)
 		if err != nil {
 			return err
 		}
 
-		networkId, err := d.state.Get(path.Join("endpoints", endpoint, "networkId"))
-		if err != nil {
-			return err
-		}
-
-		hwAddr, err := d.state.Get(path.Join("endpoints", endpoint, "hwAddr"))
-		if err != nil {
-			return err
-		}
-
-		mtu, err := d.state.Get(path.Join("endpoints", endpoint, "mtu"))
-		if err != nil {
-			return err
-		}
-
-		mtuInt, err := strconv.ParseUint(mtu, 10, 32)
-		if err != nil {
-			return err
-		}
-
-		d.endpoints[endpoint] = &BridgeEndpoint{
-			interfaceName: iface,
-			hwAddr:        hwAddr,
-			mtu:           uint(mtuInt),
-			network:       d.networks[core.DID(networkId)],
-		}
+		d.endpoints[endpoint] = ep
 	}
 
 	return nil
@@ -112,9 +120,9 @@ func (d *BridgeDriver) loadNetworksFromState() error {
 
 		bridgeLink := &netlink.Bridge{netlink.LinkAttrs{Name: bridge}}
 
-		d.networks[core.DID(network)] = &BridgeNetwork{
+		d.networks[network] = &BridgeNetwork{
 			bridge: bridgeLink,
-			ID:     core.DID(network),
+			ID:     network,
 			driver: d,
 		}
 	}
@@ -123,7 +131,7 @@ func (d *BridgeDriver) loadNetworksFromState() error {
 }
 
 // discovery driver? should it be hooked here or in the core?
-func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace bool) (network.Endpoint, error) {
+func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (network.Endpoint, error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -137,7 +145,9 @@ func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace
 		return nil, fmt.Errorf("Endpoint %q already taken", name)
 	}
 
-	d.endpoints[name] = ep
+	if _, err := d.state.Set(path.Join("endpoints", name, "networkId"), id); err != nil {
+		return nil, err
+	}
 
 	if err := ep.configure(s); err != nil {
 		return nil, err
@@ -146,12 +156,12 @@ func (d *BridgeDriver) Link(s sandbox.Sandbox, id core.DID, name string, replace
 	return ep, nil
 }
 
-func (d *BridgeDriver) Unlink(name string) error {
+func (d *BridgeDriver) Unlink(netid, name string, sb sandbox.Sandbox) error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
-	ep, ok := d.endpoints[name]
-	if !ok {
+	ep, err := d.loadEndpoint(name)
+	if err != nil {
 		return fmt.Errorf("No endpoint for name %q", name)
 	}
 
@@ -164,19 +174,19 @@ func (d *BridgeDriver) Unlink(name string) error {
 	return nil
 }
 
-func (d *BridgeDriver) AddNetwork(id core.DID) (network.Network, error) {
-	bridge, err := d.createBridge(string(id))
+func (d *BridgeDriver) AddNetwork(id string) error {
+	bridge, err := d.createBridge(id)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	d.mutex.Lock()
 	d.networks[id] = bridge
 	d.mutex.Unlock()
-	return bridge, nil
+	return nil
 }
 
-func (d *BridgeDriver) RemoveNetwork(id core.DID) error {
+func (d *BridgeDriver) RemoveNetwork(id string) error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	bridge, ok := d.networks[id]
