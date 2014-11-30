@@ -105,6 +105,8 @@ type Daemon struct {
 	execDriver     execdriver.Driver
 	trustStore     *trust.TrustStore
 	extensions     *extensions.Controller
+	networks       *network.Controller
+	sandboxes      *sandbox.Controller
 }
 
 // Install installs daemon capabilities to eng.
@@ -293,26 +295,29 @@ func (daemon *Daemon) LogToDisk(src *broadcastwriter.BroadcastWriter, dst, strea
 }
 
 func (daemon *Daemon) restore() error {
-	// FIXME: actually extract the state of the network subsystem
-	var state state.State
-	if err := daemon.extensions.Restore(state); err != nil {
+	if err := daemon.extensions.Restore(); err != nil {
+		return err
+	}
+	if err := daemon.network.Restore(); err != nil {
+		return err
+	}
+	if err := daemon.sandboxes.Restore(); err != nil {
 		return err
 	}
 
 	// FIXME:networking Find a proper place for this.
 	// If we had no previous known state and no network extension loaded,
 	// install the defaut one.
-	networks := daemon.extensions.Networks()
-	if !networks.HasDriver() {
+	if !daemon.networks.HasDriver() {
 		if err := daemon.extensions.Install(core.DID("simpledbridge"), &simplebridge.Extension{}); err != nil {
 			return fmt.Errorf("failed to install default network driver \"simplebridge\": %v", err)
 		}
 
 		// Create a default network for the default driver.
-		if net, err := networks.NewNetwork(); err != nil {
+		if net, err := daemon.networks.NewNetwork(); err != nil {
 			return fmt.Errorf("failed to create default network using default driver: %v", err)
 		} else {
-			networks.DefaultNetworkID = net.Id()
+			daemon.networks.DefaultNetworkID = net.Id()
 		}
 	}
 
@@ -789,6 +794,7 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		return nil, fmt.Errorf("Couldn't create Tag store: %s", err)
 	}
 
+	// FIXME: move trust to its own subsystem
 	trustDir := path.Join(config.Root, "trust")
 	if err := os.MkdirAll(trustDir, 0700); err != nil && !os.IsExist(err) {
 		return nil, err
@@ -852,8 +858,14 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		execDriver:     ed,
 		eng:            eng,
 		trustStore:     t,
-		extensions:     extensions.NewController(state),
+		state:          state,
+		networks:	network.NewController(state.Scope("/networks")),
+		sandboxes:	sandbox.NewController(state.Scope("/sandboxes")),
+		extensions:	extensions.NewController(state.Scope("/extensions")),
 	}
+
+	// Start subsystems
+	// FIXME: restore should be called separately from newdaemon
 
 	if err := daemon.restore(); err != nil {
 		return nil, err
@@ -862,6 +874,9 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	// Setup shutdown handlers
 	// FIXME: can these shutdown handlers be registered closer to their source?
 	eng.OnShutdown(func() {
+		// FIXME netdriver: call Shutdown for each subsystem
+
+
 		// FIXME: if these cleanup steps can be called concurrently, register
 		// them as separate handlers to speed up total shutdown time
 		// FIXME: use engine logging instead of log.Errorf

@@ -10,44 +10,33 @@ import (
 	"github.com/docker/docker/state"
 )
 
+
 // ExtensionController manages the lifetime of loaded extensions. It provides
 // an implementation of core.Core for extensions to interact with Docker.
 func NewController(state state.State) *Controller {
 	return &Controller{
-		networks:   network.NewController(state),
-		sandboxes:  sandbox.NewController(),
-		extensions: make(map[core.DID]*extensionData),
+		state: state,
 	}
 }
 
+// NOTE netdriver: all extensions are initialized by calling New...()
+// and passing a dedicated state object.
+// The extension is responsible for 1) reading initial state for initialization,
+// and 2) continue watching for state changes to resolve them. This means
+// extensions need a way to spawn long-running goroutines. The core is
+// responsible for providing a facility for that.
 type Controller struct {
-	networks   *network.Controller
-	sandboxes  *sandbox.Controller
-	extensions map[core.DID]*extensionData
-}
-
-type extensionData struct {
-	enabled   bool
-	extension Extension
+	state state.State
 }
 
 func (c *Controller) Restore(state state.State) error {
-	// Restore sandboxes first, because networking relies on their existence in
-	// order to restore endpoints.
-	if err := c.sandboxes.Restore(state); err != nil {
-		return err
-	}
-
-	// Restore networks and endpoints.
-	if err := c.networks.Restore(state); err != nil {
-		return err
-	}
-
-	return nil
+	// Go over all extensions.
+	// Re-initialize those that are activated.
 }
 
-func (c *Controller) Install(id core.DID, extension Extension) error {
-	if _, err := c.Get(id); err == nil {
+func (c *Controller) Install(name string) error {
+	// FIXME: hardcoded extensions should have their own hardcoded ID.
+	if _, err := c.Get(name); err == nil {
 		return fmt.Errorf("failed to install extension with duplicated ID %q", id)
 	}
 
@@ -60,15 +49,67 @@ func (c *Controller) Install(id core.DID, extension Extension) error {
 	return nil
 }
 
-func (c *Controller) Get(id core.DID) (Extension, error) {
-	if ext, err := c.getExtensionData(id); err != nil {
+func (c *Controller) Get(name string) (Extension, error) {
+	state, err := c.state.Scope("extensions/" + name + "/state")
+	if err != nil {
 		return nil, err
-	} else {
-		return ext.extension, nil
 	}
+	return &builtinExtension{c, state}, nil
 }
 
-func (c *Controller) Enable(id core.DID) error {
+type builtinExtension struct {
+	c *Controller
+	state state.State
+}
+
+func (e *builtinExtension) newContext() (*extensionContext, error) {
+	ctx := &builtinContext{
+	   c: c,
+	   e: e,
+	   state: c.state.Scope("extensions/" + id + "/state"),
+	   config: c.state.Scope("extensions/" + id + "/config"),
+	}
+	ctx.Context, ctx.cancel = context.WithCancel(context.Background())
+	return ctx, nil
+}
+
+// builtinContext exposes the core-facing side of a Context.
+type builtinContext struct {
+	context.Context
+
+	e Extension
+	c *Controller
+
+	state state.State
+	config state.State
+	cancel func()
+}
+
+func (ctx *builtinContext) MyState() state.State {
+	return ctx.state
+}
+
+
+func (ctx *builtinContext) MyConfig() state.State {
+	return ctx.config
+}
+
+func (ctx *builtinContext) RegisterNetworkDriver(driver network.Driver, name string) error {
+	// FIXME:networking Quick & dirty test code
+	ctx.c.daemon.networks.AddDriver(driver)
+	return nil
+}
+
+
+func (e *builtinExtension) Install(c Context) error {
+	return nil
+}
+
+func (e *builtinExtension) Uninstall(c Context) error {
+	return nil
+}
+
+func (c *Controller) Enable(name string) error {
 	ext, err := c.getExtensionData(id)
 	if err != nil {
 		return err
@@ -122,46 +163,10 @@ func (c *Controller) Disabled() []core.DID {
 	return c.listExtensions(func(e *extensionData) bool { return !e.enabled })
 }
 
-func (c *Controller) Networks() *network.Controller {
-	return c.networks
-}
-
-func (c *Controller) Sandboxes() *sandbox.Controller {
-	return c.sandboxes
-}
-
-func (c *Controller) getExtensionData(id core.DID) (*extensionData, error) {
-	if ext, ok := c.extensions[id]; ok {
-		return ext, nil
-	}
-	return nil, fmt.Errorf("unknown extension ID %q", id)
-}
-
 func (c *Controller) listExtensions(predicate func(*extensionData) bool) []core.DID {
 	result := make([]core.DID, 0, len(c.extensions))
 	for did := range c.extensions {
 		result = append(result, did)
 	}
 	return result
-}
-
-// The coreProvider implements extensions.Core. We rely on this extra structure
-// to avoid publicly exposing Core interface in extensions.Controller.
-type coreProvider struct {
-	controller *Controller
-}
-
-func newCoreProvider(c *Controller) coreProvider {
-	return coreProvider{controller: c}
-}
-
-func (c coreProvider) RegisterNetworkDriver(driver network.Driver, name string) error {
-	// FIXME:networking Quick & dirty test code
-	c.controller.networks.AddDriver(driver)
-	return nil
-}
-
-func (c coreProvider) UnregisterNetworkDriver(name string) error {
-	// FIXME:networking
-	return nil
 }
