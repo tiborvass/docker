@@ -135,6 +135,19 @@ Please let your co-maintainers and other contributors know by raising a pull
 request that comments out your `MAINTAINERS` file entry using a `#`.
 """
 
+	[Rules.lead]
+
+	title = "What does a lead do?"
+
+	text = """
+Most groups of people in the project have a lead. A lead is responsible, by default, for
+circulating information, breaking ties, and representing the group.
+How this is implemented is left up to each group. 
+Leading a group is just a job. It does not grant higher status - just more responsibilities.
+In particular, everyone should make sure that free flow of information and opinions should
+never be suppressed on account of a lead's opinion or feelings.
+"""
+
 	[Rules.no direct push]
 
 	title = "I'm a maintainer. Should I make pull requests too?"
@@ -320,7 +333,7 @@ made through a pull request.
 			lead = "dmp42"
 
 			mustreview = [
-				"registry/"
+				"docker-registry/"
 			]
 
 		[Org.Subsystems.build tools]
@@ -386,4 +399,3 @@ made through a pull request.
 	Name = "Victor Vieux"
 	Email = "vieux@docker.com"
 	Github = "vieux"
-
