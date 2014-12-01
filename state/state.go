@@ -1,14 +1,11 @@
 package state
 
-import (
-	"io"
-
-	"github.com/docker/docker/core"
-)
+import "io"
 
 // FIXME:networking Just to get things to build
 type State interface {
-	Scope(core.DID) State
+	Tree
+	List(dir string) ([]string, error)
 }
 
 // github.com/docker/docker/state
@@ -37,7 +34,7 @@ type Tree interface {
 	Diff(other Tree) (added, removed Tree)
 	Walk(func(key string, entry Value)) error
 	Add(key string, overlay Tree) (Tree, error)
-	Substract(key string, whiteout Tree) (Tree, error)
+	Subtract(key string, whiteout Tree) (Tree, error)
 	Scope(key string) (Tree, error)
 	Pipeline() Pipeline
 }

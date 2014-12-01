@@ -5,8 +5,7 @@ package network
 import (
 	"net"
 
-	// FIXME:networking Should libcontainer depend on docker/pkg?
-	"github.com/docker/docker/pkg/netlink"
+	"github.com/docker/libcontainer/netlink"
 )
 
 func InterfaceUp(name string) error {

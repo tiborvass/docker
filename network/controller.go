@@ -60,7 +60,8 @@ func (c *Controller) Restore(s state.State) error {
 
 	// Load list of networks
 	// Call drivers.Restore
-	return nil
+
+	return c.driver.Restore(s)
 }
 
 func (c *Controller) ListNetworks() []core.DID {
@@ -84,7 +85,7 @@ func (c *Controller) RemoveNetwork(id core.DID) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if err := c.driver.RemoveNetwork(string(id), c.state.Scope(id)); err != nil {
+	if err := c.driver.RemoveNetwork(string(id)); err != nil {
 		return err
 	}
 
@@ -95,7 +96,7 @@ func (c *Controller) RemoveNetwork(id core.DID) error {
 
 func (c *Controller) NewNetwork() (Network, error) {
 	did := core.DID("") // core.GenerateDID() // func Generatecore.DID() core.DID { return core.DID(uuid.New()) }
-	err := c.driver.AddNetwork(string(did), c.state.Scope(did))
+	err := c.driver.AddNetwork(string(did))
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +120,7 @@ type Network interface {
 	Id() core.DID
 
 	// List returns the IDs of available networks
-	List() ([]core.DID, error)
+	List() []string
 
 	// Link makes the specified sandbox reachable as a named endpoint on the network.
 	// If the endpoint already exists, the call will either fail (replace=false), or
@@ -144,4 +145,5 @@ type Endpoint interface {
 
 	// FIXME:networking Should we take nat.Port string format (i.e.: "80/tcp")?
 	Expose(portspec string, publish bool) error
+	Network() Network
 }
