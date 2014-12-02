@@ -37,7 +37,7 @@ func (b *BridgeNetwork) Unlink(name string) error {
 }
 
 func (b *BridgeNetwork) destroy() error {
-	if _, err := b.driver.state.Remove(path.Join("networks", b.ID)); err != nil {
+	if err := b.driver.state.Remove(path.Join("networks", b.ID)); err != nil {
 		return err
 	}
 

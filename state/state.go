@@ -28,14 +28,14 @@ type DB interface {
 
 type Tree interface {
 	Get(key string) (string, error)
-	Set(key, val string) (Tree, error)
-	Mkdir(key string) (Tree, error)
-	Remove(key string) (Tree, error)
+	Set(key, val string) error
+	Mkdir(key string) error
+	Remove(key string) error
 	Diff(other Tree) (added, removed Tree)
 	Walk(func(key string, entry Value)) error
 	Add(key string, overlay Tree) (Tree, error)
 	Subtract(key string, whiteout Tree) (Tree, error)
-	Scope(key string) (Tree, error)
+	Scope(key string) (State, error)
 	Pipeline() Pipeline
 }
 

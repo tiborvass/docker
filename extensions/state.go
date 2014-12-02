@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/docker/docker/state"
 	"github.com/docker/libpack"
 )
 
@@ -75,3 +76,10 @@ func (s GitState) Mkdir(dir string) error {
 	}
 	return s.db.Commit(fmt.Sprintf("mkdir %q", dir))
 }
+
+func (s GitState) Diff(other state.Tree) (added, removed state.Tree)            { return nil, nil }
+func (s GitState) Walk(func(key string, entry state.Value)) error               { return nil }
+func (s GitState) Add(key string, overlay state.Tree) (state.Tree, error)       { return nil, nil }
+func (s GitState) Subtract(key string, whiteout state.Tree) (state.Tree, error) { return nil, nil }
+func (s GitState) Scope(key string) (state.State, error)                        { return nil, nil }
+func (s GitState) Pipeline() state.Pipeline                                     { return nil }
