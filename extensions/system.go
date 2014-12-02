@@ -1,9 +1,12 @@
 package extensions
 
-import "github.com/docker/docker/network"
+import (
+	"github.com/docker/docker/network"
+	"github.com/docker/docker/state"
+)
 
 type Context interface {
-	context.Context
+	//context.Context // FIXME get to compile
 
 	MyState() state.State
 	MyConfig() state.State
