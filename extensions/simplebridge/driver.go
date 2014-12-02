@@ -146,7 +146,7 @@ func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (n
 		return nil, fmt.Errorf("Endpoint %q already taken", name)
 	}
 
-	if _, err := d.state.Set(path.Join("endpoints", name, "networkId"), id); err != nil {
+	if err := d.state.Set(path.Join("endpoints", name, "networkId"), id); err != nil {
 		return nil, err
 	}
 
@@ -170,7 +170,7 @@ func (d *BridgeDriver) Unlink(netid, name string, sb sandbox.Sandbox) error {
 		return err
 	}
 
-	if _, err := d.state.Remove(path.Join("endpoints", name)); err != nil {
+	if err := d.state.Remove(path.Join("endpoints", name)); err != nil {
 		return err
 	}
 
@@ -209,7 +209,7 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
-	if _, err := d.state.Set(path.Join("networks", id, "bridgeInterface"), id); err != nil {
+	if err := d.state.Set(path.Join("networks", id, "bridgeInterface"), id); err != nil {
 		return nil, err
 	}
 

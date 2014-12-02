@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/docker/docker/extensions"
 	"github.com/docker/docker/extensions/simplebridge"
-	state "github.com/docker/docker/extensions/simplebridge/drivertest/mockstate"
 )
 
 func create(driver *simplebridge.BridgeDriver) error {
@@ -69,9 +69,13 @@ func main() {
 		throw("supply create or destroy")
 	}
 
-	mystate := state.Load()
+	state, err := extensions.GitStateFromFolder("/tmp/drivertest", "drivertest")
+	if err != nil {
+		throw(err)
+	}
+
 	driver := &simplebridge.BridgeDriver{}
-	if err := driver.Restore(mystate); err != nil {
+	if err := driver.Restore(state); err != nil {
 		throw(err)
 	}
 
@@ -94,10 +98,6 @@ func main() {
 		}
 	default:
 		throw("supply create or destroy")
-	}
-
-	if err := mystate.Save(); err != nil {
-		throw(err.Error())
 	}
 
 	os.Exit(0)
