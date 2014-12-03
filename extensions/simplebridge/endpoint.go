@@ -10,6 +10,8 @@ import (
 )
 
 type BridgeEndpoint struct {
+	ID string
+
 	bridgeVeth    *netlink.Veth
 	containerVeth *netlink.Veth
 
@@ -71,6 +73,6 @@ func (b *BridgeEndpoint) configure(name string, s sandbox.Sandbox) error {
 	return nil
 }
 
-func (b *BridgeEndpoint) deconfigure() error {
-	return nil
+func (b *BridgeEndpoint) deconfigure(name string) error {
+	return netlink.LinkDel(&netlink.Veth{LinkAttrs: netlink.LinkAttrs{Name: name}})
 }

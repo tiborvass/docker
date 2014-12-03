@@ -1,8 +1,6 @@
 package simplebridge
 
 import (
-	"path"
-
 	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
@@ -29,7 +27,7 @@ func (b *BridgeNetwork) Name() string {
 }
 
 func (b *BridgeNetwork) List() []string {
-	return b.driver.endpointNames()
+	return []string{} // FIXME finish
 }
 
 func (b *BridgeNetwork) Link(s sandbox.Sandbox, name string, replace bool) (network.Endpoint, error) {
@@ -41,9 +39,5 @@ func (b *BridgeNetwork) Unlink(name string) error {
 }
 
 func (b *BridgeNetwork) destroy() error {
-	if err := b.driver.state.Remove(path.Join("networks", b.ID)); err != nil {
-		return err
-	}
-
 	return netlink.LinkDel(b.bridge)
 }
