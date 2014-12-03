@@ -24,6 +24,10 @@ func (b *BridgeNetwork) Id() core.DID {
 	return core.DID(b.ID)
 }
 
+func (b *BridgeNetwork) Name() string {
+	return b.ID
+}
+
 func (b *BridgeNetwork) List() []string {
 	return b.driver.endpointNames()
 }

@@ -49,11 +49,11 @@ func (d *BridgeDriver) loadFromState() error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
-	if err := d.loadNetworksFromState(); err != nil {
-		return err
-	}
+	// FIXME error checking skipped until better facilities for missing trees exist
+	d.loadNetworksFromState()
+	d.loadEndpointsFromState()
 
-	return d.loadEndpointsFromState()
+	return nil
 }
 
 func (d *BridgeDriver) loadEndpoint(endpoint string) (*BridgeEndpoint, error) {
@@ -131,8 +131,16 @@ func (d *BridgeDriver) loadNetworksFromState() error {
 	return nil
 }
 
+func vethNameTooLong(name string) bool {
+	return len(name) > 8 // FIXME write a test for this
+}
+
 // discovery driver? should it be hooked here or in the core?
 func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (network.Endpoint, error) {
+	if vethNameTooLong(name) {
+		return nil, fmt.Errorf("name %q is too long, must be 8 characters", name)
+	}
+
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -150,7 +158,7 @@ func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (n
 		return nil, err
 	}
 
-	if err := ep.configure(s); err != nil {
+	if err := ep.configure(name, s); err != nil {
 		return nil, err
 	}
 
