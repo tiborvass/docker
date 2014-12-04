@@ -8,7 +8,7 @@ import (
 	"github.com/docker/docker/state"
 )
 
-func NewController() *Controller {
+func NewController(s state.State) *Controller {
 	return &Controller{}
 }
 

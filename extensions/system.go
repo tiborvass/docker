@@ -1,20 +1,6 @@
 package extensions
 
-import (
-	"github.com/docker/docker/network"
-	"github.com/docker/docker/state"
-)
-
-type Context interface {
-	//context.Context // FIXME get to compile
-
-	MyState() state.State
-	MyConfig() state.State
-
-	RegisterNetworkDriver(driver network.Driver, name string) error
-	UnregisterNetworkDriver(name string) error
-	Log(msg string)
-}
+import "github.com/docker/docker/extensions/context"
 
 // An extension is a object which can extend the capabilities of Docker by
 // hooking into various points of its lifecycle: networking, storage, sandboxing,
@@ -27,12 +13,12 @@ type Extension interface {
 	// Once installed the extension must be enabled separately. Install MUST NOT
 	// interfere with the functioning and user experience of Docker.
 	//
-	Install(c Context) error
+	Install(c context.Context) error
 
 	// Uninstall is called when the extension is uninstalled.
 	// The extension should use it to tear down resources initialized at install,
 	// and cleaning up the host environment of any side effects.
-	Uninstall(c Context) error
+	Uninstall(c context.Context) error
 
 	// Enable is called when a) the user enables the extension, or b) the daemon is starting
 	// and the extension is already enabled.
@@ -40,8 +26,8 @@ type Extension interface {
 	// The extension should use it to hook itself into the core to modify its behavior.
 	// See the Core interface for available interactions with the core.
 	//
-	Enable(c Context) error
+	Enable(c context.Context) error
 
 	// Disabled is called when the extension is disabled.
-	Disable(c Context) error
+	Disable(c context.Context) error
 }
