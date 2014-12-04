@@ -72,14 +72,14 @@ func (daemon *Daemon) ContainerCreate(job *engine.Job) engine.Status {
 
 func (daemon *Daemon) attachContainerToDefaultNetwork(cid, name string) (network.Endpoint, error) {
 	// Retrieve the default network that the new container should be joining.
-	netid := daemon.extensions.Networks().DefaultNetworkID
-	defaultNet, err := daemon.extensions.Networks().GetNetwork(netid)
+	netid := daemon.networks.DefaultNetworkID
+	defaultNet, err := daemon.networks.GetNetwork(netid)
 	if err != nil {
 		return nil, err
 	}
 
 	// Retrieve the Sandbox corresponding to the starting container.
-	sandbox, err := daemon.extensions.Sandboxes().Get(core.DID(cid))
+	sandbox, err := daemon.sandboxes.Get(core.DID(cid))
 	if err != nil {
 		return nil, err
 	}

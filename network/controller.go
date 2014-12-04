@@ -29,7 +29,7 @@ func NewController(s state.State) *Controller {
 }
 
 // FIXME:networking
-func (c *Controller) AddDriver(driver Driver) error {
+func (c *Controller) AddDriver(driver Driver, name string) error {
 	c.driver = driver
 	return nil
 }

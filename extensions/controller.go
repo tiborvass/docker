@@ -3,17 +3,17 @@ package extensions
 import (
 	"fmt"
 
-	"github.com/docker/docker/core"
-	"github.com/docker/docker/network"
+	log "github.com/Sirupsen/logrus"
+	"github.com/docker/docker/extensions/context"
 	"github.com/docker/docker/state"
 )
 
-// ExtensionController manages the lifetime of loaded extensions. It provides
-// an implementation of core.Core for extensions to interact with Docker.
-func NewController(state state.State) *Controller {
+// ExtensionController manages the lifetime of loaded extensions.
+func NewController(state state.State, core context.Core) *Controller {
 	return &Controller{
+		core:       core,
+		extensions: make(map[string]*extensionData),
 		state:      state,
-		extensions: []core.DID{},
 	}
 }
 
@@ -24,8 +24,14 @@ func NewController(state state.State) *Controller {
 // extensions need a way to spawn long-running goroutines. The core is
 // responsible for providing a facility for that.
 type Controller struct {
+	core       context.Core
+	extensions map[string]*extensionData
 	state      state.State
-	extensions []core.DID
+}
+
+type extensionData struct {
+	enabled   bool
+	extension Extension
 }
 
 func (c *Controller) Restore(state state.State) error {
@@ -34,166 +40,113 @@ func (c *Controller) Restore(state state.State) error {
 	return nil
 }
 
+// Install attempts to find the extension matching the specified names and
+// initializes it. Once installed, it can respond to get, enable, and disable
+// messages.
 func (c *Controller) Install(name string) error {
-	// FIXME: hardcoded extensions should have their own hardcoded ID.
-	if id, err := c.Get(name); err == nil {
-		return fmt.Errorf("failed to install extension with duplicated ID %q", id)
+	ext, err := c.load(name)
+	if err == nil {
+		return fmt.Errorf("failed to install extension with duplicated name %q", name)
 	}
 
-	/// FIXME: none of this actually works
-	//extCore := newCoreProvider(c)
-	//if err := extension.Install(extCore); err != nil {
-	//return fmt.Errorf("failed to install extension: %v", err)
-	//}
+	ctx := context.Root()
+	if err := ext.Install(ctx); err != nil {
+		return fmt.Errorf("failed to install extension: %v", err)
+	}
 
-	//c.extensions[id] = &extensionData{extension: extension}
+	c.extensions[name] = &extensionData{extension: ext}
 	return nil
 }
 
-func (c *Controller) Get(name string) (Extension, error) {
+// Load returns the extension corresponding to the specified name, or an error
+// if either no extension was found, or an extension with that name is already
+// registered.
+func (c *Controller) load(name string) (Extension, error) {
+	if _, ok := c.extensions[name]; ok {
+		return nil, fmt.Errorf("extention %q is already loaded", name)
+	}
+
 	state, err := c.state.Scope("extensions/" + name + "/state")
 	if err != nil {
 		return nil, err
 	}
-	return &builtinExtension{c, state}, nil
+
+	return newBuiltinExtension(name, c, state)
 }
 
-type builtinExtension struct {
-	c     *Controller
-	state state.State
-}
-
-func (e *builtinExtension) newContext() (*builtinContext, error) {
-	scope, err := e.state.Scope("/config")
-	if err != nil {
-		return nil, err
+// Get returns an extension previously installed under the specified name.
+func (c *Controller) Get(name string) (Extension, error) {
+	if extData, ok := c.extensions[name]; ok {
+		return extData.extension, nil
 	}
-
-	ctx := &builtinContext{
-		c:      e.c,
-		e:      e,
-		state:  e.state,
-		config: scope,
-	}
-
-	// FIXME get to compile
-	//ctx.Context, ctx.cancel = context.WithCancel(context.Background())
-	return ctx, nil
-}
-
-func (e *builtinExtension) Install(c Context) error {
-	return nil
-}
-
-func (ctx *builtinExtension) Uninstall(c Context) error {
-	return nil
-}
-
-func (ctx *builtinExtension) Disable(c Context) error {
-	return nil
-}
-
-func (ctx *builtinExtension) Enable(c Context) error {
-	return nil
-}
-
-// builtinContext exposes the core-facing side of a Context.
-type builtinContext struct {
-	//context.Context // FIXME get to compile
-
-	e Extension
-	c *Controller
-
-	state  state.State
-	config state.State
-	cancel func()
-}
-
-func (ctx *builtinContext) MyState() state.State {
-	return ctx.state
-}
-
-func (ctx *builtinContext) MyConfig() state.State {
-	return ctx.config
-}
-
-func (ctx *builtinContext) RegisterNetworkDriver(driver network.Driver, name string) error {
-	// FIXME:networking Quick & dirty test code
-	// FIXME get to compile first
-	//ctx.c.daemon.networks.AddDriver(driver)
-	return nil
+	return nil, fmt.Errorf("extension %q is not installed", name)
 }
 
 func (c *Controller) Enable(name string) error {
-	/* FIXME get to compile
-	ext, err := c.getExtensionData(id)
+	ext, err := c.getExtensionData(name)
 	if err != nil {
 		return err
 	}
 
 	// Silently ignore is extension is already enabled.
 	if ext.enabled {
-		log.Debugf("Attempt to Enable() an already enabled extension %q", id)
+		log.Debugf("Attempt to Enable() an already enabled extension %q", name)
 		return nil
 	}
 
-	extCore := newCoreProvider(c)
-	if err := ext.extension.Enable(extCore); err != nil {
+	ctx := context.Root()
+	if err := ext.extension.Enable(ctx); err != nil {
 		return err
 	}
 
 	ext.enabled = true
 	return nil
-	*/
-	return nil
 }
 
-func (c *Controller) Disable(id core.DID) error {
-	/* FIXME get to compile
-	ext, err := c.getExtensionData(id)
+func (c *Controller) Disable(name string) error {
+	ext, err := c.getExtensionData(name)
 	if err != nil {
 		return err
 	}
 
 	// Silently ignore is extension is already disabled.
 	if !ext.enabled {
-		log.Debugf("Attempt to Disable() an already disabled extension %q", id)
+		log.Debugf("Attempt to Disable() an already disabled extension %q", name)
 		return nil
 	}
 
-	extCore := newCoreProvider(c)
-	if err := ext.extension.Disable(extCore); err != nil {
+	ctx := context.Root()
+	if err := ext.extension.Disable(ctx); err != nil {
 		return err
 	}
 
 	ext.enabled = false
-	*/
 	return nil
 }
 
-type extensionData struct {
-	enabled bool
-}
-
-func (c *Controller) Available() []core.DID {
+func (c *Controller) Available() []string {
 	return c.listExtensions(func(e *extensionData) bool { return true })
-	return []core.DID{}
 }
 
-func (c *Controller) Enabled() []core.DID {
+func (c *Controller) Enabled() []string {
 	return c.listExtensions(func(e *extensionData) bool { return e.enabled })
 }
 
-func (c *Controller) Disabled() []core.DID {
+func (c *Controller) Disabled() []string {
 	return c.listExtensions(func(e *extensionData) bool { return !e.enabled })
 }
 
-func (c *Controller) listExtensions(predicate func(*extensionData) bool) []core.DID {
-	result := make([]core.DID, 0, len(c.extensions))
-	for _, did := range c.extensions {
-		result = append(result, did)
+func (c *Controller) getExtensionData(name string) (*extensionData, error) {
+	if ext, ok := c.extensions[name]; ok {
+		return ext, nil
+	}
+	return nil, fmt.Errorf("unknown extension %q", name)
+}
+
+func (c *Controller) listExtensions(predicate func(*extensionData) bool) []string {
+	result := make([]string, 0, len(c.extensions))
+	for name := range c.extensions {
+		result = append(result, name)
 	}
 	return result
-
-	return []core.DID{}
 }

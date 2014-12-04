@@ -16,7 +16,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/docker/api"
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/docker/daemon/execdriver/execdrivers"
 	"github.com/docker/docker/daemon/execdriver/lxc"
@@ -30,6 +29,7 @@ import (
 	"github.com/docker/docker/extensions/simplebridge"
 	"github.com/docker/docker/graph"
 	"github.com/docker/docker/image"
+	"github.com/docker/docker/network"
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/docker/pkg/broadcastwriter"
 	"github.com/docker/docker/pkg/graphdb"
@@ -40,6 +40,7 @@ import (
 	"github.com/docker/docker/pkg/sysinfo"
 	"github.com/docker/docker/pkg/truncindex"
 	"github.com/docker/docker/runconfig"
+	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
 	"github.com/docker/docker/trust"
 	"github.com/docker/docker/utils"
@@ -104,6 +105,7 @@ type Daemon struct {
 	driver         graphdriver.Driver
 	execDriver     execdriver.Driver
 	trustStore     *trust.TrustStore
+	state          state.State
 	extensions     *extensions.Controller
 	networks       *network.Controller
 	sandboxes      *sandbox.Controller
@@ -295,22 +297,31 @@ func (daemon *Daemon) LogToDisk(src *broadcastwriter.BroadcastWriter, dst, strea
 }
 
 func (daemon *Daemon) restore() error {
-	if err := daemon.extensions.Restore(); err != nil {
-		return err
-	}
-	if err := daemon.network.Restore(); err != nil {
-		return err
-	}
-	if err := daemon.sandboxes.Restore(); err != nil {
-		return err
-	}
+	// FIXME:networking it needs a state
+	//if err := daemon.extensions.Restore(); err != nil {
+	//	return err
+	//}
+	//if err := daemon.network.Restore(); err != nil {
+	//	return err
+	//}
+	//if err := daemon.sandboxes.Restore(); err != nil {
+	//	return err
+	//}
 
 	// FIXME:networking Find a proper place for this.
 	// If we had no previous known state and no network extension loaded,
 	// install the defaut one.
 	if !daemon.networks.HasDriver() {
-		if err := daemon.extensions.Install(core.DID("simpledbridge"), &simplebridge.Extension{}); err != nil {
-			return fmt.Errorf("failed to install default network driver \"simplebridge\": %v", err)
+		if err := extensions.RegisterBuiltin("simplebridge", func() extensions.Extension { return &simplebridge.Extension{} }); err != nil {
+			return err
+		}
+
+		if err := daemon.extensions.Install("simplebridge"); err != nil {
+			return err
+		}
+
+		if err := daemon.extensions.Enable("simplebridge"); err != nil {
+			return err
 		}
 
 		// Create a default network for the default driver.
@@ -675,9 +686,6 @@ func NewDaemon(config *Config, eng *engine.Engine) (*Daemon, error) {
 }
 
 func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error) {
-	// FIXME:networking Needs proper instantiation
-	var state state.State
-
 	if config.Mtu == 0 {
 		config.Mtu = getDefaultNetworkMtu()
 	}
@@ -841,6 +849,19 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		return nil, err
 	}
 
+	// FIXME:networking Needs proper instantiation
+	rootState, err := extensions.GitStateFromFolder("/tmp/gitState", "root")
+	if err != nil {
+		return nil, err
+	}
+
+	controllerStates := map[string]state.State{}
+	for _, scope := range []string{"networks", "sandboxes", "extensions"} {
+		if controllerStates[scope], err = rootState.Scope("/" + scope); err != nil {
+			return nil, err
+		}
+	}
+
 	daemon := &Daemon{
 		ID:             trustKey.PublicKey().KeyID(),
 		repository:     daemonRepo,
@@ -858,15 +879,15 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		execDriver:     ed,
 		eng:            eng,
 		trustStore:     t,
-		state:          state,
-		networks:	network.NewController(state.Scope("/networks")),
-		sandboxes:	sandbox.NewController(state.Scope("/sandboxes")),
-		extensions:	extensions.NewController(state.Scope("/extensions")),
+		state:          rootState,
+		networks:       network.NewController(controllerStates["networks"]),
+		sandboxes:      sandbox.NewController(controllerStates["sandboxes"]),
 	}
+
+	daemon.extensions = extensions.NewController(controllerStates["extensions"], daemon)
 
 	// Start subsystems
 	// FIXME: restore should be called separately from newdaemon
-
 	if err := daemon.restore(); err != nil {
 		return nil, err
 	}
@@ -875,7 +896,6 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	// FIXME: can these shutdown handlers be registered closer to their source?
 	eng.OnShutdown(func() {
 		// FIXME netdriver: call Shutdown for each subsystem
-
 
 		// FIXME: if these cleanup steps can be called concurrently, register
 		// them as separate handlers to speed up total shutdown time
