@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/version"
-	"github.com/tiborvass/docker/vendor/src/github.com/docker/libtrust"
+	"github.com/docker/libtrust"
 )
 
 const (
