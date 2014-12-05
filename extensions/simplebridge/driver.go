@@ -2,7 +2,6 @@ package simplebridge
 
 import (
 	"fmt"
-	"path"
 	"strconv"
 	"sync"
 
@@ -189,10 +188,6 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
 	if err := netlink.LinkAdd(dockerbridge); err != nil {
-		return nil, err
-	}
-
-	if err := d.state.Set(path.Join("networks", id, "bridgeInterface"), id); err != nil {
 		return nil, err
 	}
 
