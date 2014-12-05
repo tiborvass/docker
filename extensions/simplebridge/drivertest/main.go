@@ -31,7 +31,7 @@ func createEndpoint(driver *simplebridge.BridgeDriver) error {
 		return errors.New("network does not exist")
 	}
 
-	if _, err := driver.Link("test", "endpointtest", nil, true); err != nil {
+	if _, err := driver.Link("test", "ept", nil, true); err != nil {
 		return err
 	}
 
@@ -44,7 +44,7 @@ func destroyEndpoint(driver *simplebridge.BridgeDriver) error {
 		return errors.New("network does not exist")
 	}
 
-	if err := driver.Unlink("test", "endpointtest", nil); err != nil {
+	if err := driver.Unlink("test", "ept", nil); err != nil {
 		return err
 	}
 
