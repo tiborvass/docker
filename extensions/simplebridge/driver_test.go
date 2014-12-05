@@ -1,6 +1,7 @@
 package simplebridge
 
 import (
+	"io/ioutil"
 	"testing"
 
 	"github.com/docker/docker/extensions"
@@ -15,12 +16,12 @@ func createNetwork(t *testing.T) *BridgeDriver {
 
 	driver := &BridgeDriver{}
 
-	//dir, err := ioutil.TempDir("", "simplebridge")
-	//if err != nil {
-	//t.Fatal(err)
-	//}
+	dir, err := ioutil.TempDir("", "simplebridge")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	state, err := extensions.GitStateFromFolder("/tmp/drivertest", "drivertest")
+	state, err := extensions.GitStateFromFolder(dir, "drivertest")
 	if err != nil {
 		t.Fatal(err)
 	}
