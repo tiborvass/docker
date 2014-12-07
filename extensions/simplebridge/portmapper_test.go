@@ -75,6 +75,10 @@ func TestMap(t *testing.T) {
 		t.Fatal("Mapping for 1234 failed due to incorrect forward parameters")
 	}
 
+	if _, ok := hostPortMap[pm.hostPort]; !ok {
+		t.Fatalf("hostPort %q was not mapped", pm.hostPort)
+	}
+
 	if err := NewPortMap(defaultChain, net.ParseIP("0.0.0.0"), "tcp", net.ParseIP("123.123.123.123"), 0, 22, testForward).Map(); err == nil {
 		t.Fatal("Error was supposed to be returned mapping port 22, succeeded")
 	}
@@ -108,6 +112,10 @@ func TestUnmap(t *testing.T) {
 
 		t.Fatal("Unmapping for 1234 failed due to incorrect forward parameters")
 	}
+
+	if _, ok := hostPortMap[pm.hostPort]; ok {
+		t.Fatalf("Mapped port %q still exists after Unmap", pm.hostPort)
+	}
 }
 
 func TestMapIPv6(t *testing.T) {
@@ -129,6 +137,10 @@ func TestMapIPv6(t *testing.T) {
 		pm.containerPort != 0 {
 
 		t.Fatal("Mapping for 1234 failed due to incorrect forward parameters")
+	}
+
+	if _, ok := hostPortMap[pm.hostPort]; !ok {
+		t.Fatalf("hostPort %q was not mapped", pm.hostPort)
 	}
 
 	if err := NewPortMap(defaultChain, net.ParseIP("::"), "tcp", net.ParseIP("fe80::1"), 0, 22, testForward).Map(); err == nil {
@@ -163,5 +175,9 @@ func TestUnmapIPv6(t *testing.T) {
 		pm.containerPort != 0 {
 
 		t.Fatal("Unmapping for 1234 failed due to incorrect forward parameters")
+	}
+
+	if _, ok := hostPortMap[pm.hostPort]; ok {
+		t.Fatalf("Mapped port %q still exists after Unmap", pm.hostPort)
 	}
 }

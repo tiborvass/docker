@@ -35,7 +35,8 @@ var chainMutex sync.Mutex // iptables are the same way
 
 var (
 	chainMap        = map[string]*iptables.Chain{}
-	portTableFormat = "/proc/net/%s" // XXX this is overwritten in tests to use test data.
+	hostPortMap     = map[uint]struct{}{} // locked with mapperMutex in Map and Unmap
+	portTableFormat = "/proc/net/%s"      // XXX this is overwritten in tests to use test data.
 )
 
 const defaultChain = "DOCKER"
@@ -143,6 +144,8 @@ func (pm *PortMap) Unmap() error {
 		return err
 	}
 
+	delete(hostPortMap, pm.hostPort)
+
 	return nil
 }
 
@@ -196,6 +199,10 @@ func (pm *PortMap) Map() error {
 			return err
 		}
 	}
+
+	// since the forward rules won't show up in the bound ports files we need to
+	// track this independently.
+	hostPortMap[pm.hostPort] = struct{}{}
 
 	return nil
 }
