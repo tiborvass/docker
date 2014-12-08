@@ -16,8 +16,6 @@ func treeDel(repo *git.Repository, tree *git.Tree, key string) (*git.Tree, error
 	key = TreePath(key)
 	base, leaf := path.Split(key)
 
-	root := tree
-
 	if tree != nil {
 		if tree, err = TreeScope(repo, tree, base); err != nil {
 			return nil, err
@@ -38,11 +36,12 @@ func treeDel(repo *git.Repository, tree *git.Tree, key string) (*git.Tree, error
 		return nil, err
 	}
 
-	if base == "" {
-		return lookupTree(repo, treeId)
+	newTree, err := lookupTree(repo, treeId)
+	if err != nil {
+		return nil, err
 	}
 
-	return treeAdd(repo, root, key, treeId, false)
+	return newTree, err
 }
 
 // treeAdd creates a new Git tree by adding a new object

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/j-keck/arping"
 	"github.com/vishvananda/netlink"
 )
 
@@ -14,17 +15,19 @@ import (
 // could also be used outside simplebridge.
 
 type refreshFunc func(*net.Interface) (map[string]struct{}, error)
+type allocateFunc func(*net.Interface, net.IP) (bool, error)
 
 type IPAllocator struct {
-	bridgeName  string
-	bridgeNet   *net.IPNet
-	lastIP      net.IP
-	v6          bool
-	refreshFunc refreshFunc
-	mutex       sync.Mutex
+	bridgeName   string
+	bridgeNet    *net.IPNet
+	lastIP       net.IP
+	v6           bool
+	refreshFunc  refreshFunc
+	allocateFunc allocateFunc
+	mutex        sync.Mutex
 }
 
-func NewIPAllocator(bridgeName string, bridgeNet *net.IPNet, refreshFunc refreshFunc) *IPAllocator {
+func NewIPAllocator(bridgeName string, bridgeNet *net.IPNet, refreshFunc refreshFunc, allocateFunc allocateFunc) *IPAllocator {
 	ip := &IPAllocator{
 		bridgeName:  bridgeName,
 		bridgeNet:   bridgeNet,
@@ -37,7 +40,19 @@ func NewIPAllocator(bridgeName string, bridgeNet *net.IPNet, refreshFunc refresh
 		ip.refreshFunc = ip.refresh
 	}
 
+	if refreshFunc == nil {
+		ip.allocateFunc = ip.allocate
+	}
+
 	return ip
+}
+
+func (ip *IPAllocator) allocate(_if *net.Interface, dstIP net.IP) (bool, error) {
+	if _, _, err := arping.Ping(dstIP); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (ip *IPAllocator) refresh(_if *net.Interface) (map[string]struct{}, error) {
