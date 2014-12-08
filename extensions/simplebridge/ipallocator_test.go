@@ -9,8 +9,8 @@ import (
 )
 
 func createTestAllocate(ok bool) allocateFunc {
-	return func(_if *net.Interface, dstIP net.IP) (bool, error) {
-		return ok, nil
+	return func(dstIP net.IP) bool {
+		return ok
 	}
 }
 

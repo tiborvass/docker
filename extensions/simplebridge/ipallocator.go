@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/j-keck/arping"
+	"github.com/erikh/ping"
 	"github.com/vishvananda/netlink"
 )
 
@@ -15,7 +15,7 @@ import (
 // could also be used outside simplebridge.
 
 type refreshFunc func(*net.Interface) (map[string]struct{}, error)
-type allocateFunc func(*net.Interface, net.IP) (bool, error)
+type allocateFunc func(net.IP) bool
 
 type IPAllocator struct {
 	bridgeName   string
@@ -48,17 +48,8 @@ func NewIPAllocator(bridgeName string, bridgeNet *net.IPNet, refreshFunc refresh
 	return ip
 }
 
-func (ip *IPAllocator) allocate(_if *net.Interface, dstIP net.IP) (bool, error) {
-	if _, _, err := arping.PingOverIface(dstIP, *_if); err != nil {
-		switch err {
-		case arping.ErrTimeout:
-			return false, nil
-		default:
-			return false, err
-		}
-	}
-
-	return true, nil
+func (ip *IPAllocator) allocate(dstIP net.IP) bool {
+	return !ping.Ping(dstIP.String(), 1) // FIXME one second is way too long, fix in ping library.
 }
 
 func (ip *IPAllocator) refresh(_if *net.Interface) (map[string]struct{}, error) {
@@ -129,7 +120,7 @@ func (ip *IPAllocator) Allocate() (net.IP, error) {
 		_, ok = ipMap[newip.String()]
 		if !ok {
 			// use ARP to check if the IP is in use, final sanity check.
-			if ok, err := ip.allocateFunc(_if, newip); ok {
+			if ip.allocateFunc(newip) {
 				ipMap[newip.String()] = struct{}{}
 				ip.lastIP = newip
 				break
