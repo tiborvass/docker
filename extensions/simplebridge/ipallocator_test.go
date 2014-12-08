@@ -8,6 +8,12 @@ import (
 	"testing"
 )
 
+func createTestAllocate(ok bool) allocateFunc {
+	return func(_if *net.Interface, dstIP net.IP) (bool, error) {
+		return ok, nil
+	}
+}
+
 func createTestRefresh(t *testing.T, arpfile string) refreshFunc {
 	return func(_if *net.Interface) (map[string]struct{}, error) {
 		f, err := os.Open(arpfile)
@@ -34,6 +40,7 @@ func createTestRefresh(t *testing.T, arpfile string) refreshFunc {
 
 func TestAllocateEmpty(t *testing.T) {
 	tr := createTestRefresh(t, os.DevNull)
+	ta := createTestAllocate(true)
 	bridgeIP, ipNet, err := net.ParseCIDR("172.16.0.1/16")
 
 	if err != nil {
@@ -42,7 +49,7 @@ func TestAllocateEmpty(t *testing.T) {
 
 	createNetwork(t) // XXX from driver_test.go
 
-	ip := NewIPAllocator("test", ipNet, tr)
+	ip := NewIPAllocator("test", ipNet, tr, ta)
 	allocated, err := ip.Allocate()
 	if err != nil {
 		t.Fatal(err)
@@ -55,6 +62,7 @@ func TestAllocateEmpty(t *testing.T) {
 
 func TestAllocateBasic(t *testing.T) {
 	tr := createTestRefresh(t, "testdata/ipallocator/arptable1")
+	ta := createTestAllocate(true)
 	bridgeIP, ipNet, err := net.ParseCIDR("172.16.0.1/16")
 
 	if err != nil {
@@ -63,7 +71,7 @@ func TestAllocateBasic(t *testing.T) {
 
 	createNetwork(t) // XXX from driver_test.go
 
-	ip := NewIPAllocator("test", ipNet, tr)
+	ip := NewIPAllocator("test", ipNet, tr, ta)
 	allocated, err := ip.Allocate()
 	if err != nil {
 		t.Fatal(err)
@@ -76,6 +84,7 @@ func TestAllocateBasic(t *testing.T) {
 
 func TestAllocateCycle(t *testing.T) {
 	tr := createTestRefresh(t, "testdata/ipallocator/arptable2")
+	ta := createTestAllocate(true)
 	_, ipNet, err := net.ParseCIDR("172.16.0.1/29")
 
 	if err != nil {
@@ -84,7 +93,7 @@ func TestAllocateCycle(t *testing.T) {
 
 	createNetwork(t) // XXX from driver_test.go
 
-	ip := NewIPAllocator("test", ipNet, tr)
+	ip := NewIPAllocator("test", ipNet, tr, ta)
 	if allocated, err := ip.Allocate(); err == nil {
 		t.Fatalf("Did not error; should have cycled trying to allocate on %q: got %q", ipNet.String(), allocated.String())
 	}
