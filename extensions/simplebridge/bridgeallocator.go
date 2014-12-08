@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net"
 
-	"github.com/paulstuart/ping"
+	"github.com/erikh/ping"
 )
 
 var bridgeAddrs = []string{
@@ -42,7 +42,7 @@ func GetBridgeIP() (*net.IPNet, error) {
 			return nil, err
 		}
 
-		if !ping.Ping(ip.String(), 1) {
+		if !ping.Ping(ip.String(), 1) { // FIXME one second is way too long, fix in ping library.
 			ipNet.IP = ip // set the bridge IP to the one we want
 			return ipNet, err
 		}
