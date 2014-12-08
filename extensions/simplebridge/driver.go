@@ -193,12 +193,16 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
-	_, ipNet, err := GetBridgeIP()
+	addr, err := GetBridgeIP()
 	if err != nil {
 		return nil, err
 	}
 
-	if err := netlink.AddrAdd(&netlink.Addr{IPNet: ipNet}, dockerbridge); err != nil {
+	if err := netlink.AddrAdd(dockerbridge, &netlink.Addr{IPNet: addr}); err != nil {
+		return nil, err
+	}
+
+	if err := netlink.LinkSetUp(dockerbridge); err != nil {
 		return nil, err
 	}
 
@@ -206,6 +210,6 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		bridge:  dockerbridge,
 		ID:      id,
 		driver:  d,
-		network: ipNet,
+		network: addr,
 	}, nil
 }

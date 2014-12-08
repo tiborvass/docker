@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net"
 
-	"github.com/j-keck/arping"
+	"github.com/paulstuart/ping"
 )
 
 var bridgeAddrs = []string{
@@ -16,9 +16,9 @@ var bridgeAddrs = []string{
 	//
 	// Don't use 172.16.0.0/16, it conflicts with EC2 DNS 172.16.0.23
 	//
-	"10.0.42.1/16",
-	"10.1.42.1/16",
 	"10.42.42.1/16",
+	"10.0.42.1/16", // common subnet on home routers
+	"10.1.42.1/16",
 
 	// XXX this next line was changed from a /16 to /24 because the netmask would
 	// allow for EC2's DNS to be trumped still. The 10.x/16's were moved to the top
@@ -35,24 +35,18 @@ var bridgeAddrs = []string{
 }
 
 // FIXME have this accept state objects to get at parameter data
-func GetBridgeIP() (net.IP, *net.IPNet, error) {
+func GetBridgeIP() (*net.IPNet, error) {
 	for _, addr := range bridgeAddrs {
-		ip, ipnet, err := net.ParseCIDR(addr)
-		if err != nil { // this should not happen since the list is above and static
-			return nil, nil, err
+		ip, ipNet, err := net.ParseCIDR(addr)
+		if err != nil {
+			return nil, err
 		}
 
-		// ping the IP using ARP on all interfaces to determine if we know about
-		// this network already.
-		if _, _, err := arping.Ping(ip); err != nil {
-			switch err {
-			case arping.ErrTimeout: // this is what we want
-				return ip, ipnet, nil
-			default:
-				return nil, nil, err
-			}
+		if !ping.Ping(ip.String(), 1) {
+			ipNet.IP = ip // set the bridge IP to the one we want
+			return ipNet, err
 		}
 	}
 
-	return nil, nil, errors.New("Could not find a suitable bridge IP!")
+	return nil, errors.New("Could not find a suitable bridge IP!")
 }

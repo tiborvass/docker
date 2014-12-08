@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -26,9 +25,8 @@ func destroy(driver *simplebridge.BridgeDriver) error {
 }
 
 func createEndpoint(driver *simplebridge.BridgeDriver) error {
-	network := driver.GetNetwork("test")
-	if network == nil {
-		return errors.New("network does not exist")
+	if _, err := driver.GetNetwork("test"); err != nil {
+		return err
 	}
 
 	if _, err := driver.Link("test", "ept", nil, true); err != nil {
@@ -39,9 +37,8 @@ func createEndpoint(driver *simplebridge.BridgeDriver) error {
 }
 
 func destroyEndpoint(driver *simplebridge.BridgeDriver) error {
-	network := driver.GetNetwork("test")
-	if network == nil {
-		return errors.New("network does not exist")
+	if _, err := driver.GetNetwork("test"); err != nil {
+		return err
 	}
 
 	if err := driver.Unlink("test", "ept", nil); err != nil {
