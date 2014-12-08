@@ -12,6 +12,8 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
+const maxVethName = 8
+
 type BridgeDriver struct {
 	state state.State
 	mutex sync.Mutex
@@ -75,7 +77,7 @@ func (d *BridgeDriver) saveEndpoint(name string, ep *BridgeEndpoint) error {
 }
 
 func vethNameTooLong(name string) bool {
-	return len(name) > 8 // FIXME write a test for this
+	return len(name) > maxVethName // FIXME write a test for this
 }
 
 // discovery driver? should it be hooked here or in the core?
@@ -191,9 +193,19 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
+	_, ipNet, err := GetBridgeIP()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := netlink.AddrAdd(&netlink.Addr{IPNet: ipNet}, dockerbridge); err != nil {
+		return nil, err
+	}
+
 	return &BridgeNetwork{
-		bridge: dockerbridge,
-		ID:     id,
-		driver: d,
+		bridge:  dockerbridge,
+		ID:      id,
+		driver:  d,
+		network: ipNet,
 	}, nil
 }
