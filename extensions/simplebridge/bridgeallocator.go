@@ -3,6 +3,7 @@ package simplebridge
 import (
 	"errors"
 	"net"
+	"time"
 
 	"github.com/erikh/ping"
 )
@@ -42,7 +43,7 @@ func GetBridgeIP() (*net.IPNet, error) {
 			return nil, err
 		}
 
-		if !ping.Ping(ip.String(), 1) { // FIXME one second is way too long, fix in ping library.
+		if !ping.Ping(ip.String(), 150*time.Millisecond) {
 			ipNet.IP = ip // set the bridge IP to the one we want
 			return ipNet, err
 		}

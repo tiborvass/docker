@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"net"
 	"sync"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/erikh/ping"
@@ -49,7 +50,7 @@ func NewIPAllocator(bridgeName string, bridgeNet *net.IPNet, refreshFunc refresh
 }
 
 func (ip *IPAllocator) allocate(dstIP net.IP) bool {
-	return !ping.Ping(dstIP.String(), 1) // FIXME one second is way too long, fix in ping library.
+	return !ping.Ping(dstIP.String(), 150*time.Millisecond)
 }
 
 func (ip *IPAllocator) refresh(_if *net.Interface) (map[string]struct{}, error) {
