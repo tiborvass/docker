@@ -50,7 +50,7 @@ func NewIPAllocator(bridgeName string, bridgeNet *net.IPNet, refreshFunc refresh
 }
 
 func (ip *IPAllocator) allocate(dstIP net.IP) bool {
-	return !ping.Ping(dstIP.String(), 150*time.Millisecond)
+	return !ping.Ping(&net.IPAddr{dstIP, ""}, 150*time.Millisecond)
 }
 
 func (ip *IPAllocator) refresh(_if *net.Interface) (map[string]struct{}, error) {

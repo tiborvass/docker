@@ -43,7 +43,7 @@ func GetBridgeIP() (*net.IPNet, error) {
 			return nil, err
 		}
 
-		if !ping.Ping(ip.String(), 150*time.Millisecond) {
+		if !ping.Ping(&net.IPAddr{ip, ""}, 150*time.Millisecond) {
 			ipNet.IP = ip // set the bridge IP to the one we want
 			return ipNet, err
 		}
