@@ -59,7 +59,7 @@ clone git github.com/docker/libpack 2eb51e1e6c
 
 clone git github.com/vishvananda/netlink 178d3a43f5
 
-clone git github.com/erikh/ping 0345a9703e43995c48c1749fda54272132d57324
+clone git github.com/erikh/ping bd7a78533484a6483bba9b6160e83bb83c787eb4
 
 # get Go tip's archive/tar, for xattr support and improved performance
 # TODO after Go 1.4 drops, bump our minimum supported version and drop this vendored dep
