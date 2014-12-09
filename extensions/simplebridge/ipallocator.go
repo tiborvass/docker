@@ -81,7 +81,6 @@ func (ip *IPAllocator) refresh(_if *net.Interface) (map[string]struct{}, error) 
 }
 
 func (ip *IPAllocator) Allocate() (net.IP, error) {
-	// FIXME use netlink package to insert into the neighbors table / arp cache
 	ip.mutex.Lock()
 	defer ip.mutex.Unlock()
 

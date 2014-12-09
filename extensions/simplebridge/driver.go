@@ -2,6 +2,7 @@ package simplebridge
 
 import (
 	"fmt"
+	"net"
 	"strconv"
 	"sync"
 
@@ -94,7 +95,10 @@ func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (n
 		return nil, err
 	}
 
-	ep := &BridgeEndpoint{network: network, ID: name}
+	ep := &BridgeEndpoint{
+		network: network,
+		ID:      name,
+	}
 
 	if ep, err := d.loadEndpoint(id, name); ep != nil && err != nil && !replace {
 		return nil, fmt.Errorf("Endpoint %q already taken", name)
@@ -136,7 +140,12 @@ func (d *BridgeDriver) Unlink(netid, name string, sb sandbox.Sandbox) error {
 }
 
 func (d *BridgeDriver) saveNetwork(id string, bridge *BridgeNetwork) error {
+	// FIXME allocator, address will be broken if not saved
 	if err := d.setNetworkProperty(id, "bridgeInterface", bridge.bridge.Name); err != nil {
+		return err
+	}
+
+	if err := d.setNetworkProperty(id, "address", bridge.network.String()); err != nil {
 		return err
 	}
 
@@ -149,10 +158,20 @@ func (d *BridgeDriver) loadNetwork(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
+	addr, err := d.getNetworkProperty(id, "address")
+	if err != nil {
+		return nil, err
+	}
+
+	ip, ipNet, err := net.ParseCIDR(addr)
+	ipNet.IP = ip
+
 	return &BridgeNetwork{
-		bridge: &netlink.Bridge{LinkAttrs: netlink.LinkAttrs{Name: iface}},
-		ID:     id,
-		driver: d,
+		bridge:      &netlink.Bridge{LinkAttrs: netlink.LinkAttrs{Name: iface}},
+		ID:          id,
+		driver:      d,
+		network:     ipNet,
+		ipallocator: NewIPAllocator(id, ipNet, nil, nil),
 	}, nil
 }
 
@@ -207,9 +226,10 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 	}
 
 	return &BridgeNetwork{
-		bridge:  dockerbridge,
-		ID:      id,
-		driver:  d,
-		network: addr,
+		bridge:      dockerbridge,
+		ID:          id,
+		driver:      d,
+		network:     addr,
+		ipallocator: NewIPAllocator(id, addr, nil, nil),
 	}, nil
 }

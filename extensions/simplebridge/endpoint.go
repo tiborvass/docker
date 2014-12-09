@@ -18,7 +18,8 @@ type BridgeEndpoint struct {
 	interfaceName string
 	hwAddr        string
 	mtu           uint
-	network       *BridgeNetwork
+
+	network *BridgeNetwork
 }
 
 func (b *BridgeEndpoint) Name() string {
@@ -61,12 +62,28 @@ func (b *BridgeEndpoint) configure(name string, s sandbox.Sandbox) error {
 		return err
 	}
 
-	link, err := netlink.LinkByName(name)
+	if err := netlink.LinkSetMaster(veth, b.network.bridge); err != nil {
+		return err
+	}
+
+	link, err := netlink.LinkByName(intVethName)
 	if err != nil {
 		return err
 	}
 
-	if err := netlink.LinkSetMaster(link, b.network.bridge); err != nil {
+	ip, err := b.network.ipallocator.Allocate()
+	if err != nil {
+		return err
+	}
+
+	bridgeNet := *b.network.network
+	bridgeNet.IP = ip
+
+	if err := netlink.AddrAdd(link, &netlink.Addr{IPNet: &bridgeNet}); err != nil {
+		return err
+	}
+
+	if err := netlink.LinkSetUp(link); err != nil {
 		return err
 	}
 

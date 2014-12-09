@@ -11,10 +11,11 @@ import (
 )
 
 type BridgeNetwork struct {
-	bridge  *netlink.Bridge
-	ID      string
-	driver  *BridgeDriver
-	network *net.IPNet
+	bridge      *netlink.Bridge
+	ID          string
+	driver      *BridgeDriver
+	network     *net.IPNet
+	ipallocator *IPAllocator
 }
 
 func (b *BridgeNetwork) Driver() network.Driver {
