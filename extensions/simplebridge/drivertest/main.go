@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -9,42 +8,40 @@ import (
 	"github.com/docker/docker/extensions/simplebridge"
 )
 
-func create(driver *simplebridge.BridgeDriver) error {
-	if err := driver.AddNetwork("test"); err != nil {
+func create(driver *simplebridge.BridgeDriver, name string) error {
+	if err := driver.AddNetwork(name); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func destroy(driver *simplebridge.BridgeDriver) error {
-	if err := driver.RemoveNetwork("test"); err != nil {
+func destroy(driver *simplebridge.BridgeDriver, name string) error {
+	if err := driver.RemoveNetwork(name); err != nil {
 		panic(err)
 	}
 
 	return nil
 }
 
-func createEndpoint(driver *simplebridge.BridgeDriver) error {
-	network := driver.GetNetwork("test")
-	if network == nil {
-		return errors.New("network does not exist")
+func createEndpoint(driver *simplebridge.BridgeDriver, name string) error {
+	if _, err := driver.GetNetwork(name); err != nil {
+		return err
 	}
 
-	if _, err := driver.Link("test", "ept", nil, true); err != nil {
+	if _, err := driver.Link(name, "ept", nil, true); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func destroyEndpoint(driver *simplebridge.BridgeDriver) error {
-	network := driver.GetNetwork("test")
-	if network == nil {
-		return errors.New("network does not exist")
+func destroyEndpoint(driver *simplebridge.BridgeDriver, name string) error {
+	if _, err := driver.GetNetwork(name); err != nil {
+		return err
 	}
 
-	if err := driver.Unlink("test", "ept", nil); err != nil {
+	if err := driver.Unlink(name, "ept", nil); err != nil {
 		return err
 	}
 
@@ -69,7 +66,7 @@ func main() {
 		throw("supply create or destroy")
 	}
 
-	state, err := extensions.GitStateFromFolder("/tmp/drivertest", "drivertest")
+	state, err := extensions.GitStateFromFolder("/tmp/drivertest2", "drivertest2")
 	if err != nil {
 		throw(err)
 	}
@@ -79,21 +76,23 @@ func main() {
 		throw(err)
 	}
 
+	name := os.Args[2]
+
 	switch os.Args[1] {
 	case "create":
-		if err := create(driver); err != nil {
+		if err := create(driver, name); err != nil {
 			throw(err)
 		}
 	case "create_endpoint":
-		if err := createEndpoint(driver); err != nil {
+		if err := createEndpoint(driver, name); err != nil {
 			throw(err)
 		}
 	case "destroy_endpoint":
-		if err := destroyEndpoint(driver); err != nil {
+		if err := destroyEndpoint(driver, name); err != nil {
 			throw(err)
 		}
 	case "destroy":
-		if err := destroy(driver); err != nil {
+		if err := destroy(driver, name); err != nil {
 			throw(err)
 		}
 	default:

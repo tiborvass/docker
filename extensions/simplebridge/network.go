@@ -1,6 +1,8 @@
 package simplebridge
 
 import (
+	"net"
+
 	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
@@ -9,9 +11,11 @@ import (
 )
 
 type BridgeNetwork struct {
-	bridge *netlink.Bridge
-	ID     string
-	driver *BridgeDriver
+	bridge      *netlink.Bridge
+	ID          string
+	driver      *BridgeDriver
+	network     *net.IPNet
+	ipallocator *IPAllocator
 }
 
 func (b *BridgeNetwork) Driver() network.Driver {

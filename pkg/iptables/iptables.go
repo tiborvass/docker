@@ -70,7 +70,7 @@ func RemoveExistingChain(name string) error {
 	return chain.Remove()
 }
 
-func (c *Chain) Forward(action Action, ip net.IP, port int, proto, dest_addr string, dest_port int) error {
+func (c *Chain) Forward(action Action, ip net.IP, port uint, proto string, dest_addr net.IP, dest_port uint) error {
 	daddr := ip.String()
 	if ip.IsUnspecified() {
 		// iptables interprets "0.0.0.0" as "0.0.0.0/32", whereas we
@@ -81,10 +81,10 @@ func (c *Chain) Forward(action Action, ip net.IP, port int, proto, dest_addr str
 	if output, err := Raw("-t", "nat", fmt.Sprint(action), c.Name,
 		"-p", proto,
 		"-d", daddr,
-		"--dport", strconv.Itoa(port),
+		"--dport", strconv.Itoa(int(port)),
 		"!", "-i", c.Bridge,
 		"-j", "DNAT",
-		"--to-destination", net.JoinHostPort(dest_addr, strconv.Itoa(dest_port))); err != nil {
+		"--to-destination", net.JoinHostPort(dest_addr.String(), strconv.Itoa(int(dest_port)))); err != nil {
 		return err
 	} else if len(output) != 0 {
 		return &ChainError{Chain: "FORWARD", Output: output}
@@ -98,8 +98,8 @@ func (c *Chain) Forward(action Action, ip net.IP, port int, proto, dest_addr str
 		"!", "-i", c.Bridge,
 		"-o", c.Bridge,
 		"-p", proto,
-		"-d", dest_addr,
-		"--dport", strconv.Itoa(dest_port),
+		"-d", dest_addr.String(),
+		"--dport", strconv.Itoa(int(dest_port)),
 		"-j", "ACCEPT"); err != nil {
 		return err
 	} else if len(output) != 0 {
