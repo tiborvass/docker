@@ -325,10 +325,11 @@ func (daemon *Daemon) restore() error {
 		}
 
 		// Create a default network for the default driver.
-		if net, err := daemon.networks.NewNetwork(); err != nil {
+		if _, err := daemon.networks.NewNetwork("default"); err != nil {
 			return fmt.Errorf("failed to create default network using default driver: %v", err)
 		} else {
-			daemon.networks.DefaultNetworkID = net.Id()
+			// FIXME:networking Returned net is nil
+			//daemon.networks.DefaultNetworkID = net.Id()
 		}
 	}
 

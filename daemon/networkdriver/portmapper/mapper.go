@@ -172,5 +172,6 @@ func forward(action iptables.Action, proto string, sourceIP net.IP, sourcePort i
 	if chain == nil {
 		return nil
 	}
-	return chain.Forward(action, sourceIP, sourcePort, proto, containerIP, containerPort)
+
+	return chain.Forward(action, sourceIP, uint(sourcePort), proto, net.ParseIP(containerIP), uint(containerPort))
 }

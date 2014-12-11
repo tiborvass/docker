@@ -11,13 +11,12 @@ func (d *Daemon) CmdNetCreate(job *engine.Job) engine.Status {
 		return job.Errorf("usage: %s NAME", job.Name)
 	}
 
-	// FIXME What do we do with user provided name?
-	// Store in Service? Store in NetController?
-	netw, err := d.networks.NewNetwork()
+	_, err := d.networks.NewNetwork(job.Args[0])
 	if err != nil {
 		return job.Error(err)
 	}
-	job.Printf("%v\n", netw.Id())
+	// FIXME:neworking NewNework returns nil
+	//job.Printf("%v\n", netw.Id())
 	return engine.StatusOK
 }
 
