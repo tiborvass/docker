@@ -7,10 +7,11 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"sync"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/tiborvass/docker/pkg/log"
 	"github.com/tiborvass/docker/pkg/tailfile"
 	"github.com/tiborvass/docker/pkg/timeutils"
 )
@@ -112,24 +113,36 @@ func (daemon *Daemon) ContainerLogs(job *engine.Job) engine.Status {
 	}
 	if follow && container.IsRunning() {
 		errors := make(chan error, 2)
+		wg := sync.WaitGroup{}
+
 		if stdout {
+			wg.Add(1)
 			stdoutPipe := container.StdoutLogPipe()
 			defer stdoutPipe.Close()
 			go func() {
 				errors <- jsonlog.WriteLog(stdoutPipe, job.Stdout, format)
+				wg.Done()
 			}()
 		}
 		if stderr {
+			wg.Add(1)
 			stderrPipe := container.StderrLogPipe()
 			defer stderrPipe.Close()
 			go func() {
 				errors <- jsonlog.WriteLog(stderrPipe, job.Stderr, format)
+				wg.Done()
 			}()
 		}
-		err := <-errors
-		if err != nil {
-			log.Errorf("%s", err)
+
+		wg.Wait()
+		close(errors)
+
+		for err := range errors {
+			if err != nil {
+				log.Errorf("%s", err)
+			}
 		}
+
 	}
 	return engine.StatusOK
 }
