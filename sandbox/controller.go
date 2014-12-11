@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net"
 
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/state"
 )
 
@@ -20,19 +19,19 @@ func (c *Controller) Restore(state state.State) error {
 	return nil
 }
 
-func (c *Controller) List() []core.DID {
-	return []core.DID{}
+func (c *Controller) List() []string {
+	return []string{}
 }
 
-func (c *Controller) Get(id core.DID) (Sandbox, error) {
+func (c *Controller) Get(id string) (Sandbox, error) {
 	return nil, errors.New("Not implemented")
 }
 
-func (c *Controller) Remove(id core.DID) error {
+func (c *Controller) Remove(id string) error {
 	return errors.New("Not implemented")
 }
 
-func (c *Controller) New() (core.DID, error) {
+func (c *Controller) New() (string, error) {
 	return "", errors.New("Not implemented")
 }
 

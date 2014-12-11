@@ -3,7 +3,6 @@ package simplebridge
 import (
 	"net"
 
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 
@@ -22,8 +21,8 @@ func (b *BridgeNetwork) Driver() network.Driver {
 	return b.driver
 }
 
-func (b *BridgeNetwork) Id() core.DID {
-	return core.DID(b.ID)
+func (b *BridgeNetwork) Id() string {
+	return b.ID
 }
 
 func (b *BridgeNetwork) Name() string {
