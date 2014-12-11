@@ -94,9 +94,8 @@ func (c *Controller) RemoveNetwork(id core.DID) error {
 	return nil
 }
 
-func (c *Controller) NewNetwork() (Network, error) {
-	did := core.DID("") // core.GenerateDID() // func Generatecore.DID() core.DID { return core.DID(uuid.New()) }
-	err := c.driver.AddNetwork(string(did))
+func (c *Controller) NewNetwork(name string) (Network, error) {
+	err := c.driver.AddNetwork(name)
 	if err != nil {
 		return nil, err
 	}

@@ -45,8 +45,8 @@ func (c *Controller) Restore(state state.State) error {
 // messages.
 func (c *Controller) Install(name string) error {
 	ext, err := c.load(name)
-	if err == nil {
-		return fmt.Errorf("failed to install extension with duplicated name %q", name)
+	if err != nil {
+		return err
 	}
 
 	ctx := context.Root()
@@ -63,7 +63,7 @@ func (c *Controller) Install(name string) error {
 // registered.
 func (c *Controller) load(name string) (Extension, error) {
 	if _, ok := c.extensions[name]; ok {
-		return nil, fmt.Errorf("extention %q is already loaded", name)
+		return nil, fmt.Errorf("extension %q is already loaded", name)
 	}
 
 	state, err := c.state.Scope("extensions/" + name + "/state")
