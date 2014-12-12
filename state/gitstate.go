@@ -1,10 +1,9 @@
-package extensions
+package state
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/docker/docker/state"
 	"github.com/docker/libpack"
 )
 
@@ -78,13 +77,13 @@ func (s GitState) Mkdir(dir string) error {
 }
 
 // FIXME: should we stop returning error?
-func (s GitState) Scope(key string) (state.State, error) {
+func (s GitState) Scope(key string) (State, error) {
 	// FIXME: should we split the key on the path separator?
 	return GitState{s.db.Scope(key)}, nil
 }
 
-func (s GitState) Diff(other state.Tree) (added, removed state.Tree)            { return nil, nil }
-func (s GitState) Walk(func(key string, entry state.Value)) error               { return nil }
-func (s GitState) Add(key string, overlay state.Tree) (state.Tree, error)       { return nil, nil }
-func (s GitState) Subtract(key string, whiteout state.Tree) (state.Tree, error) { return nil, nil }
-func (s GitState) Pipeline() state.Pipeline                                     { return nil }
+func (s GitState) Diff(other Tree) (added, removed Tree)            { return nil, nil }
+func (s GitState) Walk(func(key string, entry Value)) error         { return nil }
+func (s GitState) Add(key string, overlay Tree) (Tree, error)       { return nil, nil }
+func (s GitState) Subtract(key string, whiteout Tree) (Tree, error) { return nil, nil }
+func (s GitState) Pipeline() Pipeline                               { return nil }

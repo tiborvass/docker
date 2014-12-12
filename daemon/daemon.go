@@ -851,7 +851,7 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	}
 
 	// FIXME:networking Needs proper instantiation
-	rootState, err := extensions.GitStateFromFolder("/tmp/gitState", "root")
+	rootState, err := state.GitStateFromFolder("/tmp/gitState", "root")
 	if err != nil {
 		return nil, err
 	}

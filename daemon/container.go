@@ -18,7 +18,6 @@ import (
 	"github.com/docker/libcontainer/label"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/image"
@@ -98,7 +97,7 @@ type Container struct {
 	execCommands *execStore
 
 	// FIXME:networking Mapping networks to allocated endpoints.
-	Endpoints map[core.DID][]core.DID
+	Endpoints map[string][]string
 }
 
 func (container *Container) FromDisk() error {

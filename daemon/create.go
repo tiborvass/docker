@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/engine"
 	"github.com/docker/docker/graph"
 	"github.com/docker/docker/network"
@@ -79,7 +78,7 @@ func (daemon *Daemon) attachContainerToDefaultNetwork(cid, name string) (network
 	}
 
 	// Retrieve the Sandbox corresponding to the starting container.
-	sandbox, err := daemon.sandboxes.Get(core.DID(cid))
+	sandbox, err := daemon.sandboxes.Get(cid)
 	if err != nil {
 		return nil, err
 	}

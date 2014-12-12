@@ -3,7 +3,6 @@ package network
 import (
 	"sync"
 
-	"github.com/docker/docker/core"
 	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
 )
@@ -11,20 +10,20 @@ import (
 type Controller struct {
 	// FIXME:networking This probably should be a driver list
 	driver    Driver
-	networks  map[core.DID]Network
-	endpoints map[core.DID]Endpoint
+	networks  map[string]Network
+	endpoints map[string]Endpoint
 	state     state.State
 	mutex     sync.Mutex
 	// Containers at creation time will create an Endpoint on the default
 	// network identified by this ID.
-	DefaultNetworkID core.DID
+	DefaultNetworkID string
 }
 
 func NewController(s state.State) *Controller {
 	return &Controller{
 		state:     s,
-		networks:  map[core.DID]Network{},
-		endpoints: map[core.DID]Endpoint{},
+		networks:  map[string]Network{},
+		endpoints: map[string]Endpoint{},
 	}
 }
 
@@ -64,8 +63,8 @@ func (c *Controller) Restore(s state.State) error {
 	return c.driver.Restore(s)
 }
 
-func (c *Controller) ListNetworks() []core.DID {
-	dids := []core.DID{}
+func (c *Controller) ListNetworks() []string {
+	dids := []string{}
 	c.mutex.Lock()
 	for did := range c.networks {
 		dids = append(dids, did)
@@ -75,13 +74,13 @@ func (c *Controller) ListNetworks() []core.DID {
 	return dids
 }
 
-func (c *Controller) GetNetwork(id core.DID) (Network, error) {
+func (c *Controller) GetNetwork(id string) (Network, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	return c.networks[id], nil
 }
 
-func (c *Controller) RemoveNetwork(id core.DID) error {
+func (c *Controller) RemoveNetwork(id string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -107,7 +106,7 @@ func (c *Controller) NewNetwork(name string) (Network, error) {
 	return nil, nil
 }
 
-func (c *Controller) GetEndpoint(id core.DID) (Endpoint, error) {
+func (c *Controller) GetEndpoint(id string) (Endpoint, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	return c.endpoints[id], nil
@@ -116,7 +115,7 @@ func (c *Controller) GetEndpoint(id core.DID) (Endpoint, error) {
 // A network is a perimeter of IP connectivity between network services.
 type Network interface {
 	// Id returns the network's globally unique identifier
-	Id() core.DID
+	Id() string
 
 	// List returns the IDs of available networks
 	List() []string
