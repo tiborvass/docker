@@ -10,6 +10,7 @@ import (
 )
 
 type BridgeNetwork struct {
+	vxlan       *netlink.Vxlan
 	bridge      *netlink.Bridge
 	ID          string
 	driver      *BridgeDriver

@@ -10,6 +10,10 @@ import (
 )
 
 func createNetwork(t *testing.T) *BridgeDriver {
+	if link, err := netlink.LinkByName("vxtest"); err == nil {
+		netlink.LinkDel(link)
+	}
+
 	if link, err := netlink.LinkByName("test"); err == nil {
 		netlink.LinkDel(link)
 	}

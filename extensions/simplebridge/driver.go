@@ -225,7 +225,33 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
+	vxlan := &netlink.Vxlan{
+		LinkAttrs: netlink.LinkAttrs{
+			Name:         "vx" + id[0:4],
+			HardwareAddr: network.GenerateMacAddr(addr.IP),
+		},
+		VxlanId:  42,
+		Group:    net.ParseIP("239.1.1.1"),
+		Port:     1234,
+		Learning: true,
+		Proxy:    true,
+		L2miss:   true,
+	}
+
+	if err := netlink.LinkAdd(vxlan); err != nil {
+		return nil, err
+	}
+
+	if err := netlink.LinkSetMaster(vxlan, dockerbridge); err != nil {
+		return nil, err
+	}
+
+	if err := netlink.LinkSetUp(vxlan); err != nil {
+		return nil, err
+	}
+
 	return &BridgeNetwork{
+		vxlan:       vxlan,
 		bridge:      dockerbridge,
 		ID:          id,
 		driver:      d,

@@ -854,8 +854,14 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		return nil, err
 	}
 
+	// FIXME: this should not be a tmpdir
+	dir, err := ioutil.TempDir("", "docker")
+	if err != nil {
+		return nil, err
+	}
+
 	// FIXME:networking Needs proper instantiation
-	rootState, err := state.GitStateFromFolder("/tmp/gitState", "root")
+	rootState, err := state.GitStateFromFolder(dir, "root")
 	if err != nil {
 		return nil, err
 	}
