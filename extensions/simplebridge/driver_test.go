@@ -52,8 +52,28 @@ func TestNetwork(t *testing.T) {
 		t.Fatal("Fetching network 'test' did not succeed")
 	}
 
+	if link, _ := netlink.LinkByName("test"); link == nil {
+		t.Fatalf("Could not find %q link", "test")
+	}
+
+	// DEMO FIXME
+
+	if link, _ := netlink.LinkByName("vxtest"); link == nil {
+		t.Fatalf("Could not find %q link", "vxtest")
+	}
+
 	if err := driver.RemoveNetwork("test"); err != nil {
 		t.Fatal(err)
+	}
+
+	if link, _ := netlink.LinkByName("test"); link != nil {
+		t.Fatalf("link %q still exists after RemoveNetwork", "test")
+	}
+
+	// DEMO FIXME
+
+	if link, _ := netlink.LinkByName("vxtest"); link != nil {
+		t.Fatalf("link %q still exists after RemoveNetwork", "vxtest")
 	}
 }
 
