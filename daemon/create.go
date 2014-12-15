@@ -194,14 +194,14 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 		}
 	}
 
-	if err := container.Mount(); err != nil {
+	if err := c.Mount(); err != nil {
 		return nil, nil, err
 	}
-	defer container.Unmount()
-	if err := container.prepareVolumes(); err != nil {
+	defer c.Unmount()
+	if err := c.prepareVolumes(); err != nil {
 		return nil, nil, err
 	}
-	if err := container.ToDisk(); err != nil {
+	if err := c.ToDisk(); err != nil {
 		return nil, nil, err
 	}
 	return c, warnings, nil

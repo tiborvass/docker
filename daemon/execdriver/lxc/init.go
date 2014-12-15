@@ -12,8 +12,6 @@ import (
 	"strings"
 	"syscall"
 
-	// FIXME:networking Should libcontainer depend on docker/pkg?
-	"github.com/docker/docker/pkg/netlink"
 	"github.com/docker/docker/pkg/reexec"
 )
 
