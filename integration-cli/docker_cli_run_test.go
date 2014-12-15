@@ -44,7 +44,7 @@ func TestRunEchoStdout(t *testing.T) {
 
 // "test" should be printed
 func TestRunEchoStdoutWithMemoryLimit(t *testing.T) {
-	runCmd := exec.Command(dockerBinary, "run", "-m", "4m", "busybox", "echo", "test")
+	runCmd := exec.Command(dockerBinary, "run", "-m", "16m", "busybox", "echo", "test")
 	out, _, _, err := runCommandWithStdoutStderr(runCmd)
 	if err != nil {
 		t.Fatalf("failed to run container: %v, output: %q", err, out)
@@ -81,7 +81,7 @@ func TestRunEchoStdoutWitCPULimit(t *testing.T) {
 
 // "test" should be printed
 func TestRunEchoStdoutWithCPUAndMemoryLimit(t *testing.T) {
-	runCmd := exec.Command(dockerBinary, "run", "-c", "1000", "-m", "4m", "busybox", "echo", "test")
+	runCmd := exec.Command(dockerBinary, "run", "-c", "1000", "-m", "16m", "busybox", "echo", "test")
 	out, _, _, err := runCommandWithStdoutStderr(runCmd)
 	if err != nil {
 		t.Fatalf("failed to run container: %v, output: %q", err, out)
@@ -1897,37 +1897,25 @@ func TestRunMutableNetworkFiles(t *testing.T) {
 	for _, fn := range []string{"resolv.conf", "hosts"} {
 		deleteAllContainers()
 
-		out, _, err := runCommandWithOutput(exec.Command(dockerBinary, "run", "-d", "--name", "c1", "busybox", "sh", "-c", fmt.Sprintf("echo success >/etc/%s; while true; do sleep 1; done", fn)))
-		if err != nil {
-			t.Fatal(err, out)
-		}
-
-		time.Sleep(1 * time.Second)
-
-		contID := strings.TrimSpace(out)
-
-		f, err := os.Open(filepath.Join("/var/lib/docker/containers", contID, fn))
+		content, err := runCommandAndReadContainerFile(fn, exec.Command(dockerBinary, "run", "-d", "--name", "c1", "busybox", "sh", "-c", fmt.Sprintf("echo success >/etc/%s; while true; do sleep 1; done", fn)))
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		content, err := ioutil.ReadAll(f)
-		f.Close()
 
 		if strings.TrimSpace(string(content)) != "success" {
 			t.Fatal("Content was not what was modified in the container", string(content))
 		}
 
-		out, _, err = runCommandWithOutput(exec.Command(dockerBinary, "run", "-d", "--name", "c2", "busybox", "sh", "-c", fmt.Sprintf("while true; do cat /etc/%s; sleep 1; done", fn)))
+		out, _, err := runCommandWithOutput(exec.Command(dockerBinary, "run", "-d", "--name", "c2", "busybox", "sh", "-c", fmt.Sprintf("while true; do cat /etc/%s; sleep 1; done", fn)))
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		contID = strings.TrimSpace(out)
+		contID := strings.TrimSpace(out)
 
-		resolvConfPath := filepath.Join("/var/lib/docker/containers", contID, fn)
+		resolvConfPath := containerStorageFile(contID, fn)
 
-		f, err = os.OpenFile(resolvConfPath, os.O_WRONLY|os.O_SYNC|os.O_APPEND, 0644)
+		f, err := os.OpenFile(resolvConfPath, os.O_WRONLY|os.O_SYNC|os.O_APPEND, 0644)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -2712,4 +2700,74 @@ func TestRunTLSverify(t *testing.T) {
 	}
 
 	logDone("run - verify tls is set for --tlsverify")
+}
+
+func TestRunPortFromDockerRangeInUse(t *testing.T) {
+	defer deleteAllContainers()
+	// first find allocator current position
+	cmd := exec.Command(dockerBinary, "run", "-d", "-p", ":80", "busybox", "top")
+	out, _, err := runCommandWithOutput(cmd)
+	if err != nil {
+		t.Fatal(out, err)
+	}
+	id := strings.TrimSpace(out)
+	cmd = exec.Command(dockerBinary, "port", id)
+	out, _, err = runCommandWithOutput(cmd)
+	if err != nil {
+		t.Fatal(out, err)
+	}
+	out = strings.TrimSpace(out)
+	out = strings.Split(out, ":")[1]
+	lastPort, err := strconv.Atoi(out)
+	if err != nil {
+		t.Fatal(err)
+	}
+	port := lastPort + 1
+	l, err := net.Listen("tcp", ":"+strconv.Itoa(port))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer l.Close()
+	cmd = exec.Command(dockerBinary, "run", "-d", "-p", ":80", "busybox", "top")
+	out, _, err = runCommandWithOutput(cmd)
+	if err != nil {
+		t.Fatalf(out, err)
+	}
+	id = strings.TrimSpace(out)
+	cmd = exec.Command(dockerBinary, "port", id)
+	out, _, err = runCommandWithOutput(cmd)
+	if err != nil {
+		t.Fatal(out, err)
+	}
+
+	logDone("run - find another port if port from autorange already bound")
+}
+
+func TestRunTtyWithPipe(t *testing.T) {
+	defer deleteAllContainers()
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+
+		cmd := exec.Command(dockerBinary, "run", "-ti", "busybox", "true")
+		if _, err := cmd.StdinPipe(); err != nil {
+			t.Fatal(err)
+		}
+
+		expected := "cannot enable tty mode"
+		if out, _, err := runCommandWithOutput(cmd); err == nil {
+			t.Fatal("run should have failed")
+		} else if !strings.Contains(out, expected) {
+			t.Fatal("run failed with error %q: expected %q", out, expected)
+		}
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("container is running but should have failed")
+	}
+
+	logDone("run - forbid piped stdin with tty")
 }

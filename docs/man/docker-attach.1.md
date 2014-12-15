@@ -8,7 +8,7 @@ docker-attach - Attach to a running container
 **docker attach**
 [**--no-stdin**[=*false*]]
 [**--sig-proxy**[=*true*]]
- CONTAINER
+CONTAINER
 
 # DESCRIPTION
 If you **docker run** a container in detached mode (**-d**), you can reattach to
@@ -19,6 +19,9 @@ CTRL-q` (for a quiet exit), or `CTRL-c`  which will send a SIGKILL to the
 container, or `CTRL-\` to get a stacktrace of the Docker client when it quits.
 When you detach from a container the exit code will be returned to
 the client.
+
+It is forbidden to redirect the standard input of a docker attach command while
+attaching to a tty-enabled container (i.e.: launched with -t`).
 
 # OPTIONS
 **--no-stdin**=*true*|*false*

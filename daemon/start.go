@@ -31,7 +31,7 @@ func (daemon *Daemon) ContainerStart(job *engine.Job) engine.Status {
 	// creating a container, not during start.
 	if len(job.Environ()) > 0 {
 		hostConfig := runconfig.ContainerHostConfigFromJob(job)
-		if err := setHostConfig(container, hostConfig); err != nil {
+		if err := daemon.setHostConfig(container, hostConfig); err != nil {
 			return job.Error(err)
 		}
 	}
@@ -43,7 +43,10 @@ func (daemon *Daemon) ContainerStart(job *engine.Job) engine.Status {
 	return engine.StatusOK
 }
 
-func setHostConfig(container *Container, hostConfig *runconfig.HostConfig) error {
+func (daemon *Daemon) setHostConfig(container *Container, hostConfig *runconfig.HostConfig) error {
+	container.Lock()
+	defer container.Unlock()
+
 	if err := parseSecurityOpt(container, hostConfig); err != nil {
 		return err
 	}
@@ -62,7 +65,13 @@ func setHostConfig(container *Container, hostConfig *runconfig.HostConfig) error
 			}
 		}
 	}
-	container.SetHostConfig(hostConfig)
-	container.ToDisk()
+
+	// Register any links from the host config before starting the container
+	if err := daemon.RegisterLinks(container, hostConfig); err != nil {
+		return err
+	}
+	container.hostConfig = hostConfig
+	container.toDisk()
+
 	return nil
 }

@@ -65,6 +65,18 @@ func hijackServer(w http.ResponseWriter) (io.ReadCloser, io.Writer, error) {
 	return conn, conn, nil
 }
 
+func closeStreams(streams ...interface{}) {
+	for _, stream := range streams {
+		if tcpc, ok := stream.(interface {
+			CloseWrite() error
+		}); ok {
+			tcpc.CloseWrite()
+		} else if closer, ok := stream.(io.Closer); ok {
+			closer.Close()
+		}
+	}
+}
+
 // Check to make sure request's Content-Type is application/json
 func checkForJson(r *http.Request) error {
 	ct := r.Header.Get("Content-Type")
@@ -315,6 +327,7 @@ func getEvents(eng *engine.Engine, version version.Version, w http.ResponseWrite
 	streamJSON(job, w, true)
 	job.Setenv("since", r.Form.Get("since"))
 	job.Setenv("until", r.Form.Get("until"))
+	job.Setenv("filters", r.Form.Get("filters"))
 	return job.Run()
 }
 
@@ -870,20 +883,7 @@ func postContainersAttach(eng *engine.Engine, version version.Version, w http.Re
 	if err != nil {
 		return err
 	}
-	defer func() {
-		if tcpc, ok := inStream.(*net.TCPConn); ok {
-			tcpc.CloseWrite()
-		} else {
-			inStream.Close()
-		}
-	}()
-	defer func() {
-		if tcpc, ok := outStream.(*net.TCPConn); ok {
-			tcpc.CloseWrite()
-		} else if closer, ok := outStream.(io.Closer); ok {
-			closer.Close()
-		}
-	}()
+	defer closeStreams(inStream, outStream)
 
 	var errStream io.Writer
 
@@ -952,6 +952,15 @@ func getContainersByName(eng *engine.Engine, version version.Version, w http.Res
 	if version.LessThan("1.12") {
 		job.SetenvBool("raw", true)
 	}
+	streamJSON(job, w, false)
+	return job.Run()
+}
+
+func getExecByID(eng *engine.Engine, version version.Version, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	if vars == nil {
+		return fmt.Errorf("Missing parameter 'id'")
+	}
+	var job = eng.Job("execInspect", vars["id"])
 	streamJSON(job, w, false)
 	return job.Run()
 }
@@ -1124,21 +1133,7 @@ func postContainerExecStart(eng *engine.Engine, version version.Version, w http.
 		if err != nil {
 			return err
 		}
-
-		defer func() {
-			if tcpc, ok := inStream.(*net.TCPConn); ok {
-				tcpc.CloseWrite()
-			} else {
-				inStream.Close()
-			}
-		}()
-		defer func() {
-			if tcpc, ok := outStream.(*net.TCPConn); ok {
-				tcpc.CloseWrite()
-			} else if closer, ok := outStream.(io.Closer); ok {
-				closer.Close()
-			}
-		}()
+		defer closeStreams(inStream, outStream)
 
 		var errStream io.Writer
 
@@ -1249,6 +1244,7 @@ func AttachProfiler(router *mux.Router) {
 	router.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
 	router.HandleFunc("/debug/pprof/profile", pprof.Profile)
 	router.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	router.HandleFunc("/debug/pprof/block", pprof.Handler("block").ServeHTTP)
 	router.HandleFunc("/debug/pprof/heap", pprof.Handler("heap").ServeHTTP)
 	router.HandleFunc("/debug/pprof/goroutine", pprof.Handler("goroutine").ServeHTTP)
 	router.HandleFunc("/debug/pprof/threadcreate", pprof.Handler("threadcreate").ServeHTTP)
@@ -1280,6 +1276,7 @@ func createRouter(eng *engine.Engine, logging, enableCors bool, dockerVersion st
 			"/containers/{name:.*}/top":       getContainersTop,
 			"/containers/{name:.*}/logs":      getContainersLogs,
 			"/containers/{name:.*}/attach/ws": wsContainersAttach,
+			"/exec/{id:.*}/json":              getExecByID,
 		},
 		"POST": {
 			"/auth":                         postAuth,
