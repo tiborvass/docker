@@ -1,6 +1,7 @@
 package network
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/docker/docker/sandbox"
@@ -94,16 +95,20 @@ func (c *Controller) RemoveNetwork(id string) error {
 }
 
 func (c *Controller) NewNetwork(name string) (Network, error) {
-	err := c.driver.AddNetwork(name)
-	if err != nil {
+	if err := c.driver.AddNetwork(name); err != nil {
 		return nil, err
 	}
 
 	c.mutex.Lock()
-	//c.networks[did] = net
-	c.mutex.Unlock()
+	defer c.mutex.Unlock()
+	thisNet, err := c.driver.GetNetwork(name)
+	if err != nil {
+		return nil, err
+	}
+	c.networks[name] = thisNet
+	fmt.Println(c.networks)
 
-	return nil, nil
+	return thisNet, nil
 }
 
 func (c *Controller) GetEndpoint(id string) (Endpoint, error) {

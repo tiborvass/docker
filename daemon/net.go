@@ -10,21 +10,23 @@ func (d *Daemon) CmdNetCreate(job *engine.Job) engine.Status {
 		return job.Errorf("usage: %s NAME", job.Name)
 	}
 
-	_, err := d.networks.NewNetwork(job.Args[0])
+	thisNet, err := d.networks.NewNetwork(job.Args[0])
 	if err != nil {
 		return job.Error(err)
 	}
-	// FIXME:neworking NewNework returns nil
-	//job.Printf("%v\n", netw.Id())
+
+	job.Printf("%v\n", thisNet.Id())
 	return engine.StatusOK
 }
 
 func (d *Daemon) CmdNetLs(job *engine.Job) engine.Status {
 	netw := d.networks.ListNetworks()
+
 	table := engine.NewTable("Name", len(netw))
 	for _, netid := range netw {
 		item := &engine.Env{}
-		item.Set("ID", netid)
+		item.Set("Name", netid)
+		table.Add(item)
 	}
 
 	if _, err := table.WriteTo(job.Stdout); err != nil {
