@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/docker/docker/extensions"
+	"github.com/docker/docker/state"
 
 	"github.com/vishvananda/netlink"
 )
@@ -21,12 +21,12 @@ func createNetwork(t *testing.T) *BridgeDriver {
 		t.Fatal(err)
 	}
 
-	state, err := extensions.GitStateFromFolder(dir, "drivertest")
+	extensionState, err := state.GitStateFromFolder(dir, "drivertest")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if err := driver.Restore(state); err != nil {
+	if err := driver.Restore(extensionState); err != nil {
 		t.Fatal(err)
 	}
 
