@@ -227,6 +227,7 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
+	// DEMO FIXME
 	vxlan := &netlink.Vxlan{
 		LinkAttrs: netlink.LinkAttrs{Name: "vx" + id[0:4]},
 		VxlanId:   42,
@@ -257,4 +258,13 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		network:     addr,
 		ipallocator: NewIPAllocator(id, addr, nil, nil),
 	}, nil
+}
+
+func (d *BridgeDriver) destroyBridge(b *netlink.Bridge, v *netlink.Vxlan) error {
+	// DEMO FIXME
+	if err := netlink.LinkDel(v); err != nil {
+		return err
+	}
+
+	return netlink.LinkDel(b)
 }
