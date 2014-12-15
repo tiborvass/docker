@@ -264,7 +264,10 @@ func populateCommand(c *Container, env []string) error {
 	autoCreatedDevices := append(devices.DefaultAutoCreatedDevices, userSpecifiedDevices...)
 
 	// TODO: this can be removed after lxc-conf is fully deprecated
-	lxcConfig := mergeLxcConfIntoOptions(c.hostConfig)
+	lxcConfig, err := mergeLxcConfIntoOptions(c.hostConfig)
+	if err != nil {
+		return err
+	}
 
 	resources := &execdriver.Resources{
 		Memory:     c.Config.Memory,
@@ -548,7 +551,7 @@ func (container *Container) AllocateNetwork() error {
 }
 
 func (container *Container) ReleaseNetwork() {
-	if container.Config.NetworkDisabled {
+	if container.Config.NetworkDisabled || !container.hostConfig.NetworkMode.IsPrivate() {
 		return
 	}
 	eng := container.daemon.eng
@@ -605,6 +608,10 @@ func (container *Container) cleanup() {
 
 	if err := container.Unmount(); err != nil {
 		log.Errorf("%v: Failed to umount filesystem: %v", container.ID, err)
+	}
+
+	for _, eConfig := range container.execCommands.s {
+		container.daemon.unregisterExecCommand(eConfig)
 	}
 }
 

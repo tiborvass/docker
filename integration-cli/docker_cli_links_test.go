@@ -4,8 +4,10 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/docker/docker/pkg/iptables"
 )
@@ -120,7 +122,7 @@ func TestLinksInspectLinksStarted(t *testing.T) {
 
 	output := convertSliceOfStringsToMap(result)
 
-	equal := deepEqual(expected, output)
+	equal := reflect.DeepEqual(output, expected)
 
 	if !equal {
 		t.Fatalf("Links %s, expected %s", result, expected)
@@ -149,7 +151,7 @@ func TestLinksInspectLinksStopped(t *testing.T) {
 
 	output := convertSliceOfStringsToMap(result)
 
-	equal := deepEqual(expected, output)
+	equal := reflect.DeepEqual(output, expected)
 
 	if !equal {
 		t.Fatalf("Links %s, but expected %s", result, expected)
@@ -176,4 +178,56 @@ func TestLinksNotStartedParentNotFail(t *testing.T) {
 		t.Fatal(out, err)
 	}
 	logDone("link - container start not failing on updating stopped parent links")
+}
+
+func TestLinksHostsFilesInject(t *testing.T) {
+	defer deleteAllContainers()
+
+	out, _, err := runCommandWithOutput(exec.Command(dockerBinary, "run", "-itd", "--name", "one", "busybox", "top"))
+	if err != nil {
+		t.Fatal(err, out)
+	}
+
+	idOne := strings.TrimSpace(out)
+
+	out, _, err = runCommandWithOutput(exec.Command(dockerBinary, "run", "-itd", "--name", "two", "--link", "one:onetwo", "busybox", "top"))
+	if err != nil {
+		t.Fatal(err, out)
+	}
+
+	idTwo := strings.TrimSpace(out)
+
+	time.Sleep(1 * time.Second)
+
+	contentOne, err := readContainerFile(idOne, "hosts")
+	if err != nil {
+		t.Fatal(err, string(contentOne))
+	}
+
+	contentTwo, err := readContainerFile(idTwo, "hosts")
+	if err != nil {
+		t.Fatal(err, string(contentTwo))
+	}
+
+	if !strings.Contains(string(contentTwo), "onetwo") {
+		t.Fatal("Host is not present in updated hosts file", string(contentTwo))
+	}
+
+	logDone("link - ensure containers hosts files are updated with the link alias.")
+}
+
+func TestLinksNetworkHostContainer(t *testing.T) {
+	defer deleteAllContainers()
+
+	out, _, err := runCommandWithOutput(exec.Command(dockerBinary, "run", "-d", "--net", "host", "--name", "host_container", "busybox", "top"))
+	if err != nil {
+		t.Fatal(err, out)
+	}
+
+	out, _, err = runCommandWithOutput(exec.Command(dockerBinary, "run", "--name", "should_fail", "--link", "host_container:tester", "busybox", "true"))
+	if err == nil || !strings.Contains(out, "--net=host can't be used with links. This would result in undefined behavior.") {
+		t.Fatalf("Running container linking to a container with --net host should have failed: %s", out)
+	}
+
+	logDone("link - error thrown when linking to container with --net host")
 }

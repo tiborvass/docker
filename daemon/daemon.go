@@ -139,6 +139,7 @@ func (daemon *Daemon) Install(eng *engine.Engine) error {
 		"execCreate":        daemon.ContainerExecCreate,
 		"execStart":         daemon.ContainerExecStart,
 		"execResize":        daemon.ContainerExecResize,
+		"execInspect":       daemon.ContainerExecInspect,
 		"net_create":        daemon.CmdNetCreate,
 		"net_export":        daemon.CmdNetExport,
 		"net_import":        daemon.CmdNetImport,
@@ -662,6 +663,9 @@ func (daemon *Daemon) RegisterLinks(container *Container, hostConfig *runconfig.
 			if child == nil {
 				return fmt.Errorf("Could not get container for %s", parts["name"])
 			}
+			if child.hostConfig.NetworkMode.IsHost() {
+				return runconfig.ErrConflictHostNetworkAndLinks
+			}
 			if err := daemon.RegisterLink(container, child, parts["alias"]); err != nil {
 				return err
 			}
@@ -900,7 +904,6 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 
 		// FIXME: if these cleanup steps can be called concurrently, register
 		// them as separate handlers to speed up total shutdown time
-		// FIXME: use engine logging instead of log.Errorf
 		if err := daemon.shutdown(); err != nil {
 			log.Errorf("daemon.shutdown(): %s", err)
 		}

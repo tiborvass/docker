@@ -39,11 +39,11 @@ func (daemon *Daemon) ContainerInspect(job *engine.Job) engine.Status {
 		out.Set("ResolvConfPath", container.ResolvConfPath)
 		out.Set("HostnamePath", container.HostnamePath)
 		out.Set("HostsPath", container.HostsPath)
+		out.SetInt("RestartCount", container.RestartCount)
 		// FIXME: there is no concept of unique container "name".
 		// It was a mistake to expose this in the public API.
 		// To minimize breakage we are exposing ID as "name".
 		out.Set("Name", container.ID)
-
 		out.Set("Driver", container.Driver)
 		out.Set("ExecDriver", container.ExecDriver)
 		out.Set("MountLabel", container.MountLabel)
@@ -65,4 +65,22 @@ func (daemon *Daemon) ContainerInspect(job *engine.Job) engine.Status {
 		return engine.StatusOK
 	}
 	return job.Errorf("No such container: %s", name)
+}
+
+func (daemon *Daemon) ContainerExecInspect(job *engine.Job) engine.Status {
+	if len(job.Args) != 1 {
+		return job.Errorf("usage: %s ID", job.Name)
+	}
+	id := job.Args[0]
+	eConfig, err := daemon.getExecConfig(id)
+	if err != nil {
+		return job.Error(err)
+	}
+
+	b, err := json.Marshal(*eConfig)
+	if err != nil {
+		return job.Error(err)
+	}
+	job.Stdout.Write(b)
+	return engine.StatusOK
 }

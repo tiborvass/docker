@@ -464,32 +464,7 @@ func TarWithOptions(srcPath string, options *TarOptions) (io.ReadCloser, error) 
 	return pipeReader, nil
 }
 
-// Untar reads a stream of bytes from `archive`, parses it as a tar archive,
-// and unpacks it into the directory at `dest`.
-// The archive may be compressed with one of the following algorithms:
-//  identity (uncompressed), gzip, bzip2, xz.
-// FIXME: specify behavior when target path exists vs. doesn't exist.
-func Untar(archive io.Reader, dest string, options *TarOptions) error {
-	dest = filepath.Clean(dest)
-
-	if options == nil {
-		options = &TarOptions{}
-	}
-
-	if archive == nil {
-		return fmt.Errorf("Empty archive")
-	}
-
-	if options.Excludes == nil {
-		options.Excludes = []string{}
-	}
-
-	decompressedArchive, err := DecompressStream(archive)
-	if err != nil {
-		return err
-	}
-	defer decompressedArchive.Close()
-
+func Unpack(decompressedArchive io.Reader, dest string, options *TarOptions) error {
 	tr := tar.NewReader(decompressedArchive)
 	trBuf := pools.BufioReader32KPool.Get(nil)
 	defer pools.BufioReader32KPool.Put(trBuf)
@@ -530,10 +505,13 @@ loop:
 			}
 		}
 
-		// Prevent symlink breakout
 		path := filepath.Join(dest, hdr.Name)
-		if !strings.HasPrefix(path, dest) {
-			return breakoutError(fmt.Errorf("%q is outside of %q", path, dest))
+		rel, err := filepath.Rel(dest, path)
+		if err != nil {
+			return err
+		}
+		if strings.HasPrefix(rel, "..") {
+			return breakoutError(fmt.Errorf("%q is outside of %q", hdr.Name, dest))
 		}
 
 		// If path exits we almost always just want to remove and replace it
@@ -569,8 +547,31 @@ loop:
 			return err
 		}
 	}
-
 	return nil
+}
+
+// Untar reads a stream of bytes from `archive`, parses it as a tar archive,
+// and unpacks it into the directory at `dest`.
+// The archive may be compressed with one of the following algorithms:
+//  identity (uncompressed), gzip, bzip2, xz.
+// FIXME: specify behavior when target path exists vs. doesn't exist.
+func Untar(archive io.Reader, dest string, options *TarOptions) error {
+	if archive == nil {
+		return fmt.Errorf("Empty archive")
+	}
+	dest = filepath.Clean(dest)
+	if options == nil {
+		options = &TarOptions{}
+	}
+	if options.Excludes == nil {
+		options.Excludes = []string{}
+	}
+	decompressedArchive, err := DecompressStream(archive)
+	if err != nil {
+		return err
+	}
+	defer decompressedArchive.Close()
+	return Unpack(decompressedArchive, dest, options)
 }
 
 func (archiver *Archiver) TarUntar(src, dst string) error {
@@ -768,20 +769,33 @@ func NewTempArchive(src Archive, dir string) (*TempArchive, error) {
 		return nil, err
 	}
 	size := st.Size()
-	return &TempArchive{f, size, 0}, nil
+	return &TempArchive{File: f, Size: size}, nil
 }
 
 type TempArchive struct {
 	*os.File
-	Size int64 // Pre-computed from Stat().Size() as a convenience
-	read int64
+	Size   int64 // Pre-computed from Stat().Size() as a convenience
+	read   int64
+	closed bool
+}
+
+// Close closes the underlying file if it's still open, or does a no-op
+// to allow callers to try to close the TempArchive multiple times safely.
+func (archive *TempArchive) Close() error {
+	if archive.closed {
+		return nil
+	}
+
+	archive.closed = true
+
+	return archive.File.Close()
 }
 
 func (archive *TempArchive) Read(data []byte) (int, error) {
 	n, err := archive.File.Read(data)
 	archive.read += int64(n)
 	if err != nil || archive.read == archive.Size {
-		archive.File.Close()
+		archive.Close()
 		os.Remove(archive.File.Name())
 	}
 	return n, err
