@@ -28,17 +28,13 @@ type DB struct {
 
 // Scope restricts the path that can be used for writing content. Several
 // strings are composed to make a path similar to filepath.Join().
-//
-// Multiple calls to Scope will replace the scope, not append to it.
 func (db *DB) Scope(scope ...string) *DB {
 	// FIXME: do we risk duplicate db.repo.Free()?
-	newScope := []string{db.scope}
-	newScope = append(newScope, scope...)
 	return &DB{
 		repo:   db.repo,
 		commit: db.commit,
 		ref:    db.ref,
-		scope:  path.Join(newScope...), // If parent!=nil, scope is relative to parent
+		scope:  path.Join(scope...), // If parent!=nil, scope is relative to parent
 		tree:   db.tree,
 		parent: db,
 	}
@@ -80,6 +76,44 @@ func OpenOrInit(repo, ref string) (*DB, error) {
 	}
 
 	return Init(repo, ref)
+}
+
+type OdbBackendMaker func(*git.Repository) (git.GoOdbBackend, error)
+type RefdbBackendMaker func(*git.Repository, *git.Refdb) (git.GoRefdbBackend, error)
+
+func OpenWithBackends(newOdbBackend OdbBackendMaker, newRefdbBackend RefdbBackendMaker) (*DB, error) {
+	odb, err := git.NewOdb()
+	if err != nil {
+		return nil, err
+	}
+	repo, err := git.NewRepositoryWrapOdb(odb)
+	if err != nil {
+		return nil, err
+	}
+
+	odbBackend, err := newOdbBackend(repo)
+	if err != nil {
+		return nil, err
+	}
+	odb.AddBackend(git.NewOdbBackendFromGo(odbBackend), 1)
+
+	refdb, err := repo.NewRefdb()
+	if err != nil {
+		return nil, err
+	}
+
+	// refdb should be able to return repo so that we don't need to specify repo as an argument.
+	refdbBackend, err := newRefdbBackend(repo, refdb)
+	if err != nil {
+		return nil, err
+	}
+	if err := refdb.SetBackend(git.NewRefdbBackendFromGo(refdbBackend)); err != nil {
+		return nil, err
+	}
+
+	repo.SetRefdb(refdb)
+
+	return &DB{repo: repo}, nil
 }
 
 func newRepo(repo *git.Repository, ref string) (*DB, error) {
@@ -133,7 +167,11 @@ func (db *DB) Tree() (*git.Tree, error) {
 }
 
 func (db *DB) Dump(dst io.Writer) error {
-	return TreeDump(db.repo, db.tree, path.Join(db.scope, "/"), dst)
+	var absoluteScope string
+	for p := db; p != nil; p = p.parent {
+		absoluteScope = path.Join(p.scope, absoluteScope)
+	}
+	return TreeDump(db.repo, db.tree, path.Join(absoluteScope, "/"), dst)
 }
 
 // AddDB copies the contents of src into db at prefix key.

@@ -41,6 +41,32 @@ func nukeDB(db *DB) {
 	os.RemoveAll(dir)
 }
 
+func TestMultiLevelSetRemove(t *testing.T) {
+	tmp := tmpDB(t, "")
+	defer nukeDB(tmp)
+
+	if err := tmp.Set("multi/level/tree", "one"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tmp.Set("two/level", "two"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tmp.Delete("multi"); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := tmp.Get("two/level")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result != "two" {
+		t.Fatalf("Result %q is not equal to 'two'", result)
+	}
+}
+
 func TestOpen(t *testing.T) {
 	tmp := tmpdir(t)
 	defer os.RemoveAll(tmp)
@@ -200,6 +226,19 @@ func TestScopeDump(t *testing.T) {
 	}
 }
 
+func TestScopeAdd(t *testing.T) {
+	db := tmpDB(t, "")
+	defer nukeDB(db)
+	db.Set("a/b/c/foo", "bar")
+	db.Scope("a").Scope("b").Set("baz", "bar")
+	var buf bytes.Buffer
+	db.Scope("a/b/").Dump(&buf)
+	if s := buf.String(); s != "baz = bar\nc/\nc/foo = bar\n" {
+		t.Fatalf("%v", s)
+	}
+
+}
+
 func TestScopeSetGet(t *testing.T) {
 	root := tmpDB(t, "")
 	defer nukeDB(root)
@@ -233,7 +272,7 @@ func TestMultiScope(t *testing.T) {
 	var abDump bytes.Buffer
 	ab.Dump(&abDump)
 	if s := abDump.String(); s != "c/\nc/d = hello\n" {
-		t.Fatalf("%v\n", s)
+		t.Fatalf("%v", s)
 	}
 }
 

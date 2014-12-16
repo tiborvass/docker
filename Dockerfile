@@ -100,7 +100,15 @@ RUN	curl -sSL -o /cirros.tar.gz https://github.com/ewindisch/docker-cirros/raw/1
 RUN	/bin/echo -e '[default]\naccess_key=$AWS_ACCESS_KEY\nsecret_key=$AWS_SECRET_KEY' > $HOME/.s3cfg
 
 # Get libgit2
-RUN go get -d github.com/libgit2/git2go && cd /go/src/github.com/libgit2/git2go && git submodule update --init && make install
+ENV LIBGIT2=github.com/tiborvass/git2go
+ENV LIBGIT2_ORIG=github.com/libgit2/git2go
+RUN go get -d ${LIBGIT2} && \
+  mkdir -p /go/src/$(dirname ${LIBGIT2_ORIG}) && \
+  mv /go/src/${LIBGIT2} /go/src/${LIBGIT2_ORIG} && \
+  cd /go/src/${LIBGIT2_ORIG} && \
+  git checkout origin/go_backends && \
+  git submodule update --init && \
+  make install
 
 # Set user.email so crosbymichael's in-container merge commits go smoothly
 RUN	git config --global user.email 'docker-dummy@example.com'

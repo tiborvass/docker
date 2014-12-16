@@ -24,6 +24,12 @@ set -e
 set -o pipefail
 
 export DOCKER_PKG='github.com/docker/docker'
+# for libgit2
+[ -z "$CGO_CFLAGS" ] && CGO_CFLAGS="-I/go/src/github.com/libgit2/git2go/vendor/libgit2/include"
+export CGO_CFLAGS
+[ -z "$CGO_LDFLAGS" ] && CGO_LDFLAGS="/go/src/github.com/libgit2/git2go/vendor/libgit2/build/libgit2.a -L/go/src/github.com/libgit2/git2go/vendor/libgit2/build -L/go/src/github.com/libgit2/git2go/vendor/libgit2/install/lib -lrt -lgit2"
+export CGO_LDFLAGS
+
 
 # We're a nice, sexy, little shell script, and people might try to run us;
 # but really, they shouldn't. We want to be in a container!

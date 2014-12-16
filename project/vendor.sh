@@ -55,11 +55,11 @@ clone git github.com/docker/libtrust 230dfd18c232
 
 clone git github.com/Sirupsen/logrus v0.6.0
 
-clone git github.com/docker/libpack 2eb51e1e6c
+clone git github.com/docker/libpack d9b9fdf3b456084916a702714e28a490787b8a7e
 
-clone git github.com/vishvananda/netlink 178d3a43f5
+clone git github.com/vishvananda/netlink 7f10b9c2b83cfebb282b60999505e8a72e1231a0
 
-clone git github.com/erikh/ping bd7a78533484a6483bba9b6160e83bb83c787eb4
+clone git github.com/erikh/ping d731d249e12a103e22d5d4cdf41bf37062623ea4
 
 # get Go tip's archive/tar, for xattr support and improved performance
 # TODO after Go 1.4 drops, bump our minimum supported version and drop this vendored dep
