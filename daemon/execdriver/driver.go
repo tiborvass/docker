@@ -50,7 +50,7 @@ type ExitStatus struct {
 }
 
 type Driver interface {
-	Init(id string) error                                                          // initialize fs storage for container with id
+	Init(id string, nsList map[string]string) error                                // initialize fs storage for container with id
 	Run(c *Command, pipes *Pipes, startCallback StartCallback) (ExitStatus, error) // Run executes the process and blocks until the process exits and returns the exit code
 	// Exec executes the process in an existing container, blocks until the process exits and returns the exit code
 	Exec(c *Command, processConfig *ProcessConfig, pipes *Pipes, startCallback StartCallback) (int, error)
@@ -62,7 +62,7 @@ type Driver interface {
 	GetPidsForContainer(id string) ([]int, error) // Returns a list of pids for the given container.
 	Terminate(c *Command) error                   // kill it with fire
 	Clean(id string) error                        // clean all traces of container exec
-	NetNsPath(id string) string                   // returns path to network namespace of specific container
+	AddIface(id string, iface *NetworkSettings) error
 }
 
 // Network settings of the container
@@ -136,4 +136,28 @@ type Command struct {
 	MountLabel         string            `json:"mount_label"`
 	LxcConfig          []string          `json:"lxc_config"`
 	AppArmorProfile    string            `json:"apparmor_profile"`
+}
+
+type NetworkSettings struct {
+	Name string
+	// The bridge to use.
+	Bridge string `json:"bridge,omitempty"`
+	// MacAddress contains the MAC address to set on the network interface
+	MacAddress string `json:"mac_address,omitempty"`
+	// Address contains the IPv4 and mask to set on the network interface
+	Address string `json:"address,omitempty"`
+	// IPv6Address contains the IPv6 and mask to set on the network interface
+	IPv6Address string `json:"ipv6_address,omitempty"`
+	// Gateway sets the gateway address that is used as the default for the interface
+	Gateway string `json:"gateway,omitempty"`
+	// IPv6Gateway sets the ipv6 gateway address that is used as the default for the interface
+	IPv6Gateway string `json:"ipv6_gateway,omitempty"`
+	// Mtu sets the mtu value for the interface and will be mirrored on both the host and
+	// container's interfaces if a pair is created, specifically in the case of type veth
+	// Note: This does not apply to loopback interfaces.
+	Mtu int `json:"mtu,omitempty"`
+	// TxQueueLen sets the tx_queuelen value for the interface and will be mirrored on both the host and
+	// container's interfaces if a pair is created, specifically in the case of type veth
+	// Note: This does not apply to loopback interfaces.
+	TxQueueLen int `json:"txqueuelen,omitempty"`
 }

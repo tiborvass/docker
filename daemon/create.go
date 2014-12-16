@@ -20,6 +20,7 @@ func (daemon *Daemon) ContainerCreate(job *engine.Job) engine.Status {
 	} else if len(job.Args) > 1 {
 		return job.Errorf("Usage: %s", job.Name)
 	}
+
 	config := runconfig.ContainerConfigFromJob(job)
 	if config.Memory != 0 && config.Memory < 4194304 {
 		return job.Errorf("Minimum memory limit allowed is 4MB")
@@ -80,20 +81,21 @@ func (daemon *Daemon) attachContainerToDefaultNetwork(cid, name string) (network
 		return nil, err
 	}
 
+	// We need a name for the default endpoint.
+	if name == "" {
+		if name, err = daemon.generateNewName(cid); err != nil {
+			return nil, err
+		}
+	}
+
 	// Link the sandbox to the network, thus creating a new endpoint with the
 	// provided name.
 	// FIXME:networking Do we need Link() to return the Endpoint?
-	ep, err := defaultNet.Link(sandbox, name, false /* replace */)
+	// FIXME:networking Deal with link name length
+	ep, err := defaultNet.Link(sandbox, name[1:6], false /* replace */)
 	if err != nil {
 		return nil, err
 	}
-
-	// FIXME:networking This should be in network.NetController
-	//for _, iface := range ifaces {
-	//	if err := sandbox.AddIface(iface); err != nil {
-	//		return nil, nil, err
-	//	}
-	//}
 
 	return ep, nil
 }
@@ -159,7 +161,7 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	}
 
 	// Initialize sandboxing environment (ie actual kernel namespaces etc.)
-	if err := daemon.execDriver.Init(c.ID); err != nil {
+	if err := daemon.execDriver.Init(c.ID, map[string]string{"net": ""}); err != nil {
 		return nil, nil, err
 	}
 

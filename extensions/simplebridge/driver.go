@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"sync"
 
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 	"github.com/docker/docker/state"
@@ -106,14 +108,17 @@ func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (n
 	}
 
 	if err := d.createEndpoint(id, name); err != nil {
+		fmt.Println("[fail] d.createEndpoint")
 		return nil, err
 	}
 
 	if err := ep.configure(name, s); err != nil {
+		fmt.Println("[fail] ep.configure")
 		return nil, err
 	}
 
 	if err := d.saveEndpoint(id, ep); err != nil {
+		fmt.Println("[fail] d.saveEndpoint")
 		return nil, err
 	}
 
@@ -225,6 +230,7 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer stri
 	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
 	if err := netlink.LinkAdd(dockerbridge); err != nil {
+		log.Printf("Error add bridge %#v", dockerbridge)
 		return nil, err
 	}
 
@@ -234,10 +240,12 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer stri
 	}
 
 	if err := netlink.AddrAdd(dockerbridge, &netlink.Addr{IPNet: addr}); err != nil {
+		log.Println("Error add addr bridge")
 		return nil, err
 	}
 
 	if err := netlink.LinkSetUp(dockerbridge); err != nil {
+		log.Println("Error up bridge")
 		return nil, err
 	}
 
@@ -256,14 +264,17 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer stri
 		}
 
 		if err := netlink.LinkAdd(vxlan); err != nil {
+			log.Println("Error linkadd")
 			return nil, err
 		}
 
 		if err := netlink.LinkSetMaster(vxlan, dockerbridge); err != nil {
+			log.Println("Error linksetmaster")
 			return nil, err
 		}
 
 		if err := netlink.LinkSetUp(vxlan); err != nil {
+			log.Println("Error linksetmaster")
 			return nil, err
 		}
 	}

@@ -61,6 +61,50 @@ func NewDriver(root, initPath string) (*driver, error) {
 	}, nil
 }
 
+func (d *driver) nsPath(id string) string {
+	return filepath.Join(d.root, id, "ns")
+}
+
+func (d *driver) createNamespaces(id string, nsList map[string]string) (err error) {
+	nsPath := d.nsPath(id)
+	if err := os.MkdirAll(nsPath, 0655); err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			d.cleanNamespaces(id)
+			os.RemoveAll(nsPath)
+		}
+	}()
+	for ns, path := range nsList {
+		if path == "" {
+			path = filepath.Join(nsPath, ns)
+		}
+		if err := CreateNamespace(ns, path); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (d *driver) cleanNamespaces(id string) (err error) {
+	nsPath := filepath.Join(d.root, id, "ns")
+	files, err := ioutil.ReadDir(nsPath)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	for _, f := range files {
+		nsFile := filepath.Join(nsPath, f.Name())
+		if err := syscall.Unmount(nsFile, syscall.MNT_DETACH); err != nil {
+			return err
+		}
+		if err := os.Remove(nsFile); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (d *driver) notifyOnOOM(config *libcontainer.Config) (<-chan struct{}, error) {
 	return fs.NotifyOnOOM(config.Cgroups)
 }
@@ -70,11 +114,12 @@ type execOutput struct {
 	err      error
 }
 
-func (d *driver) Init(id string) error {
+// Init initialize data structure on disk for storing container state
+func (d *driver) Init(id string, nsList map[string]string) error {
 	if err := d.createContainerRoot(id); err != nil {
 		return err
 	}
-	return d.createNamespaces(id)
+	return d.createNamespaces(id, nsList)
 }
 
 func (d *driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, startCallback execdriver.StartCallback) (execdriver.ExitStatus, error) {
@@ -227,7 +272,6 @@ func (d *driver) Terminate(p *execdriver.Command) error {
 		syscall.Wait4(p.ProcessConfig.Process.Pid, nil, 0, nil)
 	}
 	d.cleanContainer(p.ID)
-
 	return err
 
 }
@@ -275,29 +319,27 @@ func (d *driver) cleanContainer(id string) error {
 }
 
 func (d *driver) createContainerRoot(id string) error {
-	// create also dir for namespaces
-	return os.MkdirAll(filepath.Join(d.root, id, "ns"), 0655)
+	return os.MkdirAll(filepath.Join(d.root, id), 0655)
+}
+
+func (d *driver) cleanContainerRoot(id string) error {
+	return os.RemoveAll(filepath.Join(d.root, id))
 }
 
 func (d *driver) Clean(id string) error {
 	if err := d.cleanContainer(id); err != nil {
-		return nil
-	}
-	nsPath := filepath.Join(d.root, id, "ns")
-	files, err := ioutil.ReadDir(nsPath)
-	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	for _, f := range files {
-		if err := syscall.Unmount(filepath.Join(nsPath, f.Name()), syscall.MNT_DETACH); err != nil {
-			return err
-		}
+	if err := d.cleanNamespaces(id); err != nil {
+		return err
 	}
-	return os.RemoveAll(filepath.Join(d.root, id))
+	return d.cleanContainerRoot(id)
 }
 
-func (d *driver) NetNsPath(id string) string {
-	return filepath.Join(d.root, id, "ns", "net")
+func (d *driver) AddIface(id string, iface *execdriver.NetworkSettings) error {
+	nsPath := d.nsPath(id)
+	netNsPath := filepath.Join(nsPath, "net")
+	return SetupChild(netNsPath, iface)
 }
 
 func getEnv(key string, env []string) string {

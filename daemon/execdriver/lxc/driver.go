@@ -50,7 +50,7 @@ func NewDriver(root, initPath string, apparmor bool) (*driver, error) {
 	}, nil
 }
 
-func (d *driver) Init(id string) error {
+func (d *driver) Init(id string, nslist map[string]string) error {
 	return nil
 }
 
@@ -531,4 +531,9 @@ func (t *TtyConsole) Close() error {
 
 func (d *driver) Exec(c *execdriver.Command, processConfig *execdriver.ProcessConfig, pipes *execdriver.Pipes, startCallback execdriver.StartCallback) (int, error) {
 	return -1, ErrExec
+}
+
+// AddIface is not implemented for lxc
+func (d *driver) AddIface(id string, iface *execdriver.NetworkSettings) error {
+	return nil
 }

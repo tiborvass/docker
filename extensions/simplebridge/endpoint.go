@@ -2,7 +2,9 @@ package simplebridge
 
 import (
 	"fmt"
+	"net"
 
+	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/docker/network"
 	"github.com/docker/docker/sandbox"
 
@@ -59,35 +61,41 @@ func (b *BridgeEndpoint) configure(name string, s sandbox.Sandbox) error {
 	}
 
 	if err := netlink.LinkAdd(veth); err != nil {
+		fmt.Printf("netlink.LinkAdd(%v)\n", veth.LinkAttrs)
 		return err
 	}
 
 	if err := netlink.LinkSetMaster(veth, b.network.bridge); err != nil {
-		return err
-	}
-
-	link, err := netlink.LinkByName(intVethName)
-	if err != nil {
+		fmt.Printf("netlink.LinkSetMaster()\n")
 		return err
 	}
 
 	ip, err := b.network.ipallocator.Allocate()
 	if err != nil {
+		fmt.Printf("ipallocator")
 		return err
 	}
 
-	bridgeNet := *b.network.network
-	bridgeNet.IP = ip
-
-	if err := netlink.AddrAdd(link, &netlink.Addr{IPNet: &bridgeNet}); err != nil {
-		return err
+	ipnet := &net.IPNet{
+		IP:   ip,
+		Mask: b.network.network.Mask,
+	}
+	mtu := b.network.bridge.MTU
+	if mtu == 0 {
+		mtu = int(b.mtu)
+		if mtu == 0 {
+			mtu = 1500
+		}
+	}
+	ns := &execdriver.NetworkSettings{
+		Name:    intVethName,
+		Bridge:  b.network.bridge.Name,
+		Address: ipnet.String(),
+		Gateway: b.network.network.IP.String(),
+		Mtu:     mtu,
 	}
 
-	if err := netlink.LinkSetUp(link); err != nil {
-		return err
-	}
-
-	return nil
+	return s.AddIface(ns)
 }
 
 func (b *BridgeEndpoint) deconfigure(name string) error {
