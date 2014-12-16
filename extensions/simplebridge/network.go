@@ -43,10 +43,5 @@ func (b *BridgeNetwork) Unlink(name string) error {
 }
 
 func (b *BridgeNetwork) destroy() error {
-	// DEMO FIXME
-	if err := netlink.LinkDel(b.vxlan); err != nil {
-		return err
-	}
-
-	return netlink.LinkDel(b.bridge)
+	return b.driver.destroyBridge(b.bridge, b.vxlan)
 }
