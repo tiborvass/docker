@@ -326,7 +326,8 @@ func (daemon *Daemon) restore() error {
 		}
 
 		// Create a default network for the default driver.
-		if _, err := daemon.networks.NewNetwork("default"); err != nil {
+		// FIXME should take parameters from docker -d
+		if _, err := daemon.networks.NewNetwork("default", []string{}); err != nil {
 			return fmt.Errorf("failed to create default network using default driver: %v", err)
 		} else {
 			// FIXME:networking Returned net is nil

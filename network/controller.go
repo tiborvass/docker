@@ -1,7 +1,6 @@
 package network
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/docker/docker/sandbox"
@@ -94,8 +93,8 @@ func (c *Controller) RemoveNetwork(id string) error {
 	return nil
 }
 
-func (c *Controller) NewNetwork(name string) (Network, error) {
-	if err := c.driver.AddNetwork(name); err != nil {
+func (c *Controller) NewNetwork(name string, args []string) (Network, error) {
+	if err := c.driver.AddNetwork(name, args); err != nil {
 		return nil, err
 	}
 
@@ -106,7 +105,6 @@ func (c *Controller) NewNetwork(name string) (Network, error) {
 		return nil, err
 	}
 	c.networks[name] = thisNet
-	fmt.Println(c.networks)
 
 	return thisNet, nil
 }

@@ -6,11 +6,17 @@ import (
 )
 
 func (d *Daemon) CmdNetCreate(job *engine.Job) engine.Status {
-	if len(job.Args) != 1 {
+	if len(job.Args) < 1 {
 		return job.Errorf("usage: %s NAME", job.Name)
 	}
 
-	thisNet, err := d.networks.NewNetwork(job.Args[0])
+	params := []string{}
+
+	if len(job.Args) > 1 {
+		params = job.Args[1:]
+	}
+
+	thisNet, err := d.networks.NewNetwork(job.Args[0], params)
 	if err != nil {
 		return job.Error(err)
 	}
