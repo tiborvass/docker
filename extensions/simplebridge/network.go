@@ -10,6 +10,7 @@ import (
 )
 
 type BridgeNetwork struct {
+	vxlan       *netlink.Vxlan
 	bridge      *netlink.Bridge
 	ID          string
 	driver      *BridgeDriver
@@ -42,5 +43,10 @@ func (b *BridgeNetwork) Unlink(name string) error {
 }
 
 func (b *BridgeNetwork) destroy() error {
+	// DEMO FIXME
+	if err := netlink.LinkDel(b.vxlan); err != nil {
+		return err
+	}
+
 	return netlink.LinkDel(b.bridge)
 }

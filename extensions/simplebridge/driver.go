@@ -167,6 +167,8 @@ func (d *BridgeDriver) loadNetwork(id string) (*BridgeNetwork, error) {
 	ipNet.IP = ip
 
 	return &BridgeNetwork{
+		// DEMO FIXME
+		vxlan:       &netlink.Vxlan{LinkAttrs: netlink.LinkAttrs{Name: "vx" + iface[0:4]}},
 		bridge:      &netlink.Bridge{LinkAttrs: netlink.LinkAttrs{Name: iface}},
 		ID:          id,
 		driver:      d,
@@ -225,7 +227,30 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
+	vxlan := &netlink.Vxlan{
+		LinkAttrs: netlink.LinkAttrs{Name: "vx" + id[0:4]},
+		VxlanId:   42,
+		Group:     net.ParseIP("239.1.1.1"),
+		Port:      1234,
+		Learning:  true,
+		Proxy:     true,
+		L2miss:    true,
+	}
+
+	if err := netlink.LinkAdd(vxlan); err != nil {
+		return nil, err
+	}
+
+	if err := netlink.LinkSetMaster(vxlan, dockerbridge); err != nil {
+		return nil, err
+	}
+
+	if err := netlink.LinkSetUp(vxlan); err != nil {
+		return nil, err
+	}
+
 	return &BridgeNetwork{
+		vxlan:       vxlan,
 		bridge:      dockerbridge,
 		ID:          id,
 		driver:      d,
