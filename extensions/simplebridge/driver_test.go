@@ -10,10 +10,6 @@ import (
 )
 
 func createNetwork(t *testing.T) *BridgeDriver {
-	if link, err := netlink.LinkByName("vxtest"); err == nil {
-		netlink.LinkDel(link)
-	}
-
 	if link, err := netlink.LinkByName("test"); err == nil {
 		netlink.LinkDel(link)
 	}
@@ -34,7 +30,7 @@ func createNetwork(t *testing.T) *BridgeDriver {
 		t.Fatal(err)
 	}
 
-	if err := driver.AddNetwork("test"); err != nil {
+	if err := driver.AddNetwork("test", []string{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -56,24 +52,12 @@ func TestNetwork(t *testing.T) {
 		t.Fatalf("Could not find %q link", "test")
 	}
 
-	// DEMO FIXME
-
-	if link, _ := netlink.LinkByName("vxtest"); link == nil {
-		t.Fatalf("Could not find %q link", "vxtest")
-	}
-
 	if err := driver.RemoveNetwork("test"); err != nil {
 		t.Fatal(err)
 	}
 
 	if link, _ := netlink.LinkByName("test"); link != nil {
 		t.Fatalf("link %q still exists after RemoveNetwork", "test")
-	}
-
-	// DEMO FIXME
-
-	if link, _ := netlink.LinkByName("vxtest"); link != nil {
-		t.Fatalf("link %q still exists after RemoveNetwork", "vxtest")
 	}
 }
 

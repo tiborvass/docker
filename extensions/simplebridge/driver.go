@@ -169,7 +169,7 @@ func (d *BridgeDriver) loadNetwork(id string) (*BridgeNetwork, error) {
 
 	return &BridgeNetwork{
 		// DEMO FIXME
-		vxlan:       &netlink.Vxlan{LinkAttrs: netlink.LinkAttrs{Name: "vx" + iface}},
+		//vxlan:       &netlink.Vxlan{LinkAttrs: netlink.LinkAttrs{Name: "vx" + iface}},
 		bridge:      &netlink.Bridge{LinkAttrs: netlink.LinkAttrs{Name: iface}},
 		ID:          id,
 		driver:      d,
@@ -244,7 +244,6 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer stri
 	var vxlan *netlink.Vxlan
 
 	if peer != "" {
-		fmt.Println(peer)
 		vxlan = &netlink.Vxlan{
 			// DEMO FIXME: name collisions, better error recovery
 			LinkAttrs: netlink.LinkAttrs{Name: "vx" + id},
@@ -281,8 +280,10 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer stri
 
 func (d *BridgeDriver) destroyBridge(b *netlink.Bridge, v *netlink.Vxlan) error {
 	// DEMO FIXME
-	if err := netlink.LinkDel(v); err != nil {
-		return err
+	if v != nil {
+		if err := netlink.LinkDel(v); err != nil {
+			return err
+		}
 	}
 
 	return netlink.LinkDel(b)
