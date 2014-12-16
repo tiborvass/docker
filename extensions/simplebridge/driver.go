@@ -1,6 +1,7 @@
 package simplebridge
 
 import (
+	"flag"
 	"fmt"
 	"net"
 	"strconv"
@@ -177,12 +178,25 @@ func (d *BridgeDriver) loadNetwork(id string) (*BridgeNetwork, error) {
 	}, nil
 }
 
-func (d *BridgeDriver) AddNetwork(id string) error {
+func (d *BridgeDriver) AddNetwork(id string, args []string) error {
+	// FIXME this should be abstracted from the network driver
+
+	fs := flag.NewFlagSet("simplebridge", flag.ContinueOnError)
+	// FIXME need to figure out a way to prop usage
+	fs.Usage = func() {}
+	peer := fs.String("peer", "", "VXLan peer to contact")
+	vlanid := fs.Uint("vid", 42, "VXLan VLAN ID")
+	port := fs.Uint("port", 0, "VXLan Tunneling Port")
+
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
 	if err := d.createNetwork(id); err != nil {
 		return err
 	}
 
-	bridge, err := d.createBridge(id)
+	bridge, err := d.createBridge(id, *vlanid, *port, *peer)
 	if err != nil {
 		return err
 	}
@@ -207,7 +221,7 @@ func (d *BridgeDriver) RemoveNetwork(id string) error {
 	return bridge.destroy()
 }
 
-func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
+func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer string) (*BridgeNetwork, error) {
 	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
 	if err := netlink.LinkAdd(dockerbridge); err != nil {
@@ -227,27 +241,32 @@ func (d *BridgeDriver) createBridge(id string) (*BridgeNetwork, error) {
 		return nil, err
 	}
 
-	// DEMO FIXME
-	vxlan := &netlink.Vxlan{
-		LinkAttrs: netlink.LinkAttrs{Name: "vx" + id},
-		VxlanId:   42,
-		Group:     net.ParseIP("239.1.1.1"),
-		Port:      1234,
-		Learning:  true,
-		Proxy:     true,
-		L2miss:    true,
-	}
+	var vxlan *netlink.Vxlan
 
-	if err := netlink.LinkAdd(vxlan); err != nil {
-		return nil, err
-	}
+	if peer != "" {
+		fmt.Println(peer)
+		vxlan = &netlink.Vxlan{
+			// DEMO FIXME: name collisions, better error recovery
+			LinkAttrs: netlink.LinkAttrs{Name: "vx" + id},
+			VxlanId:   int(vlanid),
+			Group:     net.ParseIP(peer),
+			Port:      int(port),
+			Learning:  true,
+			Proxy:     true,
+			L2miss:    true,
+		}
 
-	if err := netlink.LinkSetMaster(vxlan, dockerbridge); err != nil {
-		return nil, err
-	}
+		if err := netlink.LinkAdd(vxlan); err != nil {
+			return nil, err
+		}
 
-	if err := netlink.LinkSetUp(vxlan); err != nil {
-		return nil, err
+		if err := netlink.LinkSetMaster(vxlan, dockerbridge); err != nil {
+			return nil, err
+		}
+
+		if err := netlink.LinkSetUp(vxlan); err != nil {
+			return nil, err
+		}
 	}
 
 	return &BridgeNetwork{

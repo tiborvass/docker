@@ -2723,18 +2723,14 @@ func (cli *DockerCli) CmdNets(args ...string) error {
 func (cli *DockerCli) CmdNetsCreate(args ...string) error {
 	cmd := cli.Subcmd("nets create", "NAME", "Create a network")
 
-	if err := cmd.Parse(args); err != nil {
-		return err
-	}
-
-	if cmd.NArg() != 1 {
+	if len(args) < 1 {
 		cmd.Usage()
 		return nil
 	}
 
 	apiCmd := &api.Cmd{
 		Name: "net_create",
-		Args: cmd.Args(),
+		Args: args,
 	}
 
 	if _, _, err := cli.call("POST", "/cmd", apiCmd, true); err != nil {

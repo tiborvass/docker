@@ -7,7 +7,7 @@ import (
 
 type Driver interface {
 	Restore(netstate state.State) error
-	AddNetwork(netid string) error
+	AddNetwork(netid string, params []string) error
 	RemoveNetwork(netid string) error
 	GetNetwork(id string) (Network, error)
 
