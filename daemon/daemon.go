@@ -327,11 +327,10 @@ func (daemon *Daemon) restore() error {
 
 		// Create a default network for the default driver.
 		// FIXME should take parameters from docker -d
-		if _, err := daemon.networks.NewNetwork("default", []string{}); err != nil {
+		if net, err := daemon.networks.NewNetwork("default0", []string{}); err != nil {
 			return fmt.Errorf("failed to create default network using default driver: %v", err)
 		} else {
-			// FIXME:networking Returned net is nil
-			//daemon.networks.DefaultNetworkID = net.Id()
+			daemon.networks.DefaultNetworkID = net.Id()
 		}
 	}
 
@@ -428,27 +427,6 @@ func (daemon *Daemon) mergeAndVerifyConfig(config *runconfig.Config, img *image.
 		return nil, fmt.Errorf("No command specified")
 	}
 	return warnings, nil
-}
-
-func (daemon *Daemon) generateIdAndName(name string) (string, string, error) {
-	var (
-		err error
-		id  = utils.GenerateRandomID()
-	)
-
-	// FIXME: names are now associated with networks
-	if name == "" {
-		if name, err = daemon.generateNewName(id); err != nil {
-			return "", "", err
-		}
-		return id, name, nil
-	}
-
-	if name, err = daemon.reserveName(id, name); err != nil {
-		return "", "", err
-	}
-
-	return id, name, nil
 }
 
 func (daemon *Daemon) reserveName(id, name string) (string, error) {
@@ -551,13 +529,6 @@ func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error 
 	return err
 }
 
-// FIXME: FFS only create the data structure here.
-// There are already 2 other methods (Daemon.ContainerCreate and Daemon.Create) which
-// compete over initializing a container. We don't need a 3d competitor.
-func (daemon *Daemon) newContainer(netid, name string, config *runconfig.Config, img *image.Image) (*Container, error) {
-	return nil, nil
-}
-
 func (daemon *Daemon) createRootfs(container *Container, img *image.Image) error {
 	// Step 1: create the container directory.
 	// This doubles as a barrier to avoid race conditions.
@@ -611,34 +582,36 @@ func (daemon *Daemon) GetByName(name string) (*Container, error) {
 }
 
 func (daemon *Daemon) Children(name string) (map[string]*Container, error) {
-	name, err := GetFullContainerName(name)
-	if err != nil {
-		return nil, err
-	}
-	children := make(map[string]*Container)
+	return map[string]*Container{}, nil
+	//name, err := GetFullContainerName(name)
+	//if err != nil {
+	//return nil, err
+	//}
+	//children := make(map[string]*Container)
 
-	err = daemon.containerGraph.Walk(name, func(p string, e *graphdb.Entity) error {
-		c := daemon.Get(e.ID())
-		if c == nil {
-			return fmt.Errorf("Could not get container for name %s and id %s", e.ID(), p)
-		}
-		children[p] = c
-		return nil
-	}, 0)
+	//err = daemon.containerGraph.Walk(name, func(p string, e *graphdb.Entity) error {
+	//c := daemon.Get(e.ID())
+	//if c == nil {
+	//return fmt.Errorf("Could not get container for name %s and id %s", e.ID(), p)
+	//}
+	//children[p] = c
+	//return nil
+	//}, 0)
 
-	if err != nil {
-		return nil, err
-	}
-	return children, nil
+	//if err != nil {
+	//return nil, err
+	//}
+	//return children, nil
 }
 
 func (daemon *Daemon) Parents(name string) ([]string, error) {
-	name, err := GetFullContainerName(name)
-	if err != nil {
-		return nil, err
-	}
+	return nil, nil
+	//name, err := GetFullContainerName(name)
+	//if err != nil {
+	//return nil, err
+	//}
 
-	return daemon.containerGraph.Parents(name)
+	//return daemon.containerGraph.Parents(name)
 }
 
 func (daemon *Daemon) RegisterLink(parent, child *Container, alias string) error {
@@ -893,7 +866,7 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 		trustStore:     t,
 		state:          rootState,
 		networks:       network.NewController(controllerStates["networks"]),
-		sandboxes:      sandbox.NewController(controllerStates["sandboxes"]),
+		sandboxes:      sandbox.NewController(ed),
 	}
 
 	daemon.extensions = extensions.NewController(controllerStates["extensions"], daemon)
