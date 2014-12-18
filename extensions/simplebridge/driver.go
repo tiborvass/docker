@@ -1,6 +1,7 @@
 package simplebridge
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -15,9 +16,13 @@ import (
 	"github.com/docker/docker/state"
 
 	"github.com/vishvananda/netlink"
+	"github.com/vishvananda/netlink/nl"
 )
 
-const maxVethName = 8
+const (
+	maxVethName   = 8
+	maxVethSuffix = 32
+)
 
 type BridgeDriver struct {
 	state state.State
@@ -81,14 +86,10 @@ func (d *BridgeDriver) saveEndpoint(name string, ep *BridgeEndpoint) error {
 	return nil
 }
 
-func vethNameTooLong(name string) bool {
-	return len(name) > maxVethName // FIXME write a test for this
-}
-
 // discovery driver? should it be hooked here or in the core?
 func (d *BridgeDriver) Link(id, name string, s sandbox.Sandbox, replace bool) (network.Endpoint, error) {
-	if vethNameTooLong(name) {
-		return nil, fmt.Errorf("name %q is too long, must be 8 characters", name)
+	if len(name) > maxVethName {
+		return nil, fmt.Errorf("name %q is too long, must be %d characters", name, maxVethName)
 	}
 
 	d.mutex.Lock()
@@ -228,26 +229,74 @@ func (d *BridgeDriver) RemoveNetwork(id string) error {
 	return bridge.destroy()
 }
 
+func (d *BridgeDriver) getInterface(prefix string, linkParams netlink.Link) (netlink.Link, error) {
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+
+	var (
+		ethName   string
+		available bool
+	)
+
+	for i := 0; i < maxVethSuffix; i++ {
+		ethName = fmt.Sprintf("%s%d", prefix, i)
+		if len(ethName) > maxVethName {
+			return nil, fmt.Errorf("EthName %q is longer than %d bytes", prefix, maxVethName)
+		}
+		if _, err := netlink.LinkByName(ethName); err != nil {
+			available = true
+			break
+		}
+	}
+
+	if !available {
+		return nil, fmt.Errorf("Cannot allocate more than %d ethernet devices for prefix %q", maxVethSuffix, prefix)
+	}
+
+	linkParams.Attrs().Name = ethName
+	if err := netlink.LinkAdd(linkParams); err != nil {
+		return nil, err
+	}
+
+	return linkParams, nil
+}
+
 func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer, device string) (*BridgeNetwork, error) {
 	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
-	if err := netlink.LinkAdd(dockerbridge); err != nil {
-		log.Printf("Error add bridge %#v", dockerbridge)
+	iface, err := d.getInterface(id, dockerbridge)
+	if err != nil {
+		log.Println("Error get interface", err)
 		return nil, err
 	}
+	dockerbridge = iface.(*netlink.Bridge)
 
 	addr, err := GetBridgeIP()
 	if err != nil {
 		return nil, err
 	}
 
-	if err := netlink.AddrAdd(dockerbridge, &netlink.Addr{IPNet: addr}); err != nil {
-		log.Println("Error add addr bridge")
+	addrList, err := netlink.AddrList(dockerbridge, nl.GetIPFamily(addr.IP))
+	if err != nil {
 		return nil, err
 	}
 
+	var found bool
+	for _, el := range addrList {
+		if bytes.Equal(el.IPNet.IP, addr.IP) && bytes.Equal(el.IPNet.Mask, addr.Mask) {
+			found = true
+			break
+		}
+	}
+	if !found {
+		if err := netlink.AddrAdd(dockerbridge, &netlink.Addr{IPNet: addr}); err != nil {
+			log.Println("Error add addr", err)
+			return nil, err
+		}
+	}
+
 	if err := netlink.LinkSetUp(dockerbridge); err != nil {
-		log.Println("Error up bridge")
+		log.Println("Error up bridge", err)
 		return nil, err
 	}
 
@@ -260,6 +309,7 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer, dev
 	if peer != "" && device != "" {
 		iface, err := net.InterfaceByName(device)
 		if err != nil {
+			log.Println("Error get interface", err)
 			return nil, err
 		}
 
@@ -272,18 +322,20 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer, dev
 			Port:         int(port),
 		}
 
-		if err := netlink.LinkAdd(vxlan); err != nil {
-			log.Println("Error linkadd")
+		iface, err = d.getInterface(vxlan.LinkAttrs.Name, vxlan)
+		if err != nil {
+			log.Println("Error get interface", err)
 			return nil, err
 		}
+		vxlan = iface.(*netlink.Vxlan)
 
+		// ignore errors in case it was already set
 		if err := netlink.LinkSetMaster(vxlan, dockerbridge); err != nil {
-			log.Println("Error linksetmaster")
+			log.Println("Error linksetmaster", err)
 			return nil, err
 		}
-
 		if err := netlink.LinkSetUp(vxlan); err != nil {
-			log.Println("Error linksetmaster")
+			log.Println("Error linksetmaster", err)
 			return nil, err
 		}
 	}
