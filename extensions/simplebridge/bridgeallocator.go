@@ -18,7 +18,6 @@ var bridgeAddrs = []string{
 	// Don't use 172.16.0.0/16, it conflicts with EC2 DNS 172.16.0.23
 	//
 	"10.42.42.1/16",
-	"10.0.42.1/16", // common subnet on home routers
 	"10.1.42.1/16",
 
 	// XXX this next line was changed from a /16 to /24 because the netmask would

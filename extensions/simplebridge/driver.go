@@ -3,6 +3,7 @@ package simplebridge
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"strconv"
 	"sync"
@@ -191,7 +192,8 @@ func (d *BridgeDriver) AddNetwork(id string, args []string) error {
 	fs.Usage = func() {}
 	peer := fs.String("peer", "", "VXLan peer to contact")
 	vlanid := fs.Uint("vid", 42, "VXLan VLAN ID")
-	port := fs.Uint("port", 0, "VXLan Tunneling Port")
+	port := fs.Uint("port", 4789, "VXLan Tunneling Port")
+	device := fs.String("dev", "eth0", "Device to set as the vxlan endpoint")
 
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -201,7 +203,7 @@ func (d *BridgeDriver) AddNetwork(id string, args []string) error {
 		return err
 	}
 
-	bridge, err := d.createBridge(id, *vlanid, *port, *peer)
+	bridge, err := d.createBridge(id, *vlanid, *port, *peer, *device)
 	if err != nil {
 		return err
 	}
@@ -226,7 +228,7 @@ func (d *BridgeDriver) RemoveNetwork(id string) error {
 	return bridge.destroy()
 }
 
-func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer string) (*BridgeNetwork, error) {
+func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer, device string) (*BridgeNetwork, error) {
 	dockerbridge := &netlink.Bridge{netlink.LinkAttrs{Name: id}}
 
 	if err := netlink.LinkAdd(dockerbridge); err != nil {
@@ -255,16 +257,19 @@ func (d *BridgeDriver) createBridge(id string, vlanid uint, port uint, peer stri
 
 	var vxlan *netlink.Vxlan
 
-	if peer != "" {
+	if peer != "" && device != "" {
+		iface, err := net.InterfaceByName(device)
+		if err != nil {
+			return nil, err
+		}
+
 		vxlan = &netlink.Vxlan{
 			// DEMO FIXME: name collisions, better error recovery
-			LinkAttrs: netlink.LinkAttrs{Name: "vx" + id},
-			VxlanId:   int(vlanid),
-			Group:     net.ParseIP(peer),
-			Port:      int(port),
-			Learning:  true,
-			Proxy:     true,
-			L2miss:    true,
+			LinkAttrs:    netlink.LinkAttrs{Name: "vx" + id, Flags: net.FlagMulticast},
+			VtepDevIndex: iface.Index,
+			VxlanId:      int(vlanid),
+			Group:        net.ParseIP(peer),
+			Port:         int(port),
 		}
 
 		if err := netlink.LinkAdd(vxlan); err != nil {
@@ -306,6 +311,11 @@ func (d *BridgeDriver) destroyBridge(b *netlink.Bridge, v *netlink.Vxlan) error 
 
 // FIXME remove last two parameters
 func setupIPTables(bridgeIface string, addr net.Addr, icc, ipmasq bool) error {
+
+	if err := ioutil.WriteFile("/proc/sys/net/ipv4/ip_forward", []byte("1"), 0600); err != nil {
+		return err
+	}
+
 	// Enable NAT
 
 	if ipmasq {
