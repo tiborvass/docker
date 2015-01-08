@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
@@ -173,7 +174,14 @@ func newTestEngine(t Fataler, autorestart bool, root string) *engine.Engine {
 	eng := engine.New()
 	eng.Logging = false
 	// Load default plugins
-	builtins.Register(eng)
+	if err := builtins.Register(eng); err != nil {
+		t.Fatal(err)
+	}
+	// load registry service
+	if err := registry.NewService(nil).Install(eng); err != nil {
+		t.Fatal(err)
+	}
+
 	// (This is manually copied and modified from main() until we have a more generic plugin system)
 	cfg := &daemon.Config{
 		Root:        root,
