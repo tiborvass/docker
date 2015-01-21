@@ -53,7 +53,7 @@ func (r *Session) GetV2Authorization(ep *Endpoint, imageName string, readOnly bo
 	}
 
 	log.Debugf("Getting authorization for %s %s", imageName, scopes)
-	return NewRequestAuthorization(r.GetAuthConfig(true), ep, "repository", imageName, scopes), nil
+	return NewRequestAuthorization(r.GetAuthConfig(true), ep, "repository", imageName, scopes)
 }
 
 //

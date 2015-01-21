@@ -42,6 +42,8 @@ type ConfigFile struct {
 type RequestAuthorization struct {
 	authConfig       *AuthConfig
 	registryEndpoint *Endpoint
+	factory          *utils.HTTPRequestFactory
+	client           *http.Client
 	resource         string
 	scope            string
 	actions          []string
@@ -51,14 +53,27 @@ type RequestAuthorization struct {
 	tokenExpiration time.Time
 }
 
-func NewRequestAuthorization(authConfig *AuthConfig, registryEndpoint *Endpoint, resource, scope string, actions []string) *RequestAuthorization {
+func NewRequestAuthorization(authConfig *AuthConfig, registryEndpoint *Endpoint, resource, scope string, actions []string) (*RequestAuthorization, error) {
+	factory := HTTPRequestFactory(nil)
+	// FIXME: this is a hack in order to get a client with appropriate certs
+	req, err := factory.NewRequest("GET", registryEndpoint.Path(""), nil)
+	if err != nil {
+		return nil, err
+	}
+	client, err := newClient(req, nil, ConnectTimeout, registryEndpoint.IsSecure)
+	if err != nil {
+		return nil, fmt.Errorf("could not create client: %v", err)
+	}
+
 	return &RequestAuthorization{
 		authConfig:       authConfig,
 		registryEndpoint: registryEndpoint,
+		factory:          factory,
+		client:           client,
 		resource:         resource,
 		scope:            scope,
 		actions:          actions,
-	}
+	}, nil
 }
 
 func (auth *RequestAuthorization) getToken() (string, error) {
@@ -69,14 +84,6 @@ func (auth *RequestAuthorization) getToken() (string, error) {
 		log.Debugf("Using cached token for %s", auth.authConfig.Username)
 		return auth.tokenCache, nil
 	}
-
-	client := &http.Client{
-		Transport: &http.Transport{
-			DisableKeepAlives: true,
-			Proxy:             http.ProxyFromEnvironment},
-		CheckRedirect: AddRequiredHeadersToRedirectedRequests,
-	}
-	factory := HTTPRequestFactory(nil)
 
 	for _, challenge := range auth.registryEndpoint.AuthChallenges {
 		switch strings.ToLower(challenge.Scheme) {
@@ -89,7 +96,7 @@ func (auth *RequestAuthorization) getToken() (string, error) {
 				params[k] = v
 			}
 			params["scope"] = fmt.Sprintf("%s:%s:%s", auth.resource, auth.scope, strings.Join(auth.actions, ","))
-			token, err := getToken(auth.authConfig.Username, auth.authConfig.Password, params, auth.registryEndpoint, client, factory)
+			token, err := getToken(auth.authConfig.Username, auth.authConfig.Password, params, auth.registryEndpoint, auth.client, auth.factory)
 			if err != nil {
 				return "", err
 			}
@@ -242,17 +249,8 @@ func Login(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.HT
 // loginV1 tries to register/login to the v1 registry server.
 func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.HTTPRequestFactory) (string, error) {
 	var (
-		status  string
-		reqBody []byte
-		err     error
-		client  = &http.Client{
-			Transport: &http.Transport{
-				DisableKeepAlives: true,
-				Proxy:             http.ProxyFromEnvironment,
-			},
-			CheckRedirect: AddRequiredHeadersToRedirectedRequests,
-		}
-		reqStatusCode = 0
+		status        string
+		err           error
 		serverAddress = authConfig.ServerAddress
 	)
 
@@ -275,18 +273,26 @@ func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 
 	// using `bytes.NewReader(jsonBody)` here causes the server to respond with a 411 status.
 	b := strings.NewReader(string(jsonBody))
-	req1, err := http.Post(serverAddress+"users/", "application/json; charset=utf-8", b)
+	req1, err := factory.NewRequest("POST", serverAddress+"users/", b)
+	if err != nil {
+		return "", fmt.Errorf("Server Errror: %v", err)
+	}
+	req1.Header.Set("Content-Type", "application/json; charset=utf-8")
+	client, err := newClient(req1, nil, ConnectTimeout, registryEndpoint.IsSecure)
+	if err != nil {
+		return "", fmt.Errorf("Server Error: could not create client: %v", err)
+	}
+	resp1, err := client.Do(req1)
 	if err != nil {
 		return "", fmt.Errorf("Server Error: %s", err)
 	}
-	reqStatusCode = req1.StatusCode
-	defer req1.Body.Close()
-	reqBody, err = ioutil.ReadAll(req1.Body)
+	defer resp1.Body.Close()
+	respBody, err := ioutil.ReadAll(resp1.Body)
 	if err != nil {
-		return "", fmt.Errorf("Server Error: [%#v] %s", reqStatusCode, err)
+		return "", fmt.Errorf("Server Error: [%#v] %s", resp1.StatusCode, err)
 	}
 
-	if reqStatusCode == 201 {
+	if resp1.StatusCode == 201 {
 		if loginAgainstOfficialIndex {
 			status = "Account created. Please use the confirmation link we sent" +
 				" to your e-mail to activate it."
@@ -294,8 +300,8 @@ func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 			// *TODO: Use registry configuration to determine what this says, if anything?
 			status = "Account created. Please see the documentation of the registry " + serverAddress + " for instructions how to activate it."
 		}
-	} else if reqStatusCode == 400 {
-		if string(reqBody) == "\"Username or email already exists\"" {
+	} else if resp1.StatusCode == 400 {
+		if string(respBody) == "\"Username or email already exists\"" {
 			req, err := factory.NewRequest("GET", serverAddress+"users/", nil)
 			req.SetBasicAuth(authConfig.Username, authConfig.Password)
 			resp, err := client.Do(req)
@@ -320,9 +326,9 @@ func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 			}
 			return "", fmt.Errorf("Login: %s (Code: %d; Headers: %s)", body, resp.StatusCode, resp.Header)
 		}
-		return "", fmt.Errorf("Registration: %s", reqBody)
+		return "", fmt.Errorf("Registration: %s", respBody)
 
-	} else if reqStatusCode == 401 {
+	} else if resp1.StatusCode == 401 {
 		// This case would happen with private registries where /v1/users is
 		// protected, so people can use `docker login` as an auth check.
 		req, err := factory.NewRequest("GET", serverAddress+"users/", nil)
@@ -345,7 +351,7 @@ func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 				resp.StatusCode, resp.Header)
 		}
 	} else {
-		return "", fmt.Errorf("Unexpected status code [%d] : %s", reqStatusCode, reqBody)
+		return "", fmt.Errorf("Unexpected status code [%d] : %s", resp1.StatusCode, respBody)
 	}
 	return status, nil
 }
@@ -362,14 +368,6 @@ func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 func loginV2(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.HTTPRequestFactory) (string, error) {
 	log.Debugf("attempting v2 login to registry endpoint %s", registryEndpoint)
 
-	client := &http.Client{
-		Transport: &http.Transport{
-			DisableKeepAlives: true,
-			Proxy:             http.ProxyFromEnvironment,
-		},
-		CheckRedirect: AddRequiredHeadersToRedirectedRequests,
-	}
-
 	var (
 		err       error
 		allErrors []error
@@ -380,9 +378,9 @@ func loginV2(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 
 		switch strings.ToLower(challenge.Scheme) {
 		case "basic":
-			err = tryV2BasicAuthLogin(authConfig, challenge.Parameters, registryEndpoint, client, factory)
+			err = tryV2BasicAuthLogin(authConfig, challenge.Parameters, registryEndpoint, factory)
 		case "bearer":
-			err = tryV2TokenAuthLogin(authConfig, challenge.Parameters, registryEndpoint, client, factory)
+			err = tryV2TokenAuthLogin(authConfig, challenge.Parameters, registryEndpoint, factory)
 		default:
 			// Unsupported challenge types are explicitly skipped.
 			err = fmt.Errorf("unsupported auth scheme: %q", challenge.Scheme)
@@ -400,7 +398,7 @@ func loginV2(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 	return "", fmt.Errorf("no successful auth challenge for %s - errors: %s", registryEndpoint, allErrors)
 }
 
-func tryV2BasicAuthLogin(authConfig *AuthConfig, params map[string]string, registryEndpoint *Endpoint, client *http.Client, factory *utils.HTTPRequestFactory) error {
+func tryV2BasicAuthLogin(authConfig *AuthConfig, params map[string]string, registryEndpoint *Endpoint, factory *utils.HTTPRequestFactory) error {
 	req, err := factory.NewRequest("GET", registryEndpoint.Path(""), nil)
 	if err != nil {
 		return err
@@ -408,7 +406,7 @@ func tryV2BasicAuthLogin(authConfig *AuthConfig, params map[string]string, regis
 
 	req.SetBasicAuth(authConfig.Username, authConfig.Password)
 
-	resp, err := client.Do(req)
+	resp, _, err := doRequest(req, nil, ConnectTimeout, registryEndpoint.IsSecure)
 	if err != nil {
 		return err
 	}
@@ -421,13 +419,18 @@ func tryV2BasicAuthLogin(authConfig *AuthConfig, params map[string]string, regis
 	return nil
 }
 
-func tryV2TokenAuthLogin(authConfig *AuthConfig, params map[string]string, registryEndpoint *Endpoint, client *http.Client, factory *utils.HTTPRequestFactory) error {
-	token, err := getToken(authConfig.Username, authConfig.Password, params, registryEndpoint, client, factory)
+func tryV2TokenAuthLogin(authConfig *AuthConfig, params map[string]string, registryEndpoint *Endpoint, factory *utils.HTTPRequestFactory) error {
+	req, err := factory.NewRequest("GET", registryEndpoint.Path(""), nil)
 	if err != nil {
 		return err
 	}
 
-	req, err := factory.NewRequest("GET", registryEndpoint.Path(""), nil)
+	client, err := newClient(req, nil, ConnectTimeout, registryEndpoint.IsSecure)
+	if err != nil {
+		return fmt.Errorf("could not create client: %v", err)
+	}
+
+	token, err := getToken(authConfig.Username, authConfig.Password, params, registryEndpoint, client, factory)
 	if err != nil {
 		return err
 	}

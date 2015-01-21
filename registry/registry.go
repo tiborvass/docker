@@ -31,9 +31,67 @@ const (
 	ConnectTimeout
 )
 
-func newClient(jar http.CookieJar, roots *x509.CertPool, certs []tls.Certificate, timeout TimeoutType, secure bool) *http.Client {
+func newClient(req *http.Request, jar http.CookieJar, timeout TimeoutType, secure bool) (*http.Client, error) {
+	var (
+		pool  *x509.CertPool
+		certs []tls.Certificate
+	)
+
+	if secure && req.URL.Scheme == "https" {
+		hasFile := func(files []os.FileInfo, name string) bool {
+			for _, f := range files {
+				if f.Name() == name {
+					return true
+				}
+			}
+			return false
+		}
+
+		hostDir := path.Join("/etc/docker/certs.d", req.URL.Host)
+		log.Debugf("hostDir: %s", hostDir)
+		fs, err := ioutil.ReadDir(hostDir)
+		if err != nil && !os.IsNotExist(err) {
+			return nil, err
+		}
+
+		for _, f := range fs {
+			if strings.HasSuffix(f.Name(), ".crt") {
+				if pool == nil {
+					pool = x509.NewCertPool()
+				}
+				log.Debugf("crt: %s", hostDir+"/"+f.Name())
+				data, err := ioutil.ReadFile(path.Join(hostDir, f.Name()))
+				if err != nil {
+					return nil, err
+				}
+				pool.AppendCertsFromPEM(data)
+			}
+			if strings.HasSuffix(f.Name(), ".cert") {
+				certName := f.Name()
+				keyName := certName[:len(certName)-5] + ".key"
+				log.Debugf("cert: %s", hostDir+"/"+f.Name())
+				if !hasFile(fs, keyName) {
+					return nil, fmt.Errorf("Missing key %s for certificate %s", keyName, certName)
+				}
+				cert, err := tls.LoadX509KeyPair(path.Join(hostDir, certName), path.Join(hostDir, keyName))
+				if err != nil {
+					return nil, err
+				}
+				certs = append(certs, cert)
+			}
+			if strings.HasSuffix(f.Name(), ".key") {
+				keyName := f.Name()
+				certName := keyName[:len(keyName)-4] + ".cert"
+				log.Debugf("key: %s", hostDir+"/"+f.Name())
+				if !hasFile(fs, certName) {
+					return nil, fmt.Errorf("Missing certificate %s for key %s", certName, keyName)
+				}
+			}
+		}
+	}
+
 	tlsConfig := tls.Config{
-		RootCAs: roots,
+		RootCAs: pool,
 		// Avoid fallback to SSL protocols < TLS1.0
 		MinVersion:   tls.VersionTLS10,
 		Certificates: certs,
@@ -80,80 +138,19 @@ func newClient(jar http.CookieJar, roots *x509.CertPool, certs []tls.Certificate
 		Transport:     httpTransport,
 		CheckRedirect: AddRequiredHeadersToRedirectedRequests,
 		Jar:           jar,
-	}
+	}, nil
 }
 
 func doRequest(req *http.Request, jar http.CookieJar, timeout TimeoutType, secure bool) (*http.Response, *http.Client, error) {
-	var (
-		pool  *x509.CertPool
-		certs []tls.Certificate
-	)
-
-	if secure && req.URL.Scheme == "https" {
-		hasFile := func(files []os.FileInfo, name string) bool {
-			for _, f := range files {
-				if f.Name() == name {
-					return true
-				}
-			}
-			return false
-		}
-
-		hostDir := path.Join("/etc/docker/certs.d", req.URL.Host)
-		log.Debugf("hostDir: %s", hostDir)
-		fs, err := ioutil.ReadDir(hostDir)
-		if err != nil && !os.IsNotExist(err) {
-			return nil, nil, err
-		}
-
-		for _, f := range fs {
-			if strings.HasSuffix(f.Name(), ".crt") {
-				if pool == nil {
-					pool = x509.NewCertPool()
-				}
-				log.Debugf("crt: %s", hostDir+"/"+f.Name())
-				data, err := ioutil.ReadFile(path.Join(hostDir, f.Name()))
-				if err != nil {
-					return nil, nil, err
-				}
-				pool.AppendCertsFromPEM(data)
-			}
-			if strings.HasSuffix(f.Name(), ".cert") {
-				certName := f.Name()
-				keyName := certName[:len(certName)-5] + ".key"
-				log.Debugf("cert: %s", hostDir+"/"+f.Name())
-				if !hasFile(fs, keyName) {
-					return nil, nil, fmt.Errorf("Missing key %s for certificate %s", keyName, certName)
-				}
-				cert, err := tls.LoadX509KeyPair(path.Join(hostDir, certName), path.Join(hostDir, keyName))
-				if err != nil {
-					return nil, nil, err
-				}
-				certs = append(certs, cert)
-			}
-			if strings.HasSuffix(f.Name(), ".key") {
-				keyName := f.Name()
-				certName := keyName[:len(keyName)-4] + ".cert"
-				log.Debugf("key: %s", hostDir+"/"+f.Name())
-				if !hasFile(fs, certName) {
-					return nil, nil, fmt.Errorf("Missing certificate %s for key %s", certName, keyName)
-				}
-			}
-		}
+	client, err := newClient(req, jar, timeout, secure)
+	if err != nil {
+		return nil, nil, err
 	}
-
-	if len(certs) == 0 {
-		client := newClient(jar, pool, nil, timeout, secure)
-		res, err := client.Do(req)
-		if err != nil {
-			return nil, nil, err
-		}
-		return res, client, nil
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, nil, err
 	}
-
-	client := newClient(jar, pool, certs, timeout, secure)
-	res, err := client.Do(req)
-	return res, client, err
+	return resp, client, nil
 }
 
 func trustedLocation(req *http.Request) bool {
