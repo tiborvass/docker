@@ -13,7 +13,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
-	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libtrust"
@@ -228,7 +227,7 @@ func (s *TagStore) pushImage(r *registry.Session, out io.Writer, imgID, ep strin
 		return "", err
 	}
 
-	layerData, err := s.graph.TempLayerArchive(imgID, archive.Uncompressed, sf, out)
+	layerData, err := s.graph.TempLayerArchive(imgID, sf, out)
 	if err != nil {
 		return "", fmt.Errorf("Failed to generate layer archive: %s", err)
 	}
