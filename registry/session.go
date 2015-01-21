@@ -65,7 +65,15 @@ func NewSession(authConfig *AuthConfig, factory *utils.HTTPRequestFactory, endpo
 }
 
 func (r *Session) doRequest(req *http.Request) (*http.Response, *http.Client, error) {
-	return doRequest(req, r.jar, r.timeout, r.indexEndpoint.IsSecure)
+
+	// FIXME: last param `secure` should be indexEndpoint.IsSecure
+	// For that to happen we have to make sure the user is aware that even though the registry is
+	// marked as insecure, credentials are passed via HTTP and he's okay with it.
+	//
+	// Communication should be secure if request has Basic Auth, regardless of indexEnpoint.IsSecure.
+	// Otherwise, use indexEndpoint.IsSecure.
+	secure := strings.HasPrefix(req.Header.Get("Authorization"), "Basic ") || r.indexEndpoint.IsSecure
+	return doRequest(req, r.jar, r.timeout, secure)
 }
 
 // Retrieve the history of a given image from the Registry.

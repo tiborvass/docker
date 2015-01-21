@@ -60,7 +60,11 @@ func NewRequestAuthorization(authConfig *AuthConfig, registryEndpoint *Endpoint,
 	if err != nil {
 		return nil, err
 	}
-	client, err := newClient(req, nil, ConnectTimeout, registryEndpoint.IsSecure)
+
+	// FIXME: last param `secure` should be registryEndpoint.IsSecure
+	// For that to happen we have to make sure the user is aware that even though the registry is
+	// marked as insecure, credentials are passed via HTTP and he's okay with it.
+	client, err := newClient(req, nil, ConnectTimeout, true)
 	if err != nil {
 		return nil, fmt.Errorf("could not create client: %v", err)
 	}
@@ -278,10 +282,15 @@ func loginV1(authConfig *AuthConfig, registryEndpoint *Endpoint, factory *utils.
 		return "", fmt.Errorf("Server Errror: %v", err)
 	}
 	req1.Header.Set("Content-Type", "application/json; charset=utf-8")
-	client, err := newClient(req1, nil, ConnectTimeout, registryEndpoint.IsSecure)
+
+	// FIXME: last param `secure` should be registryEndpoint.IsSecure
+	// For that to happen we have to make sure the user is aware that even though the registry is
+	// marked as insecure, credentials are passed via HTTP and he's okay with it.
+	client, err := newClient(req1, nil, ConnectTimeout, true)
 	if err != nil {
 		return "", fmt.Errorf("Server Error: could not create client: %v", err)
 	}
+
 	resp1, err := client.Do(req1)
 	if err != nil {
 		return "", fmt.Errorf("Server Error: %s", err)
@@ -406,7 +415,10 @@ func tryV2BasicAuthLogin(authConfig *AuthConfig, params map[string]string, regis
 
 	req.SetBasicAuth(authConfig.Username, authConfig.Password)
 
-	resp, _, err := doRequest(req, nil, ConnectTimeout, registryEndpoint.IsSecure)
+	// FIXME: last param `secure` should be registryEndpoint.IsSecure
+	// For that to happen we have to make sure the user is aware that even though the registry is
+	// marked as insecure, credentials are passed via HTTP and he's okay with it.
+	resp, _, err := doRequest(req, nil, ConnectTimeout, true)
 	if err != nil {
 		return err
 	}
@@ -425,7 +437,10 @@ func tryV2TokenAuthLogin(authConfig *AuthConfig, params map[string]string, regis
 		return err
 	}
 
-	client, err := newClient(req, nil, ConnectTimeout, registryEndpoint.IsSecure)
+	// FIXME: last param `secure` should be registryEndpoint.IsSecure
+	// For that to happen we have to make sure the user is aware that even though the registry is
+	// marked as insecure, credentials are passed via HTTP and he's okay with it.
+	client, err := newClient(req, nil, ConnectTimeout, true)
 	if err != nil {
 		return fmt.Errorf("could not create client: %v", err)
 	}
