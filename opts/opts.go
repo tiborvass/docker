@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/utils"
 )
 
 var (
@@ -166,6 +167,9 @@ func ValidatePath(val string) (string, error) {
 func ValidateEnv(val string) (string, error) {
 	arr := strings.Split(val, "=")
 	if len(arr) > 1 {
+		return val, nil
+	}
+	if !utils.DoesEnvExist(val) {
 		return val, nil
 	}
 	return fmt.Sprintf("%s=%s", val, os.Getenv(val)), nil
