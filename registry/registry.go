@@ -90,21 +90,23 @@ func newClient(req *http.Request, jar http.CookieJar, timeout TimeoutType, secur
 		}
 	}
 
-	tlsConfig := tls.Config{
-		RootCAs: pool,
-		// Avoid fallback to SSL protocols < TLS1.0
-		MinVersion:   tls.VersionTLS10,
-		Certificates: certs,
-	}
-
-	if !secure {
-		tlsConfig.InsecureSkipVerify = true
+	var tlsConfig *tls.Config
+	if req.URL.Scheme == "https" {
+		tlsConfig = &tls.Config{
+			RootCAs: pool,
+			// Avoid fallback to SSL protocols < TLS1.0
+			MinVersion:   tls.VersionTLS10,
+			Certificates: certs,
+		}
+		if !secure {
+			tlsConfig.InsecureSkipVerify = true
+		}
 	}
 
 	httpTransport := &http.Transport{
 		DisableKeepAlives: true,
 		Proxy:             http.ProxyFromEnvironment,
-		TLSClientConfig:   &tlsConfig,
+		TLSClientConfig:   tlsConfig,
 	}
 
 	switch timeout {
