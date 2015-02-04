@@ -13,8 +13,8 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
-	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/truncindex"

@@ -11,7 +11,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/client"
-	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/utils"

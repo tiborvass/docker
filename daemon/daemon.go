@@ -18,6 +18,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
 	"github.com/tiborvass/docker/daemon/execdriver/lxc"
@@ -25,7 +26,6 @@ import (
 	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs"
 	_ "github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/daemon/networkdriver/portallocator"
-	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/image"

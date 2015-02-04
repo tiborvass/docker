@@ -9,12 +9,12 @@ import (
 	"path/filepath"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builtins"
 	"github.com/tiborvass/docker/daemon"
 	_ "github.com/tiborvass/docker/daemon/execdriver/lxc"
 	_ "github.com/tiborvass/docker/daemon/execdriver/native"
-	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
