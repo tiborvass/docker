@@ -6,9 +6,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/pkg/graphdb"
 
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
@@ -123,7 +125,12 @@ func (daemon *Daemon) Containers(job *engine.Job) engine.Status {
 		out := &engine.Env{}
 		out.SetJson("Id", container.ID)
 		out.SetList("Names", names[container.ID])
-		out.SetJson("Image", daemon.Repositories().ImageName(container.ImageID))
+		img := container.Config.Image
+		_, tag := parsers.ParseRepositoryTag(container.Config.Image)
+		if tag == "" {
+			img = img + ":" + graph.DEFAULTTAG
+		}
+		out.SetJson("Image", img)
 		if len(container.Args) > 0 {
 			args := []string{}
 			for _, arg := range container.Args {
