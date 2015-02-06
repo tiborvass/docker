@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/tiborvass/docker/opts"
+	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 )
 
@@ -17,21 +18,14 @@ var (
 
 func init() {
 	if dockerCertPath == "" {
-		dockerCertPath = filepath.Join(getHomeDir(), ".docker")
+		dockerCertPath = filepath.Join(homedir.Get(), ".docker")
 	}
-}
-
-func getHomeDir() string {
-	if runtime.GOOS == "windows" {
-		return os.Getenv("USERPROFILE")
-	}
-	return os.Getenv("HOME")
 }
 
 func getDaemonConfDir() string {
 	// TODO: update for Windows daemon
 	if runtime.GOOS == "windows" {
-		return filepath.Join(os.Getenv("USERPROFILE"), ".docker")
+		return filepath.Join(homedir.Get(), ".docker")
 	}
 	return "/etc/docker"
 }
@@ -60,7 +54,7 @@ func setDefaultConfFlag(flag *string, def string) {
 		if *flDaemon {
 			*flag = filepath.Join(getDaemonConfDir(), def)
 		} else {
-			*flag = filepath.Join(getHomeDir(), ".docker", def)
+			*flag = filepath.Join(homedir.Get(), ".docker", def)
 		}
 	}
 }

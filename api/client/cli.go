@@ -14,6 +14,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
@@ -104,7 +105,7 @@ func (cli *DockerCli) Subcmd(name, signature, description string, exitOnError bo
 }
 
 func (cli *DockerCli) LoadConfigFile() (err error) {
-	cli.configFile, err = registry.LoadConfig(os.Getenv("HOME"))
+	cli.configFile, err = registry.LoadConfig(homedir.Get())
 	if err != nil {
 		fmt.Fprintf(cli.err, "WARNING: %s\n", err)
 	}

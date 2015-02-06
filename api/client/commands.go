@@ -34,6 +34,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
+	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
@@ -388,7 +389,7 @@ func (cli *DockerCli) CmdLogin(args ...string) error {
 	var out2 engine.Env
 	err = out2.Decode(stream)
 	if err != nil {
-		cli.configFile, _ = registry.LoadConfig(os.Getenv("HOME"))
+		cli.configFile, _ = registry.LoadConfig(homedir.Get())
 		return err
 	}
 	registry.SaveConfig(cli.configFile)
