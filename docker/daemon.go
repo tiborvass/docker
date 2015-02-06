@@ -16,6 +16,7 @@ import (
 	_ "github.com/tiborvass/docker/daemon/execdriver/native"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/registry"
@@ -36,7 +37,7 @@ func init() {
 
 func migrateKey() (err error) {
 	// Migrate trust key if exists at ~/.docker/key.json and owned by current user
-	oldPath := filepath.Join(utils.GetHomeDir(), ".docker", defaultTrustKeyFile)
+	oldPath := filepath.Join(homedir.Get(), ".docker", defaultTrustKeyFile)
 	newPath := filepath.Join(getDaemonConfDir(), defaultTrustKeyFile)
 	if _, statErr := os.Stat(newPath); os.IsNotExist(statErr) && utils.IsFileOwner(oldPath) {
 		defer func() {
