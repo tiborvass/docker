@@ -152,7 +152,6 @@ func NewSession(client *http.Client, authConfig *cliconfig.AuthConfig, endpoint 
 		if err != nil {
 			return nil, err
 		}
-
 		if info.Standalone && authConfig != nil {
 			logrus.Debugf("Endpoint %s is eligible for private registry. Enabling decorator.", endpoint.String())
 			alwaysSetBasicAuth = true
@@ -246,7 +245,7 @@ func (r *Session) GetRemoteImageLayer(imgID, registry string, imgSize int64) (io
 	if err != nil {
 		return nil, fmt.Errorf("Error while getting from the server: %v", err)
 	}
-	// TODO: why are we doing retries at this level?
+	// TODO(tiborvass): why are we doing retries at this level?
 	// These retries should be generic to both v1 and v2
 	for i := 1; i <= retries; i++ {
 		statusCode = 0
@@ -274,6 +273,8 @@ func (r *Session) GetRemoteImageLayer(imgID, registry string, imgSize int64) (io
 			res.StatusCode, imgID)
 	}
 
+	// TODO(tiborvass): this codepath should be removed dead, because this method
+	// should only be called with imgSize <= 0
 	if res.Header.Get("Accept-Ranges") == "bytes" && imgSize > 0 {
 		logrus.Debugf("server supports resume")
 		return httputils.ResumableRequestReaderWithInitialResponse(r.client, req, 5, imgSize, res), nil
@@ -381,7 +382,7 @@ func (r *Session) GetRepositoryData(remote string) (*RepositoryData, error) {
 	}
 
 	// Forge a better object from the retrieved data
-	imgsData := make(map[string]*ImgData)
+	imgsData := make(map[string]*ImgData, len(remoteChecksums))
 	for _, elem := range remoteChecksums {
 		imgsData[elem.ID] = elem
 	}

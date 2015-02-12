@@ -1,17 +1,18 @@
 package graph
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/distribution"
 	"github.com/docker/distribution/digest"
+	"github.com/docker/distribution/manifest"
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/docker/docker/cliconfig"
 	"github.com/docker/docker/image"
@@ -22,10 +23,7 @@ import (
 	"github.com/docker/docker/registry"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
-	"github.com/docker/libtrust"
 )
-
-var ErrV2RegistryUnavailable = errors.New("error v2 registry unavailable")
 
 type ImagePushConfig struct {
 	MetaHeaders map[string][]string
@@ -88,19 +86,16 @@ func (s *TagStore) getImageList(localRepo map[string]string, requestedTag string
 	return imageList, tagsByImage, nil
 }
 
-func (s *TagStore) getImageTags(localRepo map[string]string, askedTag string) ([]string, error) {
-	logrus.Debugf("Checking %s against %#v", askedTag, localRepo)
+func (s *TagStore) getImageTags(localRepo Repository, askedTag string) ([]string, error) {
 	if len(askedTag) > 0 {
-		if _, ok := localRepo[askedTag]; !ok || utils.DigestReference(askedTag) {
-			return nil, fmt.Errorf("Tag does not exist: %s", askedTag)
+		if _, ok := localRepo[askedTag]; !ok {
+			return nil, fmt.Errorf("Tag does not exist for %s", askedTag)
 		}
 		return []string{askedTag}, nil
 	}
 	var tags []string
 	for tag := range localRepo {
-		if !utils.DigestReference(tag) {
-			tags = append(tags, tag)
-		}
+		tags = append(tags, tag)
 	}
 	return tags, nil
 }
@@ -212,6 +207,7 @@ func (s *TagStore) pushImageToEndpoint(endpoint string, out io.Writer, remoteNam
 func (s *TagStore) pushRepository(r *registry.Session, out io.Writer,
 	repoInfo *registry.RepositoryInfo, localRepo map[string]string,
 	tag string, sf *streamformatter.StreamFormatter) error {
+
 	logrus.Debugf("Local repo: %s", localRepo)
 	out = ioutils.NewWriteFlusher(out)
 	imgList, tags, err := s.getImageList(localRepo, tag)
@@ -225,6 +221,12 @@ func (s *TagStore) pushRepository(r *registry.Session, out io.Writer,
 	for _, data := range imageIndex {
 		logrus.Debugf("Pushing ID: %s with Tag: %s", data.ID, data.Tag)
 	}
+
+	if _, err := s.poolAdd("push", repoInfo.LocalName); err != nil {
+		return err
+	}
+	defer s.poolRemove("push", repoInfo.LocalName)
+
 	// Register all the images in a repository with the registry
 	// If an image is not in this list it will not be associated with the repository
 	repoData, err := r.PushImageJSONIndex(repoInfo.RemoteName, imageIndex, false, nil)
@@ -300,167 +302,160 @@ func (s *TagStore) pushImage(r *registry.Session, out io.Writer, imgID, ep strin
 	return imgData.Checksum, nil
 }
 
-func (s *TagStore) pushV2Repository(r *registry.Session, localRepo Repository, out io.Writer, repoInfo *registry.RepositoryInfo, tag string, sf *streamformatter.StreamFormatter) error {
-	endpoint, err := r.V2RegistryEndpoint(repoInfo.Index)
+func (s *TagStore) pushV2Repository(localName, repoName string, endpoint registry.APIEndpoint, imagePushConfig *ImagePushConfig, sf *streamformatter.StreamFormatter) error {
+	repo, err := NewV2Repository(repoName, endpoint, imagePushConfig.MetaHeaders, imagePushConfig.AuthConfig)
 	if err != nil {
-		if repoInfo.Index.Official {
-			logrus.Debugf("Unable to push to V2 registry, falling back to v1: %s", err)
-			return ErrV2RegistryUnavailable
-		}
-		return fmt.Errorf("error getting registry endpoint: %s", err)
+		return fmt.Errorf("error creating client: %v", err)
 	}
+	if _, err := s.poolAdd("push", localName); err != nil {
+		return err
+	}
+	defer s.poolRemove("push", localName)
 
-	tags, err := s.getImageTags(localRepo, tag)
+	localRepo, err := s.Get(localName)
 	if err != nil {
 		return err
 	}
-	if len(tags) == 0 {
-		return fmt.Errorf("No tags to push for %s", repoInfo.LocalName)
-	}
 
-	auth, err := r.GetV2Authorization(endpoint, repoInfo.RemoteName, false)
+	tags, err := s.getImageTags(localRepo, imagePushConfig.Tag)
 	if err != nil {
-		return fmt.Errorf("error getting authorization: %s", err)
+		return fmt.Errorf("error getting tags for %s: %s", localName, err)
+	}
+	if len(tags) == 0 {
+		return fmt.Errorf("no tags to push for %s", localName)
 	}
 
 	for _, tag := range tags {
-		logrus.Debugf("Pushing repository: %s:%s", repoInfo.CanonicalName, tag)
-
-		layerId, exists := localRepo[tag]
-		if !exists {
-			return fmt.Errorf("tag does not exist: %s", tag)
+		if err := s.pushV2Tag(repo, localRepo, tag, imagePushConfig.OutStream, sf); err != nil {
+			return fmt.Errorf("error pushing image repository: %v", err)
 		}
-
-		layer, err := s.graph.Get(layerId)
-		if err != nil {
-			return err
-		}
-
-		m := &registry.ManifestData{
-			SchemaVersion: 1,
-			Name:          repoInfo.RemoteName,
-			Tag:           tag,
-			Architecture:  layer.Architecture,
-		}
-		var metadata runconfig.Config
-		if layer.Config != nil {
-			metadata = *layer.Config
-		}
-
-		layersSeen := make(map[string]bool)
-		layers := []*image.Image{layer}
-		for ; layer != nil; layer, err = layer.GetParent() {
-			if err != nil {
-				return err
-			}
-
-			if layersSeen[layer.ID] {
-				break
-			}
-			layers = append(layers, layer)
-			layersSeen[layer.ID] = true
-		}
-		m.FSLayers = make([]*registry.FSLayer, len(layers))
-		m.History = make([]*registry.ManifestHistory, len(layers))
-
-		// Schema version 1 requires layer ordering from top to root
-		for i, layer := range layers {
-			logrus.Debugf("Pushing layer: %s", layer.ID)
-
-			if layer.Config != nil && metadata.Image != layer.ID {
-				if err := runconfig.Merge(&metadata, layer.Config); err != nil {
-					return err
-				}
-			}
-			jsonData, err := layer.RawJson()
-			if err != nil {
-				return fmt.Errorf("cannot retrieve the path for %s: %s", layer.ID, err)
-			}
-
-			checksum, err := layer.GetCheckSum(s.graph.ImageRoot(layer.ID))
-			if err != nil {
-				return fmt.Errorf("error getting image checksum: %s", err)
-			}
-
-			var exists bool
-			if len(checksum) > 0 {
-				dgst, err := digest.ParseDigest(checksum)
-				if err != nil {
-					return fmt.Errorf("Invalid checksum %s: %s", checksum, err)
-				}
-
-				// Call mount blob
-				exists, err = r.HeadV2ImageBlob(endpoint, repoInfo.RemoteName, dgst, auth)
-				if err != nil {
-					out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image push failed", nil))
-					return err
-				}
-			}
-			if !exists {
-				if cs, err := s.pushV2Image(r, layer, endpoint, repoInfo.RemoteName, sf, out, auth); err != nil {
-					return err
-				} else if cs != checksum {
-					// Cache new checksum
-					if err := layer.SaveCheckSum(s.graph.ImageRoot(layer.ID), cs); err != nil {
-						return err
-					}
-					checksum = cs
-				}
-			} else {
-				out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image already exists", nil))
-			}
-			m.FSLayers[i] = &registry.FSLayer{BlobSum: checksum}
-			m.History[i] = &registry.ManifestHistory{V1Compatibility: string(jsonData)}
-		}
-
-		if err := checkValidManifest(m); err != nil {
-			return fmt.Errorf("invalid manifest: %s", err)
-		}
-
-		logrus.Debugf("Pushing %s:%s to v2 repository", repoInfo.LocalName, tag)
-		mBytes, err := json.MarshalIndent(m, "", "   ")
-		if err != nil {
-			return err
-		}
-		js, err := libtrust.NewJSONSignature(mBytes)
-		if err != nil {
-			return err
-		}
-
-		if err = js.Sign(s.trustKey); err != nil {
-			return err
-		}
-
-		signedBody, err := js.PrettySignature("signatures")
-		if err != nil {
-			return err
-		}
-		logrus.Infof("Signed manifest for %s:%s using daemon's key: %s", repoInfo.LocalName, tag, s.trustKey.KeyID())
-
-		// push the manifest
-		digest, err := r.PutV2ImageManifest(endpoint, repoInfo.RemoteName, tag, signedBody, mBytes, auth)
-		if err != nil {
-			return err
-		}
-
-		out.Write(sf.FormatStatus("", "Digest: %s", digest))
 	}
+
 	return nil
 }
 
-// PushV2Image pushes the image content to the v2 registry, first buffering the contents to disk
-func (s *TagStore) pushV2Image(r *registry.Session, img *image.Image, endpoint *registry.Endpoint, imageName string, sf *streamformatter.StreamFormatter, out io.Writer, auth *registry.RequestAuthorization) (string, error) {
+func (s *TagStore) pushV2Tag(repo distribution.Repository, localRepo Repository, tag string, out io.Writer, sf *streamformatter.StreamFormatter) error {
+	logrus.Debugf("Pushing repository: %s:%s", repo.Name(), tag)
+
+	layerId, exists := localRepo[tag]
+	if !exists {
+		return fmt.Errorf("tag does not exist: %s", tag)
+	}
+
+	// TODO(tiborvass): @dmcgowan isn't this supposed to be outside the tags loop?
+	layersSeen := make(map[string]bool)
+
+	layer, err := s.graph.Get(layerId)
+	if err != nil {
+		return err
+	}
+
+	m := &manifest.Manifest{
+		Versioned: manifest.Versioned{
+			SchemaVersion: 1,
+		},
+		Name:         repo.Name(),
+		Tag:          tag,
+		Architecture: layer.Architecture,
+		FSLayers:     make([]manifest.FSLayer, 0, 4),
+		History:      make([]manifest.History, 0, 4),
+	}
+
+	var metadata runconfig.Config
+	if layer != nil && layer.Config != nil {
+		metadata = *layer.Config
+	}
+
+	for ; layer != nil; layer, err = layer.GetParent() {
+		if err != nil {
+			return err
+		}
+
+		if layersSeen[layer.ID] {
+			break
+		}
+
+		logrus.Debugf("Pushing layer: %s", layer.ID)
+
+		if layer.Config != nil && metadata.Image != layer.ID {
+			if err := runconfig.Merge(&metadata, layer.Config); err != nil {
+				return err
+			}
+		}
+
+		jsonData, err := layer.RawJson()
+		if err != nil {
+			return fmt.Errorf("cannot retrieve the path for %s: %s", layer.ID, err)
+		}
+
+		// Push v1 compatibility object for compatibility registry
+		// Set jsonData and layer.ID
+
+		var d digest.Digest
+		checksum, err := layer.GetCheckSum(s.graph.ImageRoot(layer.ID))
+		if err != nil {
+			return fmt.Errorf("error getting image checksum: %s", err)
+		}
+		if checksum != "" {
+			parsedDigest, err := digest.ParseDigest(checksum)
+			if err != nil {
+				logrus.Infof("Could not parse digest(%s) for %s: %s", checksum, layer.ID, err)
+			}
+			d = parsedDigest
+		}
+
+		if len(d) > 0 {
+			if _, err := repo.Blobs(nil).Stat(nil, d); err == nil {
+				out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image already exists", nil))
+			} else {
+				switch err {
+				case distribution.ErrBlobUnknown:
+					d = ""
+				default:
+					out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image push failed", nil))
+					return fmt.Errorf("error checking if layer exists: %s", err)
+				}
+			}
+		}
+
+		// if digest was empty or not saved, or if blob does not exist on the remote repository
+		if len(d) == 0 {
+			d, err = s.pushV2Image(repo.Blobs(nil), layer, sf, out)
+			if err != nil {
+				out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image push failed", nil))
+				return err
+			}
+
+			out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image successfully pushed", nil))
+
+			// Cache digest
+			if err := layer.SaveCheckSum(s.graph.ImageRoot(layer.ID), d.String()); err != nil {
+				return err
+			}
+		}
+
+		m.FSLayers = append(m.FSLayers, manifest.FSLayer{BlobSum: d})
+		m.History = append(m.History, manifest.History{V1Compatibility: string(jsonData)})
+
+		layersSeen[layer.ID] = true
+	}
+
+	logrus.Infof("Signed manifest for %s:%s using daemon's key: %s", repo.Name(), tag, s.trustKey.KeyID())
+	signed, err := manifest.Sign(m, s.trustKey)
+	if err != nil {
+		return err
+	}
+
+	return repo.Manifests().Put(signed)
+}
+
+func (s *TagStore) pushV2Image(bs distribution.BlobService, img *image.Image, sf *streamformatter.StreamFormatter, out io.Writer) (digest.Digest, error) {
 	out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Buffering to Disk", nil))
 
-	image, err := s.graph.Get(img.ID)
+	arch, err := img.TarLayer()
 	if err != nil {
 		return "", err
 	}
-	arch, err := image.TarLayer()
-	if err != nil {
-		return "", err
-	}
-	defer arch.Close()
 
 	tf, err := s.graph.newTempFile()
 	if err != nil {
@@ -472,32 +467,47 @@ func (s *TagStore) pushV2Image(r *registry.Session, img *image.Image, endpoint *
 	}()
 
 	size, dgst, err := bufferToFile(tf, arch)
+	if err != nil {
+		return "", err
+	}
 
 	// Send the layer
 	logrus.Debugf("rendered layer for %s of [%d] size", img.ID, size)
-
-	if err := r.PutV2ImageBlob(endpoint, imageName, dgst,
-		progressreader.New(progressreader.Config{
-			In:        tf,
-			Out:       out,
-			Formatter: sf,
-			Size:      int(size),
-			NewLines:  false,
-			ID:        stringid.TruncateID(img.ID),
-			Action:    "Pushing",
-		}), auth); err != nil {
-		out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Image push failed", nil))
+	layerUpload, err := bs.Create(nil)
+	if err != nil {
 		return "", err
 	}
-	out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Image successfully pushed", nil))
-	return dgst.String(), nil
+	// TODO(tiborvass): @dmcgowan need review
+	defer layerUpload.Close()
+
+	reader := progressreader.New(progressreader.Config{
+		In:        ioutil.NopCloser(tf),
+		Out:       out,
+		Formatter: sf,
+		Size:      int(size),
+		NewLines:  false,
+		ID:        stringid.TruncateID(img.ID),
+		Action:    "Pushing",
+	})
+	n, err := layerUpload.ReadFrom(reader)
+	if err != nil {
+		return "", err
+	}
+	if n != size {
+		return "", fmt.Errorf("short upload: only wrote %d of %d", n, size)
+	}
+
+	desc := distribution.Descriptor{Digest: dgst}
+	if _, err := layerUpload.Commit(nil, desc); err != nil {
+		return "", err
+	}
+
+	return dgst, nil
 }
 
 // FIXME: Allow to interrupt current push when new push of same image is done.
 func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) error {
-	var (
-		sf = streamformatter.NewJSONStreamFormatter()
-	)
+	var sf = streamformatter.NewJSONStreamFormatter()
 
 	// Resolve the Repository name from fqn to RepositoryInfo
 	repoInfo, err := s.registryService.ResolveRepository(localName)
@@ -505,23 +515,9 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 		return err
 	}
 
-	if _, err := s.poolAdd("push", repoInfo.LocalName); err != nil {
-		return err
-	}
-	defer s.poolRemove("push", repoInfo.LocalName)
+	image := CanonicalizeName(localName)
 
-	endpoint, err := repoInfo.GetEndpoint(imagePushConfig.MetaHeaders)
-	if err != nil {
-		return err
-	}
-	// TODO(tiborvass): reuse client from endpoint?
-	// Adds Docker-specific headers as well as user-specified headers (metaHeaders)
-	tr := transport.NewTransport(
-		registry.NewTransport(registry.NoTimeout, endpoint.IsSecure),
-		registry.DockerHeaders(imagePushConfig.MetaHeaders)...,
-	)
-	client := registry.HTTPClient(tr)
-	r, err := registry.NewSession(client, imagePushConfig.AuthConfig, endpoint)
+	endpoints, err := s.registryService.LookupEndpoints(image)
 	if err != nil {
 		return err
 	}
@@ -539,22 +535,58 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 		return fmt.Errorf("Repository does not exist: %s", repoInfo.LocalName)
 	}
 
-	if repoInfo.Index.Official || endpoint.Version == registry.APIVersion2 {
-		err := s.pushV2Repository(r, localRepo, imagePushConfig.OutStream, repoInfo, imagePushConfig.Tag, sf)
-		if err == nil {
-			s.eventsService.Log("push", repoInfo.LocalName, "")
-			return nil
+	var lastErr error
+	for _, endpoint := range endpoints {
+		name := image
+		logrus.Debugf("Trying to push %s to %s %s", name, endpoint.URL, endpoint.Version)
+		// TODO(tiborvass): isn't the following redundant with ResolveRepository?
+		if endpoint.TrimHostname {
+			if i := strings.IndexRune(name, '/'); i > 0 {
+				name = name[i+1:]
+			}
 		}
 
-		if err != ErrV2RegistryUnavailable {
-			return fmt.Errorf("Error pushing to registry: %s", err)
+		switch endpoint.Version {
+		case registry.APIVersion2:
+			if err := s.pushV2Repository(localName, name, endpoint, imagePushConfig, sf); err != nil {
+				// TODO: use fallback policy instead of automatically denying falling
+				logrus.Errorf("v2 error: %v", err)
+				return err
+			}
+		case registry.APIVersion1:
+			// TODO(tiborvass): check if endpoint is secure
+			secure := false
+			// Adds Docker-specific headers as well as user-specified headers (metaHeaders)
+			tr := transport.NewTransport(
+				registry.NewTransport(registry.NoTimeout, secure),
+				registry.DockerHeaders(imagePushConfig.MetaHeaders)...,
+			)
+			client := registry.HTTPClient(tr)
+			v1Endpoint := endpoint.ToV1Endpoint(imagePushConfig.MetaHeaders)
+			if v1Endpoint == nil {
+				lastErr = fmt.Errorf("Could not get v1 endpoint")
+				continue
+			}
+			r, err := registry.NewSession(client, imagePushConfig.AuthConfig, v1Endpoint)
+			if err != nil {
+				lastErr = err
+				continue
+			}
+			if err := s.pushRepository(r, imagePushConfig.OutStream, repoInfo, localRepo, imagePushConfig.Tag, sf); err != nil {
+				lastErr = err
+				continue
+			}
+		default:
+			lastErr = fmt.Errorf("unknown version %d for registry %s", endpoint.Version, endpoint.URL)
+			continue
 		}
+
+		s.eventsService.Log("push", repoInfo.LocalName, "")
+		return nil
 	}
 
-	if err := s.pushRepository(r, imagePushConfig.OutStream, repoInfo, localRepo, imagePushConfig.Tag, sf); err != nil {
-		return err
+	if lastErr == nil {
+		lastErr = fmt.Errorf("no endpoints found for %s", repoInfo.CanonicalName)
 	}
-	s.eventsService.Log("push", repoInfo.LocalName, "")
-	return nil
-
+	return lastErr
 }
