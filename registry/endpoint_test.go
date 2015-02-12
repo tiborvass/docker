@@ -19,7 +19,7 @@ func TestEndpointParse(t *testing.T) {
 		{"0.0.0.0:5000", "https://0.0.0.0:5000/v0/"},
 	}
 	for _, td := range testData {
-		e, err := newEndpoint(td.str, false, nil)
+		e, err := newEndpoint(td.str, nil, nil)
 		if err != nil {
 			t.Errorf("%q: %s", td.str, err)
 		}
@@ -60,7 +60,7 @@ func TestValidateEndpointAmbiguousAPIVersion(t *testing.T) {
 	testEndpoint := Endpoint{
 		URL:     testServerURL,
 		Version: APIVersionUnknown,
-		client:  HTTPClient(NewTransport(ConnectTimeout, false)),
+		client:  HTTPClient(NewTransport(nil)),
 	}
 
 	if err = validateEndpoint(&testEndpoint); err != nil {

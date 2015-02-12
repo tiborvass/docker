@@ -20,13 +20,20 @@ const (
 	REPO    = "foo42/bar"
 )
 
+type w struct{ testing.T }
+
+func (w w) Write(p []byte) (n int, err error) {
+	w.Log(string(p))
+	return len(p), nil
+}
+
 func spawnTestRegistrySession(t *testing.T) *Session {
 	authConfig := &cliconfig.AuthConfig{}
 	endpoint, err := NewEndpoint(makeIndex("/v1/"), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var tr http.RoundTripper = debugTransport{NewTransport(ReceiveTimeout, endpoint.IsSecure)}
+	var tr http.RoundTripper = debugTransport{w{t}, NewTransport(nil)}
 	tr = transport.NewTransport(AuthTransport(tr, authConfig, false), DockerHeaders(nil)...)
 	client := HTTPClient(tr)
 	r, err := NewSession(client, authConfig, endpoint)

@@ -101,7 +101,7 @@ func (s *DockerSuite) TestEventsContainerFailStartDie(c *check.C) {
 }
 
 func (s *DockerSuite) TestEventsLimit(c *check.C) {
-
+	c.Skip("kernel panic")
 	var waitGroup sync.WaitGroup
 	errChan := make(chan error, 17)
 

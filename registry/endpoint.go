@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -44,7 +45,9 @@ func scanForAPIVersion(address string) (string, APIVersion) {
 // NewEndpoint parses the given address to return a registry endpoint.
 func NewEndpoint(index *IndexInfo, metaHeaders http.Header) (*Endpoint, error) {
 	// *TODO: Allow per-registry configuration of endpoints.
-	endpoint, err := newEndpoint(index.GetAuthConfigKey(), index.Secure, metaHeaders)
+	tlsConfig := newTlsConfig()
+	tlsConfig.InsecureSkipVerify = !index.Secure
+	endpoint, err := newEndpoint(index.GetAuthConfigKey(), tlsConfig, metaHeaders)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +85,7 @@ func validateEndpoint(endpoint *Endpoint) error {
 	return nil
 }
 
-func newEndpoint(address string, secure bool, metaHeaders http.Header) (*Endpoint, error) {
+func newEndpoint(address string, tlsConfig *tls.Config, metaHeaders http.Header) (*Endpoint, error) {
 	var (
 		endpoint       = new(Endpoint)
 		trimmedAddress string
@@ -93,13 +96,16 @@ func newEndpoint(address string, secure bool, metaHeaders http.Header) (*Endpoin
 		address = "https://" + address
 	}
 
+	endpoint.IsSecure = (tlsConfig == nil || !tlsConfig.InsecureSkipVerify)
+
 	trimmedAddress, endpoint.Version = scanForAPIVersion(address)
 
 	if endpoint.URL, err = url.Parse(trimmedAddress); err != nil {
 		return nil, err
 	}
-	endpoint.IsSecure = secure
-	tr := NewTransport(ConnectTimeout, endpoint.IsSecure)
+
+	// TODO(tiborvass): make sure a ConnectTimeout transport is used
+	tr := NewTransport(tlsConfig)
 	endpoint.client = HTTPClient(transport.NewTransport(tr, DockerHeaders(metaHeaders)...))
 	return endpoint, nil
 }
