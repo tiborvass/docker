@@ -21,7 +21,7 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/ioutils"

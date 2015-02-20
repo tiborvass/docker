@@ -27,7 +27,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/stats"
-	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/nat"
