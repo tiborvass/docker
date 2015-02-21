@@ -32,6 +32,7 @@ import (
 	"github.com/tiborvass/docker/builder/parser"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/common"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/tarsum"
@@ -155,7 +156,7 @@ func (b *Builder) Run(context io.Reader) (string, error) {
 			}
 			return "", err
 		}
-		fmt.Fprintf(b.OutStream, " ---> %s\n", utils.TruncateID(b.image))
+		fmt.Fprintf(b.OutStream, " ---> %s\n", common.TruncateID(b.image))
 		if b.Remove {
 			b.clearTmp()
 		}
@@ -165,7 +166,7 @@ func (b *Builder) Run(context io.Reader) (string, error) {
 		return "", fmt.Errorf("No image was generated. Is your Dockerfile empty?")
 	}
 
-	fmt.Fprintf(b.OutStream, "Successfully built %s\n", utils.TruncateID(b.image))
+	fmt.Fprintf(b.OutStream, "Successfully built %s\n", common.TruncateID(b.image))
 	return b.image, nil
 }
 
