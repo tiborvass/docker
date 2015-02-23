@@ -12,10 +12,10 @@ import (
 	"github.com/tiborvass/docker/daemon/execdriver/lxc"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
+	"github.com/tiborvass/docker/pkg/common"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/utils"
 )
 
 type execConfig struct {
@@ -141,7 +141,7 @@ func (d *Daemon) ContainerExecCreate(job *engine.Job) engine.Status {
 	}
 
 	execConfig := &execConfig{
-		ID:            utils.GenerateRandomID(),
+		ID:            common.GenerateRandomID(),
 		OpenStdin:     config.AttachStdin,
 		OpenStdout:    config.AttachStdout,
 		OpenStderr:    config.AttachStderr,
