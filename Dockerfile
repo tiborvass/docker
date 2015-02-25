@@ -23,7 +23,7 @@
 # the case. Therefore, you don't have to disable it anymore.
 #
 
-FROM ubuntu:14.04
+FROM debian:jessie
 MAINTAINER Tianon Gravi <admwiggin@gmail.com> (@tianon)
 
 # Packaged dependencies
@@ -46,9 +46,9 @@ RUN apt-get update && apt-get install -y \
 	python-pip \
 	python-websocket \
 	reprepro \
-	ruby1.9.1 \
-	ruby1.9.1-dev \
-	s3cmd=1.1.0* \
+	ruby \
+	ruby-dev \
+	s3cmd=1.5.0* \
 	--no-install-recommends
 
 # Get lvm2 source for compiling statically
