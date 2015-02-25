@@ -36,6 +36,7 @@ import (
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
+	"github.com/tiborvass/docker/pkg/pidfile"
 	"github.com/tiborvass/docker/pkg/resolvconf"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/sysinfo"
@@ -836,12 +837,13 @@ func NewDaemonFromDirectory(config *Config, eng *engine.Engine) (*Daemon, error)
 	// Claim the pidfile first, to avoid any and all unexpected race conditions.
 	// Some of the init doesn't need a pidfile lock - but let's not try to be smart.
 	if config.Pidfile != "" {
-		if err := utils.CreatePidFile(config.Pidfile); err != nil {
+		file, err := pidfile.New(config.Pidfile)
+		if err != nil {
 			return nil, err
 		}
 		eng.OnShutdown(func() {
 			// Always release the pidfile last, just in case
-			utils.RemovePidFile(config.Pidfile)
+			file.Remove()
 		})
 	}
 
