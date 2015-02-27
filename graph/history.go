@@ -5,6 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/utils"
 )
 
 func (s *TagStore) CmdHistory(job *engine.Job) engine.Status {
@@ -24,7 +25,7 @@ func (s *TagStore) CmdHistory(job *engine.Job) engine.Status {
 			if _, exists := lookupMap[id]; !exists {
 				lookupMap[id] = []string{}
 			}
-			lookupMap[id] = append(lookupMap[id], name+":"+tag)
+			lookupMap[id] = append(lookupMap[id], utils.ImageReference(name, tag))
 		}
 	}
 
