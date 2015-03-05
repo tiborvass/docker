@@ -35,8 +35,8 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/common"
+	"github.com/tiborvass/docker/pkg/directory"
 	mountpk "github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libcontainer/label"
 )
 
@@ -320,7 +320,7 @@ func (a *Driver) applyDiff(id string, diff archive.ArchiveReader) error {
 // relative to its base filesystem directory.
 func (a *Driver) DiffSize(id, parent string) (size int64, err error) {
 	// AUFS doesn't need the parent layer to calculate the diff size.
-	return utils.TreeSize(path.Join(a.rootPath(), "diff", id))
+	return directory.Size(path.Join(a.rootPath(), "diff", id))
 }
 
 // ApplyDiff extracts the changeset from the given diff into the
