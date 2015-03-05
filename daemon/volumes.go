@@ -15,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/volumes"
-	"github.com/docker/libcontainer/label"
 )
 
 type Mount struct {
@@ -342,12 +341,6 @@ func (container *Container) setupMounts() error {
 
 	if container.HostsPath != "" {
 		mounts = append(mounts, execdriver.Mount{Source: container.HostsPath, Destination: "/etc/hosts", Writable: true, Private: true})
-	}
-
-	for _, m := range mounts {
-		if err := label.SetFileLabel(m.Source, container.MountLabel); err != nil {
-			return err
-		}
 	}
 
 	container.command.Mounts = mounts
