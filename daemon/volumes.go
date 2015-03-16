@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"syscall"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/symlink"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/volumes"
 )
 
@@ -385,15 +385,14 @@ func copyExistingContents(source, destination string) error {
 // copyOwnership copies the permissions and uid:gid of the source file
 // into the destination file
 func copyOwnership(source, destination string) error {
-	var stat syscall.Stat_t
-
-	if err := syscall.Stat(source, &stat); err != nil {
+	stat, err := system.Stat(source)
+	if err != nil {
 		return err
 	}
 
-	if err := os.Chown(destination, int(stat.Uid), int(stat.Gid)); err != nil {
+	if err := os.Chown(destination, int(stat.Uid()), int(stat.Gid())); err != nil {
 		return err
 	}
 
-	return os.Chmod(destination, os.FileMode(stat.Mode))
+	return os.Chmod(destination, os.FileMode(stat.Mode()))
 }
