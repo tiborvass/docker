@@ -1,0 +1,19 @@
+#!/bin/bash
+
+(
+	cd docker
+
+	if [ "$1" == "clean" ]; then
+		rm -f ANSI*.dll ansi_windows_*.go
+		exit 0
+	fi
+
+	cp /ansicon/ANSI{32,64}.dll .
+
+	for i in 32 64; do
+		file=ansi_windows_$([ $i == 32 ] && echo 386 || echo amd64).go
+		go-bindata -nomemcopy -o "$file" "ANSI${i}.dll"
+		sed -ri "s/^func bindata_read.*/var ansiDll = \"ANSI${i}.dll\"\n\n\0/" "$file"
+		rm -f "ANSI${i}.dll"
+	done
+)

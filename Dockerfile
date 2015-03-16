@@ -164,6 +164,15 @@ RUN set -x \
 	&& (cd /go/src/github.com/BurntSushi/toml && git checkout -q $TOMLV_COMMIT) \
 	&& go install -v github.com/BurntSushi/toml/cmd/tomlv
 
+# Get ansicon DLL files for windows
+RUN go get github.com/jteeuwen/go-bindata/go-bindata
+RUN apt-get install unzip \
+	&& curl -sSL https://github.com/adoxa/ansicon/releases/download/v1.66/ansi166.zip -o /tmp/ansi166.zip \
+	&& mkdir /ansicon
+RUN unzip -p /tmp/ansi166.zip x64/ANSI64.dll > /ansicon/ANSI64.dll \
+	&& unzip -p /tmp/ansi166.zip x86/ANSI32.dll > /ansicon/ANSI32.dll
+	#&& rm /tmp/ansi166.zip
+
 # Wrap all commands in the "docker-in-docker" script to allow nested containers
 ENTRYPOINT ["hack/dind"]
 
