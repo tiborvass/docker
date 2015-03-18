@@ -23,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/stringutils"
 )
 
@@ -254,7 +255,7 @@ func NewWriteFlusher(w io.Writer) *WriteFlusher {
 }
 
 func NewHTTPRequestError(msg string, res *http.Response) error {
-	return &JSONError{
+	return &jsonmessage.JSONError{
 		Message: msg,
 		Code:    res.StatusCode,
 	}

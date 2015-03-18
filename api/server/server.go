@@ -32,6 +32,7 @@ import (
 	"github.com/tiborvass/docker/pkg/listenbuffer"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stdcopy"
+	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
@@ -595,7 +596,7 @@ func postImagesCreate(eng *engine.Engine, version version.Version, w http.Respon
 		if !job.Stdout.Used() {
 			return err
 		}
-		sf := utils.NewStreamFormatter(version.GreaterThan("1.0"))
+		sf := streamformatter.NewStreamFormatter(version.GreaterThan("1.0"))
 		w.Write(sf.FormatError(err))
 	}
 
@@ -680,7 +681,7 @@ func postImagesPush(eng *engine.Engine, version version.Version, w http.Response
 		if !job.Stdout.Used() {
 			return err
 		}
-		sf := utils.NewStreamFormatter(version.GreaterThan("1.0"))
+		sf := streamformatter.NewStreamFormatter(version.GreaterThan("1.0"))
 		w.Write(sf.FormatError(err))
 	}
 	return nil
@@ -1107,7 +1108,7 @@ func postBuild(eng *engine.Engine, version version.Version, w http.ResponseWrite
 		if !job.Stdout.Used() {
 			return err
 		}
-		sf := utils.NewStreamFormatter(version.GreaterThanOrEqualTo("1.8"))
+		sf := streamformatter.NewStreamFormatter(version.GreaterThanOrEqualTo("1.8"))
 		w.Write(sf.FormatError(err))
 	}
 	return nil

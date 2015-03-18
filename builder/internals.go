@@ -26,6 +26,7 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -601,7 +602,7 @@ func (b *Builder) run(c *daemon.Container) error {
 
 	// Wait for it to finish
 	if ret, _ := c.WaitStop(-1 * time.Second); ret != 0 {
-		err := &utils.JSONError{
+		err := &jsonmessage.JSONError{
 			Message: fmt.Sprintf("The command %v returned a non-zero code: %d", b.Config.Cmd, ret),
 			Code:    ret,
 		}

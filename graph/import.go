@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/progressreader"
+	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
@@ -23,7 +24,7 @@ func (s *TagStore) CmdImport(job *engine.Job) error {
 		src          = job.Args[0]
 		repo         = job.Args[1]
 		tag          string
-		sf           = utils.NewStreamFormatter(job.GetenvBool("json"))
+		sf           = streamformatter.NewStreamFormatter(job.GetenvBool("json"))
 		archive      archive.ArchiveReader
 		resp         *http.Response
 		stdoutBuffer = bytes.NewBuffer(nil)

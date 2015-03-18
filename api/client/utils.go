@@ -19,11 +19,11 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/utils"
 )
 
 var (
@@ -164,7 +164,7 @@ func (cli *DockerCli) streamHelper(method, path string, setRawTerminal bool, in 
 	}
 
 	if api.MatchesContentType(resp.Header.Get("Content-Type"), "application/json") {
-		return utils.DisplayJSONMessagesStream(resp.Body, stdout, cli.outFd, cli.isTerminalOut)
+		return jsonmessage.DisplayJSONMessagesStream(resp.Body, stdout, cli.outFd, cli.isTerminalOut)
 	}
 	if stdout != nil || stderr != nil {
 		// When TTY is ON, use regular copy

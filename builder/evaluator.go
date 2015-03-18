@@ -33,6 +33,7 @@ import (
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/fileutils"
+	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/tarsum"
@@ -105,7 +106,7 @@ type Builder struct {
 
 	// Deprecated, original writer used for ImagePull. To be removed.
 	OutOld          io.Writer
-	StreamFormatter *utils.StreamFormatter
+	StreamFormatter *streamformatter.StreamFormatter
 
 	Config *runconfig.Config // runconfig for cmd, run, entrypoint etc.
 
