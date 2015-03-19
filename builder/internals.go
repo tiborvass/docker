@@ -34,6 +34,7 @@ import (
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
+	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -537,10 +538,17 @@ func (b *Builder) create() (*daemon.Container, error) {
 	}
 	b.Config.Image = b.image
 
+	hostConfig := &runconfig.HostConfig{
+		CpuShares:  b.cpuShares,
+		CpusetCpus: b.cpuSetCpus,
+		Memory:     b.memory,
+		MemorySwap: b.memorySwap,
+	}
+
 	config := *b.Config
 
 	// Create the container
-	c, warnings, err := b.Daemon.Create(b.Config, nil, "")
+	c, warnings, err := b.Daemon.Create(b.Config, hostConfig, "")
 	if err != nil {
 		return nil, err
 	}
