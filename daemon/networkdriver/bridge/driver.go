@@ -17,8 +17,8 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/pkg/iptables"
-	"github.com/tiborvass/docker/pkg/networkfs/resolvconf"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
+	"github.com/tiborvass/docker/pkg/resolvconf"
 	"github.com/docker/libcontainer/netlink"
 )
 
