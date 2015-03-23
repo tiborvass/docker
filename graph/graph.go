@@ -13,10 +13,12 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
-	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/common"
+	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -116,7 +118,7 @@ func (graph *Graph) Get(name string) (*image.Image, error) {
 // Create creates a new image and registers it in the graph.
 func (graph *Graph) Create(layerData archive.ArchiveReader, containerID, containerImage, comment, author string, containerConfig, config *runconfig.Config) (*image.Image, error) {
 	img := &image.Image{
-		ID:            utils.GenerateRandomID(),
+		ID:            common.GenerateRandomID(),
 		Comment:       comment,
 		Created:       time.Now().UTC(),
 		DockerVersion: dockerversion.VERSION,
@@ -209,14 +211,22 @@ func (graph *Graph) TempLayerArchive(id string, sf *utils.StreamFormatter, outpu
 	if err != nil {
 		return nil, err
 	}
-	progress := utils.ProgressReader(a, 0, output, sf, false, utils.TruncateID(id), "Buffering to disk")
-	defer progress.Close()
-	return archive.NewTempArchive(progress, tmp)
+	progressReader := progressreader.New(progressreader.Config{
+		In:        a,
+		Out:       output,
+		Formatter: sf,
+		Size:      0,
+		NewLines:  false,
+		ID:        common.TruncateID(id),
+		Action:    "Buffering to disk",
+	})
+	defer progressReader.Close()
+	return archive.NewTempArchive(progressReader, tmp)
 }
 
 // Mktemp creates a temporary sub-directory inside the graph's filesystem.
 func (graph *Graph) Mktemp(id string) (string, error) {
-	dir := path.Join(graph.Root, "_tmp", utils.GenerateRandomID())
+	dir := path.Join(graph.Root, "_tmp", common.GenerateRandomID())
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		return "", err
 	}
