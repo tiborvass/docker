@@ -34,9 +34,9 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
-	"github.com/tiborvass/docker/pkg/common"
 	"github.com/tiborvass/docker/pkg/directory"
 	mountpk "github.com/tiborvass/docker/pkg/mount"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/docker/libcontainer/label"
 )
 
@@ -405,7 +405,7 @@ func (a *Driver) Cleanup() error {
 
 	for _, id := range ids {
 		if err := a.unmount(id); err != nil {
-			log.Errorf("Unmounting %s: %s", common.TruncateID(id), err)
+			log.Errorf("Unmounting %s: %s", stringid.TruncateID(id), err)
 		}
 	}
 

@@ -30,12 +30,12 @@ import (
 	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
-	"github.com/tiborvass/docker/pkg/common"
 	"github.com/tiborvass/docker/pkg/directory"
 	"github.com/tiborvass/docker/pkg/etchosts"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/resolvconf"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/runconfig"
@@ -739,7 +739,7 @@ func (container *Container) Kill() error {
 	if _, err := container.WaitStop(10 * time.Second); err != nil {
 		// Ensure that we don't kill ourselves
 		if pid := container.GetPid(); pid != 0 {
-			log.Infof("Container %s failed to exit within 10 seconds of kill - trying direct SIGKILL", common.TruncateID(container.ID))
+			log.Infof("Container %s failed to exit within 10 seconds of kill - trying direct SIGKILL", stringid.TruncateID(container.ID))
 			if err := syscall.Kill(pid, 9); err != nil {
 				if err != syscall.ESRCH {
 					return err
