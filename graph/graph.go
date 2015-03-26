@@ -12,7 +12,7 @@ import (
 	"syscall"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/image"
@@ -68,7 +68,7 @@ func (graph *Graph) restore() error {
 		}
 	}
 	graph.idIndex = truncindex.NewTruncIndex(ids)
-	log.Debugf("Restored %d elements", len(dir))
+	logrus.Debugf("Restored %d elements", len(dir))
 	return nil
 }
 

@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/url"
 
-	log "github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
@@ -51,7 +51,7 @@ func (cli *DockerCli) CmdAttach(args ...string) error {
 
 	if tty && cli.isTerminalOut {
 		if err := cli.monitorTtySize(cmd.Arg(0), false); err != nil {
-			log.Debugf("Error monitoring TTY size: %s", err)
+			logrus.Debugf("Error monitoring TTY size: %s", err)
 		}
 	}
 
