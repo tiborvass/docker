@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/utils"
 )
 
 // CmdKill kills one or more running container using SIGKILL or a specified signal.
@@ -15,7 +14,7 @@ func (cli *DockerCli) CmdKill(args ...string) error {
 	signal := cmd.String([]string{"s", "-signal"}, "KILL", "Signal to send to the container")
 	cmd.Require(flag.Min, 1)
 
-	utils.ParseFlags(cmd, args, true)
+	cmd.ParseFlags(args, true)
 
 	var encounteredError error
 	for _, name := range cmd.Args() {
