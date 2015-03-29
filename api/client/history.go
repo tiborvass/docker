@@ -9,8 +9,8 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/pkg/units"
-	"github.com/tiborvass/docker/utils"
 )
 
 // CmdHistory shows the history of an image.
@@ -51,7 +51,7 @@ func (cli *DockerCli) CmdHistory(args ...string) error {
 			if *noTrunc {
 				fmt.Fprintf(w, "%s\t", entry.CreatedBy)
 			} else {
-				fmt.Fprintf(w, "%s\t", utils.Trunc(entry.CreatedBy, 45))
+				fmt.Fprintf(w, "%s\t", stringutils.Truncate(entry.CreatedBy, 45))
 			}
 			fmt.Fprintf(w, "%s\t", units.HumanSize(float64(entry.Size)))
 			fmt.Fprintf(w, "%s", entry.Comment)

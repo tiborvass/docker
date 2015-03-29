@@ -9,9 +9,9 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/utils"
 )
 
 // Options holds command line options.
@@ -213,7 +213,7 @@ func validateRemoteName(remoteName string) error {
 		name = nameParts[0]
 
 		// the repository name must not be a valid image ID
-		if err := utils.ValidateID(name); err == nil {
+		if err := image.ValidateID(name); err == nil {
 			return fmt.Errorf("Invalid repository name (%s), cannot specify 64-byte hexadecimal strings", name)
 		}
 	} else {

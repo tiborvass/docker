@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/pkg/ioutils"
 )
 
 var (
@@ -59,7 +59,7 @@ func GetIfChanged() ([]byte, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
-	newHash, err := utils.HashData(bytes.NewReader(resolv))
+	newHash, err := ioutils.HashData(bytes.NewReader(resolv))
 	if err != nil {
 		return nil, "", err
 	}

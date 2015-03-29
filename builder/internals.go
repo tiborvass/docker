@@ -25,6 +25,7 @@ import (
 	imagepkg "github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
+	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -35,7 +36,6 @@ import (
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/utils"
 )
 
 func (b *Builder) readContext(context io.Reader) error {
@@ -250,7 +250,7 @@ func calcCopyInfo(b *Builder, cmdName string, cInfos *[]*copyInfo, origPath stri
 		*cInfos = append(*cInfos, &ci)
 
 		// Initiate the download
-		resp, err := utils.Download(ci.origPath)
+		resp, err := httputils.Download(ci.origPath)
 		if err != nil {
 			return err
 		}

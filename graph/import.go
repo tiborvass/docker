@@ -9,6 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/runconfig"
@@ -46,7 +47,7 @@ func (s *TagStore) CmdImport(job *engine.Job) error {
 			u.Path = ""
 		}
 		job.Stdout.Write(sf.FormatStatus("", "Downloading from %s", u))
-		resp, err = utils.Download(u.String())
+		resp, err = httputils.Download(u.String())
 		if err != nil {
 			return err
 		}

@@ -9,7 +9,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	nativeTemplate "github.com/tiborvass/docker/daemon/execdriver/native/template"
-	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/docker/libcontainer/label"
 )
 
@@ -177,7 +177,7 @@ func keepCapabilities(adds []string, drops []string) ([]string, error) {
 }
 
 func dropList(drops []string) ([]string, error) {
-	if utils.StringsContainsNoCase(drops, "all") {
+	if stringutils.InSlice(drops, "all") {
 		var newCaps []string
 		for _, capName := range execdriver.GetAllCapabilities() {
 			cap := execdriver.GetCapability(capName)
