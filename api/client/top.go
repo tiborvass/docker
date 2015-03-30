@@ -8,7 +8,6 @@ import (
 
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/utils"
 )
 
 // CmdTop displays the running processes of a container.
@@ -18,7 +17,7 @@ func (cli *DockerCli) CmdTop(args ...string) error {
 	cmd := cli.Subcmd("top", "CONTAINER [ps OPTIONS]", "Display the running processes of a container", true)
 	cmd.Require(flag.Min, 1)
 
-	utils.ParseFlags(cmd, args, true)
+	cmd.ParseFlags(args, true)
 
 	val := url.Values{}
 	if cmd.NArg() > 1 {
