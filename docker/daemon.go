@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 )
@@ -81,6 +82,9 @@ func mainDaemon() {
 		flag.Usage()
 		return
 	}
+
+	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: timeutils.RFC3339NanoFixed})
+
 	eng := engine.New()
 	signal.Trap(eng.Shutdown)
 
