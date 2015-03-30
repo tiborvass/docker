@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -57,9 +57,10 @@ func (cli *DockerCli) CmdCommit(args ...string) error {
 	}
 
 	var (
-		config *runconfig.Config
-		env    engine.Env
+		config   *runconfig.Config
+		response types.ContainerCommitResponse
 	)
+
 	if *flConfig != "" {
 		config = &runconfig.Config{}
 		if err := json.Unmarshal([]byte(*flConfig), config); err != nil {
@@ -70,10 +71,11 @@ func (cli *DockerCli) CmdCommit(args ...string) error {
 	if err != nil {
 		return err
 	}
-	if err := env.Decode(stream); err != nil {
+
+	if err := json.NewDecoder(stream).Decode(&response); err != nil {
 		return err
 	}
 
-	fmt.Fprintf(cli.out, "%s\n", env.Get("Id"))
+	fmt.Fprintln(cli.out, response.ID)
 	return nil
 }
