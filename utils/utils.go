@@ -24,7 +24,7 @@ import (
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
-	"github.com/tiborvass/docker/pkg/stringutils"
+	"github.com/tiborvass/docker/pkg/stringid"
 )
 
 type KeyValuePair struct {
@@ -313,7 +313,7 @@ var globalTestID string
 // new directory.
 func TestDirectory(templateDir string) (dir string, err error) {
 	if globalTestID == "" {
-		globalTestID = stringutils.GenerateRandomString()[:4]
+		globalTestID = stringid.GenerateRandomID()[:4]
 	}
 	prefix := fmt.Sprintf("docker-test%s-%s-", globalTestID, GetCallerName(2))
 	if prefix == "" {
