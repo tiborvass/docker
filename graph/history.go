@@ -1,9 +1,11 @@
 package graph
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/utils"
@@ -30,19 +32,22 @@ func (s *TagStore) CmdHistory(job *engine.Job) error {
 		}
 	}
 
-	outs := engine.NewTable("Created", 0)
+	history := []types.ImageHistory{}
+
 	err = foundImage.WalkHistory(func(img *image.Image) error {
-		out := &engine.Env{}
-		out.SetJson("Id", img.ID)
-		out.SetInt64("Created", img.Created.Unix())
-		out.Set("CreatedBy", strings.Join(img.ContainerConfig.Cmd, " "))
-		out.SetList("Tags", lookupMap[img.ID])
-		out.SetInt64("Size", img.Size)
-		outs.Add(out)
+		history = append(history, types.ImageHistory{
+			ID:        img.ID,
+			Created:   img.Created.Unix(),
+			CreatedBy: strings.Join(img.ContainerConfig.Cmd, " "),
+			Tags:      lookupMap[img.ID],
+			Size:      img.Size,
+		})
 		return nil
 	})
-	if _, err := outs.WriteListTo(job.Stdout); err != nil {
+
+	if err = json.NewEncoder(job.Stdout).Encode(history); err != nil {
 		return err
 	}
+
 	return nil
 }
