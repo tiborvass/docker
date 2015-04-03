@@ -7,6 +7,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // import the vfs driver so it is used in the tests
 	"github.com/tiborvass/docker/image"
@@ -59,7 +60,7 @@ func mkTestTagStore(root string, t *testing.T) *TagStore {
 	if err != nil {
 		t.Fatal(err)
 	}
-	store, err := NewTagStore(path.Join(root, "tags"), graph, nil, nil)
+	store, err := NewTagStore(path.Join(root, "tags"), graph, nil, nil, events.New())
 	if err != nil {
 		t.Fatal(err)
 	}
