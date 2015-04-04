@@ -6,15 +6,11 @@ import (
 	"github.com/tiborvass/docker/api"
 	apiserver "github.com/tiborvass/docker/api/server"
 	"github.com/tiborvass/docker/autogen/dockerversion"
-	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 )
 
 func Register(eng *engine.Engine) error {
-	if err := daemon(eng); err != nil {
-		return err
-	}
 	if err := remote(eng); err != nil {
 		return err
 	}
@@ -31,25 +27,6 @@ func remote(eng *engine.Engine) error {
 		return err
 	}
 	return eng.Register("acceptconnections", apiserver.AcceptConnections)
-}
-
-// daemon: a default execution and storage backend for Docker on Linux,
-// with the following underlying components:
-//
-// * Pluggable storage drivers including aufs, vfs, lvm and btrfs.
-// * Pluggable execution drivers including lxc and chroot.
-//
-// In practice `daemon` still includes most core Docker components, including:
-//
-// * The reference registry client implementation
-// * Image management
-// * The build facility
-// * Logging
-//
-// These components should be broken off into plugins of their own.
-//
-func daemon(eng *engine.Engine) error {
-	return eng.Register("init_networkdriver", bridge.InitDriver)
 }
 
 // builtins jobs independent of any subsystem
