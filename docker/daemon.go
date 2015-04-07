@@ -20,9 +20,9 @@ import (
 	"github.com/tiborvass/docker/pkg/homedir"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/utils"
 )
 
 const CanDaemon = true
@@ -41,7 +41,7 @@ func migrateKey() (err error) {
 	// Migrate trust key if exists at ~/.docker/key.json and owned by current user
 	oldPath := filepath.Join(homedir.Get(), ".docker", defaultTrustKeyFile)
 	newPath := filepath.Join(getDaemonConfDir(), defaultTrustKeyFile)
-	if _, statErr := os.Stat(newPath); os.IsNotExist(statErr) && utils.IsFileOwner(oldPath) {
+	if _, statErr := os.Stat(newPath); os.IsNotExist(statErr) && currentUserIsOwner(oldPath) {
 		defer func() {
 			// Ensure old path is removed if no error occurred
 			if err == nil {
@@ -190,4 +190,15 @@ func mainDaemon() {
 		logrus.Fatalf("Shutting down due to ServeAPI error: %v", errAPI)
 	}
 
+}
+
+// currentUserIsOwner checks whether the current user is the owner of the given
+// file.
+func currentUserIsOwner(f string) bool {
+	if fileInfo, err := system.Stat(f); err == nil && fileInfo != nil {
+		if int(fileInfo.Uid()) == os.Getuid() {
+			return true
+		}
+	}
+	return false
 }
