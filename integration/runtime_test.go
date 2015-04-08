@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -65,17 +66,13 @@ func cleanup(eng *engine.Engine, t *testing.T) error {
 		container.Kill()
 		daemon.Rm(container)
 	}
-	job := eng.Job("images")
-	images, err := job.Stdout.AddTable()
+	images, err := daemon.Repositories().Images(&graph.ImagesConfig{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := job.Run(); err != nil {
-		t.Fatal(err)
-	}
-	for _, image := range images.Data {
-		if image.Get("Id") != unitTestImageID {
-			eng.Job("image_delete", image.Get("Id")).Run()
+	for _, image := range images {
+		if image.ID != unitTestImageID {
+			eng.Job("image_delete", image.ID).Run()
 		}
 	}
 	return nil
