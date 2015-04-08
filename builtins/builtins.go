@@ -8,7 +8,6 @@ import (
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/engine"
-	"github.com/tiborvass/docker/events"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 )
 
@@ -17,9 +16,6 @@ func Register(eng *engine.Engine) error {
 		return err
 	}
 	if err := remote(eng); err != nil {
-		return err
-	}
-	if err := events.New().Install(eng); err != nil {
 		return err
 	}
 	if err := eng.Register("version", dockerVersion); err != nil {
