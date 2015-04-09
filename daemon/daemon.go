@@ -24,6 +24,7 @@ import (
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs"
+	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/graph"
@@ -797,6 +798,14 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 			}
 		}
 	}()
+
+	// Verify logging driver type
+	if config.LogConfig.Type != "none" {
+		if _, err := logger.GetLogDriver(config.LogConfig.Type); err != nil {
+			return nil, fmt.Errorf("error finding the logging driver: %v", err)
+		}
+	}
+	logrus.Debugf("Using default logging driver %s", config.LogConfig.Type)
 
 	if config.EnableSelinuxSupport {
 		if selinuxEnabled() {
