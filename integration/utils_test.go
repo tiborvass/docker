@@ -19,6 +19,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builtins"
 	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -187,9 +188,11 @@ func newTestEngine(t Fataler, autorestart bool, root string) *engine.Engine {
 		ExecDriver:  "native",
 		// Either InterContainerCommunication or EnableIptables must be set,
 		// otherwise NewDaemon will fail because of conflicting settings.
-		InterContainerCommunication: true,
-		TrustKeyPath:                filepath.Join(root, "key.json"),
-		LogConfig:                   runconfig.LogConfig{Type: "json-file"},
+		Bridge: bridge.Config{
+			InterContainerCommunication: true,
+		},
+		TrustKeyPath: filepath.Join(root, "key.json"),
+		LogConfig:    runconfig.LogConfig{Type: "json-file"},
 	}
 	d, err := daemon.NewDaemon(cfg, eng, registry.NewService(nil))
 	if err != nil {
