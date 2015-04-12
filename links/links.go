@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
-	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/nat"
 )
 
@@ -17,10 +16,9 @@ type Link struct {
 	ChildEnvironment []string
 	Ports            []nat.Port
 	IsEnabled        bool
-	eng              *engine.Engine
 }
 
-func NewLink(parentIP, childIP, name string, env []string, exposedPorts map[nat.Port]struct{}, eng *engine.Engine) (*Link, error) {
+func NewLink(parentIP, childIP, name string, env []string, exposedPorts map[nat.Port]struct{}) (*Link, error) {
 
 	var (
 		i     int
@@ -38,7 +36,6 @@ func NewLink(parentIP, childIP, name string, env []string, exposedPorts map[nat.
 		ParentIP:         parentIP,
 		ChildEnvironment: env,
 		Ports:            ports,
-		eng:              eng,
 	}
 	return l, nil
 
