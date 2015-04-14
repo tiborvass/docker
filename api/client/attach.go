@@ -9,7 +9,6 @@ import (
 	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/tiborvass/docker/utils"
 )
 
 // CmdAttach attaches to a running container.
@@ -81,7 +80,7 @@ func (cli *DockerCli) CmdAttach(args ...string) error {
 		return err
 	}
 	if status != 0 {
-		return &utils.StatusError{StatusCode: status}
+		return &StatusError{StatusCode: status}
 	}
 
 	return nil

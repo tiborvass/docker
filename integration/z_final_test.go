@@ -1,13 +1,14 @@
 package docker
 
 import (
-	"github.com/tiborvass/docker/utils"
 	"runtime"
 	"testing"
+
+	"github.com/tiborvass/docker/pkg/fileutils"
 )
 
 func displayFdGoroutines(t *testing.T) {
-	t.Logf("File Descriptors: %d, Goroutines: %d", utils.GetTotalUsedFds(), runtime.NumGoroutine())
+	t.Logf("File Descriptors: %d, Goroutines: %d", fileutils.GetTotalUsedFds(), runtime.NumGoroutine())
 }
 
 func TestFinal(t *testing.T) {

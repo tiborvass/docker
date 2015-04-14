@@ -12,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/pkg/resolvconf"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/utils"
 )
 
 func (cid *cidFile) Close() error {
@@ -242,7 +241,7 @@ func (cli *DockerCli) CmdRun(args ...string) error {
 		}
 	}
 	if status != 0 {
-		return &utils.StatusError{StatusCode: status}
+		return &StatusError{StatusCode: status}
 	}
 	return nil
 }

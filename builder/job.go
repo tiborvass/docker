@@ -16,12 +16,12 @@ import (
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/utils"
 )
 
 // whitelist of commands allowed for a commit/import
@@ -106,7 +106,7 @@ func (b *BuilderJob) CmdBuild(job *engine.Job) error {
 		}
 		context = c
 	} else if urlutil.IsURL(remoteURL) {
-		f, err := utils.Download(remoteURL)
+		f, err := httputils.Download(remoteURL)
 		if err != nil {
 			return err
 		}

@@ -15,8 +15,8 @@ import (
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/pkg/units"
-	"github.com/tiborvass/docker/utils"
 )
 
 // CmdPs outputs a list of Docker containers.
@@ -135,7 +135,7 @@ func (cli *DockerCli) CmdPs(args ...string) error {
 		)
 
 		if !*noTrunc {
-			command = utils.Trunc(command, 20)
+			command = stringutils.Truncate(command, 20)
 
 			// only display the default name for the container with notrunc is passed
 			for _, name := range names {

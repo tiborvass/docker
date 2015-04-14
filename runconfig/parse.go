@@ -12,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/units"
-	"github.com/tiborvass/docker/utils"
 )
 
 var (
@@ -430,14 +429,14 @@ func parseDriverOpts(opts opts.ListOpts) (map[string][]string, error) {
 	return out, nil
 }
 
-func parseKeyValueOpts(opts opts.ListOpts) ([]utils.KeyValuePair, error) {
-	out := make([]utils.KeyValuePair, opts.Len())
+func parseKeyValueOpts(opts opts.ListOpts) ([]KeyValuePair, error) {
+	out := make([]KeyValuePair, opts.Len())
 	for i, o := range opts.GetAll() {
 		k, v, err := parsers.ParseKeyValueOpt(o)
 		if err != nil {
 			return nil, err
 		}
-		out[i] = utils.KeyValuePair{Key: k, Value: v}
+		out[i] = KeyValuePair{Key: k, Value: v}
 	}
 	return out, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/engine"
+	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
 	"github.com/tiborvass/docker/pkg/system"
@@ -61,7 +62,7 @@ func (daemon *Daemon) CmdInfo(job *engine.Job) error {
 	v.SetBool("SwapLimit", daemon.SystemConfig().SwapLimit)
 	v.SetBool("IPv4Forwarding", !daemon.SystemConfig().IPv4ForwardingDisabled)
 	v.SetBool("Debug", os.Getenv("DEBUG") != "")
-	v.SetInt("NFd", utils.GetTotalUsedFds())
+	v.SetInt("NFd", fileutils.GetTotalUsedFds())
 	v.SetInt("NGoroutines", runtime.NumGoroutine())
 	v.Set("SystemTime", time.Now().Format(time.RFC3339Nano))
 	v.Set("ExecutionDriver", daemon.ExecutionDriver().Name())
