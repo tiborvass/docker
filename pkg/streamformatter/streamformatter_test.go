@@ -3,9 +3,10 @@ package streamformatter
 import (
 	"encoding/json"
 	"errors"
-	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"reflect"
 	"testing"
+
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 )
 
 func TestFormatStream(t *testing.T) {
