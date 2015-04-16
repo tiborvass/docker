@@ -12,8 +12,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/pkg/common"
 	"github.com/tiborvass/docker/pkg/term"
-	"github.com/tiborvass/docker/utils"
 	"github.com/kr/pty"
 )
 
@@ -286,7 +286,7 @@ func TestAttachDetachTruncatedID(t *testing.T) {
 	ch := make(chan struct{})
 	go func() {
 		defer close(ch)
-		if err := cli.CmdAttach(utils.TruncateID(container.ID)); err != nil {
+		if err := cli.CmdAttach(common.TruncateID(container.ID)); err != nil {
 			if err != io.ErrClosedPipe {
 				t.Fatal(err)
 			}

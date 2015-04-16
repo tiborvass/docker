@@ -5,8 +5,8 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	apiserver "github.com/tiborvass/docker/api/server"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
-	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/events"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"

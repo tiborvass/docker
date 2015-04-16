@@ -3,7 +3,7 @@ package registry
 import (
 	"runtime"
 
-	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/utils"
 )

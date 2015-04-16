@@ -16,6 +16,7 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server"
+	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
@@ -158,6 +159,8 @@ func TestGetContainersTop(t *testing.T) {
 
 func TestPostCommit(t *testing.T) {
 	eng := NewTestEngine(t)
+	b := &builder.BuilderJob{Engine: eng}
+	b.Install()
 	defer mkDaemonFromEngine(eng, t).Nuke()
 
 	// Create a container and remove a file
@@ -325,7 +328,7 @@ func TestPostCreateNull(t *testing.T) {
 
 	containerAssertExists(eng, containerID, t)
 
-	c := daemon.Get(containerID)
+	c, _ := daemon.Get(containerID)
 	if c.Config.Cpuset != "" {
 		t.Fatalf("Cpuset should have been empty - instead its:" + c.Config.Cpuset)
 	}
