@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 
-	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/listenbuffer"
 )
 
@@ -19,16 +18,16 @@ type tlsConfig struct {
 	Verify      bool
 }
 
-func tlsConfigFromJob(job *engine.Job) *tlsConfig {
-	verify := job.GetenvBool("TlsVerify")
-	if !job.GetenvBool("Tls") && !verify {
+func tlsConfigFromServerConfig(conf *ServerConfig) *tlsConfig {
+	verify := conf.TlsVerify
+	if !conf.Tls && !conf.TlsVerify {
 		return nil
 	}
 	return &tlsConfig{
 		Verify:      verify,
-		Certificate: job.Getenv("TlsCert"),
-		Key:         job.Getenv("TlsKey"),
-		CA:          job.Getenv("TlsCa"),
+		Certificate: conf.TlsCert,
+		Key:         conf.TlsKey,
+		CA:          conf.TlsCa,
 	}
 }
 

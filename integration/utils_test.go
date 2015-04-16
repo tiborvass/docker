@@ -17,7 +17,6 @@ import (
 	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/builtins"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/engine"
@@ -170,10 +169,6 @@ func newTestEngine(t Fataler, autorestart bool, root string) *engine.Engine {
 
 	eng := engine.New()
 	eng.Logging = false
-	// Load default plugins
-	if err := builtins.Register(eng); err != nil {
-		t.Fatal(err)
-	}
 
 	// (This is manually copied and modified from main() until we have a more generic plugin system)
 	cfg := &daemon.Config{
