@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
@@ -133,9 +134,13 @@ func setupBaseImage() {
 	// If the unit test is not found, try to download it.
 	if err := job.Run(); err != nil || img.Get("Id") != unitTestImageID {
 		// Retrieve the Image
-		job = eng.Job("pull", unitTestImageName)
-		job.Stdout.Add(ioutils.NopWriteCloser(os.Stdout))
-		if err := job.Run(); err != nil {
+		imagePullConfig := &graph.ImagePullConfig{
+			Parallel:   true,
+			OutStream:  ioutils.NopWriteCloser(os.Stdout),
+			AuthConfig: &registry.AuthConfig{},
+		}
+		d := getDaemon(eng)
+		if err := d.Repositories().Pull(unitTestImageName, "", imagePullConfig, eng); err != nil {
 			logrus.Fatalf("Unable to pull the test image: %s", err)
 		}
 	}
