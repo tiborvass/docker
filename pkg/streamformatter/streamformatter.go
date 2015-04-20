@@ -3,8 +3,9 @@ package streamformatter
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"io"
+
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 )
 
 type StreamFormatter struct {
