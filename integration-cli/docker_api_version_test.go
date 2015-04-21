@@ -2,23 +2,23 @@ package main
 
 import (
 	"encoding/json"
-	"testing"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/go-check/check"
 )
 
-func TestGetVersion(t *testing.T) {
+func (s *DockerSuite) TestGetVersion(c *check.C) {
 	_, body, err := sockRequest("GET", "/version", nil)
 	if err != nil {
-		t.Fatal(err)
+		c.Fatal(err)
 	}
 	var v types.Version
 	if err := json.Unmarshal(body, &v); err != nil {
-		t.Fatal(err)
+		c.Fatal(err)
 	}
 
 	if v.Version != dockerversion.VERSION {
-		t.Fatal("Version mismatch")
+		c.Fatal("Version mismatch")
 	}
 }
