@@ -11,7 +11,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	apiserver "github.com/tiborvass/docker/api/server"
 	"github.com/tiborvass/docker/autogen/dockerversion"
-	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/daemon"
 	_ "github.com/tiborvass/docker/daemon/execdriver/lxc"
 	_ "github.com/tiborvass/docker/daemon/execdriver/native"
@@ -141,9 +140,6 @@ func mainDaemon() {
 		"graphdriver": d.GraphDriver().String(),
 	}).Info("Docker daemon")
 
-	b := &builder.BuilderJob{eng, d}
-	b.Install()
-
 	// after the daemon is done setting up we can tell the api to start
 	// accepting connections with specified daemon
 	api.AcceptConnections(d)
@@ -155,7 +151,6 @@ func mainDaemon() {
 	if errAPI != nil {
 		logrus.Fatalf("Shutting down due to ServeAPI error: %v", errAPI)
 	}
-
 }
 
 // currentUserIsOwner checks whether the current user is the owner of the given
