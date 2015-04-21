@@ -6,7 +6,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
-	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/trust"
 	"github.com/tiborvass/docker/utils"
@@ -18,7 +17,7 @@ import (
 // contains no signatures by a trusted key for the name in the manifest, the
 // image is not considered verified. The parsed manifest object and a boolean
 // for whether the manifest is verified is returned.
-func (s *TagStore) loadManifest(eng *engine.Engine, manifestBytes []byte, dgst, ref string) (*registry.ManifestData, bool, error) {
+func (s *TagStore) loadManifest(manifestBytes []byte, dgst, ref string) (*registry.ManifestData, bool, error) {
 	sig, err := libtrust.ParsePrettySignature(manifestBytes, "signatures")
 	if err != nil {
 		return nil, false, fmt.Errorf("error parsing payload: %s", err)

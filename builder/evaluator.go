@@ -31,7 +31,6 @@ import (
 	"github.com/tiborvass/docker/builder/command"
 	"github.com/tiborvass/docker/builder/parser"
 	"github.com/tiborvass/docker/daemon"
-	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -80,7 +79,6 @@ func init() {
 // processing as it evaluates the parsing result.
 type Builder struct {
 	Daemon *daemon.Daemon
-	Engine *engine.Engine
 
 	// effectively stdio for the run. Because it is not stdio, I said
 	// "Effectively". Do not use stdio anywhere in this package for any reason.
