@@ -18,6 +18,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	apiserver "github.com/tiborvass/docker/api/server"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/engine"
@@ -28,7 +29,6 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
@@ -135,7 +135,7 @@ func setupBaseImage() {
 		imagePullConfig := &graph.ImagePullConfig{
 			Parallel:   true,
 			OutStream:  ioutils.NopWriteCloser(os.Stdout),
-			AuthConfig: &registry.AuthConfig{},
+			AuthConfig: &cliconfig.AuthConfig{},
 		}
 		d := getDaemon(eng)
 		if err := d.Repositories().Pull(unitTestImageName, "", imagePullConfig); err != nil {
