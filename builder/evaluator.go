@@ -30,13 +30,13 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/builder/command"
 	"github.com/tiborvass/docker/builder/parser"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/tarsum"
-	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
@@ -99,8 +99,8 @@ type Builder struct {
 	// the final configs of the Dockerfile but dont want the layers
 	disableCommit bool
 
-	AuthConfig *registry.AuthConfig
-	ConfigFile *registry.ConfigFile
+	AuthConfig *cliconfig.AuthConfig
+	ConfigFile *cliconfig.ConfigFile
 
 	// Deprecated, original writer used for ImagePull. To be removed.
 	OutOld          io.Writer

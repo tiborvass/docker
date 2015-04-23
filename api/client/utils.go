@@ -21,6 +21,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/signal"
@@ -119,7 +120,7 @@ func (cli *DockerCli) clientRequest(method, path string, in io.Reader, headers m
 }
 
 func (cli *DockerCli) clientRequestAttemptLogin(method, path string, in io.Reader, out io.Writer, index *registry.IndexInfo, cmdName string) (io.ReadCloser, int, error) {
-	cmdAttempt := func(authConfig registry.AuthConfig) (io.ReadCloser, int, error) {
+	cmdAttempt := func(authConfig cliconfig.AuthConfig) (io.ReadCloser, int, error) {
 		buf, err := json.Marshal(authConfig)
 		if err != nil {
 			return nil, -1, err
@@ -150,14 +151,14 @@ func (cli *DockerCli) clientRequestAttemptLogin(method, path string, in io.Reade
 	}
 
 	// Resolve the Auth config relevant for this server
-	authConfig := cli.configFile.ResolveAuthConfig(index)
+	authConfig := registry.ResolveAuthConfig(cli.configFile, index)
 	body, statusCode, err := cmdAttempt(authConfig)
 	if statusCode == http.StatusUnauthorized {
 		fmt.Fprintf(cli.out, "\nPlease login prior to %s:\n", cmdName)
 		if err = cli.CmdLogin(index.GetAuthConfigKey()); err != nil {
 			return nil, -1, err
 		}
-		authConfig = cli.configFile.ResolveAuthConfig(index)
+		authConfig = registry.ResolveAuthConfig(cli.configFile, index)
 		return cmdAttempt(authConfig)
 	}
 	return body, statusCode, err
