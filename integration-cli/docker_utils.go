@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
@@ -274,7 +274,7 @@ func (d *Daemon) LogfileName() string {
 }
 
 func daemonHost() string {
-	daemonUrlStr := "unix://" + api.DEFAULTUNIXSOCKET
+	daemonUrlStr := "unix://" + opts.DefaultUnixSocket
 	if daemonHostVar := os.Getenv("DOCKER_HOST"); daemonHostVar != "" {
 		daemonUrlStr = daemonHostVar
 	}

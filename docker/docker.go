@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
@@ -63,9 +63,9 @@ func main() {
 		defaultHost := os.Getenv("DOCKER_HOST")
 		if defaultHost == "" || *flDaemon {
 			// If we do not have a host, default to unix socket
-			defaultHost = fmt.Sprintf("unix://%s", api.DEFAULTUNIXSOCKET)
+			defaultHost = fmt.Sprintf("unix://%s", opts.DefaultUnixSocket)
 		}
-		defaultHost, err := api.ValidateHost(defaultHost)
+		defaultHost, err := opts.ValidateHost(defaultHost)
 		if err != nil {
 			logrus.Fatal(err)
 		}
