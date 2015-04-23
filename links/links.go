@@ -7,6 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/iptables"
 )
 
 type Link struct {
@@ -143,6 +144,8 @@ func (l *Link) Enable() error {
 	if err := l.toggle("-A", false); err != nil {
 		return err
 	}
+	// call this on Firewalld reload
+	iptables.OnReloaded(func() { l.toggle("-I", false) })
 	l.IsEnabled = true
 	return nil
 }
@@ -152,7 +155,8 @@ func (l *Link) Disable() {
 	// exist in iptables
 	// -D == iptables delete flag
 	l.toggle("-D", true)
-
+	// call this on Firewalld reload
+	iptables.OnReloaded(func() { l.toggle("-D", true) })
 	l.IsEnabled = false
 }
 
