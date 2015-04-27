@@ -3,6 +3,7 @@ package graph
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -44,6 +45,14 @@ func CanonicalizeName(name string) string {
 	return registryName + "/" + repoName
 }
 
+type dumbCredentialStore struct {
+	auth *cliconfig.AuthConfig
+}
+
+func (dcs dumbCredentialStore) Basic(*url.URL) (string, string) {
+	return dcs.auth.Username, dcs.auth.Password
+}
+
 func NewRepositoryClient(repoName string, metaHeaders http.Header, auth *cliconfig.AuthConfig) (distribution.Repository, error) {
 	if localDirectory := os.Getenv("DOCKER_LOCAL_REGISTRY"); localDirectory != "" {
 		parameters := map[string]interface{}{
@@ -70,6 +79,7 @@ func NewRepositoryClient(repoName string, metaHeaders http.Header, auth *cliconf
 			AllowMirrors:  true,
 			NamespaceFile: namespace,
 			Header:        headers,
+			Credentials:   dumbCredentialStore{auth: auth},
 		}
 
 		resolver, err := rc.Resolver()
