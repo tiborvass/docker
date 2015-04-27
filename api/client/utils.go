@@ -22,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/cliconfig"
-	"github.com/tiborvass/docker/engine"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/stdcopy"
@@ -42,18 +41,8 @@ func (cli *DockerCli) HTTPClient() *http.Client {
 func (cli *DockerCli) encodeData(data interface{}) (*bytes.Buffer, error) {
 	params := bytes.NewBuffer(nil)
 	if data != nil {
-		if env, ok := data.(engine.Env); ok {
-			if err := env.Encode(params); err != nil {
-				return nil, err
-			}
-		} else {
-			buf, err := json.Marshal(data)
-			if err != nil {
-				return nil, err
-			}
-			if _, err := params.Write(buf); err != nil {
-				return nil, err
-			}
+		if err := json.NewEncoder(params).Encode(data); err != nil {
+			return nil, err
 		}
 	}
 	return params, nil
