@@ -1,3 +1,5 @@
+// +build linux
+
 package vfs
 
 import (
@@ -7,6 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/libcontainer/label"
 )
 
@@ -39,7 +42,7 @@ func (d *Driver) Cleanup() error {
 
 func (d *Driver) Create(id, parent string) error {
 	dir := d.dir(id)
-	if err := os.MkdirAll(path.Dir(dir), 0700); err != nil {
+	if err := system.MkdirAll(path.Dir(dir), 0700); err != nil {
 		return err
 	}
 	if err := os.Mkdir(dir, 0755); err != nil {
