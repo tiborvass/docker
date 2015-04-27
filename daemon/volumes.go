@@ -13,7 +13,6 @@ import (
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/symlink"
-	"github.com/tiborvass/docker/pkg/system"
 )
 
 type volumeMount struct {
@@ -312,21 +311,6 @@ func copyExistingContents(source, destination string) error {
 	}
 
 	return copyOwnership(source, destination)
-}
-
-// copyOwnership copies the permissions and uid:gid of the source file
-// into the destination file
-func copyOwnership(source, destination string) error {
-	stat, err := system.Stat(source)
-	if err != nil {
-		return err
-	}
-
-	if err := os.Chown(destination, int(stat.Uid()), int(stat.Gid())); err != nil {
-		return err
-	}
-
-	return os.Chmod(destination, os.FileMode(stat.Mode()))
 }
 
 func (container *Container) mountVolumes() error {
