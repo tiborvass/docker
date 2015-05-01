@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"archive/tar"
 	"bytes"
 	"io"
 	"os"
@@ -12,7 +13,6 @@ import (
 	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // import the vfs driver so it is used in the tests
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 )
 
 const (

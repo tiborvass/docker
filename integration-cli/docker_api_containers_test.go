@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/tar"
 	"bytes"
 	"encoding/json"
 	"io"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 	"github.com/go-check/check"
 )
 
