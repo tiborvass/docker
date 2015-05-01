@@ -1,8 +1,8 @@
 package archive
 
 import (
+	"archive/tar"
 	"bytes"
-	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 	"io/ioutil"
 )
 

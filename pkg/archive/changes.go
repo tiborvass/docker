@@ -1,6 +1,7 @@
 package archive
 
 import (
+	"archive/tar"
 	"bytes"
 	"fmt"
 	"io"
@@ -10,8 +11,6 @@ import (
 	"strings"
 	"syscall"
 	"time"
-
-	"github.com/tiborvass/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/pools"
