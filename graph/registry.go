@@ -11,6 +11,7 @@ import (
 
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/client"
+	"github.com/docker/distribution/namespace"
 	"github.com/docker/distribution/registry/storage"
 	"github.com/docker/distribution/registry/storage/cache"
 	"github.com/docker/distribution/registry/storage/driver/factory"
@@ -66,32 +67,29 @@ func NewRepositoryClient(repoName string, metaHeaders http.Header, auth *cliconf
 		return namespace.Repository(context.Background(), repoName)
 	}
 
-	if namespace := os.Getenv("DOCKER_NAMESPACE_CFG"); namespace != "" {
+	if nsFile := os.Getenv("DOCKER_NAMESPACE_CFG"); nsFile != "" {
 		headers := http.Header{}
 		for k, v := range headers {
 			headers[k] = v
 		}
 		headers.Add("User-Agent", "docker/1.7.0-dev")
 
+		resolver, err := namespace.NewDefaultFileResolver(nsFile)
+		if err != nil {
+			return nil, err
+		}
+
 		// TODO(dmcgowan): Pass in authorization information
 		rc := &client.RepositoryClientConfig{
-			TrimHostname:  true,
-			AllowMirrors:  true,
-			NamespaceFile: namespace,
-			Header:        headers,
-			Credentials:   dumbCredentialStore{auth: auth},
+			TrimHostname: true,
+			AllowMirrors: true,
+			Header:       headers,
+			RepoScope:    repoName,
+			Credentials:  dumbCredentialStore{auth: auth},
+			Endpoints:    client.NamespaceEndpointProvider(resolver),
 		}
 
-		resolver, err := rc.Resolver()
-		if err != nil {
-			return nil, err
-		}
-
-		namespace, err := resolver.Resolve(repoName)
-		if err != nil {
-			return nil, err
-		}
-		return namespace.Repository(context.Background(), repoName)
+		return rc.Repository(context.Background(), repoName)
 	}
 
 	return nil, errors.New("No supported registry")
