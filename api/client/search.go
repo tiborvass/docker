@@ -8,6 +8,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stringutils"
@@ -25,7 +26,7 @@ func (r ByStars) Less(i, j int) bool { return r[i].StarCount < r[j].StarCount }
 //
 // Usage: docker search [OPTIONS] TERM
 func (cli *DockerCli) CmdSearch(args ...string) error {
-	cmd := cli.Subcmd("search", []string{"TERM"}, "Search the Docker Hub for images", true)
+	cmd := Cli.Subcmd("search", []string{"TERM"}, "Search the Docker Hub for images", true)
 	noTrunc := cmd.Bool([]string{"#notrunc", "-no-trunc"}, false, "Don't truncate output")
 	trusted := cmd.Bool([]string{"#t", "#trusted", "#-trusted"}, false, "Only show trusted builds")
 	automated := cmd.Bool([]string{"-automated"}, false, "Only show automated builds")

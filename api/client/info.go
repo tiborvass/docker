@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/tiborvass/docker/api/types"
+	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -15,7 +16,7 @@ import (
 //
 // Usage: docker info
 func (cli *DockerCli) CmdInfo(args ...string) error {
-	cmd := cli.Subcmd("info", nil, "Display system-wide information", true)
+	cmd := Cli.Subcmd("info", nil, "Display system-wide information", true)
 	cmd.Require(flag.Exact, 0)
 
 	cmd.ParseFlags(args, true)
