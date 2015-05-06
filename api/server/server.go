@@ -23,7 +23,6 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
-	"github.com/tiborvass/docker/daemon/networkdriver/bridge"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -36,6 +35,7 @@ import (
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/libnetwork/portallocator"
 )
 
 type ServerConfig struct {
@@ -1548,8 +1548,9 @@ func allocateDaemonPort(addr string) error {
 		return fmt.Errorf("failed to lookup %s address in host specification", host)
 	}
 
+	pa := portallocator.Get()
 	for _, hostIP := range hostIPs {
-		if _, err := bridge.RequestPort(hostIP, "tcp", intPort); err != nil {
+		if _, err := pa.RequestPort(hostIP, "tcp", intPort); err != nil {
 			return fmt.Errorf("failed to allocate daemon listening port %d (err: %v)", intPort, err)
 		}
 	}

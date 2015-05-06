@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/pkg/resolvconf/dns"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/libnetwork/resolvconf/dns"
 )
 
 func (cid *cidFile) Close() error {
