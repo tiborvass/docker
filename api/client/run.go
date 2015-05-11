@@ -9,7 +9,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/promise"
-	"github.com/tiborvass/docker/pkg/resolvconf"
+	"github.com/tiborvass/docker/pkg/resolvconf/dns"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/runconfig"
 )
@@ -65,7 +65,7 @@ func (cli *DockerCli) CmdRun(args ...string) error {
 		// localhost regexp to warn if they are trying to
 		// set a DNS to a localhost address
 		for _, dnsIP := range hostConfig.Dns {
-			if resolvconf.IsLocalhost(dnsIP) {
+			if dns.IsLocalhost(dnsIP) {
 				fmt.Fprintf(cli.err, "WARNING: Localhost DNS setting (--dns=%s) may fail in containers.\n", dnsIP)
 				break
 			}
