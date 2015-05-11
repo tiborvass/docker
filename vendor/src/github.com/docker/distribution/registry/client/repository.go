@@ -20,15 +20,12 @@ import (
 )
 
 // NewRepository creates a new Repository for the given repository name and endpoint
-func NewRepository(ctx context.Context, name, endpoint string, repoConfig *RepositoryConfig) (distribution.Repository, error) {
+func NewRepository(ctx context.Context, name string, endpoint *url.URL, repoConfig *RepositoryConfig) (distribution.Repository, error) {
 	if err := v2.ValidateRespositoryName(name); err != nil {
 		return nil, err
 	}
 
-	ub, err := v2.NewURLBuilderFromString(endpoint)
-	if err != nil {
-		return nil, err
-	}
+	ub := v2.NewURLBuilder(endpoint)
 
 	client, err := repoConfig.HTTPClient()
 	if err != nil {
