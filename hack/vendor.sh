@@ -64,7 +64,8 @@ clone git github.com/go-check/check 64131543e7896d5bcc6bd5a76287eb75ea96c673
 
 clone hg code.google.com/p/go-uuid 7dda39b2e7d5
 
-clone git github.com/dmcgowan/distribution e75831e97ab2b46b230a8bf2877f930ec40abe7e
+#clone git github.com/dmcgowan/distribution e75831e97ab2b46b230a8bf2877f930ec40abe7e
+clone git github.com/dmcgowan/distribution 771606c36b6211505b0b6e230950ac82a80dc208
 rm -rf src/github.com/dmcgowan/distribution/Godeps
 rm -rf src/github.com/docker/distribution
 mkdir -p src/github.com/docker

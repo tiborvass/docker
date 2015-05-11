@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -104,13 +103,19 @@ func parseHTTPErrorResponse(response *http.Response) error {
 	if err != nil {
 		return err
 	}
-	decoder := json.NewDecoder(bytes.NewReader(body))
-	err = decoder.Decode(&errors)
-	if err != nil {
+
+	if err := json.Unmarshal(body, &errors); err != nil {
 		return &UnexpectedHTTPResponseError{
 			ParseErr: err,
 			Response: body,
 		}
 	}
 	return &errors
+}
+
+func handleErrorResponse(resp *http.Response) error {
+	if resp.StatusCode >= 400 && resp.StatusCode < 500 {
+		return parseHTTPErrorResponse(resp)
+	}
+	return &UnexpectedHTTPStatusError{Status: resp.Status}
 }
