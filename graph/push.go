@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -21,7 +22,10 @@ import (
 	"github.com/docker/docker/registry"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
+	"github.com/docker/docker/vendor/src/github.com/docker/distribution/registry/client"
 )
+
+var ErrV2RegistryUnavailable = errors.New("error v2 registry unavailable")
 
 type ImagePushConfig struct {
 	MetaHeaders map[string][]string
@@ -85,6 +89,7 @@ func (s *TagStore) getImageList(localRepo map[string]string, requestedTag string
 	return imageList, tagsByImage, nil
 }
 
+/*
 func (s *TagStore) getImageTags(localRepo map[string]string, askedTag string) ([]string, error) {
 	logrus.Debugf("Checking %s against %#v", askedTag, localRepo)
 	if len(askedTag) > 0 {
@@ -101,6 +106,7 @@ func (s *TagStore) getImageTags(localRepo map[string]string, askedTag string) ([
 	}
 	return tags, nil
 }
+*/
 
 // createImageIndex returns an index of an image's layer IDs and tags.
 func (s *TagStore) createImageIndex(images []string, tags map[string][]string) []*registry.ImgData {
@@ -320,6 +326,7 @@ func (s *TagStore) pushV2Repository(r *registry.Session, localRepo Repository, o
 		return fmt.Errorf("error getting authorization: %s", err)
 	}
 	//TODO(tibor)
+	_ = auth
 	return s.pushImageRepository(nil, nil, nil, nil, nil)
 }
 
@@ -510,7 +517,8 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 		sf = streamformatter.NewStreamFormatter(imagePushConfig.Json)
 	)
 
-	repo, err := NewRepositoryClient(CanonicalizeName(localName), imagePushConfig.MetaHeaders, imagePushConfig.AuthConfig)
+	//repo, err := client.NewRepositoryClient(nil, registry.CanonicalizeName(localName), imagePushConfig.MetaHeaders, imagePushConfig.AuthConfig)
+	repo, err := client.NewRepositoryClient(nil, registry.CanonicalizeName(localName), nil)
 	if err != nil {
 		return err
 	}

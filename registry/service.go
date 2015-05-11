@@ -1,6 +1,11 @@
 package registry
 
-import "github.com/docker/docker/cliconfig"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/docker/docker/cliconfig"
+)
 
 type Service struct {
 	Config *ServiceConfig
@@ -63,4 +68,41 @@ func (s *Service) ResolveRepository(name string) (*RepositoryInfo, error) {
 // ResolveIndex takes indexName and returns index info
 func (s *Service) ResolveIndex(name string) (*IndexInfo, error) {
 	return s.Config.NewIndexInfo(name)
+}
+
+// NewRepository
+func (s *Service) NewRepository(canonicalRepoName string, metaHeaders map[string][]string, authConfig *cliconfig.AuthConfig) (Repository, error) {
+	// set up [][]endpoint based on insecure registries and mirrors
+	endpoints := make([][]string, 0, 2)
+	_ = endpoints
+
+	// extract host, first part of canonical repository name
+	i := strings.IndexByte(canonicalRepoName, '/')
+	if i < 0 {
+		return nil, fmt.Errorf("Expecting fully qualified repository name, got %s", canonicalRepoName)
+	}
+	host := canonicalRepoName[:i]
+
+	indexCfg := s.Config.IndexConfigs[host]
+
+	common := &commonRepository{
+		name:        canonicalRepoName,
+		metaHeaders: metaHeaders,
+		authConfig:  authConfig,
+	}
+
+	repo := make(fallbackRepository, 0, 2)
+
+	if v2repo, err := newV2Repository(common, endpoint); err == nil {
+		repo = append(repo, v2repo)
+	}
+
+	// Only add v2 endpoints if there are no v1 mirrors
+	// TODO: update when we support v2 mirrors
+	if len(indexCfg.Mirrors) > 0 {
+		return repo, nil
+	}
+
+	//s.Config.InsecureRegistryCIDRs
+	return repo, nil
 }

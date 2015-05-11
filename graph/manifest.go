@@ -92,15 +92,3 @@ func (s *TagStore) loadManifest(manifestBytes []byte, dgst, ref string) (*regist
 	}
 	return &manifest, verified, nil
 }
-
-func checkValidManifest(manifest *registry.ManifestData) error {
-	if len(manifest.FSLayers) != len(manifest.History) {
-		return fmt.Errorf("length of history not equal to number of layers")
-	}
-
-	if len(manifest.FSLayers) == 0 {
-		return fmt.Errorf("no FSLayers in manifest")
-	}
-
-	return nil
-}

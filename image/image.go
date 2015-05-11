@@ -3,6 +3,7 @@ package image
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -251,6 +252,16 @@ func (img *Image) CheckDepth() error {
 		return fmt.Errorf("Cannot create container with more than %d parents", MaxImageDepth)
 	}
 	return nil
+}
+
+// NewImageJSON returns an Image from a JSON reader
+func NewImageJSON(src io.Reader) (*Image, error) {
+	ret := new(Image)
+	// FIXME: Is there a cleaner way to "purify" the input json?
+	if err := json.NewDecoder(src).Decode(ret); err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
 
 // Build an Image object from raw json data

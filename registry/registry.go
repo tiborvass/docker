@@ -189,3 +189,30 @@ func AddRequiredHeadersToRedirectedRequests(req *http.Request, via []*http.Reque
 	}
 	return nil
 }
+
+func isRegistryName(name string) bool {
+	return (strings.Contains(name, ".") ||
+		strings.Contains(name, ":") ||
+		name == "localhost")
+}
+
+// CanonicalizeName converts the local representation of the name in
+// the Docker graph to a fully namespaced value which includes
+// registry target.
+func CanonicalizeName(name string) string {
+	nameParts := strings.SplitN(name, "/", 2)
+	var registryName, repoName string
+	if len(nameParts) == 1 || !isRegistryName(nameParts[0]) {
+		// Default to official registry
+		registryName = "docker.io"
+		if len(nameParts) == 1 {
+			repoName = "library/" + name
+		} else {
+			repoName = name
+		}
+	} else {
+		registryName = nameParts[0]
+		repoName = nameParts[1]
+	}
+	return registryName + "/" + repoName
+}

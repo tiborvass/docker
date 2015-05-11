@@ -7,13 +7,13 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution"
 	"github.com/docker/distribution/digest"
 	"github.com/docker/docker/cliconfig"
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/pkg/progressreader"
 	"github.com/docker/docker/pkg/streamformatter"
 	"github.com/docker/docker/pkg/stringid"
+	"github.com/docker/docker/registry"
 )
 
 type ImagePullConfig struct {
@@ -24,35 +24,53 @@ type ImagePullConfig struct {
 	OutStream   io.Writer
 }
 
-func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConfig) error {
-	var (
-		sf = streamformatter.NewStreamFormatter(imagePullConfig.Json)
-	)
+func (s *TagStore) Pull(repoName, tag string, imagePullConfig *ImagePullConfig) error {
+	sf := streamformatter.NewStreamFormatter(imagePullConfig.Json)
 
-	repo, err := NewRepositoryClient(CanonicalizeName(image), imagePullConfig.MetaHeaders, imagePullConfig.AuthConfig)
+	// TODO: canonicalize on the client
+	repoName = registry.CanonicalizeName(repoName)
+
+	// TODO(v1): GetRepositoryData
+	repo, err := s.registryService.NewRepository(repoName, imagePullConfig.MetaHeaders, imagePullConfig.AuthConfig)
 	if err != nil {
 		return err
 	}
 
+	// pull all tags if tag was not specified, but only download specified tag otherwise
+	// TODO: why len(tag) > 1 ? why not > 0 ?
 	var tags []string
-	taggedName := image
+	taggedName := repoName
 	if len(tag) > 1 {
 		tags = []string{tag}
-		taggedName = image + ":" + tag
+		taggedName = repoName + ":" + tag
 	} else {
-		var err error
-		tags, err = repo.Manifests().Tags()
+		// Tags(), being the first method needing to contact a registry,
+		// will try sequentially the different endpoints defined in NewRepository
+		// taking into account settings for insecure registries and mirrors.
+		//
+		// A list of endpoints are saved for later use.
+		//
+		// The v1 implementation of Tags() will save the endpoints specified by
+		// the X-Docker-Endpoints header in the HTTP response. On a subsequent request,
+		// each endpoint of that list will be tried sequentially until one succeeds.
+		//
+		// TODO(v1): GetRemoteTags
+		// v1 at this point already knows the IDs where the tags point to, so it will be cached
+		// so that later on Layers(tag) can call GetRemoteHistory(ID) in v1
+		tags, err = repo.Tags()
 		if err != nil {
-			return fmt.Errorf("error getting tags: %s", err)
+			return fmt.Errorf("error getting tags: %v", err)
 		}
 
 	}
 
+	// TODO: why replace utils.ImageReference(localname, tag) by taggedName?
 	c, err := s.poolAdd("pull", taggedName)
 	if err != nil {
 		if c != nil {
 			// Another pull of the same repository is already taking place; just wait for it to finish
-			sf.FormatStatus("", "Repository %s already being pulled by another client. Waiting.", image)
+			//TODO: why remove imagePullConfig.OutStream.Write(sf....) ?
+			sf.FormatStatus("", "Repository %s already being pulled by another client. Waiting.", repoName)
 			<-c
 			return nil
 		}
@@ -60,7 +78,7 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 	}
 	defer s.poolRemove("pull", taggedName)
 
-	pulledNew, err := s.pullTags(repo, image, tags, imagePullConfig.OutStream, sf)
+	pulledNew, err := s.pullTags(repo, tags, imagePullConfig.OutStream, sf)
 	if err != nil {
 		return err
 	}
@@ -72,173 +90,188 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 	return nil
 }
 
-func (s *TagStore) pullTags(repo distribution.Repository, localName string, tags []string, out io.Writer, sf *streamformatter.StreamFormatter) (bool, error) {
+func (s *TagStore) pullTags(repo registry.Repository, tags []string, out io.Writer, sf *streamformatter.StreamFormatter) (bool, error) {
 	var newPullLayers bool
+
+	repoName := repo.Name()
 
 	// downloadInfo is used to pass information from download to extractor
 	type downloadInfo struct {
 		img     *image.Image
 		tmpFile *os.File
 		digest  digest.Digest
-		layer   distribution.Layer
 		size    int64
-		err     chan error
+		errCh   chan error
 	}
 
 	for _, tag := range tags {
-		var verified bool
-		manifest, err := repo.Manifests().GetByTag(tag)
+		// Download metadata for a particular image (tag on a repo)
+		// TODO(v1): GetRemoteHistory
+		layers, err := repo.Layers(tag)
 		if err != nil {
-			return false, fmt.Errorf("error getting image manifest: %s", err)
-		}
-		if manifest == nil {
-			return false, fmt.Errorf("image manifest does not exist for tag: %s", tag)
-		}
-		if manifest.SchemaVersion != 1 {
-			return false, fmt.Errorf("unsupport image manifest version(%d) for tag: %s", manifest.SchemaVersion, tag)
+			// layers for specified tag not found, probably because tag does not exist for that repo
+			return false, err
 		}
 
-		downloads := make([]downloadInfo, len(manifest.FSLayers))
-		for i := len(manifest.FSLayers) - 1; i >= 0; i-- {
-			img, err := image.NewImgJSON([]byte(manifest.History[i].V1Compatibility))
+		out.Write(sf.FormatStatus(tag, "Pulling from %s", repoName))
+
+		downloads := make([]downloadInfo, len(layers))
+
+		var verified bool
+
+		// start downloading each layer in parallel
+		for i := len(layers) - 1; i >= 0; i-- {
+			// TODO(v1): GetRemoteImageJSON
+			json, err := layers[i].V1Json()
 			if err != nil {
-				return false, fmt.Errorf("failed to parse json: %s", err)
+				return false, err
 			}
-			downloads[i].img = img
-			downloads[i].digest = manifest.FSLayers[i].BlobSum
+			img, err := image.NewImageJSON(json)
+			if err != nil {
+				return false, fmt.Errorf("failed to parse json: %v", err)
+			}
+
+			downloads[i] = downloadInfo{
+				img:    img,
+				digest: layers[i].Digest(), // empty for v1
+			}
+
+			shortId := stringid.TruncateID(img.ID)
 
 			// Check if exists
 			if s.graph.Exists(img.ID) {
 				logrus.Debugf("Image already exists: %s", img.ID)
+				out.Write(sf.FormatProgress(shortId, "Already exists", nil))
 				continue
 			}
 
-			out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Pulling fs layer", nil))
+			out.Write(sf.FormatProgress(shortId, "Pulling fs layer", nil))
 
 			downloadFunc := func(di *downloadInfo) error {
 				logrus.Debugf("pulling blob %q to %s", di.digest, img.ID)
 
+				// ensure no two downloads of the same layer happen at the same time
 				if c, err := s.poolAdd("pull", "img:"+img.ID); err != nil {
 					if c != nil {
-						out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Layer already being pulled by another client. Waiting.", nil))
+						out.Write(sf.FormatProgress(shortId, "Layer already being pulled by another client. Waiting.", nil))
 						<-c
-						out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Download complete", nil))
+						out.Write(sf.FormatProgress(shortId, "Download complete", nil))
 					} else {
 						logrus.Debugf("Image (id: %s) pull is already running, skipping: %v", img.ID, err)
 					}
-				} else {
-					defer s.poolRemove("pull", "img:"+img.ID)
-					tmpFile, err := ioutil.TempFile("", "GetImageBlob")
-					if err != nil {
-						return err
-					}
-
-					layerDownload, err := repo.Layers().Fetch(di.digest)
-					if err != nil {
-						return fmt.Errorf("error fetching layer: %s", err)
-					}
-					defer layerDownload.Close()
-
-					if size, err := layerDownload.Seek(0, os.SEEK_END); err != nil {
-						return fmt.Errorf("error seeking to end: %s", err)
-					} else if size == 0 {
-						return fmt.Errorf("layer did not return a size: %s", di.digest)
-					} else {
-						di.size = size
-					}
-					if _, err := layerDownload.Seek(0, 0); err != nil {
-						return fmt.Errorf("error seeking to beginning: %s", err)
-					}
-
-					verifier, err := digest.NewDigestVerifier(layerDownload.Digest())
-					if err != nil {
-						return err
-					}
-
-					reader := progressreader.New(progressreader.Config{
-						In:        ioutil.NopCloser(io.TeeReader(layerDownload, verifier)),
-						Out:       out,
-						Formatter: sf,
-						Size:      int(di.size),
-						NewLines:  false,
-						ID:        stringid.TruncateID(img.ID),
-						Action:    "Downloading",
-					})
-					io.Copy(tmpFile, reader)
-
-					out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Verifying Checksum", nil))
-
-					if verifier.Verified() {
-						logrus.Infof("Image verification failed for layer %s", di.digest)
-						verified = false
-					}
-
-					out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Download complete", nil))
-
-					logrus.Debugf("Downloaded %s to tempfile %s", img.ID, tmpFile.Name())
-					di.tmpFile = tmpFile
-					di.layer = layerDownload
+					return nil
 				}
+				defer s.poolRemove("pull", "img:"+img.ID)
+
+				tmpFile, err := ioutil.TempFile("", "GetImageBlob")
+				if err != nil {
+					return err
+				}
+
+				// Fetch will go through the set of endpoints defined by the first call to Tags(), in order to get the raw layers (blobs).
+				// If v1 mirrors were set, they are tried first, and then fallback to the other endpoints.
+				// TODO(v1): GetRemoteImageLayer
+				layerDownload, size, verify, err := layers[i].Fetch()
+				if err != nil {
+					return err
+				}
+				defer layerDownload.Close()
+
+				di.size = size
+
+				/*
+					TODO(v1): for v1, get size cached from the call to V1Json()
+				*/
+
+				reader := progressreader.New(progressreader.Config{
+					In:        layerDownload,
+					Out:       out,
+					Formatter: sf,
+					Size:      int(di.size),
+					NewLines:  false,
+					ID:        shortId,
+					Action:    "Downloading",
+				})
+
+				// TODO: what to do if io.Copy fails?
+				io.Copy(tmpFile, reader)
+
+				if verify != nil {
+					out.Write(sf.FormatProgress(shortId, "Verifying Checksum", nil))
+					verified = verify()
+					if !verified {
+						logrus.Infof("Image verification failed: checksum mismatch for %s", di.digest)
+					}
+				}
+
+				out.Write(sf.FormatProgress(shortId, "Download complete", nil))
+
+				logrus.Debugf("Downloaded %s to tempfile %s", img.ID, tmpFile.Name())
+				// setting tmpFile is also a way of signaling that this layer was downloaded successfully.
+				di.tmpFile = tmpFile
 
 				return nil
 			}
 
-			downloads[i].err = make(chan error)
+			downloads[i].errCh = make(chan error)
 			go func(di *downloadInfo) {
-				di.err <- downloadFunc(di)
+				di.errCh <- downloadFunc(di)
 			}(&downloads[i])
 
 		}
 
 		var layersDownloaded bool
+
+		// Extract each downloaded layer in order
 		for i := len(downloads) - 1; i >= 0; i-- {
 			d := &downloads[i]
-			if d.err != nil {
-				err := <-d.err
-				if err != nil {
-					return false, err
-				}
+
+			// A nil errCh means that nothing was downloaded
+			if d.errCh == nil {
+				continue
 			}
-			if d.layer != nil {
-				// if tmpFile is empty assume download and extracted elsewhere
-				defer os.Remove(d.tmpFile.Name())
-				defer d.tmpFile.Close()
-				d.tmpFile.Seek(0, 0)
-				if d.tmpFile != nil {
 
-					reader := progressreader.New(progressreader.Config{
-						In:        d.tmpFile,
-						Out:       out,
-						Formatter: sf,
-						Size:      int(d.size),
-						NewLines:  false,
-						ID:        stringid.TruncateID(d.img.ID),
-						Action:    "Extracting",
-					})
-
-					err = s.graph.Register(d.img, reader)
-					if err != nil {
-						return false, err
-					}
-
-					// FIXME: Pool release here for parallel tag pull (ensures any downloads block until fully extracted)
-				}
-				out.Write(sf.FormatProgress(stringid.TruncateID(d.img.ID), "Pull complete", nil))
-				layersDownloaded = true
-			} else {
-				out.Write(sf.FormatProgress(stringid.TruncateID(d.img.ID), "Already exists", nil))
+			// blocks until the layer is downloaded
+			if err := <-d.errCh; err != nil {
+				return false, err
 			}
+
+			shortId := stringid.TruncateID(d.img.ID)
+
+			defer os.Remove(d.tmpFile.Name())
+			defer d.tmpFile.Close()
+			d.tmpFile.Seek(0, 0)
+
+			reader := progressreader.New(progressreader.Config{
+				In:        d.tmpFile,
+				Out:       out,
+				Formatter: sf,
+				Size:      int(d.size),
+				NewLines:  false,
+				ID:        shortId,
+				Action:    "Extracting",
+			})
+
+			err = s.graph.Register(d.img, reader)
+			if err != nil {
+				return false, err
+			}
+
+			// FIXME: Pool release here for parallel tag pull (ensures any downloads block until fully extracted)
+
+			out.Write(sf.FormatProgress(shortId, "Pull complete", nil))
+			layersDownloaded = true
 		}
 
-		if err = s.Tag(localName, tag, downloads[0].img.ID, true); err != nil {
+		if err := s.Tag(repoName, tag, downloads[0].img.ID, true); err != nil {
 			return false, err
 		}
 
 		if layersDownloaded {
 			newPullLayers = true
-		}
-		if verified && layersDownloaded {
-			out.Write(sf.FormatStatus(repo.Name()+":"+tag, "The image you are pulling has been verified. Important: image verification is a tech preview feature and should not be relied on to provide security."))
+			if verified {
+				out.Write(sf.FormatStatus(repoName+":"+tag, "The image you are pulling has been verified. Important: image verification is a tech preview feature and should not be relied on to provide security."))
+			}
 		}
 	}
 
