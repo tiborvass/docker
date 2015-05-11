@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"strings"
+
+	"golang.org/x/net/context"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
@@ -21,8 +25,18 @@ type v2Repository struct {
 	manifests distribution.ManifestService
 }
 
-func newV2Repository(common *commonRepository, endpoint string) (*v2Repository, err) {
-	repo, err := client.NewRepository(nil, common.name, endpoint, cfg)
+func newV2Repository(common *commonRepository, endpoint *url.URL) (*v2Repository, error) {
+	//TODO: just make metaHeaders an http.Header already
+	headers := http.Header(common.metaHeaders)
+	//TODO: what is this?
+	scope := client.TokenScope{}
+
+	cfg := &client.RepositoryConfig{
+		Header:       headers,
+		AuthSource:   client.NewTokenAuthorizer(common.authConfig, headers, scope),
+		AllowMirrors: common.action == "pull",
+	}
+	repo, err := client.NewRepository(context.Background(), common.name, endpoint, cfg)
 	if err != nil {
 		return nil, err
 	}

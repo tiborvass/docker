@@ -30,8 +30,8 @@ func (s *TagStore) Pull(repoName, tag string, imagePullConfig *ImagePullConfig) 
 	// TODO: canonicalize on the client
 	repoName = registry.CanonicalizeName(repoName)
 
-	// TODO(v1): GetRepositoryData
-	repo, err := s.registryService.NewRepository(repoName, imagePullConfig.MetaHeaders, imagePullConfig.AuthConfig)
+	// TODO: dont use a string for action "pull"
+	repo, err := s.registryService.NewRepository(repoName, "pull", imagePullConfig.MetaHeaders, imagePullConfig.AuthConfig)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,6 @@ func (s *TagStore) Pull(repoName, tag string, imagePullConfig *ImagePullConfig) 
 		// the X-Docker-Endpoints header in the HTTP response. On a subsequent request,
 		// each endpoint of that list will be tried sequentially until one succeeds.
 		//
-		// TODO(v1): GetRemoteTags
 		// v1 at this point already knows the IDs where the tags point to, so it will be cached
 		// so that later on Layers(tag) can call GetRemoteHistory(ID) in v1
 		tags, err = repo.Tags()
@@ -106,7 +105,6 @@ func (s *TagStore) pullTags(repo registry.Repository, tags []string, out io.Writ
 
 	for _, tag := range tags {
 		// Download metadata for a particular image (tag on a repo)
-		// TODO(v1): GetRemoteHistory
 		layers, err := repo.Layers(tag)
 		if err != nil {
 			// layers for specified tag not found, probably because tag does not exist for that repo
@@ -121,7 +119,6 @@ func (s *TagStore) pullTags(repo registry.Repository, tags []string, out io.Writ
 
 		// start downloading each layer in parallel
 		for i := len(layers) - 1; i >= 0; i-- {
-			// TODO(v1): GetRemoteImageJSON
 			json, err := layers[i].V1Json()
 			if err != nil {
 				return false, err
@@ -170,7 +167,6 @@ func (s *TagStore) pullTags(repo registry.Repository, tags []string, out io.Writ
 
 				// Fetch will go through the set of endpoints defined by the first call to Tags(), in order to get the raw layers (blobs).
 				// If v1 mirrors were set, they are tried first, and then fallback to the other endpoints.
-				// TODO(v1): GetRemoteImageLayer
 				layerDownload, size, verify, err := layers[i].Fetch()
 				if err != nil {
 					return err
@@ -178,10 +174,6 @@ func (s *TagStore) pullTags(repo registry.Repository, tags []string, out io.Writ
 				defer layerDownload.Close()
 
 				di.size = size
-
-				/*
-					TODO(v1): for v1, get size cached from the call to V1Json()
-				*/
 
 				reader := progressreader.New(progressreader.Config{
 					In:        layerDownload,

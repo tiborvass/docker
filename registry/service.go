@@ -1,7 +1,9 @@
 package registry
 
 import (
+	"errors"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/docker/docker/cliconfig"
@@ -70,11 +72,21 @@ func (s *Service) ResolveIndex(name string) (*IndexInfo, error) {
 	return s.Config.NewIndexInfo(name)
 }
 
+func hostToEndpoint(host, version string) (u *url.URL, trimHost bool) {
+	if host == "docker.io" {
+		host = "index.docker.io"
+		// makes it so that docker.io/library/ubuntu becomes library/ubuntu for the image name in the URL
+		trimHost = true
+	}
+	return &url.URL{
+		Host:   host,
+		Scheme: "https",
+	}, trimHost
+}
+
 // NewRepository
-func (s *Service) NewRepository(canonicalRepoName string, metaHeaders map[string][]string, authConfig *cliconfig.AuthConfig) (Repository, error) {
+func (s *Service) NewRepository(canonicalRepoName, action string, metaHeaders map[string][]string, authConfig *cliconfig.AuthConfig) (Repository, error) {
 	// set up [][]endpoint based on insecure registries and mirrors
-	endpoints := make([][]string, 0, 2)
-	_ = endpoints
 
 	// extract host, first part of canonical repository name
 	i := strings.IndexByte(canonicalRepoName, '/')
@@ -85,22 +97,27 @@ func (s *Service) NewRepository(canonicalRepoName string, metaHeaders map[string
 
 	indexCfg := s.Config.IndexConfigs[host]
 
+	repo := make(fallbackRepository, 0, 2)
+
 	common := &commonRepository{
-		name:        canonicalRepoName,
+		action:      action,
 		metaHeaders: metaHeaders,
 		authConfig:  authConfig,
 	}
-
-	repo := make(fallbackRepository, 0, 2)
-
-	if v2repo, err := newV2Repository(common, endpoint); err == nil {
-		repo = append(repo, v2repo)
+	//TODO: make v2 variable
+	endpoint, trimHost := hostToEndpoint(host, "v2")
+	if trimHost {
+		common.name = canonicalRepoName[i+1:]
 	}
 
 	// Only add v2 endpoints if there are no v1 mirrors
 	// TODO: update when we support v2 mirrors
 	if len(indexCfg.Mirrors) > 0 {
-		return repo, nil
+		return nil, errors.New("v1 not implemented")
+	}
+
+	if v2repo, err := newV2Repository(common, endpoint); err == nil && len(indexCfg.Mirrors) == 0 {
+		repo = append(repo, v2repo)
 	}
 
 	//s.Config.InsecureRegistryCIDRs

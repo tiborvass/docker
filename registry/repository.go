@@ -3,7 +3,6 @@ package registry
 import (
 	"io"
 
-	"github.com/docker/distribution"
 	"github.com/docker/distribution/digest"
 	"github.com/docker/docker/cliconfig"
 )
@@ -24,10 +23,9 @@ type Layer interface {
 
 type commonRepository struct {
 	name        string
+	action      string
 	metaHeaders map[string][]string
 	authConfig  *cliconfig.AuthConfig
-	v2          distribution.Repository
-	endpoints   []Endpoint
 }
 
 func (r *commonRepository) Name() string {

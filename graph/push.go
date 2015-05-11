@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"sync"
 
+	"golang.org/x/net/context"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/digest"
@@ -518,7 +520,7 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 	)
 
 	//repo, err := client.NewRepositoryClient(nil, registry.CanonicalizeName(localName), imagePushConfig.MetaHeaders, imagePushConfig.AuthConfig)
-	repo, err := client.NewRepositoryClient(nil, registry.CanonicalizeName(localName), nil)
+	repo, err := client.NewRepository(context.Background(), registry.CanonicalizeName(localName), nil, nil)
 	if err != nil {
 		return err
 	}

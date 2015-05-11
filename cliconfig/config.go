@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -35,6 +36,10 @@ type AuthConfig struct {
 	Auth          string `json:"auth"`
 	Email         string `json:"email"`
 	ServerAddress string `json:"serveraddress,omitempty"`
+}
+
+func (ac *AuthConfig) Basic(url *url.URL) (string, string) {
+	return ac.Username, ac.Password
 }
 
 // ~/.docker/config.json file info
