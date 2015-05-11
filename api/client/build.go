@@ -19,7 +19,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -241,7 +241,7 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 			return err
 		}
 		if len(tag) > 0 {
-			if err := graph.ValidateTagName(tag); err != nil {
+			if err := tags.ValidateTagName(tag); err != nil {
 				return err
 			}
 		}
