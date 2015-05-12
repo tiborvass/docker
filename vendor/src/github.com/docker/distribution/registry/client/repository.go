@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -17,22 +18,25 @@ import (
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/context"
 	"github.com/docker/distribution/registry/api/v2"
+	"github.com/docker/distribution/registry/client/transport"
+	"github.com/docker/distribution/registry/storage/cache"
 )
 
-// NewRepository creates a new Repository for the given repository name and endpoint
-func NewRepository(ctx context.Context, name, endpoint string, repoConfig *RepositoryConfig) (distribution.Repository, error) {
+// NewRepository creates a new Repository for the given repository name and base URL
+func NewRepository(ctx context.Context, name, baseURL string, transport http.RoundTripper) (distribution.Repository, error) {
 	if err := v2.ValidateRespositoryName(name); err != nil {
 		return nil, err
 	}
 
-	ub, err := v2.NewURLBuilderFromString(endpoint)
+	ub, err := v2.NewURLBuilderFromString(baseURL)
 	if err != nil {
 		return nil, err
 	}
 
-	client, err := repoConfig.HTTPClient()
-	if err != nil {
-		return nil, err
+	client := &http.Client{
+		Transport: transport,
+		Timeout:   1 * time.Minute,
+		// TODO(dmcgowan): create cookie jar
 	}
 
 	return &repository{
@@ -54,9 +58,13 @@ func (r *repository) Name() string {
 	return r.name
 }
 
-func (r *repository) Layers() distribution.LayerService {
-	return &layers{
+func (r *repository) Blobs(ctx context.Context) distribution.BlobStore {
+	statter := &blobStatter{
 		repository: r,
+	}
+	return &blobs{
+		repository: r,
+		statter:    cache.NewCachedBlobStatter(cache.NewInMemoryBlobDescriptorCacheProvider(), statter),
 	}
 }
 
@@ -98,6 +106,7 @@ func (ms *manifests) Tags() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	switch {
 	case resp.StatusCode == http.StatusOK:
@@ -227,8 +236,10 @@ func (ms *manifests) Delete(dgst digest.Digest) error {
 	}
 }
 
-type layers struct {
+type blobs struct {
 	*repository
+
+	statter distribution.BlobStatter
 }
 
 func sanitizeLocation(location, source string) (string, error) {
@@ -252,25 +263,67 @@ func sanitizeLocation(location, source string) (string, error) {
 	return location, nil
 }
 
-func (ls *layers) Exists(dgst digest.Digest) (bool, error) {
-	_, err := ls.fetchLayer(dgst)
+func (ls *blobs) Stat(ctx context.Context, dgst digest.Digest) (distribution.Descriptor, error) {
+	return ls.statter.Stat(ctx, dgst)
+
+}
+
+func (ls *blobs) Get(ctx context.Context, dgst digest.Digest) ([]byte, error) {
+	desc, err := ls.Stat(ctx, dgst)
 	if err != nil {
-		switch err := err.(type) {
-		case distribution.ErrUnknownLayer:
-			return false, nil
-		default:
-			return false, err
-		}
+		return nil, err
+	}
+	reader, err := ls.Open(ctx, desc.Digest)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	return ioutil.ReadAll(reader)
+}
+
+func (ls *blobs) Open(ctx context.Context, dgst digest.Digest) (distribution.ReadSeekCloser, error) {
+	stat, err := ls.statter.Stat(ctx, dgst)
+	if err != nil {
+		return nil, err
 	}
 
-	return true, nil
+	blobURL, err := ls.ub.BuildBlobURL(ls.Name(), stat.Digest)
+	if err != nil {
+		return nil, err
+	}
+
+	return transport.NewHTTPReadSeeker(ls.repository.client, blobURL, stat.Length), nil
 }
 
-func (ls *layers) Fetch(dgst digest.Digest) (distribution.Layer, error) {
-	return ls.fetchLayer(dgst)
+func (ls *blobs) ServeBlob(ctx context.Context, w http.ResponseWriter, r *http.Request, dgst digest.Digest) error {
+	return nil
 }
 
-func (ls *layers) Upload() (distribution.LayerUpload, error) {
+func (ls *blobs) Put(ctx context.Context, mediaType string, p []byte) (distribution.Descriptor, error) {
+	writer, err := ls.Create(ctx)
+	if err != nil {
+		return distribution.Descriptor{}, err
+	}
+	dgstr := digest.NewCanonicalDigester()
+	n, err := io.Copy(writer, io.TeeReader(bytes.NewReader(p), dgstr))
+	if err != nil {
+		return distribution.Descriptor{}, err
+	}
+	if n < int64(len(p)) {
+		return distribution.Descriptor{}, fmt.Errorf("short copy: wrote %d of %d", n, len(p))
+	}
+
+	desc := distribution.Descriptor{
+		MediaType: mediaType,
+		Length:    int64(len(p)),
+		Digest:    dgstr.Digest(),
+	}
+
+	return writer.Commit(ctx, desc)
+}
+
+func (ls *blobs) Create(ctx context.Context) (distribution.BlobWriter, error) {
 	u, err := ls.ub.BuildBlobUploadURL(ls.name)
 
 	resp, err := ls.client.Post(u, "", nil)
@@ -288,7 +341,7 @@ func (ls *layers) Upload() (distribution.LayerUpload, error) {
 			return nil, err
 		}
 
-		return &httpLayerUpload{
+		return &httpBlobUpload{
 			repo:      ls.repository,
 			client:    ls.client,
 			uuid:      uuid,
@@ -300,19 +353,23 @@ func (ls *layers) Upload() (distribution.LayerUpload, error) {
 	}
 }
 
-func (ls *layers) Resume(uuid string) (distribution.LayerUpload, error) {
+func (ls *blobs) Resume(ctx context.Context, id string) (distribution.BlobWriter, error) {
 	panic("not implemented")
 }
 
-func (ls *layers) fetchLayer(dgst digest.Digest) (distribution.Layer, error) {
+type blobStatter struct {
+	*repository
+}
+
+func (ls *blobStatter) Stat(ctx context.Context, dgst digest.Digest) (distribution.Descriptor, error) {
 	u, err := ls.ub.BuildBlobURL(ls.name, dgst)
 	if err != nil {
-		return nil, err
+		return distribution.Descriptor{}, err
 	}
 
 	resp, err := ls.client.Head(u)
 	if err != nil {
-		return nil, err
+		return distribution.Descriptor{}, err
 	}
 	defer resp.Body.Close()
 
@@ -321,31 +378,17 @@ func (ls *layers) fetchLayer(dgst digest.Digest) (distribution.Layer, error) {
 		lengthHeader := resp.Header.Get("Content-Length")
 		length, err := strconv.ParseInt(lengthHeader, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("error parsing content-length: %v", err)
+			return distribution.Descriptor{}, fmt.Errorf("error parsing content-length: %v", err)
 		}
 
-		var t time.Time
-		lastModified := resp.Header.Get("Last-Modified")
-		if lastModified != "" {
-			t, err = http.ParseTime(lastModified)
-			if err != nil {
-				return nil, fmt.Errorf("error parsing last-modified: %v", err)
-			}
-		}
-
-		return &httpLayer{
-			layers:    ls,
-			size:      length,
-			digest:    dgst,
-			createdAt: t,
+		return distribution.Descriptor{
+			MediaType: resp.Header.Get("Content-Type"),
+			Length:    length,
+			Digest:    dgst,
 		}, nil
 	case resp.StatusCode == http.StatusNotFound:
-		return nil, distribution.ErrUnknownLayer{
-			FSLayer: manifest.FSLayer{
-				BlobSum: dgst,
-			},
-		}
+		return distribution.Descriptor{}, distribution.ErrBlobUnknown
 	default:
-		return nil, handleErrorResponse(resp)
+		return distribution.Descriptor{}, handleErrorResponse(resp)
 	}
 }

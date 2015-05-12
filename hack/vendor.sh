@@ -44,21 +44,22 @@ clone() {
 
 # the following lines are in sorted order, FYI
 clone git github.com/Sirupsen/logrus v0.7.3 # logrus is a common dependency among multiple deps
-clone git github.com/docker/libtrust 230dfd18c232
+clone git github.com/docker/libtrust c54fbb67c1f1e68d7d6f8d2ad7c9360404616a41
+clone git github.com/garyburd/redigo 2668ae2944701f73206a228638407926dea859b1
 clone git github.com/go-check/check 64131543e7896d5bcc6bd5a76287eb75ea96c673
 clone git github.com/go-fsnotify/fsnotify v1.2.0
 clone git github.com/gorilla/context 14f550f51a
 clone git github.com/gorilla/mux e444e69cbd
 clone git github.com/kr/pty 5cf931ef8f
+clone git github.com/jlhawn/go-crypto cd738dde20f0b3782516181b0866c9bb9db47401
 clone git github.com/mistifyio/go-zfs v2.1.0
 clone git github.com/tchap/go-patricia v2.1.0
 clone hg code.google.com/p/go.net 84a4013f96e0
 clone hg code.google.com/p/gosqlite 74691fb6f837
 
 # get distribution packages
-clone git github.com/docker/distribution d957768537c5af40e4f4cd96871f7b2bde9e2923
-mv src/github.com/docker/distribution/digest tmp-digest
-mv src/github.com/docker/distribution/registry/api tmp-api
+clone git github.com/dmcgowan/distribution 006ddd8283013d392d0e19bdf1adda5bac6612fe
+rm -rf src/github.com/dmcgowan/distribution/Godeps
 
 rm -rf src/github.com/docker/distribution
 mkdir -p src/github.com/docker
