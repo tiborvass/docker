@@ -59,11 +59,15 @@ clone hg code.google.com/p/gosqlite 74691fb6f837
 clone git github.com/docker/distribution d957768537c5af40e4f4cd96871f7b2bde9e2923
 mv src/github.com/docker/distribution/digest tmp-digest
 mv src/github.com/docker/distribution/registry/api tmp-api
+
 rm -rf src/github.com/docker/distribution
-mkdir -p src/github.com/docker/distribution
-mv tmp-digest src/github.com/docker/distribution/digest
-mkdir -p src/github.com/docker/distribution/registry
-mv tmp-api src/github.com/docker/distribution/registry/api
+mkdir -p src/github.com/docker
+mv src/github.com/dmcgowan/distribution src/github.com/docker/
+
+clone git github.com/golang/net 1dfe7915deaf
+rm -rf src/golang.org/x/net
+mkdir -p src/golang.org/x
+mv src/github.com/golang/net src/golang.org/x/
 
 clone git github.com/docker/libcontainer a37b2a4f152e2a1c9de596f54c051cb889de0691
 # libcontainer deps (see src/github.com/docker/libcontainer/update-vendor.sh)
