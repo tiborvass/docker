@@ -37,6 +37,10 @@ and Docker images will report:
 **--until**=""
    Stream events until this timestamp
 
+You can specify `--since` and `--until` parameters as an RFC 3339 date,
+a UNIX timestamp, or a Go duration string (e.g. `1m30s`, `3h`). Docker computes
+the date relative to the client machine’s time.
+
 # EXAMPLES
 
 ## Listening for Docker events
