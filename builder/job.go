@@ -13,7 +13,7 @@ import (
 	"github.com/tiborvass/docker/builder/parser"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
-	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -98,7 +98,7 @@ func Build(d *daemon.Daemon, buildConfig *Config) error {
 			return err
 		}
 		if len(tag) > 0 {
-			if err := graph.ValidateTagName(tag); err != nil {
+			if err := tags.ValidateTagName(tag); err != nil {
 				return err
 			}
 		}
