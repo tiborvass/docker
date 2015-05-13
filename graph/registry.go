@@ -1,6 +1,9 @@
+// TODO: move to registry/
+
 package graph
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -10,6 +13,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/registry/client"
 	"github.com/docker/distribution/registry/storage"
@@ -18,6 +22,7 @@ import (
 	_ "github.com/docker/distribution/registry/storage/driver/filesystem"
 	"github.com/docker/docker/cliconfig"
 	"github.com/docker/docker/registry"
+	"github.com/docker/docker/vendor/src/github.com/docker/distribution/registry/client/transport"
 )
 
 func isRegistryName(name string) bool {
@@ -56,50 +61,55 @@ func (dcs dumbCredentialStore) Basic(*url.URL) (string, string) {
 }
 
 func NewRepositoryClient(repoName string, endpoint registry.APIEndpoint, metaHeaders http.Header, auth *cliconfig.AuthConfig) (distribution.Repository, error) {
-	ctx := context.Background()
+	logrus.Debugf("Endpoint version: %d", endpoint.Version)
+	switch endpoint.Version {
+	case registry.APIVersion1:
+		return registry.NewV1Repository(repoName, endpoint, metaHeaders, auth)
+	case registry.APIVersion2:
+		ctx := context.Background()
 
-	if localDirectory := os.Getenv("DOCKER_LOCAL_REGISTRY"); localDirectory != "" {
-		parameters := map[string]interface{}{
-			"rootdirectory": localDirectory,
+		if localDirectory := os.Getenv("DOCKER_LOCAL_REGISTRY"); localDirectory != "" {
+			parameters := map[string]interface{}{
+				"rootdirectory": localDirectory,
+			}
+			driver, err := factory.Create("filesystem", parameters)
+			if err != nil {
+				return nil, err
+			}
+			namespace := storage.NewRegistryWithDriver(ctx, driver, cache.NewInMemoryBlobDescriptorCacheProvider())
+			return namespace.Repository(ctx, repoName)
 		}
-		driver, err := factory.Create("filesystem", parameters)
-		if err != nil {
-			return nil, err
+
+		headers := http.Header{}
+		for k, v := range headers {
+			headers[k] = v
 		}
-		namespace := storage.NewRegistryWithDriver(ctx, driver, cache.NewInMemoryLayerInfoCache())
-		return namespace.Repository(ctx, repoName)
-	}
+		headers.Add("User-Agent", "docker/1.7.0-dev")
 
-	// Call close idle connections when complete
-	// TODO(dmcgowan): Setup tls
-	base := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		Dial: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
-			DualStack: true,
-		}).Dial,
-		TLSHandshakeTimeout: 10 * time.Second,
-		TLSClientConfig:     endpoint.TLSConfig,
-	}
+		tokenScope := transport.TokenScope{
+			Resource: "repository",
+			Scope:    repoName,
+			Actions:  []string{"push", "pull"},
+		}
 
-	headers := http.Header{}
-	for k, v := range headers {
-		headers[k] = v
-	}
-	headers.Add("User-Agent", "docker/1.7.0-dev")
+		// Call close idle connections when complete
+		// TODO(dmcgowan): Setup tls
+		base := &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			Dial: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+				DualStack: true,
+			}).Dial,
+			TLSHandshakeTimeout: 10 * time.Second,
+			TLSClientConfig:     endpoint.TLSConfig,
+		}
 
-	tokenScope := client.TokenScope{
-		Resource: "repository",
-		Scope:    repoName,
-		Actions:  []string{"push", "pull"},
-	}
+		tokenHandler := transport.NewTokenHandler(nil, dumbCredentialStore{auth: auth}, tokenScope)
+		authorizer := transport.NewAuthorizer(nil, tokenHandler)
+		tr := transport.NewTransport(base, transport.NewHeaderRequestModifier(headers), authorizer)
 
-	authorizer := client.NewTokenAuthorizer(dumbCredentialStore{auth: auth}, base, headers, tokenScope)
-	clientConfig := &client.RepositoryConfig{
-		Header:     headers,
-		AuthSource: authorizer,
+		return client.NewRepository(ctx, repoName, endpoint.URL, tr)
 	}
-
-	return client.NewRepository(ctx, repoName, endpoint.URL, clientConfig)
+	return nil, fmt.Errorf("unknown API version %d", endpoint.Version)
 }

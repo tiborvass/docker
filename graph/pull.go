@@ -116,7 +116,8 @@ func (s *TagStore) pullImageFromEndpoint(image, name, tag string, endpoint regis
 		client := registry.HTTPClient(&registry.DockerHeaders{registry.DefaultTransport(registry.ReceiveTimeout, endpoint.IsSecure), imagePullConfig.MetaHeaders})
 		r, err := registry.NewSession(client, imagePullConfig.AuthConfig, endpoint)
 	*/
-	pulledNew, err := s.pullTags(repo, image, tags, imagePullConfig.OutStream, sf)
+	supportsDigestVerification := endpoint.Version >= registry.APIVersion2
+	pulledNew, err := s.pullTags(repo, image, tags, imagePullConfig.OutStream, sf, supportsDigestVerification)
 	if err != nil {
 		if endpoint.PullFallback(err) {
 			return true, err
@@ -130,7 +131,7 @@ func (s *TagStore) pullImageFromEndpoint(image, name, tag string, endpoint regis
 	return false, nil
 }
 
-func (s *TagStore) pullTags(repo distribution.Repository, localName string, tags []string, out io.Writer, sf *streamformatter.StreamFormatter) (bool, error) {
+func (s *TagStore) pullTags(repo distribution.Repository, localName string, tags []string, out io.Writer, sf *streamformatter.StreamFormatter, supportsDigestVerification bool) (bool, error) {
 	var newPullLayers bool
 
 	// downloadInfo is used to pass information from download to extractor
@@ -138,7 +139,7 @@ func (s *TagStore) pullTags(repo distribution.Repository, localName string, tags
 		img     *image.Image
 		tmpFile *os.File
 		digest  digest.Digest
-		layer   distribution.Layer
+		layer   distribution.ReadSeekCloser
 		size    int64
 		err     chan error
 	}
@@ -174,66 +175,95 @@ func (s *TagStore) pullTags(repo distribution.Repository, localName string, tags
 			out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Pulling fs layer", nil))
 
 			downloadFunc := func(di *downloadInfo) error {
-				logrus.Debugf("pulling blob %q to %s", di.digest, img.ID)
+				logrus.Debugf("pulling blob %q to %s", di.digest, di.img.ID)
 
-				if c, err := s.poolAdd("pull", "img:"+img.ID); err != nil {
+				if c, err := s.poolAdd("pull", "img:"+di.img.ID); err != nil {
 					if c != nil {
-						out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Layer already being pulled by another client. Waiting.", nil))
+						out.Write(sf.FormatProgress(stringid.TruncateID(di.img.ID), "Layer already being pulled by another client. Waiting.", nil))
 						<-c
-						out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Download complete", nil))
+						out.Write(sf.FormatProgress(stringid.TruncateID(di.img.ID), "Download complete", nil))
 					} else {
-						logrus.Debugf("Image (id: %s) pull is already running, skipping: %v", img.ID, err)
+						logrus.Debugf("Image (id: %s) pull is already running, skipping: %v", di.img.ID, err)
 					}
 				} else {
-					defer s.poolRemove("pull", "img:"+img.ID)
+					defer s.poolRemove("pull", "img:"+di.img.ID)
 					tmpFile, err := ioutil.TempFile("", "GetImageBlob")
 					if err != nil {
 						return err
 					}
 
-					layerDownload, err := repo.Layers().Fetch(di.digest)
+					blobs := repo.Blobs(nil)
+
+					desc, err := blobs.Stat(nil, di.digest)
 					if err != nil {
-						return fmt.Errorf("error fetching layer: %s", err)
+						return fmt.Errorf("error statting layer: %v", err)
+					}
+					di.size = desc.Length
+
+					layerDownload, err := repo.Blobs(nil).Open(nil, di.digest)
+					if err != nil {
+						return fmt.Errorf("error fetching layer: %v", err)
 					}
 					defer layerDownload.Close()
 
-					if size, err := layerDownload.Seek(0, os.SEEK_END); err != nil {
-						return fmt.Errorf("error seeking to end: %s", err)
-					} else if size == 0 {
-						return fmt.Errorf("layer did not return a size: %s", di.digest)
-					} else {
-						di.size = size
-					}
-					if _, err := layerDownload.Seek(0, 0); err != nil {
-						return fmt.Errorf("error seeking to beginning: %s", err)
-					}
+					/*
 
-					verifier, err := digest.NewDigestVerifier(layerDownload.Digest())
-					if err != nil {
-						return err
+						// TODO(tiborvass): does any part of the code need to do this
+						// seek dance to retrieve size?
+
+						if size, err := layerDownload.Seek(0, os.SEEK_END); err != nil {
+							return fmt.Errorf("error seeking to end: %v", err)
+						} else if size == 0 {
+							return fmt.Errorf("layer did not return a size: %s", di.digest)
+						} else {
+							di.size = size
+						}
+						if _, err := layerDownload.Seek(0, 0); err != nil {
+							return fmt.Errorf("error seeking to beginning: %v", err)
+						}
+					*/
+
+					//supportsDigestVerification := true
+
+					var (
+						in       io.ReadCloser = layerDownload
+						verifier digest.Verifier
+					)
+
+					// TODO(tiborvass): get rid of condition once v1 is retired.
+					if supportsDigestVerification {
+						var err error
+						verifier, err = digest.NewDigestVerifier(di.digest)
+						if err != nil {
+							return err
+						}
+						in = ioutil.NopCloser(io.TeeReader(layerDownload, verifier))
 					}
 
 					reader := progressreader.New(progressreader.Config{
-						In:        ioutil.NopCloser(io.TeeReader(layerDownload, verifier)),
+						In:        in,
 						Out:       out,
 						Formatter: sf,
 						Size:      int(di.size),
 						NewLines:  false,
-						ID:        stringid.TruncateID(img.ID),
+						ID:        stringid.TruncateID(di.img.ID),
 						Action:    "Downloading",
 					})
 					io.Copy(tmpFile, reader)
 
-					out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Verifying Checksum", nil))
+					// TODO(tiborvass): get rid of condition once v1 is retired.
+					if supportsDigestVerification {
+						out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Verifying Checksum", nil))
 
-					if verifier.Verified() {
-						logrus.Infof("Image verification failed for layer %s", di.digest)
-						verified = false
+						if verifier.Verified() {
+							logrus.Infof("Image verification failed for layer %s", di.digest)
+							verified = false
+						}
 					}
 
-					out.Write(sf.FormatProgress(stringid.TruncateID(img.ID), "Download complete", nil))
+					out.Write(sf.FormatProgress(stringid.TruncateID(di.img.ID), "Download complete", nil))
 
-					logrus.Debugf("Downloaded %s to tempfile %s", img.ID, tmpFile.Name())
+					logrus.Debugf("Downloaded %s to tempfile %s", di.img.ID, tmpFile.Name())
 					di.tmpFile = tmpFile
 					di.layer = layerDownload
 				}

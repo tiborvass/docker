@@ -3,12 +3,14 @@ package registry
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/cliconfig"
@@ -85,9 +87,42 @@ type APIEndpoint struct {
 	TLSConfig    *tls.Config
 	PullFallback func(error) bool
 	PushFallback func(error) bool
+	Mirrors      []string
 }
 
-func isTLSError(err error) bool {
+func (endpoint APIEndpoint) ping() error {
+	client := &http.Client{
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+			Proxy:             http.ProxyFromEnvironment,
+			TLSClientConfig:   endpoint.TLSConfig,
+		},
+		CheckRedirect: AddRequiredHeadersToRedirectedRequests,
+		Timeout:       5 * time.Second,
+	}
+	var path string
+	switch endpoint.Version {
+	case APIVersion1:
+		path = "/v1/_ping"
+	case APIVersion2:
+		path = "/v2/"
+	default:
+		return fmt.Errorf("unknown registry API version %d", endpoint.Version)
+	}
+	resp, err := client.Get(endpoint.URL + path)
+	if resp != nil && resp.Body != nil {
+		resp.Body.Close()
+	}
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return errors.New(resp.Status)
+	}
+	return nil
+}
+
+func ifTLSError(err error) bool {
 	return strings.Contains(err.Error(), "tls: oversized record received with length")
 }
 
@@ -96,7 +131,7 @@ func alwaysFallback(error) bool {
 }
 
 func neverFallback(err error) bool {
-	return isTLSError(err)
+	return false
 }
 
 func (s *Service) LookupEndpoints(repoName string) ([]APIEndpoint, error) {
@@ -127,8 +162,8 @@ func (s *Service) LookupEndpoints(repoName string) ([]APIEndpoint, error) {
 	isSecure := s.Config.isSecureIndex(hostname)
 
 	tlsConfig := &tls.Config{
-		InsecureSkipVerify:       isSecure,
-		MinVersion:               tls.VersionTLS12,
+		InsecureSkipVerify:       !isSecure,
+		MinVersion:               tls.VersionTLS10,
 		PreferServerCipherSuites: true,
 		CipherSuites: []uint16{
 			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
@@ -196,8 +231,6 @@ func (s *Service) LookupEndpoints(repoName string) ([]APIEndpoint, error) {
 	}
 
 	// TODO Get mirrors flag
-	// TODO(dmcgowan): Create tls configuration
-
 	endpoints := []APIEndpoint{
 		{
 			URL:          "https://" + hostname,
@@ -216,22 +249,32 @@ func (s *Service) LookupEndpoints(repoName string) ([]APIEndpoint, error) {
 			TLSConfig:    tlsConfig,
 		},
 	}
-	if !isSecure {
-		endpoints = append(endpoints, APIEndpoint{
-			URL:          "http://" + hostname,
-			Version:      APIVersion2,
-			TrimHostname: true,
-			PullFallback: alwaysFallback,
-			PushFallback: neverFallback,
-		})
-		endpoints = append(endpoints, APIEndpoint{
-			URL:          "http://" + hostname,
-			Version:      APIVersion1,
-			TrimHostname: true,
-			PullFallback: alwaysFallback,
-			PushFallback: neverFallback,
-		})
 
+	// TODO(tiborvass): parallelize ping checks
+	n := len(endpoints)
+	// for each HTTPS endpoint, ping them to make sure they are usable.
+	for i := 0; i < n; i++ {
+		if endpoints[i].ping() == nil {
+			// HTTPS endpoint worked, keep it.
+			continue
+		}
+		// copy bad endpoint
+		httpEndpoint := endpoints[i]
+		// remove bad endpoint
+		endpoints = append(endpoints[:i], endpoints[i+1:]...)
+		n--
+		i--
+		// because HTTPS failed and registry is marked as insecure,
+		// let's try to ping via HTTP
+		if !isSecure {
+			httpEndpoint.URL = "http://" + hostname
+			httpEndpoint.TLSConfig = nil
+
+			// if HTTP succeeded, keep it.
+			if httpEndpoint.ping() == nil {
+				endpoints = append(endpoints, httpEndpoint)
+			}
+		}
 	}
 
 	return endpoints, nil

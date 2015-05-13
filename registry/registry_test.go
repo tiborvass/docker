@@ -197,11 +197,11 @@ func TestGetRemoteImageJSON(t *testing.T) {
 
 func TestGetRemoteImageLayer(t *testing.T) {
 	r := spawnTestRegistrySession(t)
-	data, err := r.GetRemoteImageLayer(imageID, makeURL("/v1/"), 0)
+	resp, err := r.GetRemoteImageLayer(imageID, makeURL("/v1/"), 0)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if data == nil {
+	if resp.Body == nil {
 		t.Fatal("Expected non-nil data result")
 	}
 
