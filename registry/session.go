@@ -416,7 +416,6 @@ func (r *Session) PushImageChecksumRegistry(imgData *ImgData, registry string) e
 
 // Push a local image to the registry
 func (r *Session) PushImageJSONRegistry(imgData *ImgData, jsonRaw []byte, registry string) error {
-
 	u := registry + "images/" + imgData.ID + "/json"
 
 	logrus.Debugf("[registry] Calling PUT %s", u)
