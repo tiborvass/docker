@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -15,19 +13,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/libcontainer/label"
-	"github.com/docker/libnetwork"
-	"github.com/docker/libnetwork/netlabel"
-	"github.com/docker/libnetwork/options"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/api"
-	"github.com/docker/docker/autogen/dockerversion"
 	"github.com/docker/docker/daemon/events"
 	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/docker/daemon/execdriver/execdrivers"
 	"github.com/docker/docker/daemon/graphdriver"
-	_ "github.com/docker/docker/daemon/graphdriver/vfs"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/network"
 	"github.com/docker/docker/graph"
@@ -40,9 +31,9 @@ import (
 	"github.com/docker/docker/pkg/ioutils"
 	"github.com/docker/docker/pkg/namesgenerator"
 	"github.com/docker/docker/pkg/parsers"
-	"github.com/docker/docker/pkg/parsers/kernel"
 	"github.com/docker/docker/pkg/stringid"
 	"github.com/docker/docker/pkg/sysinfo"
+	"github.com/docker/docker/pkg/system"
 	"github.com/docker/docker/pkg/truncindex"
 	"github.com/docker/docker/registry"
 	"github.com/docker/docker/runconfig"
@@ -56,6 +47,9 @@ import (
 var (
 	validContainerNameChars   = `[a-zA-Z0-9][a-zA-Z0-9_.-]`
 	validContainerNamePattern = regexp.MustCompile(`^/?` + validContainerNameChars + `+$`)
+
+	// TODO Windows. Change this once daemon is up and running.
+	ErrSystemNotSupported = errors.New("The Docker daemon is only supported on linux")
 )
 
 type contStore struct {
@@ -149,7 +143,7 @@ func (daemon *Daemon) Exists(id string) bool {
 }
 
 func (daemon *Daemon) containerRoot(id string) string {
-	return path.Join(daemon.repository, id)
+	return filepath.Join(daemon.repository, id)
 }
 
 // Load reads the contents of a container from disk
@@ -464,31 +458,6 @@ func (daemon *Daemon) getEntrypointAndArgs(configEntrypoint *runconfig.Entrypoin
 	return entrypoint, args
 }
 
-func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error {
-	var (
-		labelOpts []string
-		err       error
-	)
-
-	for _, opt := range config.SecurityOpt {
-		con := strings.SplitN(opt, ":", 2)
-		if len(con) == 1 {
-			return fmt.Errorf("Invalid --security-opt: %q", opt)
-		}
-		switch con[0] {
-		case "label":
-			labelOpts = append(labelOpts, con[1])
-		case "apparmor":
-			container.AppArmorProfile = con[1]
-		default:
-			return fmt.Errorf("Invalid --security-opt: %q", opt)
-		}
-	}
-
-	container.ProcessLabel, container.MountLabel, err = label.InitLabels(labelOpts)
-	return err
-}
-
 func (daemon *Daemon) newContainer(name string, config *runconfig.Config, imgID string) (*Container, error) {
 	var (
 		id  string
@@ -519,32 +488,6 @@ func (daemon *Daemon) newContainer(name string, config *runconfig.Config, imgID 
 	}
 
 	return container, err
-}
-
-func (daemon *Daemon) createRootfs(container *Container) error {
-	// Step 1: create the container directory.
-	// This doubles as a barrier to avoid race conditions.
-	if err := os.Mkdir(container.root, 0700); err != nil {
-		return err
-	}
-	initID := fmt.Sprintf("%s-init", container.ID)
-	if err := daemon.driver.Create(initID, container.ImageID); err != nil {
-		return err
-	}
-	initPath, err := daemon.driver.Get(initID, "")
-	if err != nil {
-		return err
-	}
-	defer daemon.driver.Put(initID)
-
-	if err := graph.SetupInitLayer(initPath); err != nil {
-		return err
-	}
-
-	if err := daemon.driver.Create(container.ID, initID); err != nil {
-		return err
-	}
-	return nil
 }
 
 func GetFullContainerName(name string) (string, error) {
@@ -605,7 +548,7 @@ func (daemon *Daemon) Parents(name string) ([]string, error) {
 }
 
 func (daemon *Daemon) RegisterLink(parent, child *Container, alias string) error {
-	fullName := path.Join(parent.Name, alias)
+	fullName := filepath.Join(parent.Name, alias)
 	if !daemon.containerGraph.Exists(fullName) {
 		_, err := daemon.containerGraph.Set(fullName, child.ID)
 		return err
@@ -666,13 +609,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	config.DisableBridge = config.Bridge.Iface == disableNetworkBridge
 
 	// Check that the system is supported and we have sufficient privileges
-	if runtime.GOOS != "linux" {
-		return nil, fmt.Errorf("The Docker daemon is only supported on linux")
-	}
-	if os.Geteuid() != 0 {
-		return nil, fmt.Errorf("The Docker daemon needs to be run as root")
-	}
-	if err := checkKernel(); err != nil {
+	if err := checkSystem(); err != nil {
 		return nil, err
 	}
 
@@ -702,7 +639,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	}
 	config.Root = realRoot
 	// Create the root directory if it doesn't exists
-	if err := os.MkdirAll(config.Root, 0700); err != nil && !os.IsExist(err) {
+	if err := system.MkdirAll(config.Root, 0700); err != nil && !os.IsExist(err) {
 		return nil, err
 	}
 
@@ -719,6 +656,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	d := &Daemon{}
 	d.driver = driver
 
+	// Ensure the graph driver is shutdown at a later point
 	defer func() {
 		if err != nil {
 			if err := d.Shutdown(); err != nil {
@@ -735,50 +673,41 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	}
 	logrus.Debugf("Using default logging driver %s", config.LogConfig.Type)
 
-	if config.EnableSelinuxSupport {
-		if selinuxEnabled() {
-			// As Docker on btrfs and SELinux are incompatible at present, error on both being enabled
-			if d.driver.String() == "btrfs" {
-				return nil, fmt.Errorf("SELinux is not supported with the BTRFS graph driver")
-			}
-			logrus.Debug("SELinux enabled successfully")
-		} else {
-			logrus.Warn("Docker could not enable SELinux on the host system")
-		}
-	} else {
-		selinuxSetDisabled()
+	// Configure and validate the kernels security support
+	if err := configureKernelSecuritySupport(config, d.driver.String()); err != nil {
+		return nil, err
 	}
 
-	daemonRepo := path.Join(config.Root, "containers")
+	daemonRepo := filepath.Join(config.Root, "containers")
 
-	if err := os.MkdirAll(daemonRepo, 0700); err != nil && !os.IsExist(err) {
+	if err := system.MkdirAll(daemonRepo, 0700); err != nil && !os.IsExist(err) {
 		return nil, err
 	}
 
 	// Migrate the container if it is aufs and aufs is enabled
-	if err := migrateIfAufs(d.driver, config.Root); err != nil {
+	if err := migrateIfDownlevel(d.driver, config.Root); err != nil {
 		return nil, err
 	}
 
 	logrus.Debug("Creating images graph")
-	g, err := graph.NewGraph(path.Join(config.Root, "graph"), d.driver)
+	g, err := graph.NewGraph(filepath.Join(config.Root, "graph"), d.driver)
 	if err != nil {
 		return nil, err
 	}
 
-	volumesDriver, err := local.New(config.Root)
-	if err != nil {
+	// Configure the volumes driver
+	if err := configureVolumes(config); err != nil {
 		return nil, err
 	}
-	volumedrivers.Register(volumesDriver, volumesDriver.Name())
 
 	trustKey, err := api.LoadOrCreateTrustKey(config.TrustKeyPath)
 	if err != nil {
 		return nil, err
 	}
 
-	trustDir := path.Join(config.Root, "trust")
-	if err := os.MkdirAll(trustDir, 0700); err != nil && !os.IsExist(err) {
+	trustDir := filepath.Join(config.Root, "trust")
+
+	if err := system.MkdirAll(trustDir, 0700); err != nil && !os.IsExist(err) {
 		return nil, err
 	}
 	trustService, err := trust.NewTrustStore(trustDir)
@@ -795,7 +724,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 		Events:   eventsService,
 		Trust:    trustService,
 	}
-	repositories, err := graph.NewTagStore(path.Join(config.Root, "repositories-"+d.driver.String()), tagCfg)
+	repositories, err := graph.NewTagStore(filepath.Join(config.Root, "repositories-"+d.driver.String()), tagCfg)
 	if err != nil {
 		return nil, fmt.Errorf("Couldn't create Tag store: %s", err)
 	}
@@ -805,7 +734,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 		return nil, fmt.Errorf("Error initializing network controller: %v", err)
 	}
 
-	graphdbPath := path.Join(config.Root, "linkgraph.db")
+	graphdbPath := filepath.Join(config.Root, "linkgraph.db")
 	graph, err := graphdb.NewSqliteConn(graphdbPath)
 	if err != nil {
 		return nil, err
@@ -813,24 +742,9 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 
 	d.containerGraph = graph
 
-	localCopy := path.Join(config.Root, "init", fmt.Sprintf("dockerinit-%s", dockerversion.VERSION))
-	sysInitPath := utils.DockerInitPath(localCopy)
-	if sysInitPath == "" {
-		return nil, fmt.Errorf("Could not locate dockerinit: This usually means docker was built incorrectly. See https://docs.docker.com/contributing/devenvironment for official build instructions.")
-	}
-
-	if sysInitPath != localCopy {
-		// When we find a suitable dockerinit binary (even if it's our local binary), we copy it into config.Root at localCopy for future use (so that the original can go away without that being a problem, for example during a package upgrade).
-		if err := os.Mkdir(path.Dir(localCopy), 0700); err != nil && !os.IsExist(err) {
-			return nil, err
-		}
-		if _, err := fileutils.CopyFile(sysInitPath, localCopy); err != nil {
-			return nil, err
-		}
-		if err := os.Chmod(localCopy, 0700); err != nil {
-			return nil, err
-		}
-		sysInitPath = localCopy
+	sysInitPath, err := configureSysInit(config)
+	if err != nil {
+		return nil, err
 	}
 
 	sysInfo := sysinfo.New(false)
@@ -1019,29 +933,24 @@ func (daemon *Daemon) Mount(container *Container) error {
 	if err != nil {
 		return fmt.Errorf("Error getting container %s from driver %s: %s", container.ID, daemon.driver, err)
 	}
-	if container.basefs == "" {
-		container.basefs = dir
-	} else if container.basefs != dir {
-		daemon.driver.Put(container.ID)
-		return fmt.Errorf("Error: driver %s is returning inconsistent paths for container %s ('%s' then '%s')",
-			daemon.driver, container.ID, container.basefs, dir)
+
+	if container.basefs != dir {
+		// The mount path reported by the graph driver should always be trusted on Windows, since the
+		// volume path for a given mounted layer may change over time.  This should only be an error
+		// on non-Windows operating systems.
+		if container.basefs != "" && runtime.GOOS != "windows" {
+			daemon.driver.Put(container.ID)
+			return fmt.Errorf("Error: driver %s is returning inconsistent paths for container %s ('%s' then '%s')",
+				daemon.driver, container.ID, container.basefs, dir)
+		}
 	}
+	container.basefs = dir
 	return nil
 }
 
 func (daemon *Daemon) Unmount(container *Container) error {
 	daemon.driver.Put(container.ID)
 	return nil
-}
-
-func (daemon *Daemon) Changes(container *Container) ([]archive.Change, error) {
-	initID := fmt.Sprintf("%s-init", container.ID)
-	return daemon.driver.Changes(container.ID, initID)
-}
-
-func (daemon *Daemon) Diff(container *Container) (archive.Archive, error) {
-	initID := fmt.Sprintf("%s-init", container.ID)
-	return daemon.driver.Diff(container.ID, initID)
 }
 
 func (daemon *Daemon) Run(c *Container, pipes *execdriver.Pipes, startCallback execdriver.StartCallback) (execdriver.ExitStatus, error) {
