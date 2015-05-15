@@ -35,6 +35,7 @@ import (
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/tiborvass/docker/utils"
 )
 
 type ServerConfig struct {
@@ -701,9 +702,11 @@ func (s *Server) postImagesTag(version version.Version, w http.ResponseWriter, r
 	repo := r.Form.Get("repo")
 	tag := r.Form.Get("tag")
 	force := boolValue(r, "force")
-	if err := s.daemon.Repositories().Tag(repo, tag, vars["name"], force); err != nil {
+	name := vars["name"]
+	if err := s.daemon.Repositories().Tag(repo, tag, name, force); err != nil {
 		return err
 	}
+	s.daemon.EventsService.Log("tag", utils.ImageReference(repo, tag), "")
 	w.WriteHeader(http.StatusCreated)
 	return nil
 }
