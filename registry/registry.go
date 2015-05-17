@@ -16,10 +16,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/distribution/registry/client/transport"
 	"github.com/docker/docker/autogen/dockerversion"
 	"github.com/docker/docker/pkg/parsers/kernel"
 	"github.com/docker/docker/pkg/timeoutconn"
-	"github.com/docker/docker/pkg/transport"
 	"github.com/docker/docker/pkg/useragent"
 )
 
