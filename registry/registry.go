@@ -17,11 +17,11 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/timeoutconn"
 	"github.com/tiborvass/docker/pkg/tlsconfig"
-	"github.com/tiborvass/docker/pkg/transport"
 	"github.com/tiborvass/docker/pkg/useragent"
 )
 
@@ -92,7 +92,7 @@ func (m *httpsRequestModifier) ModifyRequest(req *http.Request) error {
 		logrus.Debugf("hostDir: %s", hostDir)
 		fs, err := ioutil.ReadDir(hostDir)
 		if err != nil && !os.IsNotExist(err) {
-			return nil
+			return err
 		}
 
 		for _, f := range fs {

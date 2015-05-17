@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/cliconfig"
-	"github.com/tiborvass/docker/pkg/transport"
 )
 
 var (
