@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/docker/docker/cliconfig"
-	"github.com/docker/docker/pkg/transport"
 )
 
 var (
@@ -21,15 +20,15 @@ const (
 )
 
 func spawnTestRegistrySession(t *testing.T) *Session {
-	authConfig := &cliconfig.AuthConfig{}
-	endpoint, err := NewEndpoint(makeIndex("/v1/"), nil)
+	auth := &Auth{Config: &cliconfig.AuthConfig{}}
+	transportFn := TransportFunc(nil, auth)
+	endpoint, err := NewEndpoint(makeIndex("/v1/"), transportFn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var tr http.RoundTripper = debugTransport{NewTransport(ReceiveTimeout, endpoint.IsSecure)}
-	tr = transport.NewTransport(AuthTransport(tr, authConfig, false), DockerHeaders(nil)...)
-	client := HTTPClient(tr)
-	r, err := NewSession(client, authConfig, endpoint)
+	client := HTTPClient(transportFn(tr))
+	r, err := NewSession(client, auth, endpoint)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sync"
@@ -18,7 +19,6 @@ import (
 	"github.com/docker/docker/pkg/progressreader"
 	"github.com/docker/docker/pkg/streamformatter"
 	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/transport"
 	"github.com/docker/docker/registry"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
@@ -510,18 +510,17 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 	}
 	defer s.poolRemove("push", repoInfo.LocalName)
 
-	endpoint, err := repoInfo.GetEndpoint(imagePushConfig.MetaHeaders)
+	// Adds Docker-specific headers as well as user-specified headers (metaHeaders) and auth headers
+	auth := &registry.Auth{Config: imagePushConfig.AuthConfig}
+	transportFn := registry.TransportFunc(http.Header(imagePushConfig.MetaHeaders), auth)
+	endpoint, err := repoInfo.GetEndpoint(transportFn)
 	if err != nil {
 		return err
 	}
 	// TODO(tiborvass): reuse client from endpoint?
-	// Adds Docker-specific headers as well as user-specified headers (metaHeaders)
-	tr := transport.NewTransport(
-		registry.NewTransport(registry.NoTimeout, endpoint.IsSecure),
-		registry.DockerHeaders(imagePushConfig.MetaHeaders)...,
-	)
+	tr := transportFn(registry.NewTransport(registry.NoTimeout, endpoint.IsSecure))
 	client := registry.HTTPClient(tr)
-	r, err := registry.NewSession(client, imagePushConfig.AuthConfig, endpoint)
+	r, err := registry.NewSession(client, auth, endpoint)
 	if err != nil {
 		return err
 	}

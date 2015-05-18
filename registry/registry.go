@@ -37,6 +37,28 @@ const (
 	ConnectTimeout
 )
 
+// DockerHeaders returns request modifiers that ensure requests have
+// the User-Agent header set to dockerUserAgent and that metaHeaders
+// are added.
+func RequestModifiers(headers http.Header, auth *Auth) []transport.RequestModifier {
+	modifiers := []transport.RequestModifier{
+		transport.NewHeaderRequestModifier(http.Header{"User-Agent": []string{dockerUserAgent}}),
+	}
+	if headers != nil {
+		modifiers = append(modifiers, transport.NewHeaderRequestModifier(headers))
+	}
+	if auth != nil {
+		modifiers = append(modifiers, auth)
+	}
+	return modifiers
+}
+
+func TransportFunc(headers http.Header, auth *Auth) func(http.RoundTripper) http.RoundTripper {
+	return func(base http.RoundTripper) http.RoundTripper {
+		return transport.NewTransport(base, RequestModifiers(headers, auth)...)
+	}
+}
+
 // dockerUserAgent is the User-Agent the Docker client uses to identify itself.
 // It is populated on init(), comprising version information of different components.
 var dockerUserAgent string
@@ -172,19 +194,6 @@ func NewTransport(timeout TimeoutType, secure bool) http.RoundTripper {
 	}
 
 	return tr
-}
-
-// DockerHeaders returns request modifiers that ensure requests have
-// the User-Agent header set to dockerUserAgent and that metaHeaders
-// are added.
-func DockerHeaders(metaHeaders http.Header) []transport.RequestModifier {
-	modifiers := []transport.RequestModifier{
-		transport.NewHeaderRequestModifier(http.Header{"User-Agent": []string{dockerUserAgent}}),
-	}
-	if metaHeaders != nil {
-		modifiers = append(modifiers, transport.NewHeaderRequestModifier(metaHeaders))
-	}
-	return modifiers
 }
 
 type debugTransport struct{ http.RoundTripper }

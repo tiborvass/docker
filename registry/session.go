@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"errors"
-	"sync"
 	// this is required for some certificates
 	_ "crypto/sha512"
 	"encoding/hex"
@@ -23,25 +22,12 @@ import (
 	"github.com/docker/docker/cliconfig"
 	"github.com/docker/docker/pkg/httputils"
 	"github.com/docker/docker/pkg/tarsum"
-	"github.com/docker/docker/pkg/transport"
 )
 
 type Session struct {
 	indexEndpoint *Endpoint
 	client        *http.Client
-	// TODO(tiborvass): remove authConfig
-	authConfig *cliconfig.AuthConfig
-}
-
-type authTransport struct {
-	http.RoundTripper
-	*cliconfig.AuthConfig
-
-	alwaysSetBasicAuth bool
-	token              []string
-
-	mu     sync.Mutex                      // guards modReq
-	modReq map[*http.Request]*http.Request // original -> modified
+	*Auth
 }
 
 // AuthTransport handles the auth layer when communicating with a v1 registry (private or official)
@@ -57,78 +43,14 @@ type authTransport struct {
 // If the server sends a token without the client having requested it, it is ignored.
 //
 // This RoundTripper also has a CancelRequest method important for correct timeout handling.
-func AuthTransport(base http.RoundTripper, authConfig *cliconfig.AuthConfig, alwaysSetBasicAuth bool) http.RoundTripper {
-	if base == nil {
-		base = http.DefaultTransport
-	}
-	return &authTransport{
-		RoundTripper:       base,
-		AuthConfig:         authConfig,
-		alwaysSetBasicAuth: alwaysSetBasicAuth,
-		modReq:             make(map[*http.Request]*http.Request),
-	}
-}
-
-func (tr *authTransport) RoundTrip(orig *http.Request) (*http.Response, error) {
-	req := transport.CloneRequest(orig)
-	tr.mu.Lock()
-	tr.modReq[orig] = req
-	tr.mu.Unlock()
-
-	if tr.alwaysSetBasicAuth {
-		req.SetBasicAuth(tr.Username, tr.Password)
-		return tr.RoundTripper.RoundTrip(req)
-	}
-
-	var askedForToken bool
-
-	// Don't override
-	if req.Header.Get("Authorization") == "" {
-		if req.Header.Get("X-Docker-Token") == "true" {
-			req.SetBasicAuth(tr.Username, tr.Password)
-			askedForToken = true
-		} else if len(tr.token) > 0 {
-			req.Header.Set("Authorization", "Token "+strings.Join(tr.token, ","))
-		}
-	}
-	resp, err := tr.RoundTripper.RoundTrip(req)
-	if err != nil {
-		delete(tr.modReq, orig)
-		return nil, err
-	}
-	if askedForToken && len(resp.Header["X-Docker-Token"]) > 0 {
-		tr.token = resp.Header["X-Docker-Token"]
-	}
-	resp.Body = &transport.OnEOFReader{
-		Rc: resp.Body,
-		Fn: func() { delete(tr.modReq, orig) },
-	}
-	return resp, nil
-}
-
-// CancelRequest cancels an in-flight request by closing its connection.
-func (tr *authTransport) CancelRequest(req *http.Request) {
-	type canceler interface {
-		CancelRequest(*http.Request)
-	}
-	if cr, ok := tr.RoundTripper.(canceler); ok {
-		tr.mu.Lock()
-		modReq := tr.modReq[req]
-		delete(tr.modReq, req)
-		tr.mu.Unlock()
-		cr.CancelRequest(modReq)
-	}
-}
 
 // TODO(tiborvass): remove authConfig param once registry client v2 is vendored
-func NewSession(client *http.Client, authConfig *cliconfig.AuthConfig, endpoint *Endpoint) (r *Session, err error) {
+func NewSession(client *http.Client, auth *Auth, endpoint *Endpoint) (r *Session, err error) {
 	r = &Session{
-		authConfig:    authConfig,
+		Auth:          auth,
 		client:        client,
 		indexEndpoint: endpoint,
 	}
-
-	var alwaysSetBasicAuth bool
 
 	// If we're working with a standalone private registry over HTTPS, send Basic Auth headers
 	// alongside all our requests.
@@ -138,13 +60,11 @@ func NewSession(client *http.Client, authConfig *cliconfig.AuthConfig, endpoint 
 			return nil, err
 		}
 
-		if info.Standalone && authConfig != nil {
+		if info.Standalone && auth != nil {
 			logrus.Debugf("Endpoint %s is eligible for private registry. Enabling decorator.", endpoint.String())
-			alwaysSetBasicAuth = true
+			r.Auth.AlwaysSetBasicAuth = true
 		}
 	}
-
-	client.Transport = AuthTransport(client.Transport, authConfig, alwaysSetBasicAuth)
 
 	jar, err := cookiejar.New(nil)
 	if err != nil {
@@ -332,6 +252,10 @@ func (r *Session) GetRepositoryData(remote string) (*RepositoryData, error) {
 	res, err := r.client.Do(req)
 	if err != nil {
 		return nil, err
+	}
+	// cache token for future requests
+	if token := res.Header["X-Docker-Token"]; len(token) > 0 {
+		r.Auth.token = token
 	}
 	defer res.Body.Close()
 	if res.StatusCode == 401 {
@@ -565,6 +489,10 @@ func (r *Session) PushImageJSONIndex(remote string, imgList []*ImgData, validate
 		u = res.Header.Get("Location")
 		logrus.Debugf("Redirected to %s", u)
 	}
+	// cache token for future requests
+	if token := res.Header["X-Docker-Token"]; len(token) > 0 {
+		r.Auth.token = token
+	}
 	defer res.Body.Close()
 
 	if res.StatusCode == 401 {
@@ -644,11 +572,11 @@ func (r *Session) SearchRepositories(term string) (*SearchResults, error) {
 func (r *Session) GetAuthConfig(withPasswd bool) *cliconfig.AuthConfig {
 	password := ""
 	if withPasswd {
-		password = r.authConfig.Password
+		password = r.Auth.Config.Password
 	}
 	return &cliconfig.AuthConfig{
-		Username: r.authConfig.Username,
+		Username: r.Auth.Config.Username,
 		Password: password,
-		Email:    r.authConfig.Email,
+		Email:    r.Auth.Config.Email,
 	}
 }

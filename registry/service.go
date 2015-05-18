@@ -47,12 +47,13 @@ func (s *Service) Search(term string, authConfig *cliconfig.AuthConfig, headers 
 		return nil, err
 	}
 
+	auth := &Auth{Config: authConfig}
 	// *TODO: Search multiple indexes.
-	endpoint, err := repoInfo.GetEndpoint(http.Header(headers))
+	endpoint, err := repoInfo.GetEndpoint(TransportFunc(http.Header(headers), auth))
 	if err != nil {
 		return nil, err
 	}
-	r, err := NewSession(endpoint.client, authConfig, endpoint)
+	r, err := NewSession(endpoint.client, auth, endpoint)
 	if err != nil {
 		return nil, err
 	}

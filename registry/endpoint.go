@@ -42,9 +42,9 @@ func scanForAPIVersion(address string) (string, APIVersion) {
 }
 
 // NewEndpoint parses the given address to return a registry endpoint.
-func NewEndpoint(index *IndexInfo, metaHeaders http.Header) (*Endpoint, error) {
+func NewEndpoint(index *IndexInfo, transportFn func(http.RoundTripper) http.RoundTripper) (*Endpoint, error) {
 	// *TODO: Allow per-registry configuration of endpoints.
-	endpoint, err := newEndpoint(index.GetAuthConfigKey(), index.Secure, metaHeaders)
+	endpoint, err := newEndpoint(index.GetAuthConfigKey(), index.Secure, transportFn)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func validateEndpoint(endpoint *Endpoint) error {
 	return nil
 }
 
-func newEndpoint(address string, secure bool, metaHeaders http.Header) (*Endpoint, error) {
+func newEndpoint(address string, secure bool, transportFn func(http.RoundTripper) http.RoundTripper) (*Endpoint, error) {
 	var (
 		endpoint       = new(Endpoint)
 		trimmedAddress string
@@ -100,12 +100,17 @@ func newEndpoint(address string, secure bool, metaHeaders http.Header) (*Endpoin
 	}
 	endpoint.IsSecure = secure
 	tr := NewTransport(ConnectTimeout, endpoint.IsSecure)
-	endpoint.client = HTTPClient(transport.NewTransport(tr, DockerHeaders(metaHeaders)...))
+	if transportFn == nil {
+		tr = transport.NewTransport(tr, RequestModifiers(nil, nil)...)
+	} else {
+		tr = transportFn(tr)
+	}
+	endpoint.client = HTTPClient(tr)
 	return endpoint, nil
 }
 
-func (repoInfo *RepositoryInfo) GetEndpoint(metaHeaders http.Header) (*Endpoint, error) {
-	return NewEndpoint(repoInfo.Index, metaHeaders)
+func (repoInfo *RepositoryInfo) GetEndpoint(transportFn func(http.RoundTripper) http.RoundTripper) (*Endpoint, error) {
+	return NewEndpoint(repoInfo.Index, transportFn)
 }
 
 // Endpoint stores basic information about a registry endpoint.

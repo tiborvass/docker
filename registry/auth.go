@@ -320,3 +320,24 @@ func ResolveAuthConfig(config *cliconfig.ConfigFile, index *IndexInfo) cliconfig
 	// When all else fails, return an empty auth config
 	return cliconfig.AuthConfig{}
 }
+
+type Auth struct {
+	Config             *cliconfig.AuthConfig
+	AlwaysSetBasicAuth bool
+	token              []string
+}
+
+func (m *Auth) ModifyRequest(r *http.Request) error {
+	if m.AlwaysSetBasicAuth {
+		r.SetBasicAuth(m.Config.Username, m.Config.Password)
+		return nil
+	}
+	if r.Header.Get("Authorization") == "" {
+		if r.Header.Get("X-Docker-Token") == "true" {
+			r.SetBasicAuth(m.Config.Username, m.Config.Password)
+		} else if len(m.token) > 0 {
+			r.Header.Set("X-Docker-Token", "Token "+strings.Join(m.token, ","))
+		}
+	}
+	return nil
+}
