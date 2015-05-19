@@ -209,5 +209,18 @@ func (s *Service) LookupEndpoints(repoName string) ([]APIEndpoint, error) {
 		},
 	}
 
+	if !isSecure {
+		endpoints = append(endpoints, APIEndpoint{
+			URL:          "http://" + hostname,
+			Version:      APIVersion2,
+			TrimHostname: true,
+		})
+		endpoints = append(endpoints, APIEndpoint{
+			URL:          "http://" + hostname,
+			Version:      APIVersion1,
+			TrimHostname: true,
+		})
+	}
+
 	return endpoints, nil
 }

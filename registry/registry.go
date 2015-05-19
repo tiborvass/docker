@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -56,6 +57,15 @@ func init() {
 	dockerUserAgent = useragent.AppendVersions("", httpVersion...)
 }
 
+func hasFile(files []os.FileInfo, name string) bool {
+	for _, f := range files {
+		if f.Name() == name {
+			return true
+		}
+	}
+	return false
+}
+
 type httpsRequestModifier struct{ tlsConfig *tls.Config }
 
 // DRAGONS(tiborvass): If someone wonders why do we set tlsconfig in a roundtrip,
@@ -71,14 +81,6 @@ func (m *httpsRequestModifier) ModifyRequest(req *http.Request) error {
 	)
 
 	if req.URL.Scheme == "https" {
-		hasFile := func(files []os.FileInfo, name string) bool {
-			for _, f := range files {
-				if f.Name() == name {
-					return true
-				}
-			}
-			return false
-		}
 
 		if runtime.GOOS == "windows" {
 			hostDir = path.Join(os.TempDir(), "/docker/certs.d", req.URL.Host)
@@ -257,4 +259,36 @@ func AddRequiredHeadersToRedirectedRequests(req *http.Request, via []*http.Reque
 		}
 	}
 	return nil
+}
+
+type ErrRegistry struct {
+	Message  string
+	Err      error
+	Fallback bool
+}
+
+func (err *ErrRegistry) Error() string {
+	return fmt.Sprintf("%s: %s", err.Message, err.Err.Error())
+}
+
+func WrapRegistryError(message string, err error) error {
+	fallback := false
+	switch v := err.(type) {
+	case *url.Error:
+		fallback = true
+	case *ErrRegistry:
+		fallback = v.Fallback
+	default:
+		errStr := err.Error()
+		switch {
+		case strings.Contains(errStr, "tls: "):
+			fallback = true
+
+		}
+	}
+	return &ErrRegistry{
+		Message:  message,
+		Err:      err,
+		Fallback: fallback,
+	}
 }

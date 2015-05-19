@@ -71,9 +71,11 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 		switch endpoint.Version {
 		case registry.APIVersion2:
 			if err := s.pullV2Repository(image, name, tag, endpoint, imagePullConfig, sf); err != nil {
-				// TODO: use fallback policy instead of automatically falling back
-				lastErr = err
-				continue
+				if rErr, ok := err.(*registry.ErrRegistry); ok && rErr.Fallback {
+					lastErr = err
+					continue
+				}
+				logrus.Debugf("Not continuing with error: %v", err)
 			}
 		case registry.APIVersion1:
 			// TODO(tiborvass): check if endpoint is secure
@@ -382,7 +384,7 @@ func (s *TagStore) pullV2Repository(image, name, tag string, endpoint registry.A
 	// TODO(dmcgowan): Pass tls configuration
 	repo, err := NewV2Repository(name, endpoint, imagePullConfig.MetaHeaders, imagePullConfig.AuthConfig)
 	if err != nil {
-		return err
+		return registry.WrapRegistryError("error creating repository client", err)
 	}
 
 	var tags []string
@@ -394,7 +396,7 @@ func (s *TagStore) pullV2Repository(image, name, tag string, endpoint registry.A
 		var err error
 		tags, err = repo.Manifests().Tags()
 		if err != nil {
-			return fmt.Errorf("error getting tags: %s", err)
+			return registry.WrapRegistryError("error getting tags", err)
 		}
 
 	}
@@ -415,7 +417,7 @@ func (s *TagStore) pullV2Repository(image, name, tag string, endpoint registry.A
 	for _, tag := range tags {
 		pulledNew, err = s.pullV2Tag(repo, image, tag, imagePullConfig.OutStream, sf)
 		if err != nil {
-			return err
+			return registry.WrapRegistryError("error pulling tags", err)
 		}
 	}
 
