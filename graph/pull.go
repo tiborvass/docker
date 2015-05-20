@@ -76,6 +76,7 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 					continue
 				}
 				logrus.Debugf("Not continuing with error: %v", err)
+				return err
 			}
 		case registry.APIVersion1:
 			// TODO(tiborvass): check if endpoint is secure
@@ -93,12 +94,14 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 			}
 			r, err := registry.NewSession(client, imagePullConfig.AuthConfig, v1Endpoint)
 			if err != nil {
+				// TODO(dmcgowan): Check if should fallback
 				lastErr = err
+				logrus.Debugf("Fallback from error: %s", err)
 				continue
 			}
 			if err := s.pullRepository(r, imagePullConfig.OutStream, repoInfo, tag, sf); err != nil {
-				lastErr = err
-				continue
+				// TODO(dmcgowan): Check if should fallback
+				return err
 			}
 		default:
 			lastErr = fmt.Errorf("unknown version %d for registry %s", endpoint.Version, endpoint.URL)

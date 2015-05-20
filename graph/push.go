@@ -549,8 +549,11 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 		switch endpoint.Version {
 		case registry.APIVersion2:
 			if err := s.pushV2Repository(localName, name, endpoint, imagePushConfig, sf); err != nil {
-				// TODO: use fallback policy instead of automatically denying falling
-				logrus.Errorf("v2 error: %v", err)
+				if rErr, ok := err.(*registry.ErrRegistry); ok && rErr.Fallback {
+					lastErr = err
+					continue
+				}
+				logrus.Debugf("Not continuing with error: %v", err)
 				return err
 			}
 		case registry.APIVersion1:
@@ -569,12 +572,13 @@ func (s *TagStore) Push(localName string, imagePushConfig *ImagePushConfig) erro
 			}
 			r, err := registry.NewSession(client, imagePushConfig.AuthConfig, v1Endpoint)
 			if err != nil {
+				// TODO(dmcgowan): Check if should fallback
 				lastErr = err
 				continue
 			}
 			if err := s.pushRepository(r, imagePushConfig.OutStream, repoInfo, localRepo, imagePushConfig.Tag, sf); err != nil {
-				lastErr = err
-				continue
+				// TODO(dmcgowan): Check if should fallback
+				return err
 			}
 		default:
 			lastErr = fmt.Errorf("unknown version %d for registry %s", endpoint.Version, endpoint.URL)

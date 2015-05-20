@@ -74,6 +74,8 @@ func NewV2Repository(repoName string, endpoint registry.APIEndpoint, metaHeaders
 		}).Dial,
 		TLSHandshakeTimeout: 10 * time.Second,
 		TLSClientConfig:     endpoint.TLSConfig,
+		// TODO(dmcgowan): Call close idle connections when complete and use keep alive
+		DisableKeepAlives: true,
 	}
 
 	modifiers := registry.DockerHeaders(metaHeaders)
