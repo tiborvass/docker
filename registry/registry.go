@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/distribution/registry/api/v2"
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/docker/docker/autogen/dockerversion"
 	"github.com/docker/docker/pkg/parsers/kernel"
@@ -270,14 +271,27 @@ type ErrRegistry struct {
 func (err *ErrRegistry) Error() string {
 	return fmt.Sprintf("%s: %s", err.Message, err.Err.Error())
 }
+func shouldV2Fallback(err *v2.Error) bool {
+	logrus.Debugf("v2 error: %T %v", err, err)
+	switch err.Code {
+	case v2.ErrorCodeUnauthorized, v2.ErrorCodeManifestUnknown:
+		return true
+	}
+	return false
+}
 
-func WrapRegistryError(message string, err error) error {
+func WrapError(message string, err error) error {
+	logrus.Debugf("registry error: %T %v", err, err)
 	fallback := false
 	switch v := err.(type) {
 	case *url.Error:
 		fallback = true
 	case *ErrRegistry:
 		fallback = v.Fallback
+	case *v2.Errors:
+		fallback = shouldV2Fallback(&v.Errors[0])
+	case *v2.Error:
+		fallback = shouldV2Fallback(v)
 	default:
 		errStr := err.Error()
 		switch {

@@ -71,7 +71,7 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 		switch endpoint.Version {
 		case registry.APIVersion2:
 			if err := s.pullV2Repository(image, name, tag, endpoint, imagePullConfig, sf); err != nil {
-				if rErr, ok := err.(*registry.ErrRegistry); ok && rErr.Fallback {
+				if err, ok := err.(*registry.ErrRegistry); ok && err.Fallback {
 					lastErr = err
 					continue
 				}
@@ -110,7 +110,7 @@ func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConf
 	}
 
 	if lastErr == nil {
-		lastErr = fmt.Errorf("no endpoints found for %s", repoInfo.CanonicalName)
+		lastErr = fmt.Errorf("no endpoints found for %s", image)
 	}
 	return lastErr
 }
@@ -384,7 +384,7 @@ func (s *TagStore) pullV2Repository(image, name, tag string, endpoint registry.A
 	// TODO(dmcgowan): Pass tls configuration
 	repo, err := NewV2Repository(name, endpoint, imagePullConfig.MetaHeaders, imagePullConfig.AuthConfig)
 	if err != nil {
-		return registry.WrapRegistryError("error creating repository client", err)
+		return registry.WrapError("error creating repository client", err)
 	}
 
 	var tags []string
@@ -396,7 +396,7 @@ func (s *TagStore) pullV2Repository(image, name, tag string, endpoint registry.A
 		var err error
 		tags, err = repo.Manifests().Tags()
 		if err != nil {
-			return registry.WrapRegistryError("error getting tags", err)
+			return registry.WrapError("error getting tags", err)
 		}
 
 	}
@@ -417,7 +417,7 @@ func (s *TagStore) pullV2Repository(image, name, tag string, endpoint registry.A
 	for _, tag := range tags {
 		pulledNew, err = s.pullV2Tag(repo, image, tag, imagePullConfig.OutStream, sf)
 		if err != nil {
-			return registry.WrapRegistryError("error pulling tags", err)
+			return registry.WrapError("error pulling tags", err)
 		}
 	}
 
@@ -439,8 +439,9 @@ func (s *TagStore) pullV2Tag(repo distribution.Repository, localName, tag string
 	var verified bool
 	manifest, err := repo.Manifests().GetByTag(tag)
 	if err != nil {
-		return false, fmt.Errorf("error getting image manifest: %s", err)
+		return false, registry.WrapError("error getting image manifest", err)
 	}
+	// TODO(tiborvass): what's the usecase for having manifest == nil and err == nil ?
 	if manifest == nil {
 		return false, fmt.Errorf("image manifest does not exist for tag: %s", tag)
 	}
@@ -452,7 +453,13 @@ func (s *TagStore) pullV2Tag(repo distribution.Repository, localName, tag string
 	for i := len(manifest.FSLayers) - 1; i >= 0; i-- {
 		img, err := image.NewImgJSON([]byte(manifest.History[i].V1Compatibility))
 		if err != nil {
-			return false, fmt.Errorf("failed to parse json: %s", err)
+			return false, registry.WrapError("error getting image manifest", err)
+		}
+		if manifest == nil {
+			return false, fmt.Errorf("image manifest does not exist for tag", tag)
+		}
+		if manifest.SchemaVersion != 1 {
+			return false, fmt.Errorf("unsupported image manifest version(%d) for tag: %s", manifest.SchemaVersion, tag)
 		}
 		downloads[i].img = img
 		downloads[i].digest = manifest.FSLayers[i].BlobSum
@@ -487,13 +494,13 @@ func (s *TagStore) pullV2Tag(repo distribution.Repository, localName, tag string
 
 				desc, err := blobs.Stat(nil, di.digest)
 				if err != nil {
-					return fmt.Errorf("error statting layer: %v", err)
+					return registry.WrapError("error statting layer", err)
 				}
 				di.size = desc.Length
 
-				layerDownload, err := repo.Blobs(nil).Open(nil, di.digest)
+				layerDownload, err := blobs.Open(nil, di.digest)
 				if err != nil {
-					return fmt.Errorf("error fetching layer: %v", err)
+					return registry.WrapError("error fetching layer", err)
 				}
 				defer layerDownload.Close()
 
@@ -516,7 +523,7 @@ func (s *TagStore) pullV2Tag(repo distribution.Repository, localName, tag string
 
 				verifier, err := digest.NewDigestVerifier(di.digest)
 				if err != nil {
-					return err
+					return registry.WrapError("creating digest verifier", err)
 				}
 
 				reader := progressreader.New(progressreader.Config{

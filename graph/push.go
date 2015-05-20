@@ -305,7 +305,7 @@ func (s *TagStore) pushImage(r *registry.Session, out io.Writer, imgID, ep strin
 func (s *TagStore) pushV2Repository(localName, repoName string, endpoint registry.APIEndpoint, imagePushConfig *ImagePushConfig, sf *streamformatter.StreamFormatter) error {
 	repo, err := NewV2Repository(repoName, endpoint, imagePushConfig.MetaHeaders, imagePushConfig.AuthConfig)
 	if err != nil {
-		return registry.WrapRegistryError("error creating client", err)
+		return registry.WrapError("error creating client", err)
 	}
 	if _, err := s.poolAdd("push", localName); err != nil {
 		return err
@@ -413,7 +413,7 @@ func (s *TagStore) pushV2Tag(repo distribution.Repository, localRepo Repository,
 					d = ""
 				default:
 					out.Write(sf.FormatProgress(stringid.TruncateID(layer.ID), "Image push failed", nil))
-					return registry.WrapRegistryError("error checking if layer exists", err)
+					return registry.WrapError("error checking if layer exists", err)
 				}
 			}
 		}
