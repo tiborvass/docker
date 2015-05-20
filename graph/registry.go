@@ -79,7 +79,7 @@ func NewV2Repository(repoName string, endpoint registry.APIEndpoint, metaHeaders
 	}
 
 	modifiers := registry.DockerHeaders(metaHeaders)
-	authTransport := transport.NewTransport(base, modifiers...)
+	authTransport := transport.NewTransport(registry.DebugTransport{base}, modifiers...)
 	tokenHandler := transport.NewTokenHandler(authTransport, dumbCredentialStore{auth: auth}, tokenScope)
 	modifiers = append(modifiers, transport.NewAuthorizer(authTransport, tokenHandler))
 	tr := transport.NewTransport(base, modifiers...)

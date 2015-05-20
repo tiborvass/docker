@@ -178,10 +178,10 @@ func NewTransport(timeout TimeoutType, secure bool) http.RoundTripper {
 	if secure {
 		// note: httpsTransport also handles http transport
 		// but for HTTPS, it sets up the certs
-		return transport.NewTransport(tr, &httpsRequestModifier{tlsConfig})
+		return transport.NewTransport(DebugTransport{tr}, &httpsRequestModifier{tlsConfig})
 	}
 
-	return tr
+	return DebugTransport{tr}
 }
 
 // DockerHeaders returns request modifiers that ensure requests have
@@ -197,9 +197,9 @@ func DockerHeaders(metaHeaders http.Header) []transport.RequestModifier {
 	return modifiers
 }
 
-type debugTransport struct{ http.RoundTripper }
+type DebugTransport struct{ http.RoundTripper }
 
-func (tr debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (tr DebugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	dump, err := httputil.DumpRequestOut(req, false)
 	if err != nil {
 		fmt.Println("could not dump request")
