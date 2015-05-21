@@ -44,7 +44,7 @@ clone() {
 
 # the following lines are in sorted order, FYI
 clone git github.com/Sirupsen/logrus v0.7.3 # logrus is a common dependency among multiple deps
-clone git github.com/docker/libtrust 230dfd18c232
+clone git github.com/docker/libtrust c54fbb67c1f1e68d7d6f8d2ad7c9360404616a41
 clone git github.com/go-check/check 64131543e7896d5bcc6bd5a76287eb75ea96c673
 clone git github.com/gorilla/context 14f550f51a
 clone git github.com/gorilla/mux e444e69cbd
@@ -53,21 +53,20 @@ clone git github.com/mistifyio/go-zfs v2.1.0
 clone git github.com/tchap/go-patricia v2.1.0
 clone hg code.google.com/p/go.net 84a4013f96e0
 clone hg code.google.com/p/gosqlite 74691fb6f837
+clone hg code.google.com/p/go-uuid 7dda39b2e7d5
 
 #get libnetwork packages
 clone git github.com/docker/libnetwork b39597744b0978fe4aeb9f3a099ba42f7b6c4a1f
 clone git github.com/vishvananda/netns 008d17ae001344769b031375bdb38a86219154c6
 clone git github.com/vishvananda/netlink 8eb64238879fed52fd51c5b30ad20b928fb4c36c
 
-# get distribution packages
-clone git github.com/docker/distribution d957768537c5af40e4f4cd96871f7b2bde9e2923
-mv src/github.com/docker/distribution/digest tmp-digest
-mv src/github.com/docker/distribution/registry/api tmp-api
-rm -rf src/github.com/docker/distribution
-mkdir -p src/github.com/docker/distribution
-mv tmp-digest src/github.com/docker/distribution/digest
-mkdir -p src/github.com/docker/distribution/registry
-mv tmp-api src/github.com/docker/distribution/registry/api
+clone git github.com/docker/distribution 2317f721a3d8428215a2b65da4ae85212ed473b4
+rm -rf src/github.com/docker/distribution/Godeps
+
+clone git github.com/golang/net 1dfe7915deaf
+rm -rf src/golang.org/x/net
+mkdir -p src/golang.org/x
+mv src/github.com/golang/net src/golang.org/x/
 
 clone git github.com/docker/libcontainer a37b2a4f152e2a1c9de596f54c051cb889de0691
 # libcontainer deps (see src/github.com/docker/libcontainer/update-vendor.sh)
