@@ -10,7 +10,6 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/libcontainer/label"
 )
@@ -120,21 +119,20 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 		if err != nil {
 			return nil, nil, err
 		}
-		if stat, err := os.Stat(path); err == nil && !stat.IsDir() {
+
+		stat, err := os.Stat(path)
+		if err == nil && !stat.IsDir() {
 			return nil, nil, fmt.Errorf("cannot mount volume over existing file, file exists %s", path)
 		}
+
 		v, err := createVolume(name, config.VolumeDriver)
 		if err != nil {
 			return nil, nil, err
 		}
-		rootfs, err := symlink.FollowSymlinkInScope(filepath.Join(container.basefs, destination), container.basefs)
-		if err != nil {
+
+		if err := container.copyImagePathContent(v, destination); err != nil {
 			return nil, nil, err
 		}
-		if path, err = v.Mount(); err != nil {
-			return nil, nil, err
-		}
-		copyExistingContents(rootfs, path)
 
 		container.addMountPointWithVolume(destination, v, true)
 	}
