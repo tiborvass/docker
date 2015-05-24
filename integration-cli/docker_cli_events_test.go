@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -139,15 +140,19 @@ func (s *DockerSuite) TestEventsContainerEvents(c *check.C) {
 	}
 	events := strings.Split(out, "\n")
 	events = events[:len(events)-1]
-	if len(events) < 4 {
+	if len(events) < 5 {
 		c.Fatalf("Missing expected event")
 	}
-	createEvent := strings.Fields(events[len(events)-4])
+	createEvent := strings.Fields(events[len(events)-5])
+	attachEvent := strings.Fields(events[len(events)-4])
 	startEvent := strings.Fields(events[len(events)-3])
 	dieEvent := strings.Fields(events[len(events)-2])
 	destroyEvent := strings.Fields(events[len(events)-1])
 	if createEvent[len(createEvent)-1] != "create" {
 		c.Fatalf("event should be create, not %#v", createEvent)
+	}
+	if attachEvent[len(createEvent)-1] != "attach" {
+		c.Fatalf("event should be attach, not %#v", attachEvent)
 	}
 	if startEvent[len(startEvent)-1] != "start" {
 		c.Fatalf("event should be start, not %#v", startEvent)
@@ -173,15 +178,19 @@ func (s *DockerSuite) TestEventsContainerEventsSinceUnixEpoch(c *check.C) {
 	}
 	events := strings.Split(out, "\n")
 	events = events[:len(events)-1]
-	if len(events) < 4 {
+	if len(events) < 5 {
 		c.Fatalf("Missing expected event")
 	}
-	createEvent := strings.Fields(events[len(events)-4])
+	createEvent := strings.Fields(events[len(events)-5])
+	attachEvent := strings.Fields(events[len(events)-4])
 	startEvent := strings.Fields(events[len(events)-3])
 	dieEvent := strings.Fields(events[len(events)-2])
 	destroyEvent := strings.Fields(events[len(events)-1])
 	if createEvent[len(createEvent)-1] != "create" {
 		c.Fatalf("event should be create, not %#v", createEvent)
+	}
+	if attachEvent[len(attachEvent)-1] != "attach" {
+		c.Fatalf("event should be attach, not %#v", attachEvent)
 	}
 	if startEvent[len(startEvent)-1] != "start" {
 		c.Fatalf("event should be start, not %#v", startEvent)
@@ -431,7 +440,7 @@ func (s *DockerSuite) TestEventsFilterContainer(c *check.C) {
 	until := fmt.Sprintf("%d", daemonTime(c).Unix())
 
 	checkEvents := func(id string, events []string) error {
-		if len(events) != 3 { // create, start, die
+		if len(events) != 4 { // create, attach, start, die
 			return fmt.Errorf("expected 3 events, got %v", events)
 		}
 		for _, event := range events {
