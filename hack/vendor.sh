@@ -74,3 +74,4 @@ clone git github.com/docker/libcontainer v2.1.1
 clone git github.com/coreos/go-systemd v2
 clone git github.com/godbus/dbus v2
 clone git github.com/syndtr/gocapability 66ef2aa7a23ba682594e2b6f74cf40c0692b49fb
+clone git github.com/golang/protobuf 655cdfa588ea
