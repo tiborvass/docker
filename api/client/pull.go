@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/graph/tags"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/registry"
@@ -28,7 +28,7 @@ func (cli *DockerCli) CmdPull(args ...string) error {
 	)
 	taglessRemote, tag := parsers.ParseRepositoryTag(remote)
 	if tag == "" && !*allTags {
-		newRemote = utils.ImageReference(taglessRemote, graph.DEFAULTTAG)
+		newRemote = utils.ImageReference(taglessRemote, tags.DEFAULTTAG)
 	}
 	if tag != "" && *allTags {
 		return fmt.Errorf("tag can't be used with --all-tags/-a")

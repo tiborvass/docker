@@ -1,13 +1,13 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"runtime"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
-	"github.com/tiborvass/docker/engine"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 )
 
@@ -32,28 +32,24 @@ func (cli *DockerCli) CmdVersion(args ...string) error {
 	}
 	fmt.Fprintf(cli.out, "OS/Arch (client): %s/%s\n", runtime.GOOS, runtime.GOARCH)
 
-	body, _, err := readBody(cli.call("GET", "/version", nil, nil))
+	stream, _, err := cli.call("GET", "/version", nil, nil)
 	if err != nil {
 		return err
 	}
 
-	out := engine.NewOutput()
-	remoteVersion, err := out.AddEnv()
-	if err != nil {
-		logrus.Errorf("Error reading remote version: %s", err)
+	var v types.Version
+	if err := json.NewDecoder(stream).Decode(&v); err != nil {
+		fmt.Fprintf(cli.err, "Error reading remote version: %s\n", err)
 		return err
 	}
-	if _, err := out.Write(body); err != nil {
-		logrus.Errorf("Error reading remote version: %s", err)
-		return err
+
+	fmt.Fprintf(cli.out, "Server version: %s\n", v.Version)
+	if v.ApiVersion != "" {
+		fmt.Fprintf(cli.out, "Server API version: %s\n", v.ApiVersion)
 	}
-	out.Close()
-	fmt.Fprintf(cli.out, "Server version: %s\n", remoteVersion.Get("Version"))
-	if apiVersion := remoteVersion.Get("ApiVersion"); apiVersion != "" {
-		fmt.Fprintf(cli.out, "Server API version: %s\n", apiVersion)
-	}
-	fmt.Fprintf(cli.out, "Go version (server): %s\n", remoteVersion.Get("GoVersion"))
-	fmt.Fprintf(cli.out, "Git commit (server): %s\n", remoteVersion.Get("GitCommit"))
-	fmt.Fprintf(cli.out, "OS/Arch (server): %s/%s\n", remoteVersion.Get("Os"), remoteVersion.Get("Arch"))
+	fmt.Fprintf(cli.out, "Go version (server): %s\n", v.GoVersion)
+	fmt.Fprintf(cli.out, "Git commit (server): %s\n", v.GitCommit)
+	fmt.Fprintf(cli.out, "OS/Arch (server): %s/%s\n", v.Os, v.Arch)
+
 	return nil
 }
