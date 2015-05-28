@@ -7,6 +7,7 @@ import (
 	"github.com/tiborvass/docker/pkg/units"
 )
 
+// TestMemInfo tests parseMemInfo with a static meminfo string
 func TestMemInfo(t *testing.T) {
 	const input = `
 	MemTotal:      1 kB
