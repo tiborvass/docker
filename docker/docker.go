@@ -16,6 +16,7 @@ import (
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/tiborvass/docker/utils"
 )
 
 const (
@@ -161,5 +162,9 @@ func main() {
 }
 
 func showVersion() {
-	fmt.Printf("Docker version %s, build %s\n", dockerversion.VERSION, dockerversion.GITCOMMIT)
+	if utils.ExperimentalBuild() {
+		fmt.Printf("Docker version %s, build %s, experimental\n", dockerversion.VERSION, dockerversion.GITCOMMIT)
+	} else {
+		fmt.Printf("Docker version %s, build %s\n", dockerversion.VERSION, dockerversion.GITCOMMIT)
+	}
 }
