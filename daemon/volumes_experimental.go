@@ -5,7 +5,6 @@ package daemon
 import (
 	"path/filepath"
 
-	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
 )
@@ -17,7 +16,7 @@ func getVolumeDriver(name string) (volume.Driver, error) {
 	return volumedrivers.Lookup(name)
 }
 
-func parseVolumeSource(spec string, config *runconfig.Config) (string, string, error) {
+func parseVolumeSource(spec string) (string, string, error) {
 	if !filepath.IsAbs(spec) {
 		return spec, "", nil
 	}
