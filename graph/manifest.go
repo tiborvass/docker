@@ -51,6 +51,8 @@ func (s *TagStore) loadManifest(manifestBytes []byte, ref string, remoteDigest d
 			logrus.Errorf("error calculating local digest during tag pull: %v", err)
 			return "", nil, false, err
 		}
+
+		localDigest = dgst
 	}
 
 	// verify against the remote digest, if available
