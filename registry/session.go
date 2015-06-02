@@ -145,7 +145,9 @@ func NewSession(client *http.Client, authConfig *cliconfig.AuthConfig, endpoint 
 		}
 	}
 
-	client.Transport = AuthTransport(client.Transport, authConfig, alwaysSetBasicAuth)
+	if endpoint.Version == APIVersion1 {
+		client.Transport = AuthTransport(client.Transport, authConfig, alwaysSetBasicAuth)
+	}
 
 	jar, err := cookiejar.New(nil)
 	if err != nil {
