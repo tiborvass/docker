@@ -4,17 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/runconfig"
 )
-
-type ContainerJSONRaw struct {
-	*Container
-	HostConfig *runconfig.HostConfig
-
-	// Unused fields for backward compatibility with API versions < 1.12.
-	Volumes   map[string]string
-	VolumesRW map[string]bool
-}
 
 func (daemon *Daemon) ContainerInspect(name string) (*types.ContainerJSON, error) {
 	container, err := daemon.Get(name)
