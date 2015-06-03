@@ -339,6 +339,37 @@ func (daemon *Daemon) verifyVolumesInfo(container *Container) error {
 	return nil
 }
 
+// migrateVolume moves the contents of a volume created pre Docker 1.7
+// to the location expected by the local driver. Steps:
+// 1. Save old directory that includes old volume's config json file.
+// 2. Move virtual directory with content to where the local driver expects it to be.
+// 3. Remove the backup of the old volume config.
+func (daemon *Daemon) migrateVolume(id, vfs string) error {
+	volumeInfo := filepath.Join(daemon.root, defaultVolumesPathName, id)
+	backup := filepath.Join(daemon.root, defaultVolumesPathName, id+".back")
+
+	var err error
+	if err = os.Rename(volumeInfo, backup); err != nil {
+		return err
+	}
+	defer func() {
+		// Put old configuration back in place in case one of the next steps fails.
+		if err != nil {
+			os.Rename(backup, volumeInfo)
+		}
+	}()
+
+	if err = os.Rename(vfs, volumeInfo); err != nil {
+		return err
+	}
+
+	if err = os.RemoveAll(backup); err != nil {
+		logrus.Errorf("Unable to remove volume info backup directory %s: %v", backup, err)
+	}
+
+	return nil
+}
+
 func createVolume(name, driverName string) (volume.Volume, error) {
 	vd, err := getVolumeDriver(driverName)
 	if err != nil {
