@@ -2,6 +2,7 @@ package client
 
 import (
 	"net/url"
+	"time"
 
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -36,11 +37,12 @@ func (cli *DockerCli) CmdEvents(args ...string) error {
 			return err
 		}
 	}
+	ref := time.Now()
 	if *since != "" {
-		v.Set("since", timeutils.GetTimestamp(*since))
+		v.Set("since", timeutils.GetTimestamp(*since, ref))
 	}
 	if *until != "" {
-		v.Set("until", timeutils.GetTimestamp(*until))
+		v.Set("until", timeutils.GetTimestamp(*until, ref))
 	}
 	if len(eventFilterArgs) > 0 {
 		filterJSON, err := filters.ToParam(eventFilterArgs)
