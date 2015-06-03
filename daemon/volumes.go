@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/chrootarchive"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/volume"
