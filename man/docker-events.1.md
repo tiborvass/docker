@@ -71,6 +71,9 @@ Again the output container IDs have been shortened for the purposes of this docu
 If you do not provide the --since option, the command returns only new and/or
 live events.
 
+If you do not provide the --since option, the command returns only new and/or
+live events.
+
 # HISTORY
 April 2014, Originally compiled by William Henry (whenry at redhat dot com)
 based on docker.com source material and internal work.
