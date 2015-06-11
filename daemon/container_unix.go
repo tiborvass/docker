@@ -1,4 +1,4 @@
-// +build linux
+// +build !windows
 
 package daemon
 
@@ -23,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -970,7 +971,7 @@ func (container *Container) setupWorkingDirectory() error {
 				return err
 			}
 
-			if err := os.MkdirAll(pth, 0755); err != nil {
+			if err := system.MkdirAll(pth, 0755); err != nil {
 				return err
 			}
 		}
@@ -1107,5 +1108,13 @@ func (container *Container) UnmountVolumes(forceSyscall bool) error {
 		}
 	}
 
+	return nil
+}
+
+func (container *Container) PrepareStorage() error {
+	return nil
+}
+
+func (container *Container) CleanupStorage() error {
 	return nil
 }

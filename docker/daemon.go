@@ -18,6 +18,7 @@ import (
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/pidfile"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/pkg/tlsconfig"
 	"github.com/tiborvass/docker/registry"
@@ -51,7 +52,7 @@ func migrateKey() (err error) {
 			}
 		}()
 
-		if err := os.MkdirAll(getDaemonConfDir(), os.FileMode(0644)); err != nil {
+		if err := system.MkdirAll(getDaemonConfDir(), os.FileMode(0644)); err != nil {
 			return fmt.Errorf("Unable to create daemon configuration directory: %s", err)
 		}
 
