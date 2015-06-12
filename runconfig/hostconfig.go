@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/tiborvass/docker/pkg/blkiodev"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/pkg/ulimit"
@@ -180,7 +181,8 @@ type HostConfig struct {
 	VolumesFrom     []string      // List of volumes to take from other container
 
 	// Applicable to UNIX platforms
-	BlkioWeight       uint16                // Block IO weight (relative weight vs. other containers)
+	BlkioWeight       uint16 // Block IO weight (relative weight vs. other containers)
+	BlkioWeightDevice []*blkiodev.WeightDevice
 	CapAdd            *stringutils.StrSlice // List of kernel capabilities to add to the container
 	CapDrop           *stringutils.StrSlice // List of kernel capabilities to remove from the container
 	CgroupParent      string                // Parent cgroup.

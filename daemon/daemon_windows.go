@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/libnetwork"
+	blkiodev "github.com/opencontainers/runc/libcontainer/configs"
 )
 
 const (
@@ -20,6 +21,10 @@ const (
 	windowsMinCPUShares  = 1
 	windowsMaxCPUShares  = 9
 )
+
+func getBlkioWeightDevices(config *runconfig.HostConfig) ([]*blkiodev.WeightDevice, error) {
+	return nil, nil
+}
 
 func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error {
 	return nil
