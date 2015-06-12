@@ -2,6 +2,8 @@ package daemon
 
 import (
 	"encoding/json"
+	"io"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/daemon/execdriver"
 	"github.com/docker/libcontainer"
