@@ -8,6 +8,8 @@ import (
 	"net/http"
 
 	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/pkg/version"
+	"github.com/tiborvass/docker/runconfig"
 )
 
 // NewServer sets up the required Server and does protocol specific checking.
