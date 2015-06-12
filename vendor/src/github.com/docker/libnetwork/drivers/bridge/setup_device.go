@@ -34,7 +34,7 @@ func setupDevice(config *NetworkConfiguration, i *bridgeInterface) error {
 }
 
 // SetupDeviceUp ups the given bridge interface.
-func setupDeviceUp(config *NetworkConfiguration, i *bridgeInterface) error {
+func setupDeviceUp(config *networkConfiguration, i *bridgeInterface) error {
 	err := netlink.LinkSetUp(i.Link)
 	if err != nil {
 		return err
