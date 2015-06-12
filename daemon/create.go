@@ -4,9 +4,11 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
@@ -123,4 +125,18 @@ func (daemon *Daemon) GenerateSecurityOpt(ipcMode runconfig.IpcMode, pidMode run
 		return label.DupSecOpt(c.ProcessLabel), nil
 	}
 	return nil, nil
+}
+
+// VolumeCreate creates a volume with the specified name, driver, and opts
+// This is called directly from the remote API
+func (daemon *Daemon) VolumeCreate(name, driverName string, opts map[string]string) (*types.Volume, error) {
+	if name == "" {
+		name = stringid.GenerateNonCryptoID()
+	}
+
+	v, err := daemon.volumes.Create(name, driverName, opts)
+	if err != nil {
+		return nil, err
+	}
+	return volumeToAPIType(v), nil
 }
