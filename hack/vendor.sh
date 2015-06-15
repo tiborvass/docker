@@ -24,7 +24,7 @@ clone git github.com/vishvananda/netlink 20397a138846e4d6590e01783ed023ed7e1c38a
 # get distribution packages
 clone git github.com/docker/distribution b9eeb328080d367dbde850ec6e94f1e4ac2b5efe
 
-clone git github.com/docker/libcontainer v2.1.1
+clone git github.com/docker/libcontainer v2.2.1
 # libcontainer deps (see src/github.com/docker/libcontainer/update-vendor.sh)
 clone git github.com/coreos/go-systemd v2
 clone git github.com/godbus/dbus v2
