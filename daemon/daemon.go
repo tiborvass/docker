@@ -19,6 +19,7 @@ import (
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
 	"github.com/tiborvass/docker/daemon/graphdriver"
+	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/graph"
