@@ -13,7 +13,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
-	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
