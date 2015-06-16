@@ -6,7 +6,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/daemon/graphdriver/aufs"
-	"github.com/tiborvass/docker/graph"
 )
 
 // Given the graphdriver ad, if it is aufs, then migrate it.
@@ -14,7 +13,7 @@ import (
 func migrateIfAufs(driver graphdriver.Driver, root string) error {
 	if ad, ok := driver.(*aufs.Driver); ok {
 		logrus.Debugf("Migrating existing containers")
-		if err := ad.Migrate(root, graph.SetupInitLayer); err != nil {
+		if err := ad.Migrate(root, setupInitLayer); err != nil {
 			return err
 		}
 	}
