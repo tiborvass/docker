@@ -11,10 +11,20 @@ import (
 	"github.com/docker/libnetwork/sandbox"
 )
 
-func (daemon *Daemon) ContainerStats(name string, stream bool, out io.Writer) error {
+type ContainerStatsConfig struct {
+	Stream    bool
+	OutStream io.Writer
+	Stop      <-chan bool
+}
+
+func (daemon *Daemon) ContainerStats(name string, config *ContainerStatsConfig) error {
 	updates, err := daemon.SubscribeToContainerStats(name)
 	if err != nil {
 		return err
+	}
+
+	if config.Stream {
+		config.OutStream.Write(nil)
 	}
 
 	var preCpuStats types.CpuStats
@@ -33,28 +43,36 @@ func (daemon *Daemon) ContainerStats(name string, stream bool, out io.Writer) er
 		return ss
 	}
 
-	enc := json.NewEncoder(out)
+	enc := json.NewEncoder(config.OutStream)
 
-	if !stream {
-		// prime the cpu stats so they aren't 0 in the final output
-		s := getStat(<-updates)
+	defer daemon.UnsubscribeToContainerStats(name, updates)
 
-		// now pull stats again with the cpu stats primed
-		s = getStat(<-updates)
-		err := enc.Encode(s)
-		daemon.UnsubscribeToContainerStats(name, updates)
-		return err
-	}
+	noStreamFirstFrame := true
+	for {
+		select {
+		case v, ok := <-updates:
+			if !ok {
+				return nil
+			}
 
-	for v := range updates {
-		s := getStat(v)
-		if err := enc.Encode(s); err != nil {
-			// TODO: handle the specific broken pipe
-			daemon.UnsubscribeToContainerStats(name, updates)
-			return err
+			s := getStat(v)
+			if !config.Stream && noStreamFirstFrame {
+				// prime the cpu stats so they aren't 0 in the final output
+				noStreamFirstFrame = false
+				continue
+			}
+
+			if err := enc.Encode(s); err != nil {
+				return err
+			}
+
+			if !config.Stream {
+				return nil
+			}
+		case <-config.Stop:
+			return nil
 		}
 	}
-	return nil
 }
 
 // convertToAPITypes converts the libcontainer.Stats to the api specific
