@@ -308,10 +308,7 @@ func (graph *Graph) Map() (map[string]*image.Image, error) {
 	err := graph.walkAll(func(image *image.Image) {
 		images[image.ID] = image
 	})
-	if err != nil {
-		return nil, err
-	}
-	return images, nil
+	return images
 }
 
 // walkAll iterates over each image in the graph, and passes it to a handler.
@@ -328,8 +325,7 @@ func (graph *Graph) walkAll(handler func(*image.Image)) error {
 		} else if handler != nil {
 			handler(img)
 		}
-	}
-	return nil
+	})
 }
 
 // ByParent returns a lookup table of images by their parent.
@@ -349,7 +345,7 @@ func (graph *Graph) ByParent() (map[string][]*image.Image, error) {
 			byParent[parent.ID] = []*image.Image{img}
 		}
 	})
-	return byParent, err
+	return byParent
 }
 
 // Heads returns all heads in the graph, keyed by id.
@@ -367,7 +363,7 @@ func (graph *Graph) Heads() (map[string]*image.Image, error) {
 			heads[image.ID] = image
 		}
 	})
-	return heads, err
+	return heads
 }
 
 func (graph *Graph) imageRoot(id string) string {
