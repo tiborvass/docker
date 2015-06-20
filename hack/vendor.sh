@@ -25,8 +25,9 @@ clone git github.com/docker/libnetwork 3daf67270570c1e07e3e3184d46a10f0c5d66f87
 clone git github.com/vishvananda/netns 493029407eeb434d0c2d44e02ea072ff2488d322
 clone git github.com/vishvananda/netlink 20397a138846e4d6590e01783ed023ed7e1c38a6
 
-# get distribution packages
+# get graph and distribution packages
 clone git github.com/docker/distribution 419bbc2da637d9b2a812be78ef8436df7caac70d
+clone git github.com/vbatts/tar-split v0.9.4
 
 clone git github.com/opencontainers/runc v0.0.2 # libcontainer
 # libcontainer deps (see src/github.com/docker/libcontainer/update-vendor.sh)
