@@ -24,8 +24,6 @@ import (
 	"github.com/tiborvass/docker/utils"
 )
 
-const CanDaemon = true
-
 var (
 	daemonCfg   = &daemon.Config{}
 	registryCfg = &registry.Options{}
