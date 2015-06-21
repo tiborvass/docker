@@ -1,14 +1,14 @@
 <!--[metadata]>
 +++
-title = "Command Line Interface"
+title = "Using the command line"
 description = "Docker's CLI command description and usage"
 keywords = ["Docker, Docker documentation, CLI,  command line"]
 [menu.main]
-parent = "mn_reference"
+parent = "smn_cli"
 +++
 <![end-metadata]-->
 
-# Docker Command Line
+# Using the command line
 
 > **Note:** if you are using a remote Docker daemon, such as Boot2Docker, 
 > then _do not_ type the `sudo` before the `docker` commands shown in the
