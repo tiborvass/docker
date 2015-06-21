@@ -351,11 +351,6 @@ func (ep *endpoint) Join(containerID string, options ...EndpointOption) error {
 	ep.joinLeaveStart()
 	defer func() {
 		ep.joinLeaveEnd()
-		if err != nil {
-			if e := ep.Leave(containerID, options...); e != nil {
-				log.Warnf("couldnt leave endpoint : %v", ep.name, err)
-			}
-		}
 	}()
 
 	ep.Lock()
@@ -405,6 +400,13 @@ func (ep *endpoint) Join(containerID string, options ...EndpointOption) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err != nil {
+			if err = driver.Leave(nid, epid); err != nil {
+				log.Warnf("driver leave failed while rolling back join: %v", err)
+			}
+		}
+	}()
 
 	err = ep.buildHostsFiles()
 	if err != nil {
@@ -423,7 +425,7 @@ func (ep *endpoint) Join(containerID string, options ...EndpointOption) error {
 
 	sb, err := ctrlr.sandboxAdd(sboxKey, !container.config.useDefaultSandBox, ep)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed sandbox add: %v", err)
 	}
 	defer func() {
 		if err != nil {
@@ -556,7 +558,7 @@ func (ep *endpoint) deleteEndpoint() error {
 	_, ok := n.endpoints[epid]
 	if !ok {
 		n.Unlock()
-		return &UnknownEndpointError{name: name, id: string(epid)}
+		return nil
 	}
 
 	nid := n.id
@@ -573,6 +575,8 @@ func (ep *endpoint) deleteEndpoint() error {
 		}
 		log.Warnf("driver error deleting endpoint %s : %v", name, err)
 	}
+
+	n.updateSvcRecord(ep, false)
 	return nil
 }
 
@@ -610,6 +614,7 @@ func (ep *endpoint) buildHostsFiles() error {
 	container := ep.container
 	joinInfo := ep.joinInfo
 	ifaces := ep.iFaces
+	n := ep.network
 	ep.Unlock()
 
 	if container == nil {
@@ -641,6 +646,8 @@ func (ep *endpoint) buildHostsFiles() error {
 		extraContent = append(extraContent,
 			etchosts.Record{Hosts: extraHost.name, IP: extraHost.IP})
 	}
+
+	extraContent = append(extraContent, n.getSvcRecords()...)
 
 	IP := ""
 	if len(ifaces) != 0 && ifaces[0] != nil {
