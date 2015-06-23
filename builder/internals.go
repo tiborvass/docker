@@ -21,6 +21,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/builder/parser"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/graph"
 	imagepkg "github.com/tiborvass/docker/image"
@@ -446,15 +447,19 @@ func (b *Builder) pullImage(name string) (*imagepkg.Image, error) {
 		tag = "latest"
 	}
 
-	pullRegistryAuth := b.AuthConfig
-	if len(b.ConfigFile.AuthConfigs) > 0 {
+	pullRegistryAuth := &cliconfig.AuthConfig{}
+	if len(b.AuthConfigs) > 0 {
 		// The request came with a full auth config file, we prefer to use that
 		repoInfo, err := b.Daemon.RegistryService.ResolveRepository(remote)
 		if err != nil {
 			return nil, err
 		}
-		resolvedAuth := registry.ResolveAuthConfig(b.ConfigFile, repoInfo.Index)
-		pullRegistryAuth = &resolvedAuth
+
+		resolvedConfig := registry.ResolveAuthConfig(
+			&cliconfig.ConfigFile{AuthConfigs: b.AuthConfigs},
+			repoInfo.Index,
+		)
+		pullRegistryAuth = &resolvedConfig
 	}
 
 	imagePullConfig := &graph.ImagePullConfig{
