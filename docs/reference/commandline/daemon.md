@@ -347,7 +347,7 @@ options for `zfs` start with `zfs`.
     To allow the `docker` daemon to start, regardless of `udev` sync not being
     supported, set `dm.override_udev_sync_check` to true:
 
-        $ docker -d --storage-opt dm.override_udev_sync_check=true
+	$ docker -d --storage-opt dm.override_udev_sync_check=true
 
     When this value is `true`, the  `devicemapper` continues and simply warns
     you the errors are happening.
