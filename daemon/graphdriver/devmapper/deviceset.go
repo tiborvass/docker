@@ -30,8 +30,7 @@ var (
 	DefaultDataLoopbackSize     int64  = 100 * 1024 * 1024 * 1024
 	DefaultMetaDataLoopbackSize int64  = 2 * 1024 * 1024 * 1024
 	DefaultBaseFsSize           uint64 = 10 * 1024 * 1024 * 1024
-	DefaultThinpBlockSize       uint32 = 128 // 64K = 128 512b sectors
-	DefaultUdevSyncOverride     bool   = false
+	DefaultThinpBlockSize       uint32 = 128      // 64K = 128 512b sectors
 	MaxDeviceId                 int    = 0xffffff // 24 bit, pool limit
 	DeviceIdMapSz               int    = (MaxDeviceId + 1) / 8
 	// We retry device removal so many a times that even error messages
@@ -1787,16 +1786,15 @@ func NewDeviceSet(root string, doInit bool, options []string) (*DeviceSet, error
 	devicemapper.SetDevDir("/dev")
 
 	devices := &DeviceSet{
-		root:                  root,
-		MetaData:              MetaData{Devices: make(map[string]*DevInfo)},
-		dataLoopbackSize:      DefaultDataLoopbackSize,
-		metaDataLoopbackSize:  DefaultMetaDataLoopbackSize,
-		baseFsSize:            DefaultBaseFsSize,
-		overrideUdevSyncCheck: DefaultUdevSyncOverride,
-		filesystem:            "ext4",
-		doBlkDiscard:          true,
-		thinpBlockSize:        DefaultThinpBlockSize,
-		deviceIdMap:           make([]byte, DeviceIdMapSz),
+		root:                 root,
+		MetaData:             MetaData{Devices: make(map[string]*DevInfo)},
+		dataLoopbackSize:     DefaultDataLoopbackSize,
+		metaDataLoopbackSize: DefaultMetaDataLoopbackSize,
+		baseFsSize:           DefaultBaseFsSize,
+		filesystem:           "ext4",
+		doBlkDiscard:         true,
+		thinpBlockSize:       DefaultThinpBlockSize,
+		deviceIdMap:          make([]byte, DeviceIdMapSz),
 	}
 
 	foundBlkDiscard := false
@@ -1853,12 +1851,6 @@ func NewDeviceSet(root string, doInit bool, options []string) (*DeviceSet, error
 			}
 			// convert to 512b sectors
 			devices.thinpBlockSize = uint32(size) >> 9
-		case "dm.override_udev_sync_check":
-			devices.overrideUdevSyncCheck, err = strconv.ParseBool(val)
-			if err != nil {
-				return nil, err
-			}
-
 		case "dm.use_deferred_removal":
 			EnableDeferredRemoval, err = strconv.ParseBool(val)
 			if err != nil {
