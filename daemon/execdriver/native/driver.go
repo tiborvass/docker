@@ -16,6 +16,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/reexec"
 	sysinfo "github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/term"
@@ -394,12 +395,12 @@ func (t *TtyConsole) AttachPipes(pipes *execdriver.Pipes) error {
 			defer wb.CloseWriters()
 		}
 
-		io.Copy(pipes.Stdout, t.console)
+		pools.Copy(pipes.Stdout, t.console)
 	}()
 
 	if pipes.Stdin != nil {
 		go func() {
-			io.Copy(t.console, pipes.Stdin)
+			pools.Copy(t.console, pipes.Stdin)
 
 			pipes.Stdin.Close()
 		}()
