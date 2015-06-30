@@ -15,6 +15,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -129,6 +130,12 @@ func (daemon *Daemon) verifyContainerSettings(hostConfig *runconfig.HostConfig, 
 		return warnings, nil
 	}
 
+	for port := range hostConfig.PortBindings {
+		_, portStr := nat.SplitProtoPort(string(port))
+		if _, err := nat.ParsePort(portStr); err != nil {
+			return warnings, fmt.Errorf("Invalid port specification: %s", portStr)
+		}
+	}
 	if hostConfig.LxcConf.Len() > 0 && !strings.Contains(daemon.ExecutionDriver().Name(), "lxc") {
 		return warnings, fmt.Errorf("Cannot use --lxc-conf with execdriver: %s", daemon.ExecutionDriver().Name())
 	}
