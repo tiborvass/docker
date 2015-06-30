@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/docker/libnetwork/resolvconf"
 	"github.com/go-check/check"
 )

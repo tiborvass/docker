@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/ulimit"
 )
 
