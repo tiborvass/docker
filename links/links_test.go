@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/nat"
 )
 
 func TestLinkNaming(t *testing.T) {

@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/nat"
+	"github.com/tiborvass/docker/pkg/nat"
 	"testing"
 )
 

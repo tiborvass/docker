@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/units"

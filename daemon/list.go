@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/nat"
 	"github.com/tiborvass/docker/pkg/graphdb"
+	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
