@@ -773,6 +773,11 @@ func (container *Container) secondaryNetworkRequired(primaryNetworkType string) 
 	case "bridge", "none", "host", "container":
 		return false
 	}
+
+	if container.daemon.config.DisableBridge {
+		return false
+	}
+
 	if container.Config.ExposedPorts != nil && len(container.Config.ExposedPorts) > 0 {
 		return true
 	}
