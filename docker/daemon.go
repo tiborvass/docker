@@ -93,6 +93,12 @@ func mainDaemon() {
 		logrus.Fatalf("Failed to set umask: %v", err)
 	}
 
+	if len(daemonCfg.LogConfig.Config) > 0 {
+		if err := logger.ValidateLogOpts(daemonCfg.LogConfig.Type, daemonCfg.LogConfig.Config); err != nil {
+			logrus.Fatalf("Failed to set log opts: %v", err)
+		}
+	}
+
 	var pfile *pidfile.PidFile
 	if daemonCfg.Pidfile != "" {
 		pf, err := pidfile.New(daemonCfg.Pidfile)
