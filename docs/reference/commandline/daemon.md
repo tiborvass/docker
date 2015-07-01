@@ -323,9 +323,6 @@ options for `zfs` start with `zfs`.
 
         $ docker -d --storage-opt dm.blkdiscard=false
 
-
-## Docker execdriver option
-
 Currently supported options of `zfs`:
 
  * `zfs.fsname`
