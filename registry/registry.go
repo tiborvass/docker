@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/timeoutconn"
+	"github.com/tiborvass/docker/pkg/tlsconfig"
 	"github.com/tiborvass/docker/pkg/transport"
 	"github.com/tiborvass/docker/pkg/useragent"
 )
@@ -141,6 +142,7 @@ func NewTransport(timeout TimeoutType, secure bool) http.RoundTripper {
 		// Avoid fallback to SSL protocols < TLS1.0
 		MinVersion:         tls.VersionTLS10,
 		InsecureSkipVerify: !secure,
+		CipherSuites:       tlsconfig.DefaultServerAcceptedCiphers,
 	}
 
 	tr := &http.Transport{
