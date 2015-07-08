@@ -690,6 +690,9 @@ func getDeviceUUID(device string) (string, error) {
 }
 
 func (devices *DeviceSet) verifyBaseDeviceUUID(baseInfo *DevInfo) error {
+	devices.Lock()
+	defer devices.Unlock()
+
 	if err := devices.activateDeviceIfNeeded(baseInfo); err != nil {
 		return err
 	}
@@ -709,6 +712,9 @@ func (devices *DeviceSet) verifyBaseDeviceUUID(baseInfo *DevInfo) error {
 }
 
 func (devices *DeviceSet) saveBaseDeviceUUID(baseInfo *DevInfo) error {
+	devices.Lock()
+	defer devices.Unlock()
+
 	if err := devices.activateDeviceIfNeeded(baseInfo); err != nil {
 		return err
 	}
