@@ -10,6 +10,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/reexec"
@@ -41,6 +42,10 @@ func main() {
 	if *flVersion {
 		showVersion()
 		return
+	}
+
+	if *flConfigDir != "" {
+		cliconfig.SetConfigDir(*flConfigDir)
 	}
 
 	if *flLogLevel != "" {
