@@ -24,7 +24,6 @@ import (
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/graph"
-	imagepkg "github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/httputils"
@@ -229,10 +228,18 @@ func (b *Builder) runContextCommand(args []string, allowRemote bool, allowDecomp
 	}
 	defer container.Unmount()
 
+	if err := container.PrepareStorage(); err != nil {
+		return err
+	}
+
 	for _, ci := range copyInfos {
 		if err := b.addContext(container, ci.origPath, ci.destPath, ci.decompress); err != nil {
 			return err
 		}
+	}
+
+	if err := container.CleanupStorage(); err != nil {
+		return err
 	}
 
 	if err := b.commit(container.ID, cmd, fmt.Sprintf("%s %s in %s", cmdName, origPaths, dest)); err != nil {
@@ -455,7 +462,7 @@ func ContainsWildcards(name string) bool {
 	return false
 }
 
-func (b *Builder) pullImage(name string) (*imagepkg.Image, error) {
+func (b *Builder) pullImage(name string) (*graph.Image, error) {
 	remote, tag := parsers.ParseRepositoryTag(name)
 	if tag == "" {
 		tag = "latest"
@@ -493,7 +500,7 @@ func (b *Builder) pullImage(name string) (*imagepkg.Image, error) {
 	return image, nil
 }
 
-func (b *Builder) processImageFrom(img *imagepkg.Image) error {
+func (b *Builder) processImageFrom(img *graph.Image) error {
 	b.image = img.ID
 
 	if img.Config != nil {

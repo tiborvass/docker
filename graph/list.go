@@ -8,7 +8,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/utils"
 )
@@ -32,7 +31,7 @@ func (r ByCreated) Less(i, j int) bool { return r[i].Created < r[j].Created }
 
 func (s *TagStore) Images(config *ImagesConfig) ([]*types.Image, error) {
 	var (
-		allImages  map[string]*image.Image
+		allImages  map[string]*Image
 		err        error
 		filtTagged = true
 		filtLabel  = false
