@@ -23,7 +23,7 @@ clone git github.com/vishvananda/netns 493029407eeb434d0c2d44e02ea072ff2488d322
 clone git github.com/vishvananda/netlink 20397a138846e4d6590e01783ed023ed7e1c38a6
 
 # get distribution packages
-clone git github.com/docker/distribution b9eeb328080d367dbde850ec6e94f1e4ac2b5efe
+clone git github.com/docker/distribution 419bbc2da637d9b2a812be78ef8436df7caac70d
 
 clone git github.com/docker/libcontainer v2.2.1
 # libcontainer deps (see src/github.com/docker/libcontainer/update-vendor.sh)
