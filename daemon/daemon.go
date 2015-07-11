@@ -48,8 +48,7 @@ var (
 	validContainerNameChars   = `[a-zA-Z0-9][a-zA-Z0-9_.-]`
 	validContainerNamePattern = regexp.MustCompile(`^/?` + validContainerNameChars + `+$`)
 
-	// TODO Windows. Change this once daemon is up and running.
-	ErrSystemNotSupported = errors.New("The Docker daemon is only supported on linux")
+	ErrSystemNotSupported = errors.New("The Docker daemon is not supported on this platform.")
 )
 
 type contStore struct {
@@ -571,7 +570,12 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	}
 	config.DisableBridge = config.Bridge.Iface == disableNetworkBridge
 
-	// Check that the system is supported and we have sufficient privileges
+	// Verify the platform is supported as a daemon
+	if runtime.GOOS != "linux" && runtime.GOOS != "windows" {
+		return nil, ErrSystemNotSupported
+	}
+
+	// Validate platform-specific requirements
 	if err := checkSystem(); err != nil {
 		return nil, err
 	}
