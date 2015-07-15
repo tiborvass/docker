@@ -1549,7 +1549,7 @@ func (devices *DeviceSet) cancelDeferredRemoval(info *DevInfo) error {
 	}
 
 	logrus.Debugf("[devmapper] cancelDeferredRemoval START(%s)", info.Name())
-	defer logrus.Debugf("[devmapper] cancelDeferredRemoval END(%s)", info.Name)
+	defer logrus.Debugf("[devmapper] cancelDeferredRemoval END(%s)", info.Name())
 
 	devinfo, err := devicemapper.GetInfoWithDeferred(info.Name())
 
