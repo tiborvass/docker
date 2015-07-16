@@ -12,7 +12,7 @@ import (
 	"github.com/tiborvass/docker/daemon/execdriver"
 	nativeTemplate "github.com/tiborvass/docker/daemon/execdriver/native/template"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/docker/libcontainer/label"
+	"github.com/opencontainers/runc/libcontainer/label"
 )
 
 const LxcTemplate = `

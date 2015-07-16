@@ -40,7 +40,7 @@ import (
 	"github.com/tiborvass/docker/pkg/directory"
 	mountpk "github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/docker/libcontainer/label"
+	"github.com/opencontainers/runc/libcontainer/label"
 )
 
 var (

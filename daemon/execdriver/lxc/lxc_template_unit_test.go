@@ -15,7 +15,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/execdriver"
 	nativeTemplate "github.com/tiborvass/docker/daemon/execdriver/native/template"
-	"github.com/docker/libcontainer/configs"
+	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/syndtr/gocapability/capability"
 )
 

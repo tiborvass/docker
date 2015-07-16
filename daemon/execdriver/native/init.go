@@ -8,7 +8,7 @@ import (
 	"runtime"
 
 	"github.com/tiborvass/docker/pkg/reexec"
-	"github.com/docker/libcontainer"
+	"github.com/opencontainers/runc/libcontainer"
 )
 
 func init() {
