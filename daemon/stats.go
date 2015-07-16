@@ -9,6 +9,7 @@ import (
 	"github.com/docker/libcontainer"
 	"github.com/docker/libcontainer/cgroups"
 	"github.com/docker/libnetwork/sandbox"
+	"github.com/opencontainers/runc/libcontainer"
 )
 
 type ContainerStatsConfig struct {
