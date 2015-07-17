@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -200,13 +201,17 @@ func Build(d *daemon.Daemon, buildConfig *Config) error {
 		memory:          buildConfig.Memory,
 		memorySwap:      buildConfig.MemorySwap,
 		cancelled:       buildConfig.WaitCancelled(),
+		id:              stringid.GenerateRandomID(),
 	}
+
+	defer func() {
+		builder.Daemon.Graph().Release(builder.id, builder.activeImages...)
+	}()
 
 	id, err := builder.Run(context)
 	if err != nil {
 		return err
 	}
-
 	if repoName != "" {
 		return d.Repositories().Tag(repoName, tag, id, true)
 	}
