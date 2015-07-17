@@ -25,12 +25,12 @@ import (
 	sysinfo "github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/pkg/version"
-	"github.com/docker/libcontainer"
-	"github.com/docker/libcontainer/cgroups"
-	"github.com/docker/libcontainer/configs"
-	"github.com/docker/libcontainer/system"
-	"github.com/docker/libcontainer/user"
 	"github.com/kr/pty"
+	"github.com/opencontainers/runc/libcontainer"
+	"github.com/opencontainers/runc/libcontainer/cgroups"
+	"github.com/opencontainers/runc/libcontainer/configs"
+	"github.com/opencontainers/runc/libcontainer/system"
+	"github.com/opencontainers/runc/libcontainer/user"
 	"github.com/vishvananda/netns"
 )
 
