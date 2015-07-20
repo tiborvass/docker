@@ -8,6 +8,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
@@ -46,7 +47,7 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	var (
 		container *Container
 		warnings  []string
-		img       *graph.Image
+		img       *image.Image
 		imgID     string
 		err       error
 	)

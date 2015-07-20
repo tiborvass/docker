@@ -20,7 +20,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	"github.com/tiborvass/docker/daemon/network"
-	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/broadcastwriter"
 	"github.com/tiborvass/docker/pkg/fileutils"
@@ -584,7 +584,7 @@ func (container *Container) Changes() ([]archive.Change, error) {
 	return container.changes()
 }
 
-func (container *Container) GetImage() (*graph.Image, error) {
+func (container *Container) GetImage() (*image.Image, error) {
 	if container.daemon == nil {
 		return nil, fmt.Errorf("Can't get image of unregistered container")
 	}
