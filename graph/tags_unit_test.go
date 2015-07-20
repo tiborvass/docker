@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // import the vfs driver so it is used in the tests
+	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/trust"
 	"github.com/tiborvass/docker/utils"
 )
@@ -79,7 +80,7 @@ func mkTestTagStore(root string, t *testing.T) *TagStore {
 	if err != nil {
 		t.Fatal(err)
 	}
-	img := &Image{ID: testOfficialImageID}
+	img := &image.Image{ID: testOfficialImageID}
 	if err := graph.Register(img, officialArchive); err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +91,7 @@ func mkTestTagStore(root string, t *testing.T) *TagStore {
 	if err != nil {
 		t.Fatal(err)
 	}
-	img = &Image{ID: testPrivateImageID}
+	img = &image.Image{ID: testPrivateImageID}
 	if err := graph.Register(img, privateArchive); err != nil {
 		t.Fatal(err)
 	}

@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -16,7 +16,7 @@ type ContainerCommitConfig struct {
 
 // Commit creates a new filesystem image from the current state of a container.
 // The image can optionally be tagged into a repository
-func (daemon *Daemon) Commit(container *Container, c *ContainerCommitConfig) (*graph.Image, error) {
+func (daemon *Daemon) Commit(container *Container, c *ContainerCommitConfig) (*image.Image, error) {
 	if c.Pause && !container.IsPaused() {
 		container.Pause()
 		defer container.Unpause()
