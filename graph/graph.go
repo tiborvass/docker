@@ -82,22 +82,6 @@ type Graph struct {
 	retained   *retainedLayers
 }
 
-type Image struct {
-	ID              string            `json:"id"`
-	Parent          string            `json:"parent,omitempty"`
-	Comment         string            `json:"comment,omitempty"`
-	Created         time.Time         `json:"created"`
-	Container       string            `json:"container,omitempty"`
-	ContainerConfig runconfig.Config  `json:"container_config,omitempty"`
-	DockerVersion   string            `json:"docker_version,omitempty"`
-	Author          string            `json:"author,omitempty"`
-	Config          *runconfig.Config `json:"config,omitempty"`
-	Architecture    string            `json:"architecture,omitempty"`
-	OS              string            `json:"os,omitempty"`
-	Size            int64
-	graph           Graph
-}
-
 var (
 	// ErrDigestNotSet is used when request the digest for a layer
 	// but the layer has no digest value or content to compute the
@@ -174,7 +158,7 @@ func (graph *Graph) Exists(id string) bool {
 }
 
 // Get returns the image with the given id, or an error if the image doesn't exist.
-func (graph *Graph) Get(name string) (*Image, error) {
+func (graph *Graph) Get(name string) (*image.Image, error) {
 	id, err := graph.idIndex.Get(name)
 	if err != nil {
 		return nil, fmt.Errorf("could not find image: %v", err)
@@ -202,8 +186,8 @@ func (graph *Graph) Get(name string) (*Image, error) {
 }
 
 // Create creates a new image and registers it in the graph.
-func (graph *Graph) Create(layerData archive.ArchiveReader, containerID, containerImage, comment, author string, containerConfig, config *runconfig.Config) (*Image, error) {
-	img := &Image{
+func (graph *Graph) Create(layerData archive.ArchiveReader, containerID, containerImage, comment, author string, containerConfig, config *runconfig.Config) (*image.Image, error) {
+	img := &image.Image{
 		ID:            stringid.GenerateRandomID(),
 		Comment:       comment,
 		Created:       time.Now().UTC(),
@@ -227,7 +211,7 @@ func (graph *Graph) Create(layerData archive.ArchiveReader, containerID, contain
 }
 
 // Register imports a pre-existing image into the graph.
-func (graph *Graph) Register(img *Image, layerData archive.ArchiveReader) (err error) {
+func (graph *Graph) Register(img *image.Image, layerData archive.ArchiveReader) (err error) {
 
 	if err := image.ValidateID(img.ID); err != nil {
 		return err
@@ -419,7 +403,7 @@ func (graph *Graph) ByParent() (map[string][]*Image, error) {
 		if children, exists := byParent[parent.ID]; exists {
 			byParent[parent.ID] = append(children, img)
 		} else {
-			byParent[parent.ID] = []*Image{img}
+			byParent[parent.ID] = []*image.Image{img}
 		}
 	})
 	return byParent
@@ -459,7 +443,7 @@ func (graph *Graph) imageRoot(id string) string {
 }
 
 // loadImage fetches the image with the given id from the graph.
-func (graph *Graph) loadImage(id string) (*Image, error) {
+func (graph *Graph) loadImage(id string) (*image.Image, error) {
 	root := graph.imageRoot(id)
 
 	// Open the JSON file to decode by streaming
@@ -469,7 +453,7 @@ func (graph *Graph) loadImage(id string) (*Image, error) {
 	}
 	defer jsonSource.Close()
 
-	img := &Image{}
+	img := &image.Image{}
 	dec := json.NewDecoder(jsonSource)
 
 	// Decode the JSON data
@@ -545,15 +529,4 @@ func (graph *Graph) RawJSON(id string) ([]byte, error) {
 
 func jsonPath(root string) string {
 	return filepath.Join(root, "json")
-}
-
-// Build an Image object from raw json data
-func NewImgJSON(src []byte) (*Image, error) {
-	ret := &Image{}
-
-	// FIXME: Is there a cleaner way to "purify" the input json?
-	if err := json.Unmarshal(src, ret); err != nil {
-		return nil, err
-	}
-	return ret, nil
 }
