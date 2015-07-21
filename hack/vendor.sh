@@ -26,7 +26,7 @@ clone git github.com/vishvananda/netns 493029407eeb434d0c2d44e02ea072ff2488d322
 clone git github.com/vishvananda/netlink 20397a138846e4d6590e01783ed023ed7e1c38a6
 
 # get graph and distribution packages
-clone git github.com/docker/distribution 856638e299eddf01964fa918ac1552d8aa2e22b3
+clone git github.com/docker/distribution cd8ff553b6b1911be23dfeabb73e33108bcbf147
 clone git github.com/vbatts/tar-split v0.9.4
 
 clone git github.com/opencontainers/runc v0.0.2 # libcontainer
