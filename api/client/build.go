@@ -19,6 +19,7 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/graph/tags"
+	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/httputils"
@@ -28,6 +29,7 @@ import (
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/symlink"
+	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/units"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
@@ -60,6 +62,11 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 	flCPUSetCpus := cmd.String([]string{"-cpuset-cpus"}, "", "CPUs in which to allow execution (0-3, 0,1)")
 	flCPUSetMems := cmd.String([]string{"-cpuset-mems"}, "", "MEMs in which to allow execution (0-3, 0,1)")
 	flCgroupParent := cmd.String([]string{"-cgroup-parent"}, "", "Optional parent cgroup for the container")
+
+	ulimits := make(map[string]*ulimit.Ulimit)
+	flUlimits := opts.NewUlimitOpt(ulimits)
+	cmd.Var(flUlimits, []string{"-ulimit"}, "Ulimit options")
+
 	cmd.Require(flag.Exact, 1)
 
 	cmd.ParseFlags(args, true)
@@ -276,6 +283,13 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 	v.Set("cgroupparent", *flCgroupParent)
 
 	v.Set("dockerfile", *dockerfileName)
+
+	ulimitsVar := flUlimits.GetList()
+	ulimitsJson, err := json.Marshal(ulimitsVar)
+	if err != nil {
+		return err
+	}
+	v.Set("ulimits", string(ulimitsJson))
 
 	headers := http.Header(make(map[string][]string))
 	buf, err := json.Marshal(cli.configFile.AuthConfigs)

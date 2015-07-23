@@ -34,6 +34,7 @@ import (
 	"github.com/tiborvass/docker/pkg/sockets"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -1293,6 +1294,15 @@ func (s *Server) postBuild(version version.Version, w http.ResponseWriter, r *ht
 	buildConfig.CPUSetCpus = r.FormValue("cpusetcpus")
 	buildConfig.CPUSetMems = r.FormValue("cpusetmems")
 	buildConfig.CgroupParent = r.FormValue("cgroupparent")
+
+	var buildUlimits = []*ulimit.Ulimit{}
+	ulimitsJson := r.FormValue("ulimits")
+	if ulimitsJson != "" {
+		if err := json.NewDecoder(strings.NewReader(ulimitsJson)).Decode(&buildUlimits); err != nil {
+			return err
+		}
+		buildConfig.Ulimits = buildUlimits
+	}
 
 	// Job cancellation. Note: not all job types support this.
 	if closeNotifier, ok := w.(http.CloseNotifier); ok {
