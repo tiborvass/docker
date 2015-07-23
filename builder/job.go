@@ -21,6 +21,7 @@ import (
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -62,6 +63,7 @@ type Config struct {
 	CPUSetCpus     string
 	CPUSetMems     string
 	CgroupParent   string
+	Ulimits        []*ulimit.Ulimit
 	AuthConfigs    map[string]cliconfig.AuthConfig
 
 	Stdout  io.Writer
@@ -205,6 +207,7 @@ func Build(d *daemon.Daemon, buildConfig *Config) error {
 		cgroupParent:    buildConfig.CgroupParent,
 		memory:          buildConfig.Memory,
 		memorySwap:      buildConfig.MemorySwap,
+		ulimits:         buildConfig.Ulimits,
 		cancelled:       buildConfig.WaitCancelled(),
 		id:              stringid.GenerateRandomID(),
 	}
