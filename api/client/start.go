@@ -9,6 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
+	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
@@ -44,7 +45,7 @@ func (cli *DockerCli) forwardAllSignals(cid string) chan os.Signal {
 //
 // Usage: docker start [OPTIONS] CONTAINER [CONTAINER...]
 func (cli *DockerCli) CmdStart(args ...string) error {
-	cmd := cli.Subcmd("start", []string{"CONTAINER [CONTAINER...]"}, "Start one or more stopped containers", true)
+	cmd := Cli.Subcmd("start", []string{"CONTAINER [CONTAINER...]"}, "Start one or more stopped containers", true)
 	attach := cmd.Bool([]string{"a", "-attach"}, false, "Attach STDOUT/STDERR and forward signals")
 	openStdin := cmd.Bool([]string{"i", "-interactive"}, false, "Attach container's STDIN")
 	cmd.Require(flag.Min, 1)
@@ -162,7 +163,7 @@ func (cli *DockerCli) CmdStart(args ...string) error {
 			return err
 		}
 		if status != 0 {
-			return StatusError{StatusCode: status}
+			return Cli.StatusError{StatusCode: status}
 		}
 	}
 	return nil

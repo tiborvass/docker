@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
+	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cliconfig"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/term"
@@ -21,7 +22,7 @@ import (
 //
 // Usage: docker login SERVER
 func (cli *DockerCli) CmdLogin(args ...string) error {
-	cmd := cli.Subcmd("login", []string{"[SERVER]"}, "Register or log in to a Docker registry server, if no server is\nspecified \""+registry.INDEXSERVER+"\" is the default.", true)
+	cmd := Cli.Subcmd("login", []string{"[SERVER]"}, "Register or log in to a Docker registry server, if no server is\nspecified \""+registry.INDEXSERVER+"\" is the default.", true)
 	cmd.Require(flag.Max, 1)
 
 	var username, password, email string

@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 
+	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -19,7 +20,7 @@ import (
 //
 // Usage: docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
 func (cli *DockerCli) CmdImport(args ...string) error {
-	cmd := cli.Subcmd("import", []string{"file|URL|- [REPOSITORY[:TAG]]"}, "Create an empty filesystem image and import the contents of the\ntarball (.tar, .tar.gz, .tgz, .bzip, .tar.xz, .txz) into it, then\noptionally tag it.", true)
+	cmd := Cli.Subcmd("import", []string{"file|URL|- [REPOSITORY[:TAG]]"}, "Create an empty filesystem image and import the contents of the\ntarball (.tar, .tar.gz, .tgz, .bzip, .tar.xz, .txz) into it, then\noptionally tag it.", true)
 	flChanges := opts.NewListOpts(nil)
 	cmd.Var(&flChanges, []string{"c", "-change"}, "Apply Dockerfile instruction to the created image")
 	cmd.Require(flag.Min, 1)

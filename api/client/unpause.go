@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 
+	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 )
 
@@ -10,7 +11,7 @@ import (
 //
 // Usage: docker unpause CONTAINER [CONTAINER...]
 func (cli *DockerCli) CmdUnpause(args ...string) error {
-	cmd := cli.Subcmd("unpause", []string{"CONTAINER [CONTAINER...]"}, "Unpause all processes within a container", true)
+	cmd := Cli.Subcmd("unpause", []string{"CONTAINER [CONTAINER...]"}, "Unpause all processes within a container", true)
 	cmd.Require(flag.Min, 1)
 
 	cmd.ParseFlags(args, true)
