@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/graph"
+	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/runconfig"
@@ -27,7 +27,7 @@ func (daemon *Daemon) ContainerCreate(name string, config *runconfig.Config, hos
 		if daemon.Graph().IsNotExist(err, config.Image) {
 			_, tag := parsers.ParseRepositoryTag(config.Image)
 			if tag == "" {
-				tag = graph.DefaultTag
+				tag = tags.DefaultTag
 			}
 			return "", warnings, fmt.Errorf("No such image: %s (tag: %s)", config.Image, tag)
 		}
