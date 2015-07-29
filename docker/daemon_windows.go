@@ -7,7 +7,7 @@ import (
 	"github.com/tiborvass/docker/daemon"
 )
 
-func setPlatformServerConfig(serverConfig *apiserver.ServerConfig, daemonCfg *daemon.Config) *apiserver.ServerConfig {
+func setPlatformServerConfig(serverConfig *apiserver.Config, daemonCfg *daemon.Config) *apiserver.Config {
 	return serverConfig
 }
 
