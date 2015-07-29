@@ -7,7 +7,6 @@ import (
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/utils"
 )
 
 // ContainerStart starts a container.
@@ -47,7 +46,7 @@ func (daemon *Daemon) ContainerStart(name string, hostConfig *runconfig.HostConf
 	}
 
 	if err := daemon.containerStart(container); err != nil {
-		return derr.ErrorCodeCantStart.WithArgs(name, utils.GetErrorMessage(err))
+		return err
 	}
 
 	return nil
