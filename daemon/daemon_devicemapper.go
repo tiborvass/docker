@@ -3,5 +3,6 @@
 package daemon
 
 import (
+	// register the devmapper graphdriver
 	_ "github.com/tiborvass/docker/daemon/graphdriver/devmapper"
 )

@@ -3,5 +3,6 @@
 package daemon
 
 import (
+	// register the overlay graphdriver
 	_ "github.com/tiborvass/docker/daemon/graphdriver/overlay"
 )
