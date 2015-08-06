@@ -8,8 +8,6 @@ import (
 	"net/http"
 
 	"github.com/tiborvass/docker/daemon"
-	"github.com/tiborvass/docker/pkg/version"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 // NewServer sets up the required Server and does protocol specific checking.
@@ -57,9 +55,6 @@ func (s *Server) AcceptConnections(d *daemon.Daemon) {
 
 func allocateDaemonPort(addr string) error {
 	return nil
-}
-
-func adjustCPUShares(version version.Version, hostConfig *runconfig.HostConfig) {
 }
 
 // getContainersByNameDownlevel performs processing for pre 1.20 APIs. This
