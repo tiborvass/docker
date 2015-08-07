@@ -9,7 +9,7 @@ import (
 	"strings"
 	"syscall"
 
-	. "github.com/tiborvass/docker/vendor/src/github.com/Azure/go-ansiterm"
+	. "github.com/Azure/go-ansiterm"
 )
 
 // Windows keyboard constants
