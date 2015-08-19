@@ -17,30 +17,15 @@
 // before and after each step, such as creating an image ID and removing temporary
 // containers and images. Note that ONBUILD creates a kinda-sorta "sub run" which
 // includes its own set of steps (usually only one of them).
-package builder
+package dockerfile
 
 import (
 	"fmt"
-	"io"
-	"os"
-	"path/filepath"
 	"runtime"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api"
-	"github.com/docker/docker/builder/command"
-	"github.com/docker/docker/builder/parser"
-	"github.com/docker/docker/cliconfig"
-	"github.com/docker/docker/daemon"
-	"github.com/docker/docker/pkg/fileutils"
-	"github.com/docker/docker/pkg/streamformatter"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/symlink"
-	"github.com/docker/docker/pkg/tarsum"
-	"github.com/docker/docker/pkg/ulimit"
-	"github.com/docker/docker/runconfig"
-	"github.com/docker/docker/utils"
+	"github.com/docker/docker/builder/dockerfile/command"
+	"github.com/docker/docker/builder/dockerfile/parser"
 )
 
 // Environment variable interpolation will happen on these statements only.
@@ -55,10 +40,10 @@ var replaceEnvAllowed = map[string]struct{}{
 	command.User:    {},
 }
 
-var evaluateTable map[string]func(*builder, []string, map[string]bool, string) error
+var evaluateTable map[string]func(*Builder, []string, map[string]bool, string) error
 
 func init() {
-	evaluateTable = map[string]func(*builder, []string, map[string]bool, string) error{
+	evaluateTable = map[string]func(*Builder, []string, map[string]bool, string) error{
 		command.Env:        env,
 		command.Label:      label,
 		command.Maintainer: maintainer,
@@ -76,6 +61,7 @@ func init() {
 	}
 }
 
+/*
 // builder is an internal struct, used to maintain configuration of the Dockerfile's
 // processing as it evaluates the parsing result.
 type builder struct {
@@ -138,133 +124,7 @@ type builder struct {
 	activeImages []string
 	id           string // Used to hold reference images
 }
-
-// Run the builder with the context. This is the lynchpin of this package. This
-// will (barring errors):
-//
-// * call readContext() which will set up the temporary directory and unpack
-//   the context into it.
-// * read the dockerfile
-// * parse the dockerfile
-// * walk the parse tree and execute it by dispatching to handlers. If Remove
-//   or ForceRemove is set, additional cleanup around containers happens after
-//   processing.
-// * Print a happy message and return the image ID.
-//
-func (b *builder) Run(context io.Reader) (string, error) {
-	if err := b.readContext(context); err != nil {
-		return "", err
-	}
-
-	defer func() {
-		if err := os.RemoveAll(b.contextPath); err != nil {
-			logrus.Debugf("[BUILDER] failed to remove temporary context: %s", err)
-		}
-	}()
-
-	if err := b.readDockerfile(); err != nil {
-		return "", err
-	}
-
-	// some initializations that would not have been supplied by the caller.
-	b.Config = &runconfig.Config{}
-
-	b.TmpContainers = map[string]struct{}{}
-
-	for i, n := range b.dockerfile.Children {
-		select {
-		case <-b.cancelled:
-			logrus.Debug("Builder: build cancelled!")
-			fmt.Fprintf(b.OutStream, "Build cancelled")
-			return "", fmt.Errorf("Build cancelled")
-		default:
-			// Not cancelled yet, keep going...
-		}
-		if err := b.dispatch(i, n); err != nil {
-			if b.ForceRemove {
-				b.clearTmp()
-			}
-			return "", err
-		}
-		fmt.Fprintf(b.OutStream, " ---> %s\n", stringid.TruncateID(b.image))
-		if b.Remove {
-			b.clearTmp()
-		}
-	}
-
-	if b.image == "" {
-		return "", fmt.Errorf("No image was generated. Is your Dockerfile empty?")
-	}
-
-	fmt.Fprintf(b.OutStream, "Successfully built %s\n", stringid.TruncateID(b.image))
-	return b.image, nil
-}
-
-// Reads a Dockerfile from the current context. It assumes that the
-// 'filename' is a relative path from the root of the context
-func (b *builder) readDockerfile() error {
-	// If no -f was specified then look for 'Dockerfile'. If we can't find
-	// that then look for 'dockerfile'.  If neither are found then default
-	// back to 'Dockerfile' and use that in the error message.
-	if b.dockerfileName == "" {
-		b.dockerfileName = api.DefaultDockerfileName
-		tmpFN := filepath.Join(b.contextPath, api.DefaultDockerfileName)
-		if _, err := os.Lstat(tmpFN); err != nil {
-			tmpFN = filepath.Join(b.contextPath, strings.ToLower(api.DefaultDockerfileName))
-			if _, err := os.Lstat(tmpFN); err == nil {
-				b.dockerfileName = strings.ToLower(api.DefaultDockerfileName)
-			}
-		}
-	}
-
-	origFile := b.dockerfileName
-
-	filename, err := symlink.FollowSymlinkInScope(filepath.Join(b.contextPath, origFile), b.contextPath)
-	if err != nil {
-		return fmt.Errorf("The Dockerfile (%s) must be within the build context", origFile)
-	}
-
-	fi, err := os.Lstat(filename)
-	if os.IsNotExist(err) {
-		return fmt.Errorf("Cannot locate specified Dockerfile: %s", origFile)
-	}
-	if fi.Size() == 0 {
-		return fmt.Errorf("The Dockerfile (%s) cannot be empty", origFile)
-	}
-
-	f, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-
-	b.dockerfile, err = parser.Parse(f)
-	f.Close()
-
-	if err != nil {
-		return err
-	}
-
-	// After the Dockerfile has been parsed, we need to check the .dockerignore
-	// file for either "Dockerfile" or ".dockerignore", and if either are
-	// present then erase them from the build context. These files should never
-	// have been sent from the client but we did send them to make sure that
-	// we had the Dockerfile to actually parse, and then we also need the
-	// .dockerignore file to know whether either file should be removed.
-	// Note that this assumes the Dockerfile has been read into memory and
-	// is now safe to be removed.
-
-	excludes, _ := utils.ReadDockerIgnore(filepath.Join(b.contextPath, ".dockerignore"))
-	if rm, _ := fileutils.Matches(".dockerignore", excludes); rm == true {
-		os.Remove(filepath.Join(b.contextPath, ".dockerignore"))
-		b.context.(tarsum.BuilderContext).Remove(".dockerignore")
-	}
-	if rm, _ := fileutils.Matches(b.dockerfileName, excludes); rm == true {
-		os.Remove(filepath.Join(b.contextPath, b.dockerfileName))
-		b.context.(tarsum.BuilderContext).Remove(b.dockerfileName)
-	}
-
-	return nil
-}
+*/
 
 // This method is the entrypoint to all statement handling routines.
 //
@@ -280,8 +140,9 @@ func (b *builder) readDockerfile() error {
 // such as `RUN` in ONBUILD RUN foo. There is special case logic in here to
 // deal with that, at least until it becomes more of a general concern with new
 // features.
-func (b *builder) dispatch(stepN int, ast *parser.Node) error {
+func (b *Builder) dispatch(stepN int, ast *parser.Node) error {
 	cmd := ast.Value
+	upperCasedCmd := strings.ToUpper(cmd)
 
 	// To ensure the user is give a decent error message if the platform
 	// on which the daemon is running does not support a builder command.
@@ -293,7 +154,7 @@ func (b *builder) dispatch(stepN int, ast *parser.Node) error {
 	original := ast.Original
 	flags := ast.Flags
 	strs := []string{}
-	msg := fmt.Sprintf("Step %d : %s", stepN, strings.ToUpper(cmd))
+	msg := fmt.Sprintf("Step %d : %s", stepN, upperCasedCmd)
 
 	if len(ast.Flags) > 0 {
 		msg += " " + strings.Join(ast.Flags, " ")
@@ -334,7 +195,7 @@ func (b *builder) dispatch(stepN int, ast *parser.Node) error {
 		str = ast.Value
 		if _, ok := replaceEnvAllowed[cmd]; ok {
 			var err error
-			str, err = ProcessWord(ast.Value, b.Config.Env)
+			str, err = ProcessWord(ast.Value, b.runConfig.Env)
 			if err != nil {
 				return err
 			}
@@ -345,19 +206,20 @@ func (b *builder) dispatch(stepN int, ast *parser.Node) error {
 	}
 
 	msg += " " + strings.Join(msgList, " ")
-	fmt.Fprintln(b.OutStream, msg)
+	fmt.Fprintln(b.Stdout, msg)
 
 	// XXX yes, we skip any cmds that are not valid; the parser should have
 	// picked these out already.
 	if f, ok := evaluateTable[cmd]; ok {
-		b.BuilderFlags = NewBFlags()
-		b.BuilderFlags.Args = flags
+		b.flags = NewBFlags()
+		b.flags.Args = flags
 		return f(b, strList, attrs, original)
 	}
 
-	return fmt.Errorf("Unknown instruction: %s", strings.ToUpper(cmd))
+	return fmt.Errorf("Unknown instruction: %s", upperCasedCmd)
 }
 
+// TODO: how to port this with client-side builder?
 // platformSupports is a short-term function to give users a quality error
 // message if a Dockerfile uses a command not supported on the platform.
 func platformSupports(command string) error {

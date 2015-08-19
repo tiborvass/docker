@@ -8,16 +8,18 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/builder"
+	"github.com/docker/docker/builder/dockerfile"
 	"github.com/docker/docker/cliconfig"
 	"github.com/docker/docker/graph"
+	"github.com/docker/docker/graph/tags"
 	"github.com/docker/docker/pkg/ioutils"
 	"github.com/docker/docker/pkg/parsers"
 	"github.com/docker/docker/pkg/streamformatter"
 	"github.com/docker/docker/pkg/ulimit"
 	"github.com/docker/docker/pkg/version"
+	"github.com/docker/docker/registry"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
 )
@@ -43,7 +45,7 @@ func (s *Server) postCommit(version version.Version, w http.ResponseWriter, r *h
 		return err
 	}
 
-	commitCfg := &builder.CommitConfig{
+	commitCfg := &dockerfile.CommitConfig{
 		Pause:   pause,
 		Repo:    r.Form.Get("repo"),
 		Tag:     r.Form.Get("tag"),
@@ -53,7 +55,7 @@ func (s *Server) postCommit(version version.Version, w http.ResponseWriter, r *h
 		Config:  c,
 	}
 
-	imgID, err := builder.Commit(cname, s.daemon, commitCfg)
+	imgID, err := dockerfile.Commit(cname, s.daemon, commitCfg)
 	if err != nil {
 		return err
 	}
@@ -121,7 +123,7 @@ func (s *Server) postImagesCreate(version version.Version, w http.ResponseWriter
 		// generated from the download to be available to the output
 		// stream processing below
 		var newConfig *runconfig.Config
-		newConfig, err = builder.BuildFromConfig(s.daemon, &runconfig.Config{}, r.Form["changes"])
+		newConfig, err = dockerfile.BuildFromConfig(s.daemon, &runconfig.Config{}, r.Form["changes"])
 		if err != nil {
 			return err
 		}
@@ -260,7 +262,7 @@ func (s *Server) postBuild(version version.Version, w http.ResponseWriter, r *ht
 	var (
 		authConfigs        = map[string]cliconfig.AuthConfig{}
 		authConfigsEncoded = r.Header.Get("X-Registry-Config")
-		buildConfig        = builder.NewBuildConfig()
+		buildConfig        = new(dockerfile.Config)
 	)
 
 	if authConfigsEncoded != "" {
@@ -274,6 +276,18 @@ func (s *Server) postBuild(version version.Version, w http.ResponseWriter, r *ht
 
 	w.Header().Set("Content-Type", "application/json")
 
+	output := ioutils.NewWriteFlusher(w)
+	sf := streamformatter.NewJSONStreamFormatter()
+	errf := func(err error) error {
+		// Do not write the error in the http output if it's still empty.
+		// This prevents from writing a 200(OK) when there is an interal error.
+		if !output.Flushed() {
+			return err
+		}
+		w.Write(sf.FormatError(err))
+		return nil
+	}
+
 	if boolValue(r, "forcerm") && version.GreaterThanOrEqualTo("1.12") {
 		buildConfig.Remove = true
 	} else if r.FormValue("rm") == "" && version.GreaterThanOrEqualTo("1.12") {
@@ -285,17 +299,27 @@ func (s *Server) postBuild(version version.Version, w http.ResponseWriter, r *ht
 		buildConfig.Pull = true
 	}
 
-	output := ioutils.NewWriteFlusher(w)
-	buildConfig.Stdout = output
-	buildConfig.Context = r.Body
+	//buildConfig.Stdout = output
+	//buildConfig.Context = r.Body
 
-	buildConfig.RemoteURL = r.FormValue("remote")
+	//buildConfig.RepoName = r.FormValue("t")
+	repoName, tag := parsers.ParseRepositoryTag(r.FormValue("t"))
+	if repoName != "" {
+		if err := registry.ValidateRepositoryName(repoName); err != nil {
+			return errf(err)
+		}
+		if len(tag) > 0 {
+			if err := tags.ValidateTagName(tag); err != nil {
+				return errf(err)
+			}
+		}
+	}
+
+	//buildConfig.RemoteURL = r.FormValue("remote")
 	buildConfig.DockerfileName = r.FormValue("dockerfile")
-	buildConfig.RepoName = r.FormValue("t")
-	buildConfig.SuppressOutput = boolValue(r, "q")
-	buildConfig.NoCache = boolValue(r, "nocache")
+	buildConfig.Verbose = !boolValue(r, "q")
+	buildConfig.UseCache = !boolValue(r, "nocache")
 	buildConfig.ForceRemove = boolValue(r, "forcerm")
-	buildConfig.AuthConfigs = authConfigs
 	buildConfig.MemorySwap = int64ValueOrZero(r, "memswap")
 	buildConfig.Memory = int64ValueOrZero(r, "memory")
 	buildConfig.CPUShares = int64ValueOrZero(r, "cpushares")
@@ -309,34 +333,52 @@ func (s *Server) postBuild(version version.Version, w http.ResponseWriter, r *ht
 	ulimitsJSON := r.FormValue("ulimits")
 	if ulimitsJSON != "" {
 		if err := json.NewDecoder(strings.NewReader(ulimitsJSON)).Decode(&buildUlimits); err != nil {
+			// TODO(tibor): shouldn't it be `return errf(err)` ?
 			return err
 		}
 		buildConfig.Ulimits = buildUlimits
 	}
 
-	// Job cancellation. Note: not all job types support this.
-	if closeNotifier, ok := w.(http.CloseNotifier); ok {
-		finished := make(chan struct{})
-		defer close(finished)
-		go func() {
-			select {
-			case <-finished:
-			case <-closeNotifier.CloseNotify():
-				logrus.Infof("Client disconnected, cancelling job: build")
-				buildConfig.Cancel()
-			}
-		}()
+	// TODO: cancellation
+	/*
+		// Job cancellation. Note: not all job types support this.
+		if closeNotifier, ok := w.(http.CloseNotifier); ok {
+			finished := make(chan struct{})
+			defer close(finished)
+			go func() {
+				select {
+				case <-finished:
+				case <-closeNotifier.CloseNotify():
+					logrus.Infof("Client disconnected, cancelling job: build")
+					buildConfig.Cancel()
+				}
+			}()
+		}
+	*/
+
+	b, err := dockerfile.NewBuilder(nil, buildConfig)
+	if err != nil {
+		return errf(err)
+	}
+	b.Stdout = &streamformatter.StdoutFormatter{Writer: output, StreamFormatter: sf}
+	b.Stderr = &streamformatter.StderrFormatter{Writer: output, StreamFormatter: sf}
+
+	ctxt, err := builder.MakeTarSumContext(r.Body)
+	if err != nil {
+		return errf(err)
 	}
 
-	if err := builder.Build(s.daemon, buildConfig); err != nil {
-		// Do not write the error in the http output if it's still empty.
-		// This prevents from writing a 200(OK) when there is an interal error.
-		if !output.Flushed() {
-			return err
-		}
-		sf := streamformatter.NewJSONStreamFormatter()
-		w.Write(sf.FormatError(err))
+	imgID, err := b.Build(builderDocker{s.daemon, output, authConfigs}, ctxt)
+	if err != nil {
+		return errf(err)
 	}
+
+	if repoName != "" {
+		if err := s.daemon.Repositories().Tag(repoName, tag, string(imgID), true); err != nil {
+			return errf(err)
+		}
+	}
+
 	return nil
 }
 

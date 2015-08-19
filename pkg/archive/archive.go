@@ -548,6 +548,7 @@ func TarWithOptions(srcPath string, options *TarOptions) (io.ReadCloser, error) 
 }
 
 // Unpack unpacks the decompressedArchive to dest with options.
+// Unpack is exported only to be used by chrootarchive.
 func Unpack(decompressedArchive io.Reader, dest string, options *TarOptions) error {
 	tr := tar.NewReader(decompressedArchive)
 	trBuf := pools.BufioReader32KPool.Get(nil)
@@ -765,6 +766,7 @@ func CopyWithTar(src, dst string) error {
 // path `dst`, and preserves all its metadata.
 func (archiver *Archiver) CopyFileWithTar(src, dst string) (err error) {
 	logrus.Debugf("CopyFileWithTar(%s, %s)", src, dst)
+
 	srcSt, err := os.Stat(src)
 	if err != nil {
 		return err
@@ -780,6 +782,7 @@ func (archiver *Archiver) CopyFileWithTar(src, dst string) (err error) {
 		dst = filepath.Join(dst, filepath.Base(src))
 	}
 	// Create the holding directory if necessary
+	// TODO: why 700 and not 755?
 	if err := system.MkdirAll(filepath.Dir(dst), 0700); err != nil {
 		return err
 	}

@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -77,9 +76,8 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 	cmd.ParseFlags(args, true)
 
 	var (
-		context  io.ReadCloser
-		isRemote bool
-		err      error
+		context io.ReadCloser
+		err     error
 	)
 
 	_, err = exec.LookPath("git")
@@ -130,7 +128,7 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 
 	var includes = []string{"."}
 
-	excludes, err := utils.ReadDockerIgnore(path.Join(contextDir, ".dockerignore"))
+	excludes, err := utils.ReadDockerIgnore(filepath.Join(contextDir, ".dockerignore"))
 	if err != nil {
 		return err
 	}
@@ -218,9 +216,6 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 
 	if *suppressOutput {
 		v.Set("q", "1")
-	}
-	if isRemote {
-		v.Set("remote", cmd.Arg(0))
 	}
 	if *noCache {
 		v.Set("nocache", "1")
