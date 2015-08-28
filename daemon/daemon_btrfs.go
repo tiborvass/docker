@@ -3,5 +3,6 @@
 package daemon
 
 import (
+	// register the btrfs graphdriver
 	_ "github.com/tiborvass/docker/daemon/graphdriver/btrfs"
 )
