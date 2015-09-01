@@ -15,6 +15,7 @@ import (
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/archive"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/pkg/system"
 )
 
 type copyDirection int
@@ -101,7 +102,7 @@ func (cli *DockerCli) CmdCp(args ...string) error {
 // client, a `:` could be part of an absolute Windows path, in which case it
 // is immediately proceeded by a backslash.
 func splitCpArg(arg string) (container, path string) {
-	if filepath.IsAbs(arg) {
+	if system.IsAbs(arg) {
 		// Explicit local absolute path, e.g., `C:\foo` or `/foo`.
 		return "", arg
 	}
@@ -236,7 +237,7 @@ func (cli *DockerCli) copyToContainer(srcPath, dstContainer, dstPath string) (er
 	// If the destination is a symbolic link, we should evaluate it.
 	if err == nil && dstStat.Mode&os.ModeSymlink != 0 {
 		linkTarget := dstStat.LinkTarget
-		if !filepath.IsAbs(linkTarget) {
+		if !system.IsAbs(linkTarget) {
 			// Join with the parent directory.
 			dstParent, _ := archive.SplitPathDirEntry(dstPath)
 			linkTarget = filepath.Join(dstParent, linkTarget)
