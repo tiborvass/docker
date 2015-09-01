@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -143,8 +144,8 @@ func (d *Daemon) ContainerExecCreate(config *runconfig.ExecConfig) (string, erro
 		return "", err
 	}
 
-	cmd := runconfig.NewCommand(config.Cmd...)
-	entrypoint, args := d.getEntrypointAndArgs(runconfig.NewEntrypoint(), cmd)
+	cmd := stringutils.NewStrSlice(config.Cmd...)
+	entrypoint, args := d.getEntrypointAndArgs(stringutils.NewStrSlice(), cmd)
 
 	user := config.User
 	if len(user) == 0 {

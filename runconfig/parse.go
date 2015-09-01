@@ -9,6 +9,7 @@ import (
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/pkg/units"
 )
 
@@ -199,15 +200,15 @@ func Parse(cmd *flag.FlagSet, args []string) (*Config, *HostConfig, *flag.FlagSe
 
 	var (
 		parsedArgs = cmd.Args()
-		runCmd     *Command
-		entrypoint *Entrypoint
+		runCmd     *stringutils.StrSlice
+		entrypoint *stringutils.StrSlice
 		image      = cmd.Arg(0)
 	)
 	if len(parsedArgs) > 1 {
-		runCmd = NewCommand(parsedArgs[1:]...)
+		runCmd = stringutils.NewStrSlice(parsedArgs[1:]...)
 	}
 	if *flEntrypoint != "" {
-		entrypoint = NewEntrypoint(*flEntrypoint)
+		entrypoint = stringutils.NewStrSlice(*flEntrypoint)
 	}
 
 	lc, err := parseKeyValueOpts(flLxcOpts)
