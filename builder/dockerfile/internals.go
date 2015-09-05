@@ -1,4 +1,4 @@
-package builder
+package dockerfile
 
 // internals for handling commands. Covers many areas and a lot of
 // non-contiguous functionality. Please read the comments.
@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/builder/parser"
+	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/graph"

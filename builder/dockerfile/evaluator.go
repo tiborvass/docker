@@ -1,4 +1,4 @@
-// Package builder is the evaluation step in the Dockerfile parse/evaluate pipeline.
+// Package dockerfile is the evaluation step in the Dockerfile parse/evaluate pipeline.
 //
 // It incorporates a dispatch table based on the parser.Node values (see the
 // parser package for more information) that are yielded from the parser itself.
@@ -17,7 +17,7 @@
 // before and after each step, such as creating an image ID and removing temporary
 // containers and images. Note that ONBUILD creates a kinda-sorta "sub run" which
 // includes its own set of steps (usually only one of them).
-package builder
+package dockerfile
 
 import (
 	"fmt"
@@ -29,8 +29,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/builder/command"
-	"github.com/tiborvass/docker/builder/parser"
+	"github.com/tiborvass/docker/builder/dockerfile/command"
+	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/fileutils"
