@@ -27,6 +27,7 @@ import (
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
+	"github.com/tiborvass/docker/utils"
 )
 
 var (
@@ -96,7 +97,7 @@ func (cli *DockerCli) clientRequest(method, path string, in io.Reader, headers m
 	}
 
 	if err != nil {
-		if types.IsTimeout(err) || strings.Contains(err.Error(), "connection refused") || strings.Contains(err.Error(), "dial unix") {
+		if utils.IsTimeout(err) || strings.Contains(err.Error(), "connection refused") || strings.Contains(err.Error(), "dial unix") {
 			return serverResp, errConnectionFailed
 		}
 
