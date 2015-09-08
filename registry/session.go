@@ -20,12 +20,12 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/tarsum"
+	"github.com/tiborvass/docker/utils"
 )
 
 var (
@@ -425,7 +425,7 @@ func (r *Session) GetRepositoryData(remote string) (*RepositoryData, error) {
 		// and return a non-obtuse error message for users
 		// "Get https://index.docker.io/v1/repositories/library/busybox/images: i/o timeout"
 		// was a top search on the docker user forum
-		if types.IsTimeout(err) {
+		if utils.IsTimeout(err) {
 			return nil, fmt.Errorf("Network timed out while trying to connect to %s. You may want to check your internet connection or if you are behind a proxy.", repositoryTarget)
 		}
 		return nil, fmt.Errorf("Error while pulling image: %v", err)

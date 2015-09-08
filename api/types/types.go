@@ -6,6 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/pkg/version"
+	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -201,7 +202,7 @@ type Info struct {
 	KernelVersion      string
 	OperatingSystem    string
 	IndexServerAddress string
-	RegistryConfig     interface{}
+	RegistryConfig     *registry.ServiceConfig
 	InitSha1           string
 	InitPath           string
 	NCPU               int
