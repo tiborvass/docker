@@ -8,15 +8,14 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/net/context"
 	"golang.org/x/net/websocket"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -251,7 +250,7 @@ func (s *Server) postContainersKill(ctx context.Context, w http.ResponseWriter, 
 		// Return error that's not caused because the container is stopped.
 		// Return error if the container is not running and the api is >= 1.20
 		// to keep backwards compatibility.
-		version, _ := ctx.Value("api-version").(version.Version)
+		version := ctx.Version()
 		if version.GreaterThanOrEqualTo("1.20") || !isStopped {
 			return fmt.Errorf("Cannot kill container %s: %v", name, err)
 		}
@@ -392,7 +391,7 @@ func (s *Server) postContainersCreate(ctx context.Context, w http.ResponseWriter
 	if err != nil {
 		return err
 	}
-	version, _ := ctx.Value("api-version").(version.Version)
+	version := ctx.Version()
 	adjustCPUShares := version.LessThan("1.19")
 
 	container, warnings, err := s.daemon.ContainerCreate(name, config, hostConfig, adjustCPUShares)

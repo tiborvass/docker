@@ -8,17 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/net/context"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
-	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -33,7 +31,7 @@ func (s *Server) getVersion(ctx context.Context, w http.ResponseWriter, r *http.
 		BuildTime:  dockerversion.BUILDTIME,
 	}
 
-	version, _ := ctx.Value("api-version").(version.Version)
+	version := ctx.Version()
 
 	if version.GreaterThanOrEqualTo("1.19") {
 		v.Experimental = utils.ExperimentalBuild()

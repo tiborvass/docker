@@ -9,9 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/net/context"
-
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/context"
 )
 
 // postContainersCopy is deprecated in favor of getContainersArchive.
