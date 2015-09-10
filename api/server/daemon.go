@@ -12,15 +12,15 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
-	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/utils"
 )
 
-func (s *Server) getVersion(version version.Version, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+func (s *Server) getVersion(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	v := &types.Version{
 		Version:    dockerversion.VERSION,
 		APIVersion: api.Version,
@@ -30,6 +30,8 @@ func (s *Server) getVersion(version version.Version, w http.ResponseWriter, r *h
 		Arch:       runtime.GOARCH,
 		BuildTime:  dockerversion.BUILDTIME,
 	}
+
+	version := ctx.Version()
 
 	if version.GreaterThanOrEqualTo("1.19") {
 		v.Experimental = utils.ExperimentalBuild()
@@ -42,7 +44,7 @@ func (s *Server) getVersion(version version.Version, w http.ResponseWriter, r *h
 	return writeJSON(w, http.StatusOK, v)
 }
 
-func (s *Server) getInfo(version version.Version, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+func (s *Server) getInfo(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	info, err := s.daemon.SystemInfo()
 	if err != nil {
 		return err
@@ -51,7 +53,7 @@ func (s *Server) getInfo(version version.Version, w http.ResponseWriter, r *http
 	return writeJSON(w, http.StatusOK, info)
 }
 
-func (s *Server) getEvents(version version.Version, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+func (s *Server) getEvents(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	if err := parseForm(r); err != nil {
 		return err
 	}

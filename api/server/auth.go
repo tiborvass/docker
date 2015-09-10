@@ -6,10 +6,10 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig"
-	"github.com/tiborvass/docker/pkg/version"
+	"github.com/tiborvass/docker/context"
 )
 
-func (s *Server) postAuth(version version.Version, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+func (s *Server) postAuth(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	var config *cliconfig.AuthConfig
 	err := json.NewDecoder(r.Body).Decode(&config)
 	r.Body.Close()
