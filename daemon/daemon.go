@@ -20,6 +20,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
+	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
@@ -137,6 +138,10 @@ func (daemon *Daemon) Get(prefixOrName string) (*Container, error) {
 
 	containerID, indexError := daemon.idIndex.Get(prefixOrName)
 	if indexError != nil {
+		// When truncindex defines an error type, use that instead
+		if strings.Contains(indexError.Error(), "no such id") {
+			return nil, derr.ErrorCodeNoSuchContainer.WithArgs(prefixOrName)
+		}
 		return nil, indexError
 	}
 	return daemon.containers.Get(containerID), nil
