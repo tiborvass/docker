@@ -12,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // import the vfs driver so it is used in the tests
 	"github.com/tiborvass/docker/image"
-	"github.com/tiborvass/docker/trust"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -62,15 +61,9 @@ func mkTestTagStore(root string, t *testing.T) *TagStore {
 		t.Fatal(err)
 	}
 
-	trust, err := trust.NewTrustStore(root + "/trust")
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	tagCfg := &TagStoreConfig{
 		Graph:  graph,
 		Events: events.New(),
-		Trust:  trust,
 	}
 	store, err := NewTagStore(path.Join(root, "tags"), tagCfg)
 	if err != nil {
