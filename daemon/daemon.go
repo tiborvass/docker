@@ -47,6 +47,8 @@ import (
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/trust"
+	volumedrivers "github.com/tiborvass/docker/volume/drivers"
+	"github.com/tiborvass/docker/volume/local"
 	"github.com/docker/libnetwork"
 	"github.com/opencontainers/runc/libcontainer/netlink"
 )
@@ -1117,4 +1119,13 @@ func (daemon *Daemon) verifyContainerSettings(hostConfig *runconfig.HostConfig, 
 
 	// Now do platform-specific verification
 	return verifyPlatformContainerSettings(daemon, hostConfig, config)
+}
+
+func configureVolumes(config *Config) (*volumeStore, error) {
+	volumesDriver, err := local.New(config.Root)
+	if err != nil {
+		return nil, err
+	}
+	volumedrivers.Register(volumesDriver, volumesDriver.Name())
+	return newVolumeStore(volumesDriver.List()), nil
 }
