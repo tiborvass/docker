@@ -20,7 +20,6 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/trust"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/libtrust"
 )
@@ -41,7 +40,6 @@ type TagStore struct {
 	pushingPool     map[string]*broadcaster.Buffered
 	registryService *registry.Service
 	eventsService   *events.Events
-	trustService    *trust.Store
 }
 
 // Repository maps tags to image IDs.
@@ -77,8 +75,6 @@ type TagStoreConfig struct {
 	Registry *registry.Service
 	// Events is the events service to use for logging.
 	Events *events.Events
-	// Trust is the trust service to use for push and pull operations.
-	Trust *trust.Store
 }
 
 // NewTagStore creates a new TagStore at specified path, using the parameters
@@ -98,7 +94,6 @@ func NewTagStore(path string, cfg *TagStoreConfig) (*TagStore, error) {
 		pushingPool:     make(map[string]*broadcaster.Buffered),
 		registryService: cfg.Registry,
 		eventsService:   cfg.Events,
-		trustService:    cfg.Trust,
 	}
 	// Load the json file if it exists, otherwise create it.
 	if err := store.reload(); os.IsNotExist(err) {
