@@ -5,8 +5,8 @@ package daemon
 import (
 	"strings"
 
-	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	derr "github.com/tiborvass/docker/errors"
 )
 
 // DefaultPathEnv is deliberately empty on Windows as the default path will be set by

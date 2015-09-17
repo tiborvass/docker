@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	derr "github.com/tiborvass/docker/api/errors"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"

@@ -13,10 +13,10 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/registry/api/errcode"
-	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/daemon"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/version"

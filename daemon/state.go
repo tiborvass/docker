@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/units"
 )
 

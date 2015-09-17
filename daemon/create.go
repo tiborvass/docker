@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/parsers"

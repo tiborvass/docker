@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	derr "github.com/tiborvass/docker/api/errors"
+	derr "github.com/tiborvass/docker/errors"
 )
 
 // ContainerStop looks for the given container and terminates it,
