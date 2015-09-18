@@ -15,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/volume"
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
+	"github.com/tiborvass/docker/volume/store"
 )
 
 //
@@ -505,7 +506,7 @@ func initDaemonForVolumesTest(tmp string) (*Daemon, error) {
 	daemon := &Daemon{
 		repository: tmp,
 		root:       tmp,
-		volumes:    newVolumeStore([]volume.Volume{}),
+		volumes:    store.New(),
 	}
 
 	volumesDriver, err := local.New(tmp)
