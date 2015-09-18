@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	derr "github.com/tiborvass/docker/api/errors"
+	derr "github.com/tiborvass/docker/errors"
 )
 
 // ContainerUnpause unpauses a container

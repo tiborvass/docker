@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	derr "github.com/tiborvass/docker/api/errors"
+	derr "github.com/tiborvass/docker/errors"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/signal"

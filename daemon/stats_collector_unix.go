@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/pubsub"
 	"github.com/opencontainers/runc/libcontainer/system"
 )

@@ -10,8 +10,8 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	derr "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/volume"
