@@ -49,6 +49,7 @@ import (
 	"github.com/tiborvass/docker/trust"
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
+	"github.com/tiborvass/docker/volume/store"
 	"github.com/docker/libnetwork"
 	"github.com/opencontainers/runc/libcontainer/netlink"
 )
@@ -114,7 +115,7 @@ type Daemon struct {
 	RegistryService  *registry.Service
 	EventsService    *events.Events
 	netController    libnetwork.NetworkController
-	volumes          *volumeStore
+	volumes          *store.VolumeStore
 	root             string
 	shutdown         bool
 }
@@ -1121,11 +1122,15 @@ func (daemon *Daemon) verifyContainerSettings(hostConfig *runconfig.HostConfig, 
 	return verifyPlatformContainerSettings(daemon, hostConfig, config)
 }
 
-func configureVolumes(config *Config) (*volumeStore, error) {
+func configureVolumes(config *Config) (*store.VolumeStore, error) {
 	volumesDriver, err := local.New(config.Root)
 	if err != nil {
 		return nil, err
 	}
+
 	volumedrivers.Register(volumesDriver, volumesDriver.Name())
-	return newVolumeStore(volumesDriver.List()), nil
+	s := store.New()
+	s.AddAll(volumesDriver.List())
+
+	return s, nil
 }
