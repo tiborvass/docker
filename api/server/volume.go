@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/context"
+	"golang.org/x/net/context"
 )
 
 func (s *Server) getVolumesList(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {

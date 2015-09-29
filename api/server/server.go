@@ -10,15 +10,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gorilla/mux"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/registry/api/errcode"
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/sockets"
 	"github.com/tiborvass/docker/utils"
+	"github.com/gorilla/mux"
+	"golang.org/x/net/context"
 )
 
 // Config provides the configuration for the API server
