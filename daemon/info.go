@@ -8,7 +8,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/autogen/dockerversion"
-	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
@@ -19,7 +18,7 @@ import (
 )
 
 // SystemInfo returns information about the host server the daemon is running on.
-func (daemon *Daemon) SystemInfo(ctx context.Context) (*types.Info, error) {
+func (daemon *Daemon) SystemInfo() (*types.Info, error) {
 	images := daemon.Graph().Map()
 	var imgcount int
 	if images == nil {

@@ -6,7 +6,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/cliconfig"
-	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
@@ -63,7 +62,7 @@ func NewPuller(s *TagStore, endpoint registry.APIEndpoint, repoInfo *registry.Re
 
 // Pull initiates a pull operation. image is the repository name to pull, and
 // tag may be either empty, or indicate a specific tag to pull.
-func (s *TagStore) Pull(ctx context.Context, image string, tag string, imagePullConfig *ImagePullConfig) error {
+func (s *TagStore) Pull(image string, tag string, imagePullConfig *ImagePullConfig) error {
 	var sf = streamformatter.NewJSONStreamFormatter()
 
 	// Resolve the Repository name from fqn to RepositoryInfo
@@ -132,7 +131,7 @@ func (s *TagStore) Pull(ctx context.Context, image string, tag string, imagePull
 
 		}
 
-		s.eventsService.Log(ctx, "pull", logName, "")
+		s.eventsService.Log("pull", logName, "")
 		return nil
 	}
 

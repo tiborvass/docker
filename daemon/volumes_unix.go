@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/context"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/system"
@@ -286,7 +285,7 @@ func parseVolumesFrom(spec string) (string, string, error) {
 // 1. Select the previously configured mount points for the containers, if any.
 // 2. Select the volumes mounted from another containers. Overrides previously configured mount point destination.
 // 3. Select the bind mounts set by the client. Overrides previously configured mount point destinations.
-func (daemon *Daemon) registerMountPoints(ctx context.Context, container *Container, hostConfig *runconfig.HostConfig) error {
+func (daemon *Daemon) registerMountPoints(container *Container, hostConfig *runconfig.HostConfig) error {
 	binds := map[string]bool{}
 	mountPoints := map[string]*mountPoint{}
 
@@ -302,7 +301,7 @@ func (daemon *Daemon) registerMountPoints(ctx context.Context, container *Contai
 			return err
 		}
 
-		c, err := daemon.Get(ctx, containerID)
+		c, err := daemon.Get(containerID)
 		if err != nil {
 			return err
 		}
