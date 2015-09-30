@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/docker/libnetwork/osl"
@@ -96,7 +97,7 @@ func (daemon *Daemon) ContainerStats(prefixOrName string, config *ContainerStats
 					txErrors += v.TxErrors
 					txDropped += v.TxDropped
 				}
-				statsJSONPre121 := &types.StatsJSONPre121{
+				statsJSONPre121 := &v1p20.StatsJSON{
 					Stats: statsJSON.Stats,
 					Network: types.NetworkStats{
 						RxBytes:   rxBytes,
