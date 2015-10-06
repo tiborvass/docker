@@ -10,7 +10,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	derr "github.com/tiborvass/docker/errors"
-	"github.com/tiborvass/docker/pkg/broadcastwriter"
+	"github.com/tiborvass/docker/pkg/broadcaster"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -233,8 +233,8 @@ func (d *Daemon) ContainerExecStart(name string, stdin io.ReadCloser, stdout io.
 		cStderr = stderr
 	}
 
-	ec.streamConfig.stderr = broadcastwriter.New()
-	ec.streamConfig.stdout = broadcastwriter.New()
+	ec.streamConfig.stderr = new(broadcaster.Unbuffered)
+	ec.streamConfig.stdout = new(broadcaster.Unbuffered)
 	// Attach to stdin
 	if ec.OpenStdin {
 		ec.streamConfig.stdin, ec.streamConfig.stdinPipe = io.Pipe()
