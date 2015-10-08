@@ -21,15 +21,15 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
 	"github.com/tiborvass/docker/daemon/graphdriver"
-	derr "github.com/tiborvass/docker/errors"
-	// register vfs
-	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs"
+	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // register vfs
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/network"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -1239,4 +1239,17 @@ func configureVolumes(config *Config) (*store.VolumeStore, error) {
 	s.AddAll(volumesDriver.List())
 
 	return s, nil
+}
+
+// AuthenticateToRegistry checks the validity of credentials in authConfig
+func (daemon *Daemon) AuthenticateToRegistry(authConfig *cliconfig.AuthConfig) (string, error) {
+	return daemon.RegistryService.Auth(authConfig)
+}
+
+// SearchRegistryForImages queries the registry for images matching
+// term. authConfig is used to login.
+func (daemon *Daemon) SearchRegistryForImages(term string,
+	authConfig *cliconfig.AuthConfig,
+	headers map[string][]string) (*registry.SearchResults, error) {
+	return daemon.RegistryService.Search(term, authConfig, headers)
 }
