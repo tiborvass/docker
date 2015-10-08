@@ -16,8 +16,8 @@ import (
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/broadcaster"
 	"github.com/tiborvass/docker/pkg/parsers"
-	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/trust"
@@ -37,8 +37,8 @@ type TagStore struct {
 	sync.Mutex
 	// FIXME: move push/pull-related fields
 	// to a helper type
-	pullingPool     map[string]*progressreader.Broadcaster
-	pushingPool     map[string]*progressreader.Broadcaster
+	pullingPool     map[string]*broadcaster.Buffered
+	pushingPool     map[string]*broadcaster.Buffered
 	registryService *registry.Service
 	eventsService   *events.Events
 	trustService    *trust.Store
@@ -94,8 +94,8 @@ func NewTagStore(path string, cfg *TagStoreConfig) (*TagStore, error) {
 		graph:           cfg.Graph,
 		trustKey:        cfg.Key,
 		Repositories:    make(map[string]Repository),
-		pullingPool:     make(map[string]*progressreader.Broadcaster),
-		pushingPool:     make(map[string]*progressreader.Broadcaster),
+		pullingPool:     make(map[string]*broadcaster.Buffered),
+		pushingPool:     make(map[string]*broadcaster.Buffered),
 		registryService: cfg.Registry,
 		eventsService:   cfg.Events,
 		trustService:    cfg.Trust,
@@ -437,7 +437,7 @@ func validateDigest(dgst string) error {
 // poolAdd checks if a push or pull is already running, and returns
 // (broadcaster, true) if a running operation is found. Otherwise, it creates a
 // new one and returns (broadcaster, false).
-func (store *TagStore) poolAdd(kind, key string) (*progressreader.Broadcaster, bool) {
+func (store *TagStore) poolAdd(kind, key string) (*broadcaster.Buffered, bool) {
 	store.Lock()
 	defer store.Unlock()
 
@@ -448,7 +448,7 @@ func (store *TagStore) poolAdd(kind, key string) (*progressreader.Broadcaster, b
 		return p, true
 	}
 
-	broadcaster := progressreader.NewBroadcaster()
+	broadcaster := broadcaster.NewBuffered()
 
 	switch kind {
 	case "pull":

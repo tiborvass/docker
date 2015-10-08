@@ -11,6 +11,7 @@ import (
 	"github.com/docker/distribution/digest"
 	"github.com/docker/distribution/manifest"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/broadcaster"
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -110,7 +111,7 @@ type downloadInfo struct {
 	size        int64
 	err         chan error
 	poolKey     string
-	broadcaster *progressreader.Broadcaster
+	broadcaster *broadcaster.Buffered
 }
 
 type errVerification struct{}
