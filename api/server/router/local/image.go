@@ -16,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon/daemonbuilder"
+	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/graph/tags"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -63,12 +64,11 @@ func (s *router) postCommit(ctx context.Context, w http.ResponseWriter, r *http.
 		Config:  c,
 	}
 
-	container, err := s.daemon.Get(cname)
-	if err != nil {
-		return err
+	if !s.daemon.Exists(cname) {
+		return derr.ErrorCodeNoSuchContainer.WithArgs(cname)
 	}
 
-	imgID, err := dockerfile.Commit(container, s.daemon, commitCfg)
+	imgID, err := dockerfile.Commit(cname, s.daemon, commitCfg)
 	if err != nil {
 		return err
 	}
