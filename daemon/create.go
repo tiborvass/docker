@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 
@@ -147,6 +148,11 @@ func (daemon *Daemon) VolumeCreate(name, driverName string, opts map[string]stri
 	v, err := daemon.volumes.Create(name, driverName, opts)
 	if err != nil {
 		return nil, err
+	}
+
+	// keep "docker run -v existing_volume:/foo --volume-driver other_driver" work
+	if (driverName != "" && v.DriverName() != driverName) || (driverName == "" && v.DriverName() != volume.DefaultDriverName) {
+		return nil, derr.ErrorVolumeNameTaken.WithArgs(name, v.DriverName())
 	}
 	return volumeToAPIType(v), nil
 }
