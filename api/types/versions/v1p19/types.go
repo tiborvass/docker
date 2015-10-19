@@ -3,6 +3,7 @@ package v1p19
 
 import (
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -18,6 +19,10 @@ type ContainerJSON struct {
 // ContainerConfig is a backcompatibility struct for APIs prior to 1.20.
 type ContainerConfig struct {
 	*runconfig.Config
+
+	MacAddress      string
+	NetworkDisabled bool
+	ExposedPorts    map[nat.Port]struct{}
 
 	// backward compatibility, they now live in HostConfig
 	VolumeDriver string
