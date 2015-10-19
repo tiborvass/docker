@@ -73,7 +73,7 @@ func parseBindMount(spec, volumeDriver string) (*mountPoint, error) {
 	bind := &mountPoint{
 		RW: true,
 	}
-	arr := strings.Split(spec, ":")
+	arr := volume.SplitN(spec, -1)
 
 	switch len(arr) {
 	case 2:
