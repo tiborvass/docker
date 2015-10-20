@@ -17,10 +17,10 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/httputils"
+	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/progressreader"
-	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -180,7 +180,7 @@ func (d Docker) Copy(c *daemon.Container, destPath string, src builder.FileInfo,
 		destPath = filepath.Join(destPath, filepath.Base(srcPath))
 	}
 
-	if err := system.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
+	if err := idtools.MkdirAllNewAs(filepath.Dir(destPath), 0755, rootUID, rootGID); err != nil {
 		return err
 	}
 	if err := d.Archiver.CopyFileWithTar(srcPath, destPath); err != nil {
