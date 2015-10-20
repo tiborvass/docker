@@ -96,6 +96,8 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	if err := daemon.createRootfs(container); err != nil {
 		return nil, err
 	}
+
+	logrus.Debugf("bindmounts: %v", hostConfig.Binds)
 	if err := daemon.setHostConfig(container, hostConfig); err != nil {
 		return nil, err
 	}
@@ -114,6 +116,7 @@ func (daemon *Daemon) Create(config *runconfig.Config, hostConfig *runconfig.Hos
 	if err := createContainerPlatformSpecificSettings(container, config, hostConfig, img); err != nil {
 		return nil, err
 	}
+	logrus.Debugf("volumes: %v", container.MountPoints)
 
 	if err := container.toDiskLocking(); err != nil {
 		logrus.Errorf("Error saving new container to disk: %v", err)
