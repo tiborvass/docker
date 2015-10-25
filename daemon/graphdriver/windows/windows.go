@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -24,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/random"
+	"github.com/tiborvass/docker/version"
 	"github.com/microsoft/hcsshim"
 )
 
@@ -440,7 +440,7 @@ func (d *Driver) RestoreCustomImages(tagger graphdriver.Tagger, recorder graphdr
 			img := &image.Image{
 				ID:            id,
 				Created:       imageData.CreatedTime,
-				DockerVersion: dockerversion.VERSION,
+				DockerVersion: version.VERSION,
 				Architecture:  runtime.GOARCH,
 				OS:            runtime.GOOS,
 				Size:          imageData.Size,
