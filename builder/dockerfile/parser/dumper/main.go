@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tiborvass/docker/builder/parser"
+	"github.com/tiborvass/docker/builder/dockerfile/parser"
 )
 
 func main() {
