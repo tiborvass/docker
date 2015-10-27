@@ -7,7 +7,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
@@ -15,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/version"
 )
 
 // SystemInfo returns information about the host server the daemon is running on.
@@ -83,14 +83,14 @@ func (daemon *Daemon) SystemInfo() (*types.Info, error) {
 		OperatingSystem:    operatingSystem,
 		IndexServerAddress: registry.IndexServer,
 		RegistryConfig:     daemon.RegistryService.Config,
-		InitSha1:           dockerversion.INITSHA1,
+		InitSha1:           version.INITSHA1,
 		InitPath:           initPath,
 		NCPU:               runtime.NumCPU(),
 		MemTotal:           meminfo.MemTotal,
 		DockerRootDir:      daemon.config().Root,
 		Labels:             daemon.config().Labels,
 		ExperimentalBuild:  utils.ExperimentalBuild(),
-		ServerVersion:      dockerversion.VERSION,
+		ServerVersion:      version.VERSION,
 		ClusterStore:       daemon.config().ClusterStore,
 		ClusterAdvertise:   daemon.config().ClusterAdvertise,
 	}

@@ -10,24 +10,24 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/utils"
+	"github.com/tiborvass/docker/version"
 	"golang.org/x/net/context"
 )
 
 func (s *router) getVersion(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	v := &types.Version{
-		Version:    dockerversion.VERSION,
+		Version:    version.VERSION,
 		APIVersion: api.Version,
-		GitCommit:  dockerversion.GITCOMMIT,
+		GitCommit:  version.GITCOMMIT,
 		GoVersion:  runtime.Version(),
 		Os:         runtime.GOOS,
 		Arch:       runtime.GOARCH,
-		BuildTime:  dockerversion.BUILDTIME,
+		BuildTime:  version.BUILDTIME,
 	}
 
 	version := httputils.VersionFromContext(ctx)
