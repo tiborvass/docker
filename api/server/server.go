@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/api/server/router"
 	"github.com/tiborvass/docker/api/server/router/local"
 	"github.com/tiborvass/docker/api/server/router/network"
+	"github.com/tiborvass/docker/api/server/router/volume"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/sockets"
 	"github.com/tiborvass/docker/utils"
@@ -170,6 +171,7 @@ func (s *Server) makeHTTPHandler(handler httputils.APIFunc) http.HandlerFunc {
 func (s *Server) InitRouters(d *daemon.Daemon) {
 	s.addRouter(local.NewRouter(d))
 	s.addRouter(network.NewRouter(d))
+	s.addRouter(volume.NewRouter(d))
 
 	for _, srv := range s.servers {
 		srv.srv.Handler = s.CreateMux()
