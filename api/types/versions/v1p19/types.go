@@ -3,6 +3,7 @@ package v1p19
 
 import (
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/runconfig"
 )
@@ -11,9 +12,10 @@ import (
 // Note this is not used by the Windows daemon.
 type ContainerJSON struct {
 	*types.ContainerJSONBase
-	Volumes   map[string]string
-	VolumesRW map[string]bool
-	Config    *ContainerConfig
+	Volumes         map[string]string
+	VolumesRW       map[string]bool
+	Config          *ContainerConfig
+	NetworkSettings *v1p20.NetworkSettings
 }
 
 // ContainerConfig is a backcompatibility struct for APIs prior to 1.20.
