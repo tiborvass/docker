@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/version"
 )
 
 func TestMount(t *testing.T) {
@@ -106,8 +106,8 @@ func TestGraphCreate(t *testing.T) {
 	if img.Comment != "Testing" {
 		t.Fatalf("Wrong comment: should be '%s', not '%s'", "Testing", img.Comment)
 	}
-	if img.DockerVersion != version.VERSION {
-		t.Fatalf("Wrong docker_version: should be '%s', not '%s'", version.VERSION, img.DockerVersion)
+	if img.DockerVersion != dockerversion.VERSION {
+		t.Fatalf("Wrong docker_version: should be '%s', not '%s'", dockerversion.VERSION, img.DockerVersion)
 	}
 	images := graph.Map()
 	if l := len(images); l != 1 {

@@ -12,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/fileutils"
@@ -21,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/version"
 	"github.com/tiborvass/docker/volume"
 	"github.com/docker/libnetwork"
 	nwconfig "github.com/docker/libnetwork/config"
@@ -286,7 +286,7 @@ func migrateIfDownlevel(driver graphdriver.Driver, root string) error {
 }
 
 func configureSysInit(config *Config, rootUID, rootGID int) (string, error) {
-	localCopy := filepath.Join(config.Root, "init", fmt.Sprintf("dockerinit-%s", version.VERSION))
+	localCopy := filepath.Join(config.Root, "init", fmt.Sprintf("dockerinit-%s", dockerversion.VERSION))
 	sysInitPath := utils.DockerInitPath(localCopy)
 	if sysInitPath == "" {
 		return "", fmt.Errorf("Could not locate dockerinit: This usually means docker was built incorrectly. See https://docs.docker.com/project/set-up-dev-env/ for official build instructions.")

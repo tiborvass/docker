@@ -20,6 +20,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/signal"
@@ -27,7 +28,6 @@ import (
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/version"
 )
 
 var (
@@ -77,7 +77,7 @@ func (cli *DockerCli) clientRequest(method, path string, in io.Reader, headers m
 		req.Header.Set(k, v)
 	}
 
-	req.Header.Set("User-Agent", "Docker-Client/"+version.VERSION+" ("+runtime.GOOS+")")
+	req.Header.Set("User-Agent", "Docker-Client/"+dockerversion.VERSION+" ("+runtime.GOOS+")")
 	req.URL.Host = cli.addr
 	req.URL.Scheme = cli.scheme
 
