@@ -7,10 +7,10 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/version"
 )
 
 var versionTemplate = `Client:
@@ -60,11 +60,11 @@ func (cli *DockerCli) CmdVersion(args ...string) (err error) {
 
 	vd := versionData{
 		Client: types.Version{
-			Version:      version.VERSION,
+			Version:      dockerversion.VERSION,
 			APIVersion:   api.Version,
 			GoVersion:    runtime.Version(),
-			GitCommit:    version.GITCOMMIT,
-			BuildTime:    version.BUILDTIME,
+			GitCommit:    dockerversion.GITCOMMIT,
+			BuildTime:    dockerversion.BUILDTIME,
 			Os:           runtime.GOOS,
 			Arch:         runtime.GOARCH,
 			Experimental: utils.ExperimentalBuild(),

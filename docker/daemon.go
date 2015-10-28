@@ -14,6 +14,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/uuid"
 	apiserver "github.com/tiborvass/docker/api/server"
+	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
@@ -27,7 +28,6 @@ import (
 	"github.com/tiborvass/docker/pkg/tlsconfig"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/version"
 )
 
 const daemonUsage = "       docker daemon [ --help | ... ]\n"
@@ -206,7 +206,7 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 
 	serverConfig := &apiserver.Config{
 		Logging: true,
-		Version: version.VERSION,
+		Version: dockerversion.VERSION,
 	}
 	serverConfig = setPlatformServerConfig(serverConfig, cli.Config)
 
@@ -279,8 +279,8 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 	logrus.Info("Daemon has completed initialization")
 
 	logrus.WithFields(logrus.Fields{
-		"version":     version.VERSION,
-		"commit":      version.GITCOMMIT,
+		"version":     dockerversion.VERSION,
+		"commit":      dockerversion.GITCOMMIT,
 		"execdriver":  d.ExecutionDriver().Name(),
 		"graphdriver": d.GraphDriver().String(),
 	}).Info("Docker daemon")
