@@ -17,6 +17,7 @@ import (
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 	"golang.org/x/net/context"
@@ -100,11 +101,11 @@ func (s *router) getContainersLogs(ctx context.Context, w http.ResponseWriter, r
 
 	var since time.Time
 	if r.Form.Get("since") != "" {
-		s, err := strconv.ParseInt(r.Form.Get("since"), 10, 64)
+		s, n, err := timeutils.ParseTimestamps(r.Form.Get("since"), 0)
 		if err != nil {
 			return err
 		}
-		since = time.Unix(s, 0)
+		since = time.Unix(s, n)
 	}
 
 	var closeNotifier <-chan bool
