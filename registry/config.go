@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/docker/distribution/registry/api/v2"
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -226,7 +226,8 @@ func validateRemoteName(remoteName string) error {
 		}
 	}
 
-	return v2.ValidateRepositoryName(remoteName)
+	_, err := reference.WithName(remoteName)
+	return err
 }
 
 func validateNoSchema(reposName string) error {
