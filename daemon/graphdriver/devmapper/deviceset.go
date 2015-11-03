@@ -33,11 +33,11 @@ import (
 var (
 	defaultDataLoopbackSize     int64  = 100 * 1024 * 1024 * 1024
 	defaultMetaDataLoopbackSize int64  = 2 * 1024 * 1024 * 1024
-	defaultBaseFsSize           uint64 = 100 * 1024 * 1024 * 1024
+	defaultBaseFsSize           uint64 = 10 * 1024 * 1024 * 1024
 	defaultThinpBlockSize       uint32 = 128 // 64K = 128 512b sectors
-	defaultUdevSyncOverride            = false
-	maxDeviceID                        = 0xffffff // 24 bit, pool limit
-	deviceIDMapSz                      = (maxDeviceID + 1) / 8
+	defaultUdevSyncOverride     bool   = false
+	maxDeviceID                 int    = 0xffffff // 24 bit, pool limit
+	deviceIDMapSz               int    = (maxDeviceID + 1) / 8
 	// We retry device removal so many a times that even error messages
 	// will fill up console during normal operation. So only log Fatal
 	// messages by default.
