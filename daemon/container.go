@@ -20,7 +20,6 @@ import (
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	"github.com/tiborvass/docker/daemon/network"
 	derr "github.com/tiborvass/docker/errors"
-	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/broadcaster"
 	"github.com/tiborvass/docker/pkg/fileutils"
@@ -284,13 +283,6 @@ func (container *Container) Resize(h, w int) error {
 	}
 	container.logEvent("resize")
 	return nil
-}
-
-func (container *Container) getImage() (*image.Image, error) {
-	if container.daemon == nil {
-		return nil, derr.ErrorCodeImageUnregContainer
-	}
-	return container.daemon.graph.Get(container.ImageID)
 }
 
 func (container *Container) hostConfigPath() (string, error) {
