@@ -22,6 +22,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/idtools"
+	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/progressreader"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -100,7 +101,7 @@ type Graph struct {
 	idIndex          *truncindex.TruncIndex
 	driver           graphdriver.Driver
 	imagesMutex      sync.Mutex
-	imageMutex       imageMutex // protect images in driver.
+	imageMutex       locker.Locker // protect images in driver.
 	retained         *retainedLayers
 	tarSplitDisabled bool
 	uidMaps          []idtools.IDMap
