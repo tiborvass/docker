@@ -6,8 +6,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
-	"github.com/tiborvass/docker/autogen/dockerversion"
 	"github.com/tiborvass/docker/cli"
+	"github.com/tiborvass/docker/dockerversion"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
@@ -77,8 +77,8 @@ func main() {
 
 func showVersion() {
 	if utils.ExperimentalBuild() {
-		fmt.Printf("Docker version %s, build %s, experimental\n", dockerversion.VERSION, dockerversion.GITCOMMIT)
+		fmt.Printf("Docker version %s, build %s, experimental\n", dockerversion.Version, dockerversion.GitCommit)
 	} else {
-		fmt.Printf("Docker version %s, build %s\n", dockerversion.VERSION, dockerversion.GITCOMMIT)
+		fmt.Printf("Docker version %s, build %s\n", dockerversion.Version, dockerversion.GitCommit)
 	}
 }

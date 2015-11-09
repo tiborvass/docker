@@ -11,7 +11,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
-	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/version"
 	"golang.org/x/net/context"
@@ -111,7 +111,7 @@ func versionMiddleware(handler httputils.APIFunc) httputils.APIFunc {
 			return errors.ErrorCodeOldClientVersion.WithArgs(apiVersion, api.Version)
 		}
 
-		w.Header().Set("Server", "Docker/"+dockerversion.VERSION+" ("+runtime.GOOS+")")
+		w.Header().Set("Server", "Docker/"+dockerversion.Version+" ("+runtime.GOOS+")")
 		ctx = context.WithValue(ctx, httputils.APIVersionKey, apiVersion)
 		return handler(ctx, w, r, vars)
 	}

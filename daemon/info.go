@@ -7,7 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/autogen/dockerversion"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
@@ -83,14 +83,14 @@ func (daemon *Daemon) SystemInfo() (*types.Info, error) {
 		OperatingSystem:    operatingSystem,
 		IndexServerAddress: registry.IndexServer,
 		RegistryConfig:     daemon.RegistryService.Config,
-		InitSha1:           dockerversion.INITSHA1,
+		InitSha1:           dockerversion.InitSHA1,
 		InitPath:           initPath,
 		NCPU:               runtime.NumCPU(),
 		MemTotal:           meminfo.MemTotal,
 		DockerRootDir:      daemon.config().Root,
 		Labels:             daemon.config().Labels,
 		ExperimentalBuild:  utils.ExperimentalBuild(),
-		ServerVersion:      dockerversion.VERSION,
+		ServerVersion:      dockerversion.Version,
 		ClusterStore:       daemon.config().ClusterStore,
 		ClusterAdvertise:   daemon.config().ClusterAdvertise,
 	}
