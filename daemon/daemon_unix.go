@@ -15,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	derr "github.com/tiborvass/docker/errors"
+	pblkiodev "github.com/tiborvass/docker/pkg/blkiodev"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -30,6 +31,7 @@ import (
 	"github.com/docker/libnetwork/netlabel"
 	"github.com/docker/libnetwork/options"
 	"github.com/docker/libnetwork/types"
+	blkiodev "github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runc/libcontainer/label"
 	"github.com/vishvananda/netlink"
 )
@@ -40,6 +42,21 @@ const (
 	linuxMaxCPUShares = 262144
 	platformSupported = true
 )
+
+func getBlkioWeightDevices(config *runconfig.HostConfig) ([]*blkiodev.WeightDevice, error) {
+	var stat syscall.Stat_t
+	var BlkioWeightDevices []*blkiodev.WeightDevice
+
+	for _, weightDevice := range config.BlkioWeightDevice {
+		if err := syscall.Stat(weightDevice.Path, &stat); err != nil {
+			return nil, err
+		}
+		WeightDevice := blkiodev.NewWeightDevice(int64(stat.Rdev/256), int64(stat.Rdev%256), weightDevice.Weight, 0)
+		BlkioWeightDevices = append(BlkioWeightDevices, WeightDevice)
+	}
+
+	return BlkioWeightDevices, nil
+}
 
 func parseSecurityOpt(container *Container, config *runconfig.HostConfig) error {
 	var (
@@ -219,6 +236,11 @@ func verifyPlatformContainerSettings(daemon *Daemon, hostConfig *runconfig.HostC
 	}
 	if hostConfig.BlkioWeight > 0 && (hostConfig.BlkioWeight < 10 || hostConfig.BlkioWeight > 1000) {
 		return warnings, fmt.Errorf("Range of blkio weight is from 10 to 1000.")
+	}
+	if len(hostConfig.BlkioWeightDevice) > 0 && !sysInfo.BlkioWeightDevice {
+		warnings = append(warnings, "Your kernel does not support Block I/O weight_device.")
+		logrus.Warnf("Your kernel does not support Block I/O weight_device. Weight-device discarded.")
+		hostConfig.BlkioWeightDevice = []*pblkiodev.WeightDevice{}
 	}
 	if hostConfig.OomKillDisable && !sysInfo.OomKillDisable {
 		hostConfig.OomKillDisable = false
