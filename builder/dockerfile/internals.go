@@ -29,7 +29,7 @@ import (
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
-	"github.com/tiborvass/docker/pkg/progressreader"
+	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/stringutils"
@@ -264,17 +264,11 @@ func (b *Builder) download(srcURL string) (fi builder.FileInfo, err error) {
 		return
 	}
 
+	stdoutFormatter := b.Stdout.(*streamformatter.StdoutFormatter)
+	progressOutput := stdoutFormatter.StreamFormatter.NewProgressOutput(stdoutFormatter.Writer, true)
+	progressReader := progress.NewProgressReader(resp.Body, progressOutput, resp.ContentLength, "", "Downloading")
 	// Download and dump result to tmp file
-	if _, err = io.Copy(tmpFile, progressreader.New(progressreader.Config{
-		In: resp.Body,
-		// TODO: make progressreader streamformatter agnostic
-		Out:       b.Stdout.(*streamformatter.StdoutFormatter).Writer,
-		Formatter: b.Stdout.(*streamformatter.StdoutFormatter).StreamFormatter,
-		Size:      resp.ContentLength,
-		NewLines:  true,
-		ID:        "",
-		Action:    "Downloading",
-	})); err != nil {
+	if _, err = io.Copy(tmpFile, progressReader); err != nil {
 		tmpFile.Close()
 		return
 	}

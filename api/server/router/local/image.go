@@ -23,7 +23,7 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/pkg/progressreader"
+	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/runconfig"
@@ -325,7 +325,7 @@ func (s *router) postBuild(ctx context.Context, w http.ResponseWriter, r *http.R
 	sf := streamformatter.NewJSONStreamFormatter()
 	errf := func(err error) error {
 		// Do not write the error in the http output if it's still empty.
-		// This prevents from writing a 200(OK) when there is an interal error.
+		// This prevents from writing a 200(OK) when there is an internal error.
 		if !output.Flushed() {
 			return err
 		}
@@ -401,23 +401,17 @@ func (s *router) postBuild(ctx context.Context, w http.ResponseWriter, r *http.R
 	remoteURL := r.FormValue("remote")
 
 	// Currently, only used if context is from a remote url.
-	// The field `In` is set by DetectContextFromRemoteURL.
 	// Look at code in DetectContextFromRemoteURL for more information.
-	pReader := &progressreader.Config{
-		// TODO: make progressreader streamformatter-agnostic
-		Out:       output,
-		Formatter: sf,
-		Size:      r.ContentLength,
-		NewLines:  true,
-		ID:        "Downloading context",
-		Action:    remoteURL,
+	createProgressReader := func(in io.ReadCloser) io.ReadCloser {
+		progressOutput := sf.NewProgressOutput(output, true)
+		return progress.NewProgressReader(in, progressOutput, r.ContentLength, "Downloading context", remoteURL)
 	}
 
 	var (
 		context        builder.ModifiableContext
 		dockerfileName string
 	)
-	context, dockerfileName, err = daemonbuilder.DetectContextFromRemoteURL(r.Body, remoteURL, pReader)
+	context, dockerfileName, err = daemonbuilder.DetectContextFromRemoteURL(r.Body, remoteURL, createProgressReader)
 	if err != nil {
 		return errf(err)
 	}
