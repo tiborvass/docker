@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/parsers/operatingsystem"
+	"github.com/tiborvass/docker/pkg/platform"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/registry"
@@ -75,8 +76,8 @@ func (daemon *Daemon) SystemInfo() (*types.Info, error) {
 		KernelVersion:      kernelVersion,
 		OperatingSystem:    operatingSystem,
 		IndexServerAddress: registry.IndexServer,
-		OSType:             runtime.GOOS,
-		Architecture:       runtime.GOARCH,
+		OSType:             platform.OSType,
+		Architecture:       platform.Architecture,
 		RegistryConfig:     daemon.RegistryService.Config,
 		InitSha1:           dockerversion.InitSHA1,
 		InitPath:           initPath,
