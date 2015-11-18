@@ -8,6 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/layer"
 )
 
 // ContainerInspect returns low-level information about a
@@ -124,7 +125,7 @@ func (daemon *Daemon) getInspectData(container *Container, size bool) (*types.Co
 		Path:         container.Path,
 		Args:         container.Args,
 		State:        containerState,
-		Image:        container.ImageID,
+		Image:        container.ImageID.String(),
 		LogPath:      container.LogPath,
 		Name:         container.Name,
 		RestartCount: container.RestartCount,
@@ -149,7 +150,18 @@ func (daemon *Daemon) getInspectData(container *Container, size bool) (*types.Co
 	contJSONBase = setPlatformSpecificContainerFields(container, contJSONBase)
 
 	contJSONBase.GraphDriver.Name = container.Driver
-	graphDriverData, err := daemon.driver.GetMetadata(container.ID)
+
+	image, err := daemon.imageStore.Get(container.ImageID)
+	if err != nil {
+		return nil, err
+	}
+	l, err := daemon.layerStore.Get(image.RootFS.ChainID())
+	if err != nil {
+		return nil, err
+	}
+	defer layer.ReleaseAndLog(daemon.layerStore, l)
+
+	graphDriverData, err := l.Metadata()
 	if err != nil {
 		return nil, err
 	}

@@ -20,6 +20,8 @@ import (
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	"github.com/tiborvass/docker/daemon/network"
 	derr "github.com/tiborvass/docker/errors"
+	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
@@ -28,6 +30,8 @@ import (
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/volume"
 )
+
+const configFileName = "config.v2.json"
 
 var (
 	// ErrRootFSReadOnly is returned when a container
@@ -43,12 +47,13 @@ type CommonContainer struct {
 	*State          `json:"State"` // Needed for remote api version <= 1.11
 	root            string         // Path to the "home" of the container, including metadata.
 	basefs          string         // Path to the graphdriver mountpoint
+	rwlayer         layer.RWLayer
 	ID              string
 	Created         time.Time
 	Path            string
 	Args            []string
 	Config          *runconfig.Config
-	ImageID         string `json:"Image"`
+	ImageID         image.ID `json:"Image"`
 	NetworkSettings *network.Settings
 	LogPath         string
 	Name            string
@@ -256,7 +261,7 @@ func (container *Container) hostConfigPath() (string, error) {
 }
 
 func (container *Container) jsonPath() (string, error) {
-	return container.getRootResourcePath("config.json")
+	return container.getRootResourcePath(configFileName)
 }
 
 // This directory is only usable when the container is running
@@ -301,7 +306,7 @@ func (container *Container) StartLogger(cfg runconfig.LogConfig) (logger.Logger,
 		ContainerName:       container.Name,
 		ContainerEntrypoint: container.Path,
 		ContainerArgs:       container.Args,
-		ContainerImageID:    container.ImageID,
+		ContainerImageID:    container.ImageID.String(),
 		ContainerImageName:  container.Config.Image,
 		ContainerCreated:    container.Created,
 		ContainerEnv:        container.Config.Env,
