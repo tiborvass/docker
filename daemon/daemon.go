@@ -32,12 +32,10 @@ import (
 	"github.com/tiborvass/docker/graph"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/broadcaster"
 	"github.com/tiborvass/docker/pkg/discovery"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
@@ -205,15 +203,11 @@ func (daemon *Daemon) Register(container *Container) error {
 	}
 
 	// Attach to stdout and stderr
-	container.stderr = new(broadcaster.Unbuffered)
-	container.stdout = new(broadcaster.Unbuffered)
-	// Attach to stdin
 	if container.Config.OpenStdin {
-		container.stdin, container.stdinPipe = io.Pipe()
+		container.NewInputPipes()
 	} else {
-		container.stdinPipe = ioutils.NopWriteCloser(ioutil.Discard) // Silently drop stdin
+		container.NewNopInputPipe()
 	}
-	// done
 	daemon.containers.Add(container.ID, container)
 
 	// don't update the Suffixarray if we're starting up
