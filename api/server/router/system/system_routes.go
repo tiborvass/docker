@@ -1,51 +1,34 @@
-package local
+package system
 
 import (
 	"encoding/json"
 	"net/http"
-	"runtime"
 	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
-	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/timeutils"
-	"github.com/tiborvass/docker/utils"
 	"golang.org/x/net/context"
 )
 
-func (s *router) getVersion(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
-	v := &types.Version{
-		Version:    dockerversion.Version,
-		APIVersion: api.Version,
-		GitCommit:  dockerversion.GitCommit,
-		GoVersion:  runtime.Version(),
-		Os:         runtime.GOOS,
-		Arch:       runtime.GOARCH,
-		BuildTime:  dockerversion.BuildTime,
-	}
-
-	version := httputils.VersionFromContext(ctx)
-
-	if version.GreaterThanOrEqualTo("1.19") {
-		v.Experimental = utils.ExperimentalBuild()
-	}
-
-	if kernelVersion, err := kernel.GetKernelVersion(); err == nil {
-		v.KernelVersion = kernelVersion.String()
-	}
-
-	return httputils.WriteJSON(w, http.StatusOK, v)
+func optionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	w.WriteHeader(http.StatusOK)
+	return nil
 }
 
-func (s *router) getInfo(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
-	info, err := s.daemon.SystemInfo()
+func pingHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	_, err := w.Write([]byte{'O', 'K'})
+	return err
+}
+
+func (s *systemRouter) getInfo(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	info, err := s.backend.SystemInfo()
 	if err != nil {
 		return err
 	}
@@ -53,7 +36,14 @@ func (s *router) getInfo(ctx context.Context, w http.ResponseWriter, r *http.Req
 	return httputils.WriteJSON(w, http.StatusOK, info)
 }
 
-func (s *router) getEvents(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+func (s *systemRouter) getVersion(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	info := s.backend.SystemVersion()
+	info.APIVersion = api.Version
+
+	return httputils.WriteJSON(w, http.StatusOK, info)
+}
+
+func (s *systemRouter) getEvents(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
 	if err := httputils.ParseForm(r); err != nil {
 		return err
 	}
@@ -92,8 +82,8 @@ func (s *router) getEvents(ctx context.Context, w http.ResponseWriter, r *http.R
 
 	enc := json.NewEncoder(output)
 
-	buffered, l := s.daemon.SubscribeToEvents(since, sinceNano, ef)
-	defer s.daemon.UnsubscribeFromEvents(l)
+	buffered, l := s.backend.SubscribeToEvents(since, sinceNano, ef)
+	defer s.backend.UnsubscribeFromEvents(l)
 
 	for _, ev := range buffered {
 		if err := enc.Encode(ev); err != nil {
@@ -123,4 +113,20 @@ func (s *router) getEvents(ctx context.Context, w http.ResponseWriter, r *http.R
 			return nil
 		}
 	}
+}
+
+func (s *systemRouter) postAuth(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
+	var config *cliconfig.AuthConfig
+	err := json.NewDecoder(r.Body).Decode(&config)
+	r.Body.Close()
+	if err != nil {
+		return err
+	}
+	status, err := s.backend.AuthenticateToRegistry(config)
+	if err != nil {
+		return err
+	}
+	return httputils.WriteJSON(w, http.StatusOK, &types.AuthResponse{
+		Status: status,
+	})
 }
