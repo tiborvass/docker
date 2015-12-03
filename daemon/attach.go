@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 )
@@ -66,7 +67,7 @@ func (daemon *Daemon) ContainerWsAttachWithLogs(prefixOrName string, c *Containe
 	return daemon.attachWithLogs(container, c.InStream, c.OutStream, c.ErrStream, c.Logs, c.Stream)
 }
 
-func (daemon *Daemon) attachWithLogs(container *Container, stdin io.ReadCloser, stdout, stderr io.Writer, logs, stream bool) error {
+func (daemon *Daemon) attachWithLogs(container *container.Container, stdin io.ReadCloser, stdout, stderr io.Writer, logs, stream bool) error {
 	if logs {
 		logDriver, err := daemon.getLogger(container)
 		if err != nil {

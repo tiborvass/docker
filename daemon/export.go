@@ -3,6 +3,7 @@ package daemon
 import (
 	"io"
 
+	"github.com/tiborvass/docker/container"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -29,13 +30,13 @@ func (daemon *Daemon) ContainerExport(name string, out io.Writer) error {
 	return nil
 }
 
-func (daemon *Daemon) containerExport(container *Container) (archive.Archive, error) {
+func (daemon *Daemon) containerExport(container *container.Container) (archive.Archive, error) {
 	if err := daemon.Mount(container); err != nil {
 		return nil, err
 	}
 
 	uidMaps, gidMaps := daemon.GetUIDGIDMaps()
-	archive, err := archive.TarWithOptions(container.basefs, &archive.TarOptions{
+	archive, err := archive.TarWithOptions(container.BaseFS, &archive.TarOptions{
 		Compression: archive.Uncompressed,
 		UIDMaps:     uidMaps,
 		GIDMaps:     gidMaps,
