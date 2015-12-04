@@ -13,7 +13,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder/dockerignore"
@@ -29,8 +28,8 @@ import (
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/urlutil"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	tagpkg "github.com/tiborvass/docker/tag"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/go-units"
 )
@@ -532,11 +531,11 @@ func rewriteDockerfileFrom(dockerfileName string, translator func(reference.Name
 
 			digested := false
 			switch ref.(type) {
-			case reference.Tagged:
-			case reference.Digested:
+			case reference.NamedTagged:
+			case reference.Canonical:
 				digested = true
 			default:
-				ref, err = reference.WithTag(ref, tagpkg.DefaultTag)
+				ref, err = reference.WithTag(ref, reference.DefaultTag)
 				if err != nil {
 					return nil, nil, err
 				}

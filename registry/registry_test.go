@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/distribution/reference"
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/api/types"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
+	"github.com/tiborvass/docker/reference"
 )
 
 var (

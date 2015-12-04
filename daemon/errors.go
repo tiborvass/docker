@@ -3,9 +3,8 @@ package daemon
 import (
 	"strings"
 
-	"github.com/docker/distribution/reference"
 	derr "github.com/tiborvass/docker/errors"
-	tagpkg "github.com/tiborvass/docker/tag"
+	"github.com/tiborvass/docker/reference"
 )
 
 func (d *Daemon) imageNotExistToErrcode(err error) error {
@@ -13,12 +12,12 @@ func (d *Daemon) imageNotExistToErrcode(err error) error {
 		if strings.Contains(dne.RefOrID, "@") {
 			return derr.ErrorCodeNoSuchImageHash.WithArgs(dne.RefOrID)
 		}
-		tag := tagpkg.DefaultTag
+		tag := reference.DefaultTag
 		ref, err := reference.ParseNamed(dne.RefOrID)
 		if err != nil {
 			return derr.ErrorCodeNoSuchImageTag.WithArgs(dne.RefOrID, tag)
 		}
-		if tagged, isTagged := ref.(reference.Tagged); isTagged {
+		if tagged, isTagged := ref.(reference.NamedTagged); isTagged {
 			tag = tagged.Tag()
 		}
 		return derr.ErrorCodeNoSuchImageTag.WithArgs(ref.Name(), tag)

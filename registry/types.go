@@ -1,8 +1,8 @@
 package registry
 
 import (
-	"github.com/docker/distribution/reference"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
+	"github.com/tiborvass/docker/reference"
 )
 
 // RepositoryData tracks the image list, list of endpoints, and list of tokens

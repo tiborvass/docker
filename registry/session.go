@@ -19,13 +19,13 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/tarsum"
+	"github.com/tiborvass/docker/reference"
 )
 
 var (

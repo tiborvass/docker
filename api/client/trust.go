@@ -19,7 +19,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
-	"github.com/docker/distribution/reference"
 	"github.com/docker/distribution/registry/client/auth"
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/api/client/lib"
@@ -30,6 +29,7 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/tlsconfig"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/notary/client"
 	"github.com/docker/notary/passphrase"

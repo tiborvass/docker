@@ -3,10 +3,10 @@ package client
 import (
 	"errors"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 )
 
@@ -25,13 +25,12 @@ func (cli *DockerCli) CmdTag(args ...string) error {
 		return err
 	}
 
-	_, isDigested := ref.(reference.Digested)
-	if isDigested {
+	if _, isCanonical := ref.(reference.Canonical); isCanonical {
 		return errors.New("refusing to create a tag with a digest reference")
 	}
 
 	tag := ""
-	tagged, isTagged := ref.(reference.Tagged)
+	tagged, isTagged := ref.(reference.NamedTagged)
 	if isTagged {
 		tag = tagged.Tag()
 	}

@@ -6,15 +6,14 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/distribution/xfer"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/progress"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/tag"
 	"golang.org/x/net/context"
 )
 
@@ -39,8 +38,8 @@ type ImagePullConfig struct {
 	MetadataStore metadata.Store
 	// ImageStore manages images.
 	ImageStore image.Store
-	// TagStore manages tags.
-	TagStore tag.Store
+	// ReferenceStore manages tags.
+	ReferenceStore reference.Store
 	// DownloadManager manages concurrent pulls.
 	DownloadManager *xfer.LayerDownloadManager
 }

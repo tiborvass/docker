@@ -8,7 +8,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/distribution/metadata"
@@ -16,8 +15,8 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/tag"
 	"github.com/docker/libtrust"
 	"golang.org/x/net/context"
 )
@@ -45,8 +44,8 @@ type ImagePushConfig struct {
 	LayerStore layer.Store
 	// ImageStore manages images.
 	ImageStore image.Store
-	// TagStore manages tags.
-	TagStore tag.Store
+	// ReferenceStore manages tags.
+	ReferenceStore reference.Store
 	// TrustKey is the private key for legacy signatures. This is typically
 	// an ephemeral key, since these signatures are no longer verified.
 	TrustKey libtrust.PrivateKey
@@ -112,7 +111,7 @@ func Push(ctx context.Context, ref reference.Named, imagePushConfig *ImagePushCo
 
 	progress.Messagef(imagePushConfig.ProgressOutput, "", "The push refers to a repository [%s]", repoInfo.CanonicalName.String())
 
-	associations := imagePushConfig.TagStore.ReferencesByName(repoInfo.LocalName)
+	associations := imagePushConfig.ReferenceStore.ReferencesByName(repoInfo.LocalName)
 	if len(associations) == 0 {
 		return fmt.Errorf("Repository does not exist: %s", repoInfo.LocalName)
 	}

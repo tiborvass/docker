@@ -4,14 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	tagpkg "github.com/tiborvass/docker/tag"
 )
 
 var errTagCantBeUsed = errors.New("tag can't be used with --all-tags/-a")
@@ -35,19 +34,19 @@ func (cli *DockerCli) CmdPull(args ...string) error {
 
 	var tag string
 	switch x := distributionRef.(type) {
-	case reference.Digested:
+	case reference.Canonical:
 		if *allTags {
 			return errTagCantBeUsed
 		}
 		tag = x.Digest().String()
-	case reference.Tagged:
+	case reference.NamedTagged:
 		if *allTags {
 			return errTagCantBeUsed
 		}
 		tag = x.Tag()
 	default:
 		if !*allTags {
-			tag = tagpkg.DefaultTag
+			tag = reference.DefaultTag
 			distributionRef, err = reference.WithTag(distributionRef, tag)
 			if err != nil {
 				return err
