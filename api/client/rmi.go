@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/tiborvass/docker/api/client/lib"
+	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 )
@@ -30,7 +30,7 @@ func (cli *DockerCli) CmdRmi(args ...string) error {
 
 	var errNames []string
 	for _, name := range cmd.Args() {
-		options := lib.ImageRemoveOptions{
+		options := types.ImageRemoveOptions{
 			ImageID:       name,
 			Force:         *force,
 			PruneChildren: !*noprune,

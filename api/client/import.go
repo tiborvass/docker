@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/client/lib"
+	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -67,7 +67,7 @@ func (cli *DockerCli) CmdImport(args ...string) error {
 
 	}
 
-	options := lib.ImportImageOptions{
+	options := types.ImageImportOptions{
 		Source:         in,
 		SourceName:     srcName,
 		RepositoryName: repository,
@@ -76,7 +76,7 @@ func (cli *DockerCli) CmdImport(args ...string) error {
 		Changes:        changes,
 	}
 
-	responseBody, err := cli.client.ImportImage(options)
+	responseBody, err := cli.client.ImageImport(options)
 	if err != nil {
 		return err
 	}

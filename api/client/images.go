@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/client/lib"
+	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -48,7 +48,7 @@ func (cli *DockerCli) CmdImages(args ...string) error {
 		matchName = cmd.Arg(0)
 	}
 
-	options := lib.ImageListOptions{
+	options := types.ImageListOptions{
 		MatchName: matchName,
 		All:       *all,
 		Filters:   imageFilterArgs,

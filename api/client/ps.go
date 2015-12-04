@@ -1,8 +1,8 @@
 package client
 
 import (
-	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/api/client/ps"
+	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -47,7 +47,7 @@ func (cli *DockerCli) CmdPs(args ...string) error {
 		}
 	}
 
-	options := lib.ContainerListOptions{
+	options := types.ContainerListOptions{
 		All:    *all,
 		Limit:  *last,
 		Since:  *since,
