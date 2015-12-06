@@ -9,17 +9,16 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	gosignal "os/signal"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/client/lib"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -259,18 +258,21 @@ func (cli *DockerCli) resizeTty(id string, isExec bool) {
 	if height == 0 && width == 0 {
 		return
 	}
-	v := url.Values{}
-	v.Set("h", strconv.Itoa(height))
-	v.Set("w", strconv.Itoa(width))
 
-	path := ""
-	if !isExec {
-		path = "/containers/" + id + "/resize?"
-	} else {
-		path = "/exec/" + id + "/resize?"
+	options := types.ResizeOptions{
+		ID:     id,
+		Height: height,
+		Width:  width,
 	}
 
-	if _, _, err := readBody(cli.call("POST", path+v.Encode(), nil, nil)); err != nil {
+	var err error
+	if !isExec {
+		err = cli.client.ContainerExecResize(options)
+	} else {
+		err = cli.client.ContainerResize(options)
+	}
+
+	if err != nil {
 		logrus.Debugf("Error resize: %s", err)
 	}
 }
