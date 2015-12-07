@@ -20,10 +20,10 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/container"
-	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/httputils"
@@ -77,7 +77,7 @@ func (b *Builder) commit(id string, autoCmd *stringutils.StrSlice, comment strin
 	autoConfig := *b.runConfig
 	autoConfig.Cmd = autoCmd
 
-	commitCfg := &daemon.ContainerCommitConfig{
+	commitCfg := &types.ContainerCommitConfig{
 		Author: b.maintainer,
 		Pause:  true,
 		Config: &autoConfig,
@@ -586,7 +586,7 @@ func (b *Builder) run(c *container.Container) error {
 }
 
 func (b *Builder) removeContainer(c string) error {
-	rmConfig := &daemon.ContainerRmConfig{
+	rmConfig := &types.ContainerRmConfig{
 		ForceRemove:  true,
 		RemoveVolume: true,
 	}
