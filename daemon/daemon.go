@@ -1501,6 +1501,15 @@ func (daemon *Daemon) newBaseContainer(id string) *container.Container {
 	return container.NewBaseContainer(id, daemon.containerRoot(id))
 }
 
+// ResolveRepository gets the repository information from a registry service.
+func (daemon *Daemon) ResolveRepository(ref reference.Named) (*registry.RepositoryInfo, error) {
+	return daemon.RegistryService.ResolveRepository(ref)
+}
+
+// GetContainer returns a container identified by a reference.
+func (daemon *Daemon) GetContainer(ref string) (*container.Container, error) {
+	return daemon.Get(ref)
+}
 func convertLnNetworkStats(name string, stats *lntypes.InterfaceStatistics) *libcontainer.NetworkInterface {
 	n := &libcontainer.NetworkInterface{Name: name}
 	n.RxBytes = stats.RxBytes
