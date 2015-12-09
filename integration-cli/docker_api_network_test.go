@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/go-check/check"

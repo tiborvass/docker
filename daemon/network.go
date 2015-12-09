@@ -6,7 +6,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/api/types/network"
 	"github.com/docker/libnetwork"
 )
 

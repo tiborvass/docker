@@ -7,8 +7,8 @@ import (
 	"text/tabwriter"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/network"
 	Cli "github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringid"

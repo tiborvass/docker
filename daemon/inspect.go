@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
+	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
@@ -223,7 +224,7 @@ func (daemon *Daemon) getBackwardsCompatibleNetworkSettings(settings *network.Se
 
 // getDefaultNetworkSettings creates the deprecated structure that holds the information
 // about the bridge network for a container.
-func (daemon *Daemon) getDefaultNetworkSettings(networks map[string]*network.EndpointSettings) types.DefaultNetworkSettings {
+func (daemon *Daemon) getDefaultNetworkSettings(networks map[string]*networktypes.EndpointSettings) types.DefaultNetworkSettings {
 	var settings types.DefaultNetworkSettings
 
 	if defaultNetwork, ok := networks["bridge"]; ok {

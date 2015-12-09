@@ -13,8 +13,8 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/daemon/execdriver"
-	"github.com/tiborvass/docker/daemon/network"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/nat"
