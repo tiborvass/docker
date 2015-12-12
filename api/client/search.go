@@ -9,6 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
+	"github.com/tiborvass/docker/cliconfig"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/registry"
@@ -38,7 +39,7 @@ func (cli *DockerCli) CmdSearch(args ...string) error {
 	authConfig := registry.ResolveAuthConfig(cli.configFile.AuthConfigs, indexInfo)
 	requestPrivilege := cli.registryAuthenticationPrivilegedFunc(indexInfo, "search")
 
-	encodedAuth, err := authConfig.EncodeToBase64()
+	encodedAuth, err := cliconfig.EncodeAuthToBase64(authConfig)
 	if err != nil {
 		return err
 	}

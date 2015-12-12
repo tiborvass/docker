@@ -9,7 +9,6 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
@@ -116,7 +115,7 @@ func (s *systemRouter) getEvents(ctx context.Context, w http.ResponseWriter, r *
 }
 
 func (s *systemRouter) postAuth(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
-	var config *cliconfig.AuthConfig
+	var config *types.AuthConfig
 	err := json.NewDecoder(r.Body).Decode(&config)
 	r.Body.Close()
 	if err != nil {

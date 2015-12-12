@@ -10,7 +10,6 @@ import (
 
 	"github.com/tiborvass/docker/api/client/lib"
 	Cli "github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/cliconfig"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
@@ -63,7 +62,7 @@ func (cli *DockerCli) CmdLogin(args ...string) error {
 
 	authconfig, ok := cli.configFile.AuthConfigs[serverAddress]
 	if !ok {
-		authconfig = cliconfig.AuthConfig{}
+		authconfig = types.AuthConfig{}
 	}
 
 	if username == "" {
