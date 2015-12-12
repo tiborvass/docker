@@ -7,6 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/distribution/xfer"

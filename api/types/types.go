@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types/network"
+	"github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/version"
-	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 )
 

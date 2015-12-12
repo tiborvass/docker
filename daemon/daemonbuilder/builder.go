@@ -13,7 +13,6 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/image"

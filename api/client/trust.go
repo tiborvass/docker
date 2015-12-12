@@ -24,6 +24,7 @@ import (
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/ansiescape"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -81,7 +82,7 @@ func (cli *DockerCli) certificateDirectory(server string) (string, error) {
 	return filepath.Join(cliconfig.ConfigDir(), "tls", u.Host), nil
 }
 
-func trustServer(index *registry.IndexInfo) (string, error) {
+func trustServer(index *registrytypes.IndexInfo) (string, error) {
 	if s := os.Getenv("DOCKER_CONTENT_TRUST_SERVER"); s != "" {
 		urlObj, err := url.Parse(s)
 		if err != nil || urlObj.Scheme != "https" {
