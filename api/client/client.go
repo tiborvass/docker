@@ -9,7 +9,6 @@ import (
 
 	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -67,7 +66,7 @@ type apiClient interface {
 	NetworkInspect(networkID string) (types.NetworkResource, error)
 	NetworkList() ([]types.NetworkResource, error)
 	NetworkRemove(networkID string) error
-	RegistryLogin(auth cliconfig.AuthConfig) (types.AuthResponse, error)
+	RegistryLogin(auth types.AuthConfig) (types.AuthResponse, error)
 	ServerVersion() (types.Version, error)
 	VolumeCreate(options types.VolumeCreateRequest) (types.Volume, error)
 	VolumeInspect(volumeID string) (types.Volume, error)

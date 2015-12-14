@@ -7,7 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/cliconfig"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/distribution/xfer"
@@ -25,7 +25,7 @@ type ImagePullConfig struct {
 	MetaHeaders map[string][]string
 	// AuthConfig holds authentication credentials for authenticating with
 	// the registry.
-	AuthConfig *cliconfig.AuthConfig
+	AuthConfig *types.AuthConfig
 	// ProgressOutput is the interface for showing the status of the pull
 	// operation.
 	ProgressOutput progress.Output

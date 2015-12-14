@@ -5,7 +5,6 @@ import (
 	"io"
 	"net"
 
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/runconfig"
@@ -135,7 +134,7 @@ type ImageBuildOptions struct {
 	Dockerfile     string
 	Ulimits        []*ulimit.Ulimit
 	BuildArgs      []string
-	AuthConfigs    map[string]cliconfig.AuthConfig
+	AuthConfigs    map[string]AuthConfig
 	Context        io.Reader
 }
 

@@ -10,14 +10,15 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
 	"github.com/docker/distribution/registry/client/auth"
-	"github.com/tiborvass/docker/cliconfig"
+	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 	"golang.org/x/net/context"
 )
 
 func TestTokenPassThru(t *testing.T) {
-	authConfig := &cliconfig.AuthConfig{
+	authConfig := &types.AuthConfig{
 		RegistryToken: "mysecrettoken",
 	}
 	gotToken := false
@@ -57,7 +58,7 @@ func TestTokenPassThru(t *testing.T) {
 	}
 	n, _ := reference.ParseNamed("testremotename")
 	repoInfo := &registry.RepositoryInfo{
-		Index: &registry.IndexInfo{
+		Index: &registrytypes.IndexInfo{
 			Name:     "testrepo",
 			Mirrors:  nil,
 			Secure:   false,

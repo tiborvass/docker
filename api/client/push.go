@@ -9,7 +9,6 @@ import (
 	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/registry"
@@ -65,8 +64,8 @@ func (cli *DockerCli) CmdPush(args ...string) error {
 	return cli.imagePushPrivileged(authConfig, ref.Name(), tag, cli.out, requestPrivilege)
 }
 
-func (cli *DockerCli) imagePushPrivileged(authConfig cliconfig.AuthConfig, imageID, tag string, outputStream io.Writer, requestPrivilege lib.RequestPrivilegeFunc) error {
-	encodedAuth, err := authConfig.EncodeToBase64()
+func (cli *DockerCli) imagePushPrivileged(authConfig types.AuthConfig, imageID, tag string, outputStream io.Writer, requestPrivilege lib.RequestPrivilegeFunc) error {
+	encodedAuth, err := encodeAuthToBase64(authConfig)
 	if err != nil {
 		return err
 	}
