@@ -16,6 +16,7 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/builder/dockerignore"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -132,7 +133,7 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 
 	var excludes []string
 	if err == nil {
-		excludes, err = utils.ReadDockerIgnore(f)
+		excludes, err = dockerignore.ReadAll(f)
 		if err != nil {
 			return err
 		}
