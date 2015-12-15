@@ -5,10 +5,10 @@ import (
 	"text/tabwriter"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
 // CmdVolume is the parent subcommand for all volume commands

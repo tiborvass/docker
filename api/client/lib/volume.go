@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
+	"github.com/tiborvass/docker/api/types/filters"
 )
 
 // VolumeList returns the volumes configured in the docker host.

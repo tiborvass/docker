@@ -9,10 +9,10 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"golang.org/x/net/context"
 )
 
