@@ -20,11 +20,11 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/opts"
+	"github.com/tiborvass/docker/pkg/jsonlog"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/pidfile"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/pkg/tlsconfig"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
@@ -150,7 +150,7 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 		logrus.Warn("Running experimental build")
 	}
 
-	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: timeutils.RFC3339NanoFixed})
+	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: jsonlog.RFC3339NanoFixed})
 
 	if err := setDefaultUmask(); err != nil {
 		logrus.Fatalf("Failed to set umask: %v", err)
