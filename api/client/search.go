@@ -8,6 +8,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringutils"
@@ -83,7 +84,7 @@ func (cli *DockerCli) CmdSearch(args ...string) error {
 }
 
 // SearchResultsByStars sorts search results in descending order by number of stars.
-type searchResultsByStars []registry.SearchResult
+type searchResultsByStars []registrytypes.SearchResult
 
 func (r searchResultsByStars) Len() int           { return len(r) }
 func (r searchResultsByStars) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
