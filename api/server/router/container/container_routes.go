@@ -13,11 +13,11 @@ import (
 	"github.com/docker/distribution/registry/api/errcode"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
+	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/daemon"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/tiborvass/docker/pkg/timeutils"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 	"golang.org/x/net/context"
@@ -101,7 +101,7 @@ func (s *containerRouter) getContainersLogs(ctx context.Context, w http.Response
 
 	var since time.Time
 	if r.Form.Get("since") != "" {
-		s, n, err := timeutils.ParseTimestamps(r.Form.Get("since"), 0)
+		s, n, err := timetypes.ParseTimestamps(r.Form.Get("since"), 0)
 		if err != nil {
 			return err
 		}
