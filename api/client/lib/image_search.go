@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/registry"
+	"github.com/tiborvass/docker/api/types/registry"
 )
 
 // ImageSearch makes the docker host to search by a term in a remote registry.
