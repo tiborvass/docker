@@ -1,8 +1,9 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/volume"
 	"testing"
+
+	"github.com/tiborvass/docker/volume"
 )
 
 func TestParseVolumesFrom(t *testing.T) {
