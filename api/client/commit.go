@@ -5,12 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/registry"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -44,16 +43,13 @@ func (cli *DockerCli) CmdCommit(args ...string) error {
 		if err != nil {
 			return err
 		}
-		if err := registry.ValidateRepositoryName(ref); err != nil {
-			return err
-		}
 
 		repositoryName = ref.Name()
 
 		switch x := ref.(type) {
-		case reference.Digested:
+		case reference.Canonical:
 			return errors.New("cannot commit to digest reference")
-		case reference.Tagged:
+		case reference.NamedTagged:
 			tag = x.Tag()
 		}
 	}

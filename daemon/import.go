@@ -8,13 +8,13 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -90,7 +90,7 @@ func (daemon *Daemon) ImportImage(src string, newRef reference.Named, msg string
 		return err
 	}
 
-	// FIXME: connect with commit code and call tagstore directly
+	// FIXME: connect with commit code and call refstore directly
 	if newRef != nil {
 		if err := daemon.TagImage(newRef, id.String()); err != nil {
 			return err

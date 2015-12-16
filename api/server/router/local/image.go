@@ -12,7 +12,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
@@ -25,8 +24,8 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/ulimit"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
-	tagpkg "github.com/tiborvass/docker/tag"
 	"github.com/tiborvass/docker/utils"
 	"golang.org/x/net/context"
 )
@@ -155,8 +154,7 @@ func (s *router) postImagesCreate(ctx context.Context, w http.ResponseWriter, r 
 				return err
 			}
 
-			switch newRef.(type) {
-			case reference.Digested:
+			if _, isCanonical := newRef.(reference.Canonical); isCanonical {
 				return errors.New("cannot import digest reference")
 			}
 
@@ -497,13 +495,10 @@ func sanitizeRepoAndTags(names []string) ([]reference.Named, error) {
 		if err != nil {
 			return nil, err
 		}
+		ref = reference.WithDefaultTag(ref)
 
-		if _, isDigested := ref.(reference.Digested); isDigested {
-			return nil, errors.New("build tag cannot be a digest")
-		}
-
-		if _, isTagged := ref.(reference.Tagged); !isTagged {
-			ref, err = reference.WithTag(ref, tagpkg.DefaultTag)
+		if _, isCanonical := ref.(reference.Canonical); isCanonical {
+			return nil, errors.New("build tag cannot contain a digest")
 		}
 
 		nameWithTag := ref.String()

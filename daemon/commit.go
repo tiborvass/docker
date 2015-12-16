@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/dockerversion"
@@ -15,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
 )
 

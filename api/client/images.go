@@ -6,13 +6,13 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/reference"
 	"github.com/docker/go-units"
 )
 
@@ -98,9 +98,9 @@ func (cli *DockerCli) CmdImages(args ...string) error {
 				repo = ref.Name()
 
 				switch x := ref.(type) {
-				case reference.Digested:
+				case reference.Canonical:
 					digest = x.Digest().String()
-				case reference.Tagged:
+				case reference.NamedTagged:
 					tag = x.Tag()
 				}
 			}

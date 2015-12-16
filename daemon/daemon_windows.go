@@ -9,13 +9,12 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
-	"github.com/tiborvass/docker/tag"
+	"github.com/tiborvass/docker/reference"
 	// register the windows graph driver
 	"github.com/tiborvass/docker/daemon/graphdriver/windows"
 	"github.com/tiborvass/docker/pkg/system"
@@ -153,7 +152,7 @@ func (daemon *Daemon) conditionalUnmountOnCleanup(container *container.Container
 	}
 }
 
-func restoreCustomImage(driver graphdriver.Driver, is image.Store, ls layer.Store, ts tag.Store) error {
+func restoreCustomImage(driver graphdriver.Driver, is image.Store, ls layer.Store, rs reference.Store) error {
 	if wd, ok := driver.(*windows.Driver); ok {
 		imageInfos, err := wd.GetCustomImageInfos()
 		if err != nil {
@@ -206,7 +205,7 @@ func restoreCustomImage(driver graphdriver.Driver, is image.Store, ls layer.Stor
 				return err
 			}
 
-			if err := ts.AddTag(ref, id, true); err != nil {
+			if err := rs.AddTag(ref, id, true); err != nil {
 				return err
 			}
 

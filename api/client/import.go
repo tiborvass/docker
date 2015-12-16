@@ -5,14 +5,13 @@ import (
 	"io"
 	"os"
 
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/urlutil"
-	"github.com/tiborvass/docker/registry"
+	"github.com/tiborvass/docker/reference"
 )
 
 // CmdImport creates an empty filesystem image, imports the contents of the tarball into the image, and optionally tags the image.
@@ -45,11 +44,7 @@ func (cli *DockerCli) CmdImport(args ...string) error {
 
 	if repository != "" {
 		//Check if the given image name can be resolved
-		ref, err := reference.ParseNamed(repository)
-		if err != nil {
-			return err
-		}
-		if err := registry.ValidateRepositoryName(ref); err != nil {
+		if _, err := reference.ParseNamed(repository); err != nil {
 			return err
 		}
 	}
@@ -64,7 +59,6 @@ func (cli *DockerCli) CmdImport(args ...string) error {
 		}
 		defer file.Close()
 		in = file
-
 	}
 
 	options := types.ImageImportOptions{

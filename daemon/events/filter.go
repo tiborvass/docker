@@ -1,9 +1,9 @@
 package events
 
 import (
-	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
+	"github.com/tiborvass/docker/reference"
 )
 
 // Filter can filter out docker events from a stream
