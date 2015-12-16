@@ -24,7 +24,6 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/daemon"
-	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -403,11 +402,11 @@ func containsWildcards(name string) bool {
 	return false
 }
 
-func (b *Builder) processImageFrom(img *image.Image) error {
-	b.image = img.ID().String()
+func (b *Builder) processImageFrom(img builder.Image) error {
+	b.image = img.ID()
 
 	if img.Config != nil {
-		b.runConfig = img.Config
+		b.runConfig = img.Config()
 	}
 
 	// The default path will be blank on Windows (set by HCS)
