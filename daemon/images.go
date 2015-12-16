@@ -7,9 +7,9 @@ import (
 
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
 var acceptedImageFilterTags = map[string]bool{
@@ -31,7 +31,7 @@ func (daemon *Daemon) Map() map[image.ID]*image.Image {
 }
 
 // Images returns a filtered list of images. filterArgs is a JSON-encoded set
-// of filter arguments which will be interpreted by pkg/parsers/filters.
+// of filter arguments which will be interpreted by api/types/filters.
 // filter is a shell glob string applied to repository names. The argument
 // named all controls whether all images in the graph are filtered, or just
 // the heads.

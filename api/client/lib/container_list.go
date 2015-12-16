@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
+	"github.com/tiborvass/docker/api/types/filters"
 )
 
 // ContainerList returns the list of containers in the docker host.

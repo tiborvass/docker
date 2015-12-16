@@ -8,11 +8,11 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/nat"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
 // iterationAction represents possible outcomes happening during the container iteration.

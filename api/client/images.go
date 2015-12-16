@@ -8,10 +8,10 @@ import (
 
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/units"
 )

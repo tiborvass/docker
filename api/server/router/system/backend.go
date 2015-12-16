@@ -2,8 +2,8 @@ package system
 
 import (
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
 // Backend is the methods that need to be implemented to provide

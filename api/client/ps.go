@@ -3,10 +3,10 @@ package client
 import (
 	"github.com/tiborvass/docker/api/client/ps"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/pkg/parsers/filters"
 )
 
 // CmdPs outputs a list of Docker containers.
