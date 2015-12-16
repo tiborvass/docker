@@ -19,7 +19,6 @@ import (
 	"github.com/tiborvass/docker/layer"
 	pblkiodev "github.com/tiborvass/docker/pkg/blkiodev"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/runconfig"
@@ -648,7 +647,7 @@ func (daemon *Daemon) registerLinks(container *container.Container, hostConfig *
 	}
 
 	for _, l := range hostConfig.Links {
-		name, alias, err := parsers.ParseLink(l)
+		name, alias, err := runconfig.ParseLink(l)
 		if err != nil {
 			return err
 		}
