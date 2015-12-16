@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 // ReadMemInfo retrieves memory statistics of the host system and returns a

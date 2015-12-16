@@ -15,7 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/devicemapper"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 func init() {

@@ -13,7 +13,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 // CmdImages lists the images in a specified repository, or all top-level images if no repository is specified.

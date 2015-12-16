@@ -12,8 +12,8 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/tiborvass/docker/pkg/units"
 	"github.com/tiborvass/docker/volume"
+	"github.com/docker/go-units"
 )
 
 var (
