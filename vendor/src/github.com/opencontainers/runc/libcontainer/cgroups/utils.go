@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 const cgroupNamePrefix = "name="
