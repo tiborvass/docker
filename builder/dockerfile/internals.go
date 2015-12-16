@@ -23,7 +23,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
-	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -188,7 +187,7 @@ func (b *Builder) runContextCommand(args []string, allowRemote bool, allowLocalD
 		return nil
 	}
 
-	container, err := b.docker.ContainerCreate(&daemon.ContainerCreateConfig{Config: b.runConfig})
+	container, err := b.docker.ContainerCreate(types.ContainerCreateConfig{Config: b.runConfig})
 	if err != nil {
 		return err
 	}
@@ -507,7 +506,7 @@ func (b *Builder) create() (string, error) {
 	config := *b.runConfig
 
 	// Create the container
-	c, err := b.docker.ContainerCreate(&daemon.ContainerCreateConfig{
+	c, err := b.docker.ContainerCreate(types.ContainerCreateConfig{
 		Config:     b.runConfig,
 		HostConfig: hostConfig,
 	})
