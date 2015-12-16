@@ -3,8 +3,9 @@
 package overlay
 
 import (
-	"github.com/tiborvass/docker/daemon/graphdriver/graphtest"
 	"testing"
+
+	"github.com/tiborvass/docker/daemon/graphdriver/graphtest"
 )
 
 // This avoids creating a new driver for each test if all tests are run

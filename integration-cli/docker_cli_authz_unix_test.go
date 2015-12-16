@@ -5,15 +5,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tiborvass/docker/pkg/authorization"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/tiborvass/docker/pkg/plugins"
-	"github.com/go-check/check"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
+
+	"github.com/tiborvass/docker/pkg/authorization"
+	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/pkg/plugins"
+	"github.com/go-check/check"
 )
 
 const testAuthZPlugin = "authzplugin"
