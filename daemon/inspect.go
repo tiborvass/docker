@@ -10,7 +10,6 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/network"
-	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/version"
 )
 
@@ -164,17 +163,7 @@ func (daemon *Daemon) getInspectData(container *container.Container, size bool) 
 
 	contJSONBase.GraphDriver.Name = container.Driver
 
-	image, err := daemon.imageStore.Get(container.ImageID)
-	if err != nil {
-		return nil, err
-	}
-	l, err := daemon.layerStore.Get(image.RootFS.ChainID())
-	if err != nil {
-		return nil, err
-	}
-	defer layer.ReleaseAndLog(daemon.layerStore, l)
-
-	graphDriverData, err := l.Metadata()
+	graphDriverData, err := daemon.layerStore.Metadata(container.ID)
 	if err != nil {
 		return nil, err
 	}
