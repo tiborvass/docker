@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 // Name is the name of the file that the jsonlogger logs to.

@@ -11,7 +11,7 @@ import (
 
 	"github.com/tiborvass/docker/pkg/blkiodev"
 	"github.com/tiborvass/docker/pkg/parsers"
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 var (

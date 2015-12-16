@@ -10,7 +10,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/tiborvass/docker/pkg/units"
+	"github.com/docker/go-units"
 )
 
 const (
