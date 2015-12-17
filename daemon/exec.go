@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/promise"
-	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/runconfig"
 )
 
@@ -85,8 +85,8 @@ func (d *Daemon) ContainerExecCreate(config *runconfig.ExecConfig) (string, erro
 		return "", err
 	}
 
-	cmd := stringutils.NewStrSlice(config.Cmd...)
-	entrypoint, args := d.getEntrypointAndArgs(stringutils.NewStrSlice(), cmd)
+	cmd := strslice.New(config.Cmd...)
+	entrypoint, args := d.getEntrypointAndArgs(strslice.New(), cmd)
 
 	processConfig := &execdriver.ProcessConfig{
 		CommonProcessConfig: execdriver.CommonProcessConfig{
