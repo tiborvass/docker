@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
@@ -15,14 +16,13 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/reference"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 // ImportImage imports an image, getting the archived layer data either from
 // inConfig (if src is "-"), or from a URI specified in src. Progress output is
 // written to outStream. Repository and tag names can optionally be given in
 // the repo and tag arguments, respectively.
-func (daemon *Daemon) ImportImage(src string, newRef reference.Named, msg string, inConfig io.ReadCloser, outStream io.Writer, config *runconfig.Config) error {
+func (daemon *Daemon) ImportImage(src string, newRef reference.Named, msg string, inConfig io.ReadCloser, outStream io.Writer, config *container.Config) error {
 	var (
 		sf      = streamformatter.NewJSONStreamFormatter()
 		archive io.ReadCloser

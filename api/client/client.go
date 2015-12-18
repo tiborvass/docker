@@ -9,9 +9,9 @@ import (
 
 	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/registry"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 // apiClient is an interface that clients that talk with a docker server must implement.
@@ -19,7 +19,7 @@ type apiClient interface {
 	ClientVersion() string
 	ContainerAttach(options types.ContainerAttachOptions) (types.HijackedResponse, error)
 	ContainerCommit(options types.ContainerCommitOptions) (types.ContainerCommitResponse, error)
-	ContainerCreate(config *runconfig.ContainerConfigWrapper, containerName string) (types.ContainerCreateResponse, error)
+	ContainerCreate(config *container.Config, hostConfig *container.HostConfig, containerName string) (types.ContainerCreateResponse, error)
 	ContainerDiff(containerID string) ([]types.ContainerChange, error)
 	ContainerExecAttach(execID string, config types.ExecConfig) (types.HijackedResponse, error)
 	ContainerExecCreate(config types.ExecConfig) (types.ContainerExecCreateResponse, error)

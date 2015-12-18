@@ -4,13 +4,14 @@ import (
 	"runtime"
 
 	"github.com/Sirupsen/logrus"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/runconfig"
 )
 
 // ContainerStart starts a container.
-func (daemon *Daemon) ContainerStart(name string, hostConfig *runconfig.HostConfig) error {
+func (daemon *Daemon) ContainerStart(name string, hostConfig *containertypes.HostConfig) error {
 	container, err := daemon.GetContainer(name)
 	if err != nil {
 		return err

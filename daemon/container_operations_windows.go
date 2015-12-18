@@ -7,6 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/tiborvass/docker/daemon/execdriver/windows"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/layer"
 	"github.com/docker/libnetwork"
@@ -103,6 +104,16 @@ func (daemon *Daemon) populateCommand(c *container.Container, env []string) erro
 	}
 	layerFolder := m["dir"]
 
+	var hvPartition bool
+	// Work out the isolation (whether it is a hypervisor partition)
+	if c.HostConfig.Isolation.IsDefault() {
+		// Not specified by caller. Take daemon default
+		hvPartition = windows.DefaultIsolation.IsHyperV()
+	} else {
+		// Take value specified by caller
+		hvPartition = c.HostConfig.Isolation.IsHyperV()
+	}
+
 	c.Command = &execdriver.Command{
 		CommonCommand: execdriver.CommonCommand{
 			ID:            c.ID,
@@ -119,8 +130,9 @@ func (daemon *Daemon) populateCommand(c *container.Container, env []string) erro
 		LayerFolder: layerFolder,
 		LayerPaths:  layerPaths,
 		Hostname:    c.Config.Hostname,
-		Isolation:   c.HostConfig.Isolation,
+		Isolation:   string(c.HostConfig.Isolation),
 		ArgsEscaped: c.Config.ArgsEscaped,
+		HvPartition: hvPartition,
 	}
 
 	return nil

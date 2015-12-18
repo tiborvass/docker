@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/version"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 // execBackend includes functions to implement to provide exec functionality.
@@ -39,7 +39,7 @@ type stateBackend interface {
 	ContainerResize(name string, height, width int) error
 	ContainerRestart(name string, seconds int) error
 	ContainerRm(name string, config *types.ContainerRmConfig) error
-	ContainerStart(name string, hostConfig *runconfig.HostConfig) error
+	ContainerStart(name string, hostConfig *container.HostConfig) error
 	ContainerStop(name string, seconds int) error
 	ContainerUnpause(name string) error
 	ContainerWait(name string, timeout time.Duration) (int, error)

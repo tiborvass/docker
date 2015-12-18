@@ -4,10 +4,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/version"
-	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/go-connections/nat"
 )
 
@@ -103,10 +103,10 @@ type ImageInspect struct {
 	Comment         string
 	Created         string
 	Container       string
-	ContainerConfig *runconfig.Config
+	ContainerConfig *container.Config
 	DockerVersion   string
 	Author          string
-	Config          *runconfig.Config
+	Config          *container.Config
 	Architecture    string
 	Os              string
 	Size            int64
@@ -283,7 +283,7 @@ type ContainerJSONBase struct {
 	ProcessLabel    string
 	AppArmorProfile string
 	ExecIDs         []string
-	HostConfig      *runconfig.HostConfig
+	HostConfig      *container.HostConfig
 	GraphDriver     GraphDriverData
 	SizeRw          *int64 `json:",omitempty"`
 	SizeRootFs      *int64 `json:",omitempty"`
@@ -293,7 +293,7 @@ type ContainerJSONBase struct {
 type ContainerJSON struct {
 	*ContainerJSONBase
 	Mounts          []MountPoint
-	Config          *runconfig.Config
+	Config          *container.Config
 	NetworkSettings *NetworkSettings
 }
 

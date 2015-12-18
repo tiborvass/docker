@@ -6,17 +6,17 @@ import (
 	"os"
 	"path/filepath"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 
 // createContainerPlatformSpecificSettings performs platform specific container create functionality
-func (daemon *Daemon) createContainerPlatformSpecificSettings(container *container.Container, config *runconfig.Config, hostConfig *runconfig.HostConfig, img *image.Image) error {
+func (daemon *Daemon) createContainerPlatformSpecificSettings(container *container.Container, config *containertypes.Config, hostConfig *containertypes.HostConfig, img *image.Image) error {
 	if err := daemon.Mount(container); err != nil {
 		return err
 	}

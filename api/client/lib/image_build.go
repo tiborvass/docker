@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/runconfig"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/docker/go-units"
 )
 
@@ -73,7 +73,7 @@ func imageBuildOptionsToQuery(options types.ImageBuildOptions) (url.Values, erro
 		query.Set("pull", "1")
 	}
 
-	if !runconfig.IsolationLevel.IsDefault(runconfig.IsolationLevel(options.Isolation)) {
+	if !container.IsolationLevel.IsDefault(container.IsolationLevel(options.Isolation)) {
 		query.Set("isolation", options.Isolation)
 	}
 

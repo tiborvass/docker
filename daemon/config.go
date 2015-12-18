@@ -1,9 +1,9 @@
 package daemon
 
 import (
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 const (
@@ -27,7 +27,7 @@ type CommonConfig struct {
 	GraphDriver   string
 	GraphOptions  []string
 	Labels        []string
-	LogConfig     runconfig.LogConfig
+	LogConfig     container.LogConfig
 	Mtu           int
 	Pidfile       string
 	RemappedRoot  string

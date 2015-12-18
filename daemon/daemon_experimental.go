@@ -9,9 +9,9 @@ import (
 	"runtime"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/pkg/directory"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 func setupRemappedRoot(config *Config) ([]idtools.IDMap, []idtools.IDMap, error) {
@@ -99,7 +99,7 @@ func setupDaemonRoot(config *Config, rootDir string, rootUID, rootGID int) error
 	return nil
 }
 
-func (daemon *Daemon) verifyExperimentalContainerSettings(hostConfig *runconfig.HostConfig, config *runconfig.Config) ([]string, error) {
+func (daemon *Daemon) verifyExperimentalContainerSettings(hostConfig *container.HostConfig, config *container.Config) ([]string, error) {
 	if hostConfig.Privileged && daemon.configStore.RemappedRoot != "" {
 		return nil, fmt.Errorf("Privileged mode is incompatible with user namespace mappings")
 	}
