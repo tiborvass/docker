@@ -3,7 +3,7 @@ package opts
 import (
 	"fmt"
 
-	"github.com/tiborvass/docker/pkg/blkiodev"
+	"github.com/tiborvass/docker/api/types/blkiodev"
 )
 
 // WeightdeviceOpt defines a map of WeightDevices

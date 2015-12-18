@@ -12,12 +12,12 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
+	pblkiodev "github.com/tiborvass/docker/api/types/blkiodev"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
-	pblkiodev "github.com/tiborvass/docker/pkg/blkiodev"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/sysinfo"
