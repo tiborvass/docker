@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/tiborvass/docker/api/client/ps"
+	"github.com/tiborvass/docker/api/client/formatter"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	Cli "github.com/tiborvass/docker/cli"
@@ -70,15 +70,18 @@ func (cli *DockerCli) CmdPs(args ...string) error {
 		}
 	}
 
-	psCtx := ps.Context{
-		Output: cli.out,
-		Format: f,
-		Quiet:  *quiet,
-		Size:   *size,
-		Trunc:  !*noTrunc,
+	psCtx := formatter.ContainerContext{
+		Context: formatter.Context{
+			Output: cli.out,
+			Format: f,
+			Quiet:  *quiet,
+			Trunc:  !*noTrunc,
+		},
+		Size:       *size,
+		Containers: containers,
 	}
 
-	ps.Format(psCtx, containers)
+	psCtx.Write()
 
 	return nil
 }
