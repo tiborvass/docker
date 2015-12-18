@@ -20,8 +20,8 @@ import (
 
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork/resolvconf"
 	"github.com/go-check/check"
 )

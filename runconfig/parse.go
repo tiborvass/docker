@@ -10,10 +10,10 @@ import (
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/volume"
+	"github.com/docker/go-connections/nat"
 	"github.com/docker/go-units"
 )
 

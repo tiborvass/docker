@@ -6,8 +6,8 @@ import (
 	"io"
 
 	"github.com/tiborvass/docker/api/types/strslice"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/volume"
+	"github.com/docker/go-connections/nat"
 )
 
 // Config contains the configuration data about a container.

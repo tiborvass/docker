@@ -22,10 +22,10 @@ import (
 	"github.com/tiborvass/docker/builder"
 	derr "github.com/tiborvass/docker/errors"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/go-connections/nat"
 )
 
 const (

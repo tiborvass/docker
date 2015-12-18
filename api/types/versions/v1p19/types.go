@@ -4,8 +4,8 @@ package v1p19
 import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/go-connections/nat"
 )
 
 // ContainerJSON is a backcompatibility struct for APIs prior to 1.20.

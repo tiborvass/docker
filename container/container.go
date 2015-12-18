@@ -19,12 +19,12 @@ import (
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/volume"
+	"github.com/docker/go-connections/nat"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 

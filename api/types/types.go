@@ -6,9 +6,9 @@ import (
 
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/registry"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/go-connections/nat"
 )
 
 // ContainerCreateResponse contains the information returned to a client on the

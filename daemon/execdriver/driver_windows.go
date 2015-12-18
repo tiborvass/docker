@@ -1,8 +1,8 @@
 package execdriver
 
 import (
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/go-connections/nat"
 )
 
 // Mount contains information for a mount operation.

@@ -5,7 +5,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/tiborvass/docker/pkg/nat"
+	"github.com/docker/go-connections/nat"
 )
 
 // Link struct holds informations about parent/child linked container
