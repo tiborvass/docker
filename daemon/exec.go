@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
@@ -13,7 +14,6 @@ import (
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/promise"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 func (d *Daemon) registerExecCommand(container *container.Container, config *exec.Config) {
@@ -79,7 +79,7 @@ func (d *Daemon) getActiveContainer(name string) (*container.Container, error) {
 }
 
 // ContainerExecCreate sets up an exec in a running container.
-func (d *Daemon) ContainerExecCreate(config *runconfig.ExecConfig) (string, error) {
+func (d *Daemon) ContainerExecCreate(config *types.ExecConfig) (string, error) {
 	container, err := d.getActiveContainer(config.Container)
 	if err != nil {
 		return "", err
