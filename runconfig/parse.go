@@ -12,6 +12,7 @@ import (
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/signal"
+	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/tiborvass/docker/volume"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/go-units"
@@ -63,7 +64,7 @@ func Parse(cmd *flag.FlagSet, args []string) (*container.Config, *container.Host
 		flLabels            = opts.NewListOpts(opts.ValidateEnv)
 		flDevices           = opts.NewListOpts(ValidateDevice)
 
-		flUlimits = opts.NewUlimitOpt(nil)
+		flUlimits = runconfigopts.NewUlimitOpt(nil)
 
 		flPublish           = opts.NewListOpts(nil)
 		flExpose            = opts.NewListOpts(nil)

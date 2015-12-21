@@ -27,9 +27,9 @@ import (
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
-	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/reference"
+	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/tiborvass/docker/utils"
 	"github.com/docker/go-units"
 )
@@ -62,8 +62,8 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 	cmd.Var(&flBuildArg, []string{"-build-arg"}, "Set build-time variables")
 	isolation := cmd.String([]string{"-isolation"}, "", "Container isolation level")
 
-	ulimits := make(map[string]*ulimit.Ulimit)
-	flUlimits := opts.NewUlimitOpt(&ulimits)
+	ulimits := make(map[string]*units.Ulimit)
+	flUlimits := runconfigopts.NewUlimitOpt(&ulimits)
 	cmd.Var(flUlimits, []string{"-ulimit"}, "Ulimit options")
 
 	cmd.Require(flag.Exact, 1)
