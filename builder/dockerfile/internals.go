@@ -21,6 +21,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -30,14 +32,12 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/pkg/urlutil"
-	"github.com/tiborvass/docker/runconfig"
 )
 
-func (b *Builder) commit(id string, autoCmd *stringutils.StrSlice, comment string) error {
+func (b *Builder) commit(id string, autoCmd *strslice.StrSlice, comment string) error {
 	if b.disableCommit {
 		return nil
 	}
@@ -48,11 +48,11 @@ func (b *Builder) commit(id string, autoCmd *stringutils.StrSlice, comment strin
 	if id == "" {
 		cmd := b.runConfig.Cmd
 		if runtime.GOOS != "windows" {
-			b.runConfig.Cmd = stringutils.NewStrSlice("/bin/sh", "-c", "#(nop) "+comment)
+			b.runConfig.Cmd = strslice.New("/bin/sh", "-c", "#(nop) "+comment)
 		} else {
-			b.runConfig.Cmd = stringutils.NewStrSlice("cmd", "/S /C", "REM (nop) "+comment)
+			b.runConfig.Cmd = strslice.New("cmd", "/S /C", "REM (nop) "+comment)
 		}
-		defer func(cmd *stringutils.StrSlice) { b.runConfig.Cmd = cmd }(cmd)
+		defer func(cmd *strslice.StrSlice) { b.runConfig.Cmd = cmd }(cmd)
 
 		hit, err := b.probeCache()
 		if err != nil {
@@ -171,11 +171,11 @@ func (b *Builder) runContextCommand(args []string, allowRemote bool, allowLocalD
 
 	cmd := b.runConfig.Cmd
 	if runtime.GOOS != "windows" {
-		b.runConfig.Cmd = stringutils.NewStrSlice("/bin/sh", "-c", fmt.Sprintf("#(nop) %s %s in %s", cmdName, srcHash, dest))
+		b.runConfig.Cmd = strslice.New("/bin/sh", "-c", fmt.Sprintf("#(nop) %s %s in %s", cmdName, srcHash, dest))
 	} else {
-		b.runConfig.Cmd = stringutils.NewStrSlice("cmd", "/S", "/C", fmt.Sprintf("REM (nop) %s %s in %s", cmdName, srcHash, dest))
+		b.runConfig.Cmd = strslice.New("cmd", "/S", "/C", fmt.Sprintf("REM (nop) %s %s in %s", cmdName, srcHash, dest))
 	}
-	defer func(cmd *stringutils.StrSlice) { b.runConfig.Cmd = cmd }(cmd)
+	defer func(cmd *strslice.StrSlice) { b.runConfig.Cmd = cmd }(cmd)
 
 	if hit, err := b.probeCache(); err != nil {
 		return err
@@ -476,7 +476,7 @@ func (b *Builder) create() (string, error) {
 	}
 	b.runConfig.Image = b.image
 
-	resources := runconfig.Resources{
+	resources := container.Resources{
 		CgroupParent: b.CgroupParent,
 		CPUShares:    b.CPUShares,
 		CPUPeriod:    b.CPUPeriod,
@@ -489,7 +489,7 @@ func (b *Builder) create() (string, error) {
 	}
 
 	// TODO: why not embed a hostconfig in builder?
-	hostConfig := &runconfig.HostConfig{
+	hostConfig := &container.HostConfig{
 		Isolation: b.Isolation,
 		ShmSize:   b.ShmSize,
 		Resources: resources,

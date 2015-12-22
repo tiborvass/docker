@@ -11,6 +11,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/image"
@@ -21,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 // Docker implements builder.Backend for the docker Daemon object.
@@ -182,7 +182,7 @@ func (d Docker) BuilderCopy(cID string, destPath string, src builder.FileInfo, d
 
 // GetCachedImage returns a reference to a cached image whose parent equals `parent`
 // and runconfig equals `cfg`. A cache miss is expected to return an empty ID and a nil error.
-func (d Docker) GetCachedImage(imgID string, cfg *runconfig.Config) (string, error) {
+func (d Docker) GetCachedImage(imgID string, cfg *container.Config) (string, error) {
 	cache, err := d.Daemon.ImageGetCached(image.ID(imgID), cfg)
 	if cache == nil || err != nil {
 		return "", err

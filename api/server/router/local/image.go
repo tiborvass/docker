@@ -12,6 +12,7 @@ import (
 	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -43,7 +44,7 @@ func (s *router) postCommit(ctx context.Context, w http.ResponseWriter, r *http.
 		return err
 	}
 	if c == nil {
-		c = &runconfig.Config{}
+		c = &container.Config{}
 	}
 
 	if !s.daemon.Exists(cname) {
@@ -162,8 +163,8 @@ func (s *router) postImagesCreate(ctx context.Context, w http.ResponseWriter, r 
 		// 'err' MUST NOT be defined within this block, we need any error
 		// generated from the download to be available to the output
 		// stream processing below
-		var newConfig *runconfig.Config
-		newConfig, err = dockerfile.BuildFromConfig(&runconfig.Config{}, r.Form["changes"])
+		var newConfig *container.Config
+		newConfig, err = dockerfile.BuildFromConfig(&container.Config{}, r.Form["changes"])
 		if err != nil {
 			return err
 		}

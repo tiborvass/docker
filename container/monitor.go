@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -51,7 +51,7 @@ type containerMonitor struct {
 	container *Container
 
 	// restartPolicy is the current policy being applied to the container monitor
-	restartPolicy runconfig.RestartPolicy
+	restartPolicy container.RestartPolicy
 
 	// failureCount is the number of times the container has failed to
 	// start in a row
@@ -79,7 +79,7 @@ type containerMonitor struct {
 
 // StartMonitor initializes a containerMonitor for this container with the provided supervisor and restart policy
 // and starts the container's process.
-func (container *Container) StartMonitor(s supervisor, policy runconfig.RestartPolicy) error {
+func (container *Container) StartMonitor(s supervisor, policy container.RestartPolicy) error {
 	container.monitor = &containerMonitor{
 		supervisor:    s,
 		container:     container,

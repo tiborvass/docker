@@ -21,8 +21,10 @@ import (
 	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/filters"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/exec"
@@ -48,12 +50,10 @@ import (
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
-	"github.com/tiborvass/docker/pkg/nat"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
@@ -64,6 +64,7 @@ import (
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
 	"github.com/tiborvass/docker/volume/store"
+	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork"
 	lntypes "github.com/docker/libnetwork/types"
 	"github.com/docker/libtrust"
@@ -148,7 +149,7 @@ type Daemon struct {
 	driver                    graphdriver.Driver
 	execDriver                execdriver.Driver
 	statsCollector            *statsCollector
-	defaultLogConfig          runconfig.LogConfig
+	defaultLogConfig          containertypes.LogConfig
 	RegistryService           *registry.Service
 	EventsService             *events.Events
 	netController             libnetwork.NetworkController
@@ -390,7 +391,7 @@ func (daemon *Daemon) restore() error {
 	return nil
 }
 
-func (daemon *Daemon) mergeAndVerifyConfig(config *runconfig.Config, img *image.Image) error {
+func (daemon *Daemon) mergeAndVerifyConfig(config *containertypes.Config, img *image.Image) error {
 	if img != nil && img.Config != nil {
 		if err := runconfig.Merge(config, img.Config); err != nil {
 			return err
@@ -472,14 +473,14 @@ func (daemon *Daemon) generateNewName(id string) (string, error) {
 	return name, nil
 }
 
-func (daemon *Daemon) generateHostname(id string, config *runconfig.Config) {
+func (daemon *Daemon) generateHostname(id string, config *containertypes.Config) {
 	// Generate default hostname
 	if config.Hostname == "" {
 		config.Hostname = id[:12]
 	}
 }
 
-func (daemon *Daemon) getEntrypointAndArgs(configEntrypoint *stringutils.StrSlice, configCmd *stringutils.StrSlice) (string, []string) {
+func (daemon *Daemon) getEntrypointAndArgs(configEntrypoint *strslice.StrSlice, configCmd *strslice.StrSlice) (string, []string) {
 	cmdSlice := configCmd.Slice()
 	if configEntrypoint.Len() != 0 {
 		eSlice := configEntrypoint.Slice()
@@ -488,7 +489,7 @@ func (daemon *Daemon) getEntrypointAndArgs(configEntrypoint *stringutils.StrSlic
 	return cmdSlice[0], cmdSlice[1:]
 }
 
-func (daemon *Daemon) newContainer(name string, config *runconfig.Config, imgID image.ID) (*container.Container, error) {
+func (daemon *Daemon) newContainer(name string, config *containertypes.Config, imgID image.ID) (*container.Container, error) {
 	var (
 		id             string
 		err            error
@@ -507,7 +508,7 @@ func (daemon *Daemon) newContainer(name string, config *runconfig.Config, imgID 
 	base.Path = entrypoint
 	base.Args = args //FIXME: de-duplicate from config
 	base.Config = config
-	base.HostConfig = &runconfig.HostConfig{}
+	base.HostConfig = &containertypes.HostConfig{}
 	base.ImageID = imgID
 	base.NetworkSettings = &network.Settings{IsAnonymousEndpoint: noExplicitName}
 	base.Name = name
@@ -1366,7 +1367,7 @@ func (daemon *Daemon) GetRemappedUIDGID() (int, int) {
 // of the image with imgID, that had the same config when it was
 // created. nil is returned if a child cannot be found. An error is
 // returned if the parent image cannot be found.
-func (daemon *Daemon) ImageGetCached(imgID image.ID, config *runconfig.Config) (*image.Image, error) {
+func (daemon *Daemon) ImageGetCached(imgID image.ID, config *containertypes.Config) (*image.Image, error) {
 	// Retrieve all images
 	imgs := daemon.Map()
 
@@ -1402,7 +1403,7 @@ func tempDir(rootDir string, rootUID, rootGID int) (string, error) {
 	return tmpDir, idtools.MkdirAllAs(tmpDir, 0700, rootUID, rootGID)
 }
 
-func (daemon *Daemon) setHostConfig(container *container.Container, hostConfig *runconfig.HostConfig) error {
+func (daemon *Daemon) setHostConfig(container *container.Container, hostConfig *containertypes.HostConfig) error {
 	container.Lock()
 	if err := parseSecurityOpt(container, hostConfig); err != nil {
 		container.Unlock()
@@ -1444,7 +1445,7 @@ func setDefaultMtu(config *Config) {
 
 // verifyContainerSettings performs validation of the hostconfig and config
 // structures.
-func (daemon *Daemon) verifyContainerSettings(hostConfig *runconfig.HostConfig, config *runconfig.Config) ([]string, error) {
+func (daemon *Daemon) verifyContainerSettings(hostConfig *containertypes.HostConfig, config *containertypes.Config) ([]string, error) {
 
 	// First perform verification of settings common across all platforms.
 	if config != nil {

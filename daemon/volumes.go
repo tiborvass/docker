@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	derr "github.com/tiborvass/docker/errors"
-	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
@@ -71,7 +71,7 @@ func (m mounts) parts(i int) int {
 // 2. Select the volumes mounted from another containers. Overrides previously configured mount point destination.
 // 3. Select the bind mounts set by the client. Overrides previously configured mount point destinations.
 // 4. Cleanup old volumes that are about to be reassigned.
-func (daemon *Daemon) registerMountPoints(container *container.Container, hostConfig *runconfig.HostConfig) error {
+func (daemon *Daemon) registerMountPoints(container *container.Container, hostConfig *containertypes.HostConfig) error {
 	binds := map[string]bool{}
 	mountPoints := map[string]*volume.MountPoint{}
 

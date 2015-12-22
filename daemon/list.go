@@ -12,7 +12,7 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/graphdb"
-	"github.com/tiborvass/docker/pkg/nat"
+	"github.com/docker/go-connections/nat"
 )
 
 // iterationAction represents possible outcomes happening during the container iteration.

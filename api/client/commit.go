@@ -6,11 +6,11 @@ import (
 	"fmt"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reference"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 // CmdCommit creates a new image from a container's changes.
@@ -54,9 +54,9 @@ func (cli *DockerCli) CmdCommit(args ...string) error {
 		}
 	}
 
-	var config *runconfig.Config
+	var config *container.Config
 	if *flConfig != "" {
-		config = &runconfig.Config{}
+		config = &container.Config{}
 		if err := json.Unmarshal([]byte(*flConfig), config); err != nil {
 			return err
 		}

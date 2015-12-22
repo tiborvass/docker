@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tiborvass/docker/pkg/nat"
+	"github.com/docker/go-connections/nat"
 )
 
 // Just to make life easier

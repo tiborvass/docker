@@ -1,8 +1,8 @@
 package daemonbuilder
 
 import (
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/image"
-	"github.com/tiborvass/docker/runconfig"
 )
 
 type imgWrap struct {
@@ -13,6 +13,6 @@ func (img imgWrap) ID() string {
 	return string(img.inner.ID())
 }
 
-func (img imgWrap) Config() *runconfig.Config {
+func (img imgWrap) Config() *container.Config {
 	return img.inner.Config
 }
