@@ -23,9 +23,9 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
-	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/go-units"
 	"golang.org/x/net/context"
 )
 
@@ -151,7 +151,7 @@ func (br *buildRouter) postBuild(ctx context.Context, w http.ResponseWriter, r *
 		buildConfig.Isolation = i
 	}
 
-	var buildUlimits = []*ulimit.Ulimit{}
+	var buildUlimits = []*units.Ulimit{}
 	ulimitsJSON := r.FormValue("ulimits")
 	if ulimitsJSON != "" {
 		if err := json.NewDecoder(strings.NewReader(ulimitsJSON)).Decode(&buildUlimits); err != nil {

@@ -24,8 +24,8 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/ulimit"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/go-units"
 	"github.com/docker/libnetwork"
 	"github.com/docker/libnetwork/netlabel"
 	"github.com/docker/libnetwork/options"
@@ -146,11 +146,11 @@ func (daemon *Daemon) populateCommand(c *container.Container, env []string) erro
 
 	autoCreatedDevices := mergeDevices(configs.DefaultAutoCreatedDevices, userSpecifiedDevices)
 
-	var rlimits []*ulimit.Rlimit
+	var rlimits []*units.Rlimit
 	ulimits := c.HostConfig.Ulimits
 
 	// Merge ulimits with daemon defaults
-	ulIdx := make(map[string]*ulimit.Ulimit)
+	ulIdx := make(map[string]*units.Ulimit)
 	for _, ul := range ulimits {
 		ulIdx[ul.Name] = ul
 	}
