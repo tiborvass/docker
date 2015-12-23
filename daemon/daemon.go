@@ -30,7 +30,8 @@ import (
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/execdriver/execdrivers"
-	_ "github.com/tiborvass/docker/daemon/graphdriver/vfs" // register vfs
+	// register graph drivers
+	_ "github.com/tiborvass/docker/daemon/graphdriver/register"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/distribution"
