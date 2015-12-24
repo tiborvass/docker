@@ -7,6 +7,7 @@ import (
 	"github.com/tiborvass/docker/container"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/volume"
@@ -41,13 +42,12 @@ func (daemon *Daemon) ContainerCreate(params types.ContainerCreateConfig) (types
 }
 
 // Create creates a new container from the given configuration with a given name.
-func (daemon *Daemon) create(params types.ContainerCreateConfig) (*container.Container, error) {
+func (daemon *Daemon) create(params types.ContainerCreateConfig) (retC *container.Container, retErr error) {
 	var (
 		container *container.Container
 		img       *image.Image
 		imgID     image.ID
 		err       error
-		retErr    error
 	)
 
 	if params.Config.Image != "" {
@@ -72,6 +72,15 @@ func (daemon *Daemon) create(params types.ContainerCreateConfig) (*container.Con
 			}
 		}
 	}()
+
+	if err := daemon.setSecurityOptions(container, params.HostConfig); err != nil {
+		return nil, err
+	}
+
+	// Set RWLayer for container after mount labels have been set
+	if err := daemon.setRWLayer(container); err != nil {
+		return nil, err
+	}
 
 	if err := daemon.Register(container); err != nil {
 		return nil, err
@@ -124,6 +133,24 @@ func (daemon *Daemon) generateSecurityOpt(ipcMode containertypes.IpcMode, pidMod
 		return label.DupSecOpt(c.ProcessLabel), nil
 	}
 	return nil, nil
+}
+
+func (daemon *Daemon) setRWLayer(container *container.Container) error {
+	var layerID layer.ChainID
+	if container.ImageID != "" {
+		img, err := daemon.imageStore.Get(container.ImageID)
+		if err != nil {
+			return err
+		}
+		layerID = img.RootFS.ChainID()
+	}
+	rwLayer, err := daemon.layerStore.CreateRWLayer(container.ID, layerID, container.MountLabel, daemon.setupInitLayer)
+	if err != nil {
+		return err
+	}
+	container.RWLayer = rwLayer
+
+	return nil
 }
 
 // VolumeCreate creates a volume with the specified name, driver, and opts
