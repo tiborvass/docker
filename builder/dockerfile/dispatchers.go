@@ -9,7 +9,6 @@ package dockerfile
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -18,10 +17,10 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
 	derr "github.com/tiborvass/docker/errors"
-	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig"
@@ -315,13 +314,9 @@ func run(b *Builder, args []string, attributes map[string]bool, original string)
 		}
 	}
 
-	runCmd := flag.NewFlagSet("run", flag.ContinueOnError)
-	runCmd.SetOutput(ioutil.Discard)
-	runCmd.Usage = nil
-
-	config, _, _, err := runconfig.Parse(runCmd, append([]string{b.image}, args...))
-	if err != nil {
-		return err
+	config := &container.Config{
+		Cmd:   strslice.New(args...),
+		Image: b.image,
 	}
 
 	// stash the cmd
