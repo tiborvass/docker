@@ -16,6 +16,7 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerignore"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
@@ -207,6 +208,14 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 		}
 	}
 
+	var shmSize int64
+	if *flShmSize != "" {
+		shmSize, err = units.RAMInBytes(*flShmSize)
+		if err != nil {
+			return err
+		}
+	}
+
 	var remoteContext string
 	if isRemote {
 		remoteContext = cmd.Arg(0)
@@ -223,17 +232,17 @@ func (cli *DockerCli) CmdBuild(args ...string) error {
 		Remove:         *rm,
 		ForceRemove:    *forceRm,
 		PullParent:     *pull,
-		Isolation:      *isolation,
+		IsolationLevel: container.IsolationLevel(*isolation),
 		CPUSetCPUs:     *flCPUSetCpus,
 		CPUSetMems:     *flCPUSetMems,
 		CPUShares:      *flCPUShares,
 		CPUQuota:       *flCPUQuota,
 		CPUPeriod:      *flCPUPeriod,
 		CgroupParent:   *flCgroupParent,
-		ShmSize:        *flShmSize,
 		Dockerfile:     relDockerfile,
+		ShmSize:        shmSize,
 		Ulimits:        flUlimits.GetList(),
-		BuildArgs:      flBuildArg.GetAll(),
+		BuildArgs:      runconfigopts.ConvertKVStringsToMap(flBuildArg.GetAll()),
 		AuthConfigs:    cli.configFile.AuthConfigs,
 	}
 
