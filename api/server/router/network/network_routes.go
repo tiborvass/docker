@@ -8,7 +8,6 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/server/httputils"
-	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/filters"
@@ -81,7 +80,7 @@ func (n *networkRouter) postNetworkCreate(ctx context.Context, w http.ResponseWr
 			fmt.Sprintf("%s is a pre-defined network and cannot be created", create.Name))
 	}
 
-	nw, err := n.backend.GetNetwork(create.Name, daemon.NetworkByName)
+	nw, err := n.backend.GetNetworkByName(create.Name)
 	if _, ok := err.(libnetwork.ErrNoSuchNetwork); err != nil && !ok {
 		return err
 	}
