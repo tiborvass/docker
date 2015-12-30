@@ -18,8 +18,8 @@ import (
 	"github.com/tiborvass/docker/api/server/router/volume"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/authorization"
-	"github.com/tiborvass/docker/pkg/sockets"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/go-connections/sockets"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/context"
 )

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tiborvass/docker/pkg/tlsconfig"
 	"github.com/tiborvass/docker/reference"
+	"github.com/docker/go-connections/tlsconfig"
 )
 
 func (s *Service) lookupV1Endpoints(repoName reference.Named) (endpoints []APIEndpoint, err error) {
