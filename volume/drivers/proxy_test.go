@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/pkg/plugins"
-	"github.com/tiborvass/docker/pkg/tlsconfig"
+	"github.com/docker/go-connections/tlsconfig"
 )
 
 func TestVolumeRequestError(t *testing.T) {
