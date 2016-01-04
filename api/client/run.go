@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/tiborvass/docker/runconfig"
+	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/libnetwork/resolvconf/dns"
 )
 
@@ -82,7 +82,7 @@ func (cli *DockerCli) CmdRun(args ...string) error {
 		ErrConflictDetachAutoRemove           = fmt.Errorf("Conflicting options: --rm and -d")
 	)
 
-	config, hostConfig, cmd, err := runconfig.Parse(cmd, args)
+	config, hostConfig, cmd, err := runconfigopts.Parse(cmd, args)
 	// just in case the Parse does not exit
 	if err != nil {
 		cmd.ReportError(err.Error(), true)
