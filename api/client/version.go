@@ -9,7 +9,6 @@ import (
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/dockerversion"
 	flag "github.com/tiborvass/docker/pkg/mflag"
-	"github.com/tiborvass/docker/pkg/version"
 	"github.com/tiborvass/docker/utils"
 )
 
@@ -57,7 +56,7 @@ func (cli *DockerCli) CmdVersion(args ...string) (err error) {
 	vd := types.VersionResponse{
 		Client: &types.Version{
 			Version:      dockerversion.Version,
-			APIVersion:   version.Version(cli.client.ClientVersion()),
+			APIVersion:   cli.client.ClientVersion(),
 			GoVersion:    runtime.Version(),
 			GitCommit:    dockerversion.GitCommit,
 			BuildTime:    dockerversion.BuildTime,
