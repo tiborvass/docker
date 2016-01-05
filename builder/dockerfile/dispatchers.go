@@ -24,7 +24,6 @@ import (
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/runconfig"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/go-connections/nat"
 )
@@ -317,7 +316,10 @@ func run(b *Builder, args []string, attributes map[string]bool, original string)
 
 	// stash the cmd
 	cmd := b.runConfig.Cmd
-	runconfig.Merge(b.runConfig, config)
+	if b.runConfig.Entrypoint.Len() == 0 && b.runConfig.Cmd.Len() == 0 {
+		b.runConfig.Cmd = config.Cmd
+	}
+
 	// stash the config environment
 	env := b.runConfig.Env
 
