@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/docker/engine-api/types"
 )
 
 func (cli *DockerCli) holdHijackedConnection(setRawTerminal bool, inputStream io.ReadCloser, outputStream, errorStream io.Writer, resp types.HijackedResponse) error {

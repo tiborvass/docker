@@ -8,11 +8,11 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/events"
-	"github.com/tiborvass/docker/api/types/filters"
-	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/events"
+	"github.com/docker/engine-api/types/filters"
+	timetypes "github.com/docker/engine-api/types/time"
 	"golang.org/x/net/context"
 )
 

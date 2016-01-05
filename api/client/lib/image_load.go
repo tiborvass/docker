@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/url"
 
-	"github.com/tiborvass/docker/api/types"
+	"github.com/docker/engine-api/types"
 )
 
 // ImageLoad loads an image in the docker host from the client host.

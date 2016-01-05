@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/types"
-	eventtypes "github.com/tiborvass/docker/api/types/events"
-	"github.com/tiborvass/docker/api/types/filters"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonlog"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/docker/engine-api/types"
+	eventtypes "github.com/docker/engine-api/types/events"
+	"github.com/docker/engine-api/types/filters"
 )
 
 // CmdEvents prints a live stream of real time events from the server.

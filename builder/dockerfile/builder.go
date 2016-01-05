@@ -10,11 +10,11 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 )
 
 var validCommitCommands = map[string]bool{

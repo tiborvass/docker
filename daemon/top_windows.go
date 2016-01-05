@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/api/types"
 	derr "github.com/tiborvass/docker/errors"
+	"github.com/docker/engine-api/types"
 )
 
 // ContainerTop is not supported on Windows and returns an error.

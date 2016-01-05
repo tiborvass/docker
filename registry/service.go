@@ -6,9 +6,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/tiborvass/docker/api/types"
-	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/reference"
+	"github.com/docker/engine-api/types"
+	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 // Service is a registry service. It tracks configuration data such as a list

@@ -8,12 +8,12 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/tiborvass/docker/api/client/lib"
-	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/registry"
+	"github.com/docker/engine-api/client"
+	"github.com/docker/engine-api/types"
 )
 
 // CmdLogin logs in or registers a user to a Docker registry service.
@@ -122,7 +122,7 @@ func (cli *DockerCli) CmdLogin(args ...string) error {
 	auth := cli.configFile.AuthConfigs[serverAddress]
 	response, err := cli.client.RegistryLogin(auth)
 	if err != nil {
-		if lib.IsErrUnauthorized(err) {
+		if client.IsErrUnauthorized(err) {
 			delete(cli.configFile.AuthConfigs, serverAddress)
 			if err2 := cli.configFile.Save(); err2 != nil {
 				fmt.Fprintf(cli.out, "WARNING: could not save config file: %v\n", err2)

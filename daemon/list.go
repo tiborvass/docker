@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/graphdb"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/filters"
 	"github.com/docker/go-connections/nat"
 )
 

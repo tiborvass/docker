@@ -1,6 +1,6 @@
 package runconfig
 
-import "github.com/tiborvass/docker/api/types/container"
+import "github.com/docker/engine-api/types/container"
 
 // ContainerConfigWrapper is a Config wrapper that hold the container Config (portable)
 // and the corresponding HostConfig (non-portable).

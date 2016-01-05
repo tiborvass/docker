@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/filters"
 )
 
 // NetworkCreate creates a new network in the docker host.

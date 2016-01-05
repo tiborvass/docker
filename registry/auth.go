@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
-	registrytypes "github.com/tiborvass/docker/api/types/registry"
+	"github.com/docker/engine-api/types"
+	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 // Login tries to register/login to the registry server.

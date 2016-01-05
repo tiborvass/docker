@@ -8,7 +8,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/distribution/xfer"
 	"github.com/tiborvass/docker/image"
@@ -16,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/docker/engine-api/types"
 	"github.com/docker/libtrust"
 	"golang.org/x/net/context"
 )

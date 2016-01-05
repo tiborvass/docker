@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tiborvass/docker/api/types/container"
-	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/docker/engine-api/types/container"
+	"github.com/docker/engine-api/types/strslice"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/go-units"
 )

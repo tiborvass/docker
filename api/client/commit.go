@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reference"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 )
 
 // CmdCommit creates a new image from a container's changes.

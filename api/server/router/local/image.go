@@ -11,14 +11,14 @@ import (
 
 	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api/server/httputils"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 	"golang.org/x/net/context"
 )
 

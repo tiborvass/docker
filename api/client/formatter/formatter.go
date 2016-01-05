@@ -8,8 +8,8 @@ import (
 	"text/tabwriter"
 	"text/template"
 
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/reference"
+	"github.com/docker/engine-api/types"
 )
 
 const (

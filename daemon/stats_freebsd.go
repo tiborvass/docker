@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/api/types"
+	"github.com/docker/engine-api/types"
 	"github.com/opencontainers/runc/libcontainer"
 )
 

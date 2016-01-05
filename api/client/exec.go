@@ -5,10 +5,10 @@ import (
 	"io"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/promise"
+	"github.com/docker/engine-api/types"
 )
 
 // CmdExec runs a command in a running container.

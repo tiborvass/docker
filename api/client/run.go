@@ -8,13 +8,13 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
+	"github.com/docker/engine-api/types"
 	"github.com/docker/libnetwork/resolvconf/dns"
 )
 

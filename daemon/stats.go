@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/pkg/version"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/versions/v1p20"
 )
 
 // ContainerStatsConfig holds information for configuring the runtime

@@ -8,10 +8,10 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/docker/engine-api/types/container"
 )
 
 // This is a daemon development variable only and should not be

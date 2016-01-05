@@ -5,14 +5,14 @@ import (
 	"io"
 	"os"
 
-	"github.com/tiborvass/docker/api/client/lib"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
+	"github.com/docker/engine-api/client"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 )
 
 func (cli *DockerCli) pullImage(image string) error {
@@ -110,7 +110,7 @@ func (cli *DockerCli) createContainer(config *container.Config, hostConfig *cont
 	response, err := cli.client.ContainerCreate(config, hostConfig, name)
 	//if image not found try to pull it
 	if err != nil {
-		if lib.IsErrImageNotFound(err) {
+		if client.IsErrImageNotFound(err) {
 			fmt.Fprintf(cli.err, "Unable to find image '%s' locally\n", ref.String())
 
 			// we don't want to write to stdout anything apart from container.ID

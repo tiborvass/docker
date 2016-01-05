@@ -3,7 +3,7 @@ package daemon
 import (
 	"fmt"
 
-	"github.com/tiborvass/docker/api/types/container"
+	"github.com/docker/engine-api/types/container"
 )
 
 // ContainerUpdate updates resources of the container

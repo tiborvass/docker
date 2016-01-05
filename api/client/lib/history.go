@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/tiborvass/docker/api/types"
+	"github.com/docker/engine-api/types"
 )
 
 // ImageHistory returns the changes in an image in history format.

@@ -3,9 +3,9 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/docker/engine-api/types"
 )
 
 // setPlatformSpecificExecProcessConfig sets platform-specific fields in the

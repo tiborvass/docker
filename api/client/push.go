@@ -4,13 +4,13 @@ import (
 	"errors"
 	"io"
 
-	"github.com/tiborvass/docker/api/client/lib"
-	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/docker/engine-api/client"
+	"github.com/docker/engine-api/types"
 )
 
 // CmdPush pushes an image or repository to the registry.
@@ -52,7 +52,7 @@ func (cli *DockerCli) CmdPush(args ...string) error {
 	return cli.imagePushPrivileged(authConfig, ref.Name(), tag, cli.out, requestPrivilege)
 }
 
-func (cli *DockerCli) imagePushPrivileged(authConfig types.AuthConfig, imageID, tag string, outputStream io.Writer, requestPrivilege lib.RequestPrivilegeFunc) error {
+func (cli *DockerCli) imagePushPrivileged(authConfig types.AuthConfig, imageID, tag string, outputStream io.Writer, requestPrivilege client.RequestPrivilegeFunc) error {
 	encodedAuth, err := encodeAuthToBase64(authConfig)
 	if err != nil {
 		return err

@@ -7,12 +7,12 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/tiborvass/docker/api/types"
-	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/registry"
+	"github.com/docker/engine-api/types"
+	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 // CmdSearch searches the Docker Hub for images.

@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/tiborvass/docker/api/types"
+	"github.com/docker/engine-api/types"
 )
 
 // ContainerTop shows process information from within a container.

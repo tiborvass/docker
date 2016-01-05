@@ -4,9 +4,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/tiborvass/docker/api/types/container"
-	"github.com/tiborvass/docker/api/types/network"
-	"github.com/tiborvass/docker/api/types/registry"
+	"github.com/docker/engine-api/types/container"
+	"github.com/docker/engine-api/types/network"
+	"github.com/docker/engine-api/types/registry"
 	"github.com/docker/go-connections/nat"
 )
 

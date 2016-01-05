@@ -16,10 +16,10 @@ import (
 	"github.com/docker/distribution/registry/client"
 	"github.com/docker/distribution/registry/client/auth"
 	"github.com/docker/distribution/registry/client/transport"
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/distribution/xfer"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/docker/engine-api/types"
 	"golang.org/x/net/context"
 )
 

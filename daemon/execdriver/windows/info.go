@@ -3,8 +3,8 @@
 package windows
 
 import (
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
+	"github.com/docker/engine-api/types/container"
 )
 
 type info struct {

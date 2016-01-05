@@ -3,10 +3,10 @@ package client
 import (
 	"errors"
 
-	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reference"
+	"github.com/docker/engine-api/types"
 )
 
 // CmdTag tags an image into a repository.

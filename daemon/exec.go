@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/execdriver"
@@ -15,6 +13,8 @@ import (
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/strslice"
 )
 
 func (d *Daemon) registerExecCommand(container *container.Container, config *exec.Config) {

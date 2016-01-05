@@ -4,12 +4,12 @@ import (
 	"io"
 	"time"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/version"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 )
 
 // execBackend includes functions to implement to provide exec functionality.

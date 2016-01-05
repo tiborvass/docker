@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/tiborvass/docker/api/types"
+	"github.com/docker/engine-api/types"
 )
 
 // ImagePull request the docker host to pull an image from a remote registry.

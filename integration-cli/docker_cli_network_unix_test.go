@@ -13,10 +13,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/versions/v1p20"
 	"github.com/docker/libnetwork/driverapi"
 	remoteapi "github.com/docker/libnetwork/drivers/remote/api"
 	"github.com/docker/libnetwork/ipamapi"

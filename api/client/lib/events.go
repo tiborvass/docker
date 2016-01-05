@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/filters"
-	timetypes "github.com/tiborvass/docker/api/types/time"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/filters"
+	timetypes "github.com/docker/engine-api/types/time"
 )
 
 // Events returns a stream of events in the daemon in a ReadCloser.

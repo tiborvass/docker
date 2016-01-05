@@ -10,8 +10,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/image"
@@ -22,6 +20,8 @@ import (
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 )
 
 // Docker implements builder.Backend for the docker Daemon object.

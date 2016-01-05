@@ -9,12 +9,12 @@ import (
 	"runtime"
 
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/api/client/lib"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/docker/engine-api/client"
 	"github.com/docker/go-connections/tlsconfig"
 )
 
@@ -120,7 +120,7 @@ func NewDockerCli(in io.ReadCloser, out, err io.Writer, clientFlags *cli.ClientF
 			return err
 		}
 
-		client, err := lib.NewClient(host, verStr, clientTransport, customHeaders)
+		client, err := client.NewClient(host, verStr, clientTransport, customHeaders)
 		if err != nil {
 			return err
 		}

@@ -9,13 +9,13 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/reference"
+	containertypes "github.com/docker/engine-api/types/container"
 	// register the windows graph driver
 	"github.com/tiborvass/docker/daemon/graphdriver/windows"
 	"github.com/tiborvass/docker/pkg/system"

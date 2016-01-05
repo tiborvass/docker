@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/engine-api/types/container"
 )
 
 const (

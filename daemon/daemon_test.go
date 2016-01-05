@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/truncindex"
@@ -15,6 +14,7 @@ import (
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
 	"github.com/tiborvass/docker/volume/store"
+	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/go-connections/nat"
 )
 

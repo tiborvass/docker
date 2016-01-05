@@ -9,9 +9,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/server/httputils"
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/engine-api/types"
 	"golang.org/x/net/context"
 )
 

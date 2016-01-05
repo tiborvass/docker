@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 )
 
 // Context represents a file system tree.

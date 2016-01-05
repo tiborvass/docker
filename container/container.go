@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/execdriver"
 	"github.com/tiborvass/docker/daemon/logger"
@@ -25,6 +24,7 @@ import (
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/volume"
+	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/opencontainers/runc/libcontainer/label"
 )

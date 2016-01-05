@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"github.com/tiborvass/docker/api/types/container"
+	"github.com/docker/engine-api/types/container"
 )
 
 // ContainerUpdate updates resources of a container

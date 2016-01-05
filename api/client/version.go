@@ -5,11 +5,11 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/tiborvass/docker/api/types"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/dockerversion"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/engine-api/types"
 )
 
 var versionTemplate = `Client:

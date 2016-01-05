@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
+	"github.com/docker/engine-api/types"
 )
 
 // This sets platform-specific fields

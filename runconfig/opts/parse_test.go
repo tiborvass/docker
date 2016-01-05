@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tiborvass/docker/api/types/container"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/engine-api/types/container"
 	"github.com/docker/go-connections/nat"
 )
 

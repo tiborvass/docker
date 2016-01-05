@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/tiborvass/docker/api/types"
+	"github.com/docker/engine-api/types"
 )
 
 func TestDisplay(t *testing.T) {

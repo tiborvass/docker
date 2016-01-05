@@ -13,8 +13,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/server/httputils"
-	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/daemon/daemonbuilder"
@@ -25,6 +23,8 @@ import (
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/utils"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 	"github.com/docker/go-units"
 	"golang.org/x/net/context"
 )

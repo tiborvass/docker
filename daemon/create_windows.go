@@ -3,11 +3,11 @@ package daemon
 import (
 	"fmt"
 
-	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/volume"
+	containertypes "github.com/docker/engine-api/types/container"
 )
 
 // createContainerPlatformSpecificSettings performs platform specific container create functionality

@@ -6,9 +6,9 @@ import (
 	"net"
 	"strings"
 
-	"github.com/tiborvass/docker/api/types/network"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/runconfig"
+	"github.com/docker/engine-api/types/network"
 	"github.com/docker/libnetwork"
 )
 

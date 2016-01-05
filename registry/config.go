@@ -7,10 +7,10 @@ import (
 	"net/url"
 	"strings"
 
-	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/opts"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reference"
+	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 // Options holds command line options.

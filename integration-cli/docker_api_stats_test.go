@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/version"
+	"github.com/docker/engine-api/types"
 	"github.com/go-check/check"
 )
 

@@ -3,8 +3,8 @@
 package main
 
 import (
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/docker/engine-api/types"
 	"github.com/go-check/check"
 )
 

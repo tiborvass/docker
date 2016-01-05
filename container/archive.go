@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/docker/engine-api/types"
 )
 
 // ResolvePath resolves the given path in the container to a resource on the
