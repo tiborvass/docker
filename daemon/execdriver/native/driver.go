@@ -16,7 +16,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
-	"github.com/tiborvass/docker/daemon/execdriver/native/template"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/reexec"
@@ -90,7 +89,6 @@ func NewDriver(root string, options []string) (*Driver, error) {
 			case "systemd":
 				if systemd.UseSystemd() {
 					cgm = libcontainer.SystemdCgroups
-					template.SystemdCgroups = true
 				} else {
 					// warn them that they chose the wrong driver
 					logrus.Warn("You cannot use systemd as native.cgroupdriver, using cgroupfs instead")
