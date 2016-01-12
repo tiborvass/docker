@@ -16,8 +16,6 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/daemon/daemonbuilder"
-	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
@@ -206,30 +204,18 @@ func (br *buildRouter) postBuild(ctx context.Context, w http.ResponseWriter, r *
 		buildOptions.Dockerfile = dockerfileName
 	}
 
-	uidMaps, gidMaps := br.backend.GetUIDGIDMaps()
-	defaultArchiver := &archive.Archiver{
-		Untar:   chrootarchive.Untar,
-		UIDMaps: uidMaps,
-		GIDMaps: gidMaps,
-	}
-
-	docker := &daemonbuilder.Docker{
-		Daemon:      br.backend,
-		OutOld:      output,
-		AuthConfigs: authConfigs,
-		Archiver:    defaultArchiver,
-	}
-	if buildOptions.SuppressOutput {
-		docker.OutOld = notVerboseBuffer
-	}
-
 	b, err := dockerfile.NewBuilder(
 		buildOptions, // result of newBuildConfig
-		docker,
+		&daemonbuilder.Docker{br.backend},
 		builder.DockerIgnoreContext{ModifiableContext: context},
 		nil)
 	if err != nil {
 		return errf(err)
+	}
+	if buildOptions.SuppressOutput {
+		b.Output = notVerboseBuffer
+	} else {
+		b.Output = output
 	}
 	b.Stdout = &streamformatter.StdoutFormatter{Writer: output, StreamFormatter: sf}
 	b.Stderr = &streamformatter.StderrFormatter{Writer: output, StreamFormatter: sf}
