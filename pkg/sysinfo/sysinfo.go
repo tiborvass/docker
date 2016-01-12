@@ -7,6 +7,8 @@ import "github.com/tiborvass/docker/pkg/parsers"
 type SysInfo struct {
 	// Whether the kernel supports AppArmor or not
 	AppArmor bool
+	// Whether the kernel supports Seccomp or not
+	Seccomp bool
 
 	cgroupMemInfo
 	cgroupCPUInfo
