@@ -3,17 +3,16 @@ package build
 import (
 	"github.com/tiborvass/docker/api/server/router"
 	"github.com/tiborvass/docker/api/server/router/local"
-	"github.com/tiborvass/docker/daemon"
 )
 
 // buildRouter is a router to talk with the build controller
 type buildRouter struct {
-	backend *daemon.Daemon
+	backend Backend
 	routes  []router.Route
 }
 
 // NewRouter initializes a new build router
-func NewRouter(b *daemon.Daemon) router.Router {
+func NewRouter(b Backend) router.Router {
 	r := &buildRouter{
 		backend: b,
 	}
