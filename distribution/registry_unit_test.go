@@ -1,6 +1,8 @@
 package distribution
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -16,13 +18,30 @@ import (
 	"golang.org/x/net/context"
 )
 
+func newTLSConfig(t *testing.T, ts *httptest.Server) *tls.Config {
+	certs := x509.NewCertPool()
+	for _, c := range ts.TLS.Certificates {
+		roots, err := x509.ParseCertificates(c.Certificate[len(c.Certificate)-1])
+		if err != nil {
+			t.Fatalf("error parsing server's root cert: %v", err)
+		}
+		for _, root := range roots {
+			certs.AddCert(root)
+		}
+	}
+	return &tls.Config{RootCAs: certs, ServerName: "example.com"}
+}
+
 func TestTokenPassThru(t *testing.T) {
 	authConfig := &types.AuthConfig{
-		RegistryToken: "mysecrettoken",
+		RegistryToken: types.RegistryToken{
+			Host:  "example.com",
+			Token: "mysecrettoken",
+		},
 	}
 	gotToken := false
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.Header.Get("Authorization"), authConfig.RegistryToken) {
+		if strings.Contains(r.Header.Get("Authorization"), authConfig.RegistryToken.Token) {
 			logrus.Debug("Detected registry token in auth header")
 			gotToken = true
 		}
@@ -31,8 +50,10 @@ func TestTokenPassThru(t *testing.T) {
 			w.WriteHeader(401)
 		}
 	}
-	ts := httptest.NewServer(http.HandlerFunc(handler))
+
+	ts := httptest.NewTLSServer(http.HandlerFunc(handler))
 	defer ts.Close()
+	authConfig.RegistryToken.Host = ts.URL[8:] // remove `https://`
 
 	tmp, err := utils.TestDirectory("")
 	if err != nil {
@@ -40,13 +61,15 @@ func TestTokenPassThru(t *testing.T) {
 	}
 	defer os.RemoveAll(tmp)
 
+	tlsConfig := newTLSConfig(t, ts)
+
 	endpoint := registry.APIEndpoint{
 		Mirror:       false,
 		URL:          ts.URL,
 		Version:      2,
 		Official:     false,
 		TrimHostname: false,
-		TLSConfig:    nil,
+		TLSConfig:    tlsConfig,
 		//VersionHeader: "verheader",
 	}
 	n, _ := reference.ParseNamed("testremotename")
