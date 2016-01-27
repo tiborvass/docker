@@ -1,8 +1,10 @@
 package distribution
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/http/httputil"
 	"os"
 	"strings"
 	"testing"
@@ -24,6 +26,12 @@ type tokenPassThruHandler struct {
 }
 
 func (h *tokenPassThruHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	b, err := httputil.DumpRequest(r, false)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("TOKENPASSTHRUHANDLER", string(b))
+
 	h.reached = true
 	if strings.Contains(r.Header.Get("Authorization"), secretRegistryToken) {
 		logrus.Debug("Detected registry token in auth header")
@@ -105,17 +113,22 @@ func TestTokenPassThruDifferentHost(t *testing.T) {
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
-	tsproxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, ts.URL, http.StatusMovedPermanently)
+	tsredirect := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, err := httputil.DumpRequest(r, false)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("REDIRECTHANDLER", string(b))
+		http.Redirect(w, r, ts.URL+"/v2/", http.StatusMovedPermanently)
 	}))
-	defer tsproxy.Close()
+	defer tsredirect.Close()
 
-	testTokenPassThru(t, tsproxy)
+	testTokenPassThru(t, tsredirect)
 
 	if !handler.reached {
 		t.Fatal("Handler not reached")
 	}
 	if handler.gotToken {
-		t.Fatal("Proxy should not forward Authorization header to another host")
+		t.Fatal("Redirect should not forward Authorization header to another host")
 	}
 }

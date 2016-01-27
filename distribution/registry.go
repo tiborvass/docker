@@ -109,7 +109,11 @@ func NewV2Repository(ctx context.Context, repoInfo *registry.RepositoryInfo, end
 	}
 
 	if authConfig.RegistryToken != "" {
-		passThruTokenHandler := &existingTokenHandler{token: authConfig.RegistryToken}
+		ep, err := url.ParseRequestURI(endpoint.URL)
+		if err != nil {
+			return nil, false, err
+		}
+		passThruTokenHandler := &existingTokenHandler{token: authConfig.RegistryToken, host: ep.Host}
 		modifiers = append(modifiers, auth.NewAuthorizer(challengeManager, passThruTokenHandler))
 	} else {
 		creds := dumbCredentialStore{auth: authConfig}
@@ -125,6 +129,7 @@ func NewV2Repository(ctx context.Context, repoInfo *registry.RepositoryInfo, end
 
 type existingTokenHandler struct {
 	token string
+	host  string
 }
 
 func (th *existingTokenHandler) Scheme() string {
@@ -132,7 +137,9 @@ func (th *existingTokenHandler) Scheme() string {
 }
 
 func (th *existingTokenHandler) AuthorizeRequest(req *http.Request, params map[string]string) error {
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", th.token))
+	if req.Host == th.host {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", th.token))
+	}
 	return nil
 }
 
