@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
 	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"github.com/docker/engine-api/types/backend"
 )
 
 // ContainerAttachWithLogs attaches to logs according to the config passed in. See ContainerAttachWithLogsConfig.
@@ -81,7 +81,7 @@ func (daemon *Daemon) ContainerWsAttachWithLogs(prefixOrName string, c *backend.
 
 // ContainerAttachOnBuild attaches streams to the container cID. If stream is true, it streams the output.
 func (daemon *Daemon) ContainerAttachOnBuild(cID string, stdin io.ReadCloser, stdout, stderr io.Writer, stream bool) error {
-	return daemon.ContainerWsAttachWithLogs(cID, &ContainerWsAttachWithLogsConfig{
+	return daemon.ContainerWsAttachWithLogs(cID, &backend.ContainerWsAttachWithLogsConfig{
 		InStream:  stdin,
 		OutStream: stdout,
 		ErrStream: stderr,
