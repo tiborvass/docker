@@ -6,6 +6,7 @@ import (
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cliconfig"
 	flag "github.com/tiborvass/docker/pkg/mflag"
+	"github.com/tiborvass/docker/utils"
 )
 
 var clientFlags = &cli.ClientFlags{FlagSet: new(flag.FlagSet), Common: commonFlags}
@@ -23,6 +24,10 @@ func init() {
 
 		if clientFlags.Common.TrustKey == "" {
 			clientFlags.Common.TrustKey = filepath.Join(cliconfig.ConfigDir(), defaultTrustKeyFile)
+		}
+
+		if clientFlags.Common.Debug {
+			utils.EnableDebug()
 		}
 	}
 }
