@@ -15,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/api/server/router/network"
 	"github.com/tiborvass/docker/api/server/router/system"
 	"github.com/tiborvass/docker/api/server/router/volume"
+	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/tiborvass/docker/utils"
@@ -180,7 +181,7 @@ func (s *Server) InitRouters(d *daemon.Daemon) {
 	s.addRouter(network.NewRouter(d))
 	s.addRouter(system.NewRouter(d))
 	s.addRouter(volume.NewRouter(d))
-	s.addRouter(build.NewRouter(d))
+	s.addRouter(build.NewRouter(dockerfile.NewBuildManager(d)))
 }
 
 // addRouter adds a new router to the server.
