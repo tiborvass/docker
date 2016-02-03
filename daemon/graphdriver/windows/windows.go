@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Microsoft/hcsshim"
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -22,7 +23,6 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/random"
-	"github.com/microsoft/hcsshim"
 )
 
 // init registers the windows graph drivers to the register.
