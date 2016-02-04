@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stdcopy"
@@ -48,7 +50,7 @@ func (cli *DockerCli) CmdLogs(args ...string) error {
 		Follow:      *follow,
 		Tail:        *tail,
 	}
-	responseBody, err := cli.client.ContainerLogs(options)
+	responseBody, err := cli.client.ContainerLogs(context.Background(), options)
 	if err != nil {
 		return err
 	}

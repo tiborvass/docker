@@ -4,6 +4,8 @@ import (
 	"errors"
 	"io"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -70,5 +72,5 @@ func (cli *DockerCli) imagePushPrivileged(authConfig types.AuthConfig, imageID, 
 		RegistryAuth: encodedAuth,
 	}
 
-	return cli.client.ImagePush(options, requestPrivilege)
+	return cli.client.ImagePush(context.Background(), options, requestPrivilege)
 }

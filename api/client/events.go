@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonlog"
@@ -48,7 +50,7 @@ func (cli *DockerCli) CmdEvents(args ...string) error {
 		Filters: eventFilterArgs,
 	}
 
-	responseBody, err := cli.client.Events(options)
+	responseBody, err := cli.client.Events(context.Background(), options)
 	if err != nil {
 		return err
 	}
