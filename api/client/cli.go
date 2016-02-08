@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cliconfig"
+	"github.com/tiborvass/docker/cliconfig/credentials"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/term"
@@ -124,6 +125,9 @@ func NewDockerCli(in io.ReadCloser, out, err io.Writer, clientFlags *cli.ClientF
 		configFile, e := cliconfig.Load(cliconfig.ConfigDir())
 		if e != nil {
 			fmt.Fprintf(cli.err, "WARNING: Error loading config file:%v\n", e)
+		}
+		if !configFile.ContainsAuth() {
+			credentials.DetectDefaultStore(configFile)
 		}
 		cli.configFile = configFile
 
