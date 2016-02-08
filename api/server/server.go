@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/server/router"
 	"github.com/tiborvass/docker/api/server/router/build"
 	"github.com/tiborvass/docker/api/server/router/container"
-	"github.com/tiborvass/docker/api/server/router/local"
+	"github.com/tiborvass/docker/api/server/router/image"
 	"github.com/tiborvass/docker/api/server/router/network"
 	"github.com/tiborvass/docker/api/server/router/system"
 	"github.com/tiborvass/docker/api/server/router/volume"
@@ -177,7 +177,7 @@ func (s *Server) makeHTTPHandler(handler httputils.APIFunc) http.HandlerFunc {
 // InitRouters initializes a list of routers for the server.
 func (s *Server) InitRouters(d *daemon.Daemon) {
 	s.addRouter(container.NewRouter(d))
-	s.addRouter(local.NewRouter(d))
+	s.addRouter(image.NewRouter(d))
 	s.addRouter(network.NewRouter(d))
 	s.addRouter(system.NewRouter(d))
 	s.addRouter(volume.NewRouter(d))
