@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-BINARY_NAME="docker-$VERSION"
 BINARY_EXTENSION="$(binary_extension)"
 BINARY_FULLNAME="$BINARY_NAME$BINARY_EXTENSION"
 
@@ -55,7 +54,7 @@ go build \
 		$LDFLAGS
 		$LDFLAGS_STATIC_DOCKER
 	" \
-	./docker
+	$SOURCE_PATH
 )
 
 echo "Created binary: $DEST/$BINARY_FULLNAME"

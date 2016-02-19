@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+BINARY_NAME="docker-daemon-$VERSION"
+SOURCE_PATH="./docker"
+
+source "${MAKEDIR}/.binary"

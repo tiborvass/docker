@@ -64,7 +64,8 @@ DEFAULT_BUNDLES=(
 	validate-toml
 	validate-vet
 
-	binary
+	binary-client
+    binary-daemon
 	dynbinary
 
 	test-unit
