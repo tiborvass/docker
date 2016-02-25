@@ -2,13 +2,13 @@ package daemon
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/execdriver"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/volume"
 	"github.com/docker/engine-api/types"
 	containertypes "github.com/docker/engine-api/types/container"
@@ -114,7 +114,7 @@ func (daemon *Daemon) registerMountPoints(container *container.Container, hostCo
 		}
 
 		if binds[bind.Destination] {
-			return derr.ErrorCodeMountDup.WithArgs(bind.Destination)
+			return fmt.Errorf("Duplicate mount point '%s'", bind.Destination)
 		}
 
 		if len(bind.Name) > 0 {

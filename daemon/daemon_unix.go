@@ -16,7 +16,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -312,17 +311,17 @@ func verifyContainerResources(resources *containertypes.Resources, sysInfo *sysi
 	}
 	cpusAvailable, err := sysInfo.IsCpusetCpusAvailable(resources.CpusetCpus)
 	if err != nil {
-		return warnings, derr.ErrorCodeInvalidCpusetCpus.WithArgs(resources.CpusetCpus)
+		return warnings, fmt.Errorf("Invalid value %s for cpuset cpus.", resources.CpusetCpus)
 	}
 	if !cpusAvailable {
-		return warnings, derr.ErrorCodeNotAvailableCpusetCpus.WithArgs(resources.CpusetCpus, sysInfo.Cpus)
+		return warnings, fmt.Errorf("Requested CPUs are not available - requested %s, available: %s.", resources.CpusetCpus, sysInfo.Cpus)
 	}
 	memsAvailable, err := sysInfo.IsCpusetMemsAvailable(resources.CpusetMems)
 	if err != nil {
-		return warnings, derr.ErrorCodeInvalidCpusetMems.WithArgs(resources.CpusetMems)
+		return warnings, fmt.Errorf("Invalid value %s for cpuset mems.", resources.CpusetMems)
 	}
 	if !memsAvailable {
-		return warnings, derr.ErrorCodeNotAvailableCpusetMems.WithArgs(resources.CpusetMems, sysInfo.Mems)
+		return warnings, fmt.Errorf("Requested memory nodes are not available - requested %s, available: %s.", resources.CpusetMems, sysInfo.Mems)
 	}
 
 	// blkio subsystem checks and adjustments

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/container"
-	derr "github.com/tiborvass/docker/errors"
+	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/reference"
@@ -82,7 +82,8 @@ func (daemon *Daemon) ImageDelete(imageRef string, force, prune bool) ([]types.I
 				// this image would remain "dangling" and since
 				// we really want to avoid that the client must
 				// explicitly force its removal.
-				return nil, derr.ErrorCodeImgDelUsed.WithArgs(imageRef, stringid.TruncateID(container.ID), stringid.TruncateID(imgID.String()))
+				err := fmt.Errorf("conflict: unable to remove repository reference %q (must force) - container %s is using its referenced image %s", imageRef, stringid.TruncateID(container.ID), stringid.TruncateID(imgID.String()))
+				return nil, errors.NewRequestConflictError(err)
 			}
 		}
 

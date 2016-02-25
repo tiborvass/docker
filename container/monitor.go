@@ -1,6 +1,7 @@
 package container
 
 import (
+	"fmt"
 	"io"
 	"os/exec"
 	"strings"
@@ -10,10 +11,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/execdriver"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/utils"
 	"github.com/docker/engine-api/types/container"
 )
 
@@ -190,7 +189,7 @@ func (m *containerMonitor) start() error {
 				if m.container.RestartCount == 0 {
 					m.container.ExitCode = 127
 					m.resetContainer(false)
-					return derr.ErrorCodeCmdNotFound
+					return fmt.Errorf("Container command not found or does not exist.")
 				}
 			}
 			// set to 126 for container cmd can't be invoked errors
@@ -198,7 +197,7 @@ func (m *containerMonitor) start() error {
 				if m.container.RestartCount == 0 {
 					m.container.ExitCode = 126
 					m.resetContainer(false)
-					return derr.ErrorCodeCmdCouldNotBeInvoked
+					return fmt.Errorf("Container command could not be invoked.")
 				}
 			}
 
@@ -206,7 +205,7 @@ func (m *containerMonitor) start() error {
 				m.container.ExitCode = -1
 				m.resetContainer(false)
 
-				return derr.ErrorCodeCantStart.WithArgs(m.container.ID, utils.GetErrorMessage(err))
+				return fmt.Errorf("Cannot start container %s: %v", m.container.ID, err)
 			}
 
 			logrus.Errorf("Error running container: %s", err)

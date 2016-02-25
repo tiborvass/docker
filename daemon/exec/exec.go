@@ -1,11 +1,11 @@
 package exec
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
 	"github.com/tiborvass/docker/daemon/execdriver"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
 )
@@ -116,7 +116,7 @@ func (c *Config) Resize(h, w int) error {
 	select {
 	case <-c.waitStart:
 	case <-time.After(time.Second):
-		return derr.ErrorCodeExecResize.WithArgs(c.ID)
+		return fmt.Errorf("Exec %s is not running, so it can not be resized.", c.ID)
 	}
 	return c.ProcessConfig.Terminal.Resize(h, w)
 }
