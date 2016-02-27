@@ -1,9 +1,10 @@
 package daemon
 
 import (
+	"fmt"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -18,7 +19,7 @@ import (
 // ContainerCreate creates a container.
 func (daemon *Daemon) ContainerCreate(params types.ContainerCreateConfig) (types.ContainerCreateResponse, error) {
 	if params.Config == nil {
-		return types.ContainerCreateResponse{}, derr.ErrorCodeEmptyConfig
+		return types.ContainerCreateResponse{}, fmt.Errorf("Config cannot be empty in order to create a container")
 	}
 
 	warnings, err := daemon.verifyContainerSettings(params.HostConfig, params.Config, false)
@@ -174,7 +175,7 @@ func (daemon *Daemon) VolumeCreate(name, driverName string, opts map[string]stri
 	v, err := daemon.volumes.Create(name, driverName, opts)
 	if err != nil {
 		if volumestore.IsNameConflict(err) {
-			return nil, derr.ErrorVolumeNameTaken.WithArgs(name)
+			return nil, fmt.Errorf("A volume named %s already exists. Choose a different volume name.", name)
 		}
 		return nil, err
 	}

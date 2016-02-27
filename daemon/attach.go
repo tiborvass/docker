@@ -9,7 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
-	derr "github.com/tiborvass/docker/errors"
+	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 )
 
@@ -17,10 +17,11 @@ import (
 func (daemon *Daemon) ContainerAttach(prefixOrName string, c *backend.ContainerAttachConfig) error {
 	container, err := daemon.GetContainer(prefixOrName)
 	if err != nil {
-		return derr.ErrorCodeNoSuchContainer.WithArgs(prefixOrName)
+		return err
 	}
 	if container.IsPaused() {
-		return derr.ErrorCodePausedContainer.WithArgs(prefixOrName)
+		err := fmt.Errorf("Container %s is paused. Unpause the container before attach", prefixOrName)
+		return errors.NewRequestConflictError(err)
 	}
 
 	inStream, outStream, errStream, err := c.GetStreams()

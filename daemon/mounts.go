@@ -1,10 +1,10 @@
 package daemon
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/tiborvass/docker/container"
-	derr "github.com/tiborvass/docker/errors"
 	volumestore "github.com/tiborvass/docker/volume/store"
 )
 
@@ -42,7 +42,7 @@ func (daemon *Daemon) removeMountPoints(container *container.Container, rm bool)
 		}
 	}
 	if len(rmErrors) > 0 {
-		return derr.ErrorCodeRemovingVolume.WithArgs(strings.Join(rmErrors, "\n"))
+		return fmt.Errorf("Error removing volumes:\n%v", strings.Join(rmErrors, "\n"))
 	}
 	return nil
 }

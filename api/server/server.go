@@ -10,7 +10,6 @@ import (
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/server/router"
 	"github.com/tiborvass/docker/pkg/authorization"
-	"github.com/tiborvass/docker/utils"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/context"
 )
@@ -134,7 +133,7 @@ func (s *Server) makeHTTPHandler(handler httputils.APIFunc) http.HandlerFunc {
 		}
 
 		if err := handlerFunc(ctx, w, r, vars); err != nil {
-			logrus.Errorf("Handler for %s %s returned error: %s", r.Method, r.URL.Path, utils.GetErrorMessage(err))
+			logrus.Errorf("Handler for %s %s returned error: %v", r.Method, r.URL.Path, err)
 			httputils.WriteError(w, err)
 		}
 	}

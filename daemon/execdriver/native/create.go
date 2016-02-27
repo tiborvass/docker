@@ -9,7 +9,6 @@ import (
 	"syscall"
 
 	"github.com/tiborvass/docker/daemon/execdriver"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/profiles/seccomp"
 
@@ -430,7 +429,7 @@ func (d *Driver) setupMounts(container *configs.Config, c *execdriver.Command) e
 	for _, m := range c.Mounts {
 		for _, cm := range container.Mounts {
 			if cm.Destination == m.Destination {
-				return derr.ErrorCodeMountDup.WithArgs(m.Destination)
+				return fmt.Errorf("Duplicate mount point '%s'", m.Destination)
 			}
 		}
 
