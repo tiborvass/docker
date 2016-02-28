@@ -20,6 +20,7 @@ import (
 
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/mount"
+	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork/netutils"
@@ -1816,8 +1817,10 @@ func (s *DockerSuite) TestRunWriteHostsFileAndNotCommit(c *check.C) {
 }
 
 func eqToBaseDiff(out string, c *check.C) bool {
-	out1, _ := dockerCmd(c, "run", "-d", "busybox", "echo", "hello")
-	cID := strings.TrimSpace(out1)
+	name := "eqToBaseDiff" + stringutils.GenerateRandomAlphaOnlyString(32)
+	dockerCmd(c, "run", "--name", name, "busybox", "echo", "hello")
+	cID, err := getIDByName(name)
+	c.Assert(err, check.IsNil)
 
 	baseDiff, _ := dockerCmd(c, "diff", cID)
 	baseArr := strings.Split(baseDiff, "\n")
