@@ -18,10 +18,11 @@ import (
 	"testing"
 
 	"bytes"
+	"strings"
+
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/gorilla/mux"
-	"strings"
 )
 
 const pluginAddress = "authzplugin.sock"
