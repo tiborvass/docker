@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strings"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/docker/engine-api/types"
@@ -37,7 +39,7 @@ func (cli *DockerCli) CmdRmi(args ...string) error {
 			PruneChildren: !*noprune,
 		}
 
-		dels, err := cli.client.ImageRemove(options)
+		dels, err := cli.client.ImageRemove(context.Background(), options)
 		if err != nil {
 			errs = append(errs, err.Error())
 		} else {

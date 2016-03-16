@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 )
@@ -19,7 +21,7 @@ func (cli *DockerCli) CmdPause(args ...string) error {
 
 	var errs []string
 	for _, name := range cmd.Args() {
-		if err := cli.client.ContainerPause(name); err != nil {
+		if err := cli.client.ContainerPause(context.Background(), name); err != nil {
 			errs = append(errs, err.Error())
 		} else {
 			fmt.Fprintf(cli.out, "%s\n", name)

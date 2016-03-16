@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -20,7 +22,7 @@ func (cli *DockerCli) CmdInfo(args ...string) error {
 
 	cmd.ParseFlags(args, true)
 
-	info, err := cli.client.Info()
+	info, err := cli.client.Info(context.Background())
 	if err != nil {
 		return err
 	}

@@ -5,6 +5,8 @@ import (
 	"text/template"
 	"time"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/dockerversion"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -67,7 +69,7 @@ func (cli *DockerCli) CmdVersion(args ...string) (err error) {
 		},
 	}
 
-	serverVersion, err := cli.client.ServerVersion()
+	serverVersion, err := cli.client.ServerVersion(context.Background())
 	if err == nil {
 		vd.Server = &serverVersion
 	}
