@@ -7,6 +7,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"golang.org/x/net/context"
+
 	Cli "github.com/tiborvass/docker/cli"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/stringutils"
@@ -49,7 +51,7 @@ func (cli *DockerCli) CmdSearch(args ...string) error {
 		RegistryAuth: encodedAuth,
 	}
 
-	unorderedResults, err := cli.client.ImageSearch(options, requestPrivilege)
+	unorderedResults, err := cli.client.ImageSearch(context.Background(), options, requestPrivilege)
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,8 @@
 package client
 
 import (
+	"golang.org/x/net/context"
+
 	"github.com/tiborvass/docker/api/client/formatter"
 	Cli "github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
@@ -56,7 +58,7 @@ func (cli *DockerCli) CmdPs(args ...string) error {
 		Filter: psFilterArgs,
 	}
 
-	containers, err := cli.client.ContainerList(options)
+	containers, err := cli.client.ContainerList(context.Background(), options)
 	if err != nil {
 		return err
 	}
