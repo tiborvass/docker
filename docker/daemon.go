@@ -29,6 +29,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/docker/listeners"
 	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonlog"
 	flag "github.com/tiborvass/docker/pkg/mflag"
@@ -264,7 +265,13 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 	cli.TrustKeyPath = commonFlags.TrustKey
 
 	registryService := registry.NewService(cli.Config.ServiceOptions)
-	d, err := daemon.NewDaemon(cli.Config, registryService)
+
+	containerdRemote, err := libcontainerd.New(filepath.Join(cli.Config.ExecRoot, "libcontainerd"), cli.getPlatformRemoteOptions()...)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	d, err := daemon.NewDaemon(cli.Config, registryService, containerdRemote)
 	if err != nil {
 		if pfile != nil {
 			if err := pfile.Remove(); err != nil {
@@ -279,7 +286,6 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 	logrus.WithFields(logrus.Fields{
 		"version":     dockerversion.Version,
 		"commit":      dockerversion.GitCommit,
-		"execdriver":  d.ExecutionDriver().Name(),
 		"graphdriver": d.GraphDriverName(),
 	}).Info("Docker daemon")
 
@@ -330,6 +336,7 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 	// Wait for serve API to complete
 	errAPI := <-serveAPIWait
 	shutdownDaemon(d, 15)
+	containerdRemote.Cleanup()
 	if errAPI != nil {
 		if pfile != nil {
 			if err := pfile.Remove(); err != nil {
