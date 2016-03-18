@@ -23,7 +23,6 @@ import (
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/distribution"
-	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	flag "github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/reference"
@@ -152,7 +151,7 @@ func (cli *DockerCli) getNotaryRepository(repoInfo *registry.RepositoryInfo, aut
 	}
 
 	// Skip configuration headers since request is not going to Docker daemon
-	modifiers := registry.DockerHeaders(dockerversion.DockerUserAgent(""), http.Header{})
+	modifiers := registry.DockerHeaders(clientUserAgent(), http.Header{})
 	authTransport := transport.NewTransport(base, modifiers...)
 	pingClient := &http.Client{
 		Transport: authTransport,
