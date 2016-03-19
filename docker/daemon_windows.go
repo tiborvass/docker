@@ -10,6 +10,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	apiserver "github.com/tiborvass/docker/api/server"
 	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/mflag"
 	"github.com/tiborvass/docker/pkg/system"
 )
@@ -56,4 +57,8 @@ func setupConfigReloadTrap(configFile string, flags *mflag.FlagSet, reload func(
 			}
 		}
 	}()
+}
+
+func (cli *DaemonCli) getPlatformRemoteOptions() []libcontainerd.RemoteOption {
+	return nil
 }

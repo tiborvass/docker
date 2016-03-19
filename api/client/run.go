@@ -14,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/tiborvass/docker/pkg/stringid"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/libnetwork/resolvconf/dns"
@@ -256,16 +255,6 @@ func (cli *DockerCli) CmdRun(args ...string) error {
 
 	// Attached mode
 	if *flAutoRemove {
-		// Warn user if they detached us
-		js, err := cli.client.ContainerInspect(context.Background(), createResponse.ID)
-		if err != nil {
-			return runStartContainerErr(err)
-		}
-		if js.State.Running == true || js.State.Paused == true {
-			fmt.Fprintf(cli.out, "Detached from %s, awaiting its termination in order to uphold \"--rm\".\n",
-				stringid.TruncateID(createResponse.ID))
-		}
-
 		// Autoremove: wait for the container to finish, retrieve
 		// the exit code and remove the container
 		if status, err = cli.client.ContainerWait(context.Background(), createResponse.ID); err != nil {
