@@ -75,16 +75,14 @@ fi
 
 setup_s3() {
 	echo "Setting up S3"
+	# TODO: Move to Dockerfile
+	pip install awscli==1.10.15
 	# Try creating the bucket. Ignore errors (it might already exist).
-	s3cmd mb "s3://$BUCKET" 2>/dev/null || true
+	aws s3 mb "s3://$BUCKET" 2>/dev/null || true
 	# Check access to the bucket.
-	# s3cmd has no useful exit status, so we cannot check that.
-	# Instead, we check if it outputs anything on standard output.
-	# (When there are problems, it uses standard error instead.)
-	# NOTE: for some reason on debian:jessie `s3cmd info ... | grep -q .` results in a broken pipe
-	s3cmd info "s3://$BUCKET" | grep . >/dev/null
+	aws s3 ls "s3://$BUCKET" >/dev/null
 	# Make the bucket accessible through website endpoints.
-	s3cmd ws-create --ws-index index --ws-error error "s3://$BUCKET"
+	aws s3 website --index-document index --error-document error "s3://$BUCKET"
 }
 
 # write_to_s3 uploads the contents of standard input to the specified S3 url.
@@ -92,7 +90,7 @@ write_to_s3() {
 	DEST=$1
 	F=`mktemp`
 	cat > "$F"
-	s3cmd --acl-public --mime-type='text/plain' put "$F" "$DEST"
+	aws s3 cp --acl public-read "$F" "$DEST"
 	rm -f "$F"
 }
 
@@ -102,6 +100,7 @@ s3_url() {
 			echo "https://$BUCKET_PATH"
 			;;
 		*)
+			# TODO: remove s3cmd dependency
 			BASE_URL=$( s3cmd ws-info s3://$BUCKET | awk -v 'FS=: +' '/http:\/\/'$BUCKET'/ { gsub(/\/+$/, "", $2); print $2 }' )
 			if [[ -n "$AWS_S3_BUCKET_PATH" ]] ; then
 				echo "$BASE_URL/$AWS_S3_BUCKET_PATH"
@@ -147,12 +146,12 @@ upload_release_build() {
 	echo "Uploading $src"
 	echo "  to $dst"
 	echo
-	s3cmd --follow-symlinks --preserve --acl-public put "$src" "$dst"
+	aws s3 cp --follow-symlinks --acl public-read "$src" "$dst"
 	if [ "$latest" ]; then
 		echo
 		echo "Copying to $latest"
 		echo
-		s3cmd --acl-public cp "$dst" "$latest"
+		aws s3 cp --acl public-read cp "$dst" "$latest"
 	fi
 
 	# get hash files too (see hash_files() in hack/make.sh)
@@ -162,12 +161,12 @@ upload_release_build() {
 			echo "Uploading $src.$hashAlgo"
 			echo "  to $dst.$hashAlgo"
 			echo
-			s3cmd --follow-symlinks --preserve --acl-public --mime-type='text/plain' put "$src.$hashAlgo" "$dst.$hashAlgo"
+			aws s3 cp --follow-symlinks --acl public-read --content-type='text/plain' "$src.$hashAlgo" "$dst.$hashAlgo"
 			if [ "$latest" ]; then
 				echo
 				echo "Copying to $latest.$hashAlgo"
 				echo
-				s3cmd --acl-public cp "$dst.$hashAlgo" "$latest.$hashAlgo"
+				aws s3 cp --acl public-read "$dst.$hashAlgo" "$latest.$hashAlgo"
 			fi
 		fi
 	done
@@ -275,7 +274,7 @@ EOF
 
 	# Add redirect at /builds/info for URL-backwards-compatibility
 	rm -rf /tmp/emptyfile && touch /tmp/emptyfile
-	s3cmd --acl-public --add-header='x-amz-website-redirect-location:/builds/' --mime-type='text/plain' put /tmp/emptyfile "s3://$BUCKET_PATH/builds/info"
+	aws s3 --acl public-read --website-redirect '/builds/' --content-type='text/plain' /tmp/emptyfile "s3://$BUCKET_PATH/builds/info"
 
 	if [ -z "$NOLATEST" ]; then
 		echo "Advertising $VERSION on $BUCKET_PATH as most recent version"
@@ -290,19 +289,11 @@ release_index() {
 	write_to_s3 "s3://$BUCKET_PATH/index" < "bundles/$VERSION/install-script/install.sh"
 }
 
-release_test() {
-	echo "Releasing tests"
-	if [ -e "bundles/$VERSION/test" ]; then
-		s3cmd --acl-public sync "bundles/$VERSION/test/" "s3://$BUCKET_PATH/test/"
-	fi
-}
-
 main() {
 	build_all
 	setup_s3
 	release_binaries
 	release_index
-	release_test
 }
 
 main
