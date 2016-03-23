@@ -21,25 +21,28 @@ To run, I need:
 - to be provided with the location of an S3 bucket and path, in
   environment variables AWS_S3_BUCKET and AWS_S3_BUCKET_PATH (default: '');
 - to be provided with AWS credentials for this S3 bucket, in environment
-  variables AWS_ACCESS_KEY and AWS_SECRET_KEY;
+  variables AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY;
 - a generous amount of good will and nice manners.
 The canonical way to run me is to run the image produced by the Dockerfile: e.g.:"
 
 docker run -e AWS_S3_BUCKET=test.docker.com \
-           -e AWS_ACCESS_KEY=... \
-           -e AWS_SECRET_KEY=... \
-           -i -t --privileged \
+           -e AWS_ACCESS_KEY_ID     \
+           -e AWS_SECRET_ACCESS_KEY \
+	   -e AWS_DEFAULT_REGION    \
+           -it --privileged         \
            docker ./hack/release.sh
 EOF
 	exit 1
 }
 
 [ "$AWS_S3_BUCKET" ] || usage
-[ "$AWS_ACCESS_KEY" ] || usage
-[ "$AWS_SECRET_KEY" ] || usage
+[ "$AWS_ACCESS_KEY_ID" ] || usage
+[ "$AWS_SECRET_ACCESS_KEY" ] || usage
 [ -d /go/src/github.com/docker/docker ] || usage
 cd /go/src/github.com/docker/docker
 [ -x hack/make.sh ] || usage
+
+: ${AWS_DEFAULT_REGION:=us-west-2}
 
 RELEASE_BUNDLES=(
 	binary
