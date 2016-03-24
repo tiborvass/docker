@@ -117,9 +117,10 @@ set -e
 			WORKDIR /root/rpmbuild
 			RUN ln -sfv /usr/src/${rpmName}/hack/make/.build-rpm SPECS
 			WORKDIR /root/rpmbuild/SPECS
-			RUN tar -cz -C /go/src/github.com/docker -f /root/rpmbuild/SOURCES/containerd.tar.gz containerd
-			RUN tar -cz -C /go/src/github.com/opencontainers -f /root/rpmbuild/SOURCES/runc.tar.gz runc
-			RUN tar -cz -C /usr/src -f /root/rpmbuild/SOURCES/${rpmName}.tar.gz ${rpmName}
+			RUN tar -rz -C /go/src/github.com/docker -f /root/rpmbuild/SOURCES/${rpmName}.tar ${rpmName}
+			RUN tar -rz -C /go/src/github.com/docker -f /root/rpmbuild/SOURCES/${rpmName}.tar containerd
+			RUN tar -rz -C /go/src/github.com/opencontainers -f /root/rpmbuild/SOURCES/${rpmName}.tar runc
+			RUN gzip /root/rpmbuild/SOURCES/${rpmName}.tar
 			RUN { cat /usr/src/${rpmName}/contrib/builder/rpm/${PACKAGE_ARCH}/changelog; } >> ${rpmName}.spec && tail >&2 ${rpmName}.spec
 			RUN rpmbuild -ba \
 				--define '_gitcommit $DOCKER_GITCOMMIT' \
