@@ -6,7 +6,6 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
-	apiserver "github.com/tiborvass/docker/api/server"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/mflag"
@@ -14,10 +13,6 @@ import (
 )
 
 var defaultDaemonConfigFile = os.Getenv("programdata") + string(os.PathSeparator) + "docker" + string(os.PathSeparator) + "config" + string(os.PathSeparator) + "daemon.json"
-
-func setPlatformServerConfig(serverConfig *apiserver.Config, daemonCfg *daemon.Config) *apiserver.Config {
-	return serverConfig
-}
 
 // currentUserIsOwner checks whether the current user is the owner of the given
 // file.
