@@ -22,6 +22,7 @@ import (
 	"github.com/Sirupsen/logrus"
 
 	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/devicemapper"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/loopback"
@@ -1656,7 +1657,12 @@ func (devices *DeviceSet) initDevmapper(doInit bool) error {
 
 	// https://github.com/docker/docker/issues/4036
 	if supported := devicemapper.UdevSetSyncSupport(true); !supported {
-		logrus.Errorf("devmapper: Udev sync is not supported. This will lead to data loss and unexpected behavior. Install a dynamic binary to use devicemapper or select a different storage driver. For more information, see https://docs.docker.com/engine/reference/commandline/daemon/#daemon-storage-driver-option")
+		if dockerversion.IAmStatic == "true" {
+			logrus.Errorf("devmapper: Udev sync is not supported. This will lead to data loss and unexpected behavior. Install a dynamic binary to use devicemapper or select a different storage driver. For more information, see https://docs.docker.com/engine/reference/commandline/daemon/#daemon-storage-driver-option")
+		} else {
+			logrus.Errorf("devmapper: Udev sync is not supported. This will lead to data loss and unexpected behavior. Install a more recent version of libdevmapper or select a different storage driver. For more information, see https://docs.docker.com/engine/reference/commandline/daemon/#daemon-storage-driver-option")
+		}
+
 		if !devices.overrideUdevSyncCheck {
 			return graphdriver.ErrNotSupported
 		}
