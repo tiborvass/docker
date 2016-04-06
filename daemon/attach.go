@@ -11,10 +11,20 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/stdcopy"
+	"github.com/tiborvass/docker/pkg/term"
 )
 
 // ContainerAttach attaches to logs according to the config passed in. See ContainerAttachConfig.
 func (daemon *Daemon) ContainerAttach(prefixOrName string, c *backend.ContainerAttachConfig) error {
+	keys := []byte{}
+	var err error
+	if c.DetachKeys != "" {
+		keys, err = term.ToBytes(c.DetachKeys)
+		if err != nil {
+			return fmt.Errorf("Invalid escape keys (%s) provided", c.DetachKeys)
+		}
+	}
+
 	container, err := daemon.GetContainer(prefixOrName)
 	if err != nil {
 		return err
@@ -48,7 +58,7 @@ func (daemon *Daemon) ContainerAttach(prefixOrName string, c *backend.ContainerA
 		stderr = errStream
 	}
 
-	if err := daemon.containerAttach(container, stdin, stdout, stderr, c.Logs, c.Stream, c.DetachKeys); err != nil {
+	if err := daemon.containerAttach(container, stdin, stdout, stderr, c.Logs, c.Stream, keys); err != nil {
 		fmt.Fprintf(outStream, "Error attaching: %s\n", err)
 	}
 	return nil
