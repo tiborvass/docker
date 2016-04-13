@@ -43,65 +43,73 @@ set -e
 	if [ ! -z "$DOCKER_BUILD_PKGS" ]; then
 		pkgs=( $(echo ${DOCKER_BUILD_PKGS[@]/#/$builderDir\/}) )
 	fi
+	n=()
 	for dir in "${pkgs[@]}"; do
 		[ -d "$dir" ] || { echo >&2 "skipping nonexistent $dir"; continue; }
 		version="$(basename "$dir")"
 		suite="${version##*-}"
-
 		image="dockercore/builder-deb:$version"
-		if ! docker inspect "$image" &> /dev/null; then
-			( set -x && docker build ${DOCKER_BUILD_ARGS} -t "$image" "$dir" )
-		fi
+		n+=($version)
 
-		mkdir -p "$DEST/$version"
-		cat > "$DEST/$version/Dockerfile.build" <<-EOF
-			FROM $image
-			WORKDIR /usr/src/docker
-			COPY . /usr/src/docker
-			RUN mkdir -p /go/src/github.com/docker && mkdir -p /go/src/github.com/opencontainers \
-				&& ln -snf /usr/src/docker /go/src/github.com/docker/docker
-		EOF
+		(
+			if ! docker inspect "$image" &> /dev/null; then
+				( set -x && docker build ${DOCKER_BUILD_ARGS} -t "$image" "$dir" )
+			fi
 
-		# get the RUNC and CONTAINERD commit from the root Dockerfile, this keeps the commits in sync
-		awk '$1 == "ENV" && $2 == "RUNC_COMMIT" { print; exit }' Dockerfile >> "$DEST/$version/Dockerfile.build"
-		awk '$1 == "ENV" && $2 == "CONTAINERD_COMMIT" { print; exit }' Dockerfile >> "$DEST/$version/Dockerfile.build"
+			mkdir -p "$DEST/$version"
+			cat > "$DEST/$version/Dockerfile.build" <<-EOF
+				FROM $image
+				WORKDIR /usr/src/docker
+				COPY . /usr/src/docker
+				RUN mkdir -p /go/src/github.com/docker && mkdir -p /go/src/github.com/opencontainers \
+					&& ln -snf /usr/src/docker /go/src/github.com/docker/docker
+			EOF
 
-		# add runc and containerd compile and install
-		cat >> "$DEST/$version/Dockerfile.build" <<-EOF
-			# Install runc
-			RUN git clone https://github.com/opencontainers/runc.git "/go/src/github.com/opencontainers/runc" \
-					&& cd "/go/src/github.com/opencontainers/runc" \
-					&& git checkout -q "\$RUNC_COMMIT"
-			RUN set -x && export GOPATH="/go" && cd "/go/src/github.com/opencontainers/runc" \
-					&& make BUILDTAGS="\$RUNC_BUILDTAGS" && make install
-			# Install containerd
-			RUN git clone https://github.com/docker/containerd.git "/go/src/github.com/docker/containerd" \
-					&& cd "/go/src/github.com/docker/containerd" \
-					&& git checkout -q "\$CONTAINERD_COMMIT"
-			RUN set -x && export GOPATH="/go" && cd "/go/src/github.com/docker/containerd" && make && make install
-		EOF
-		if [ "$DOCKER_EXPERIMENTAL" ]; then
-			echo 'ENV DOCKER_EXPERIMENTAL 1' >> "$DEST/$version/Dockerfile.build"
-		fi
-		cat >> "$DEST/$version/Dockerfile.build" <<-EOF
-			RUN cp -aL hack/make/.build-deb debian
-			RUN { echo '$debSource (${debVersion}-0~${suite}) $suite; urgency=low'; echo; echo '  * Version: $VERSION'; echo; echo " -- $debMaintainer  $debDate"; } > debian/changelog && cat >&2 debian/changelog
-		EOF
-		# Remove the following case-based substitution when none of these are supported, and the TasksMax value is uncommented in docker.service
-		case "$version" in
-		debian-jessie|debian-wheezy|ubuntu-precise|ubuntu-trusty|ubuntu-wily)
-			;;
-		*)
-			echo "RUN sed -i -- 's/#TasksMax=infinity/TasksMax=infinity/' contrib/init/systemd/docker.service" >> "$DEST/$version/Dockerfile.build"
-			;;
-		esac
-		cat >> "$DEST/$version/Dockerfile.build" <<-EOF
-			RUN dpkg-buildpackage -uc -us
-		EOF
-		tempImage="docker-temp/build-deb:$version"
-		( set -x && docker build -t "$tempImage" -f "$DEST/$version/Dockerfile.build" . )
-		docker run --rm "$tempImage" bash -c 'cd .. && tar -c *_*' | tar -xvC "$DEST/$version"
-		docker rmi "$tempImage"
+			# get the RUNC and CONTAINERD commit from the root Dockerfile, this keeps the commits in sync
+			awk '$1 == "ENV" && $2 == "RUNC_COMMIT" { print; exit }' Dockerfile >> "$DEST/$version/Dockerfile.build"
+			awk '$1 == "ENV" && $2 == "CONTAINERD_COMMIT" { print; exit }' Dockerfile >> "$DEST/$version/Dockerfile.build"
+
+			# add runc and containerd compile and install
+			cat >> "$DEST/$version/Dockerfile.build" <<-EOF
+				# Install runc
+				RUN git clone https://github.com/opencontainers/runc.git "/go/src/github.com/opencontainers/runc" \
+						&& cd "/go/src/github.com/opencontainers/runc" \
+						&& git checkout -q "\$RUNC_COMMIT"
+				RUN set -x && export GOPATH="/go" && cd "/go/src/github.com/opencontainers/runc" \
+						&& make BUILDTAGS="\$RUNC_BUILDTAGS" && make install
+				# Install containerd
+				RUN git clone https://github.com/docker/containerd.git "/go/src/github.com/docker/containerd" \
+						&& cd "/go/src/github.com/docker/containerd" \
+						&& git checkout -q "\$CONTAINERD_COMMIT"
+				RUN set -x && export GOPATH="/go" && cd "/go/src/github.com/docker/containerd" && make && make install
+			EOF
+			if [ "$DOCKER_EXPERIMENTAL" ]; then
+				echo 'ENV DOCKER_EXPERIMENTAL 1' >> "$DEST/$version/Dockerfile.build"
+			fi
+			cat >> "$DEST/$version/Dockerfile.build" <<-EOF
+				RUN cp -aL hack/make/.build-deb debian
+				RUN { echo '$debSource (${debVersion}-0~${suite}) $suite; urgency=low'; echo; echo '  * Version: $VERSION'; echo; echo " -- $debMaintainer  $debDate"; } > debian/changelog && cat >&2 debian/changelog
+			EOF
+			# Remove the following case-based substitution when none of these are supported, and the TasksMax value is uncommented in docker.service
+			case "$version" in
+			debian-jessie|debian-wheezy|ubuntu-precise|ubuntu-trusty|ubuntu-wily)
+				;;
+			*)
+				echo "RUN sed -i -- 's/#TasksMax=infinity/TasksMax=infinity/' contrib/init/systemd/docker.service" >> "$DEST/$version/Dockerfile.build"
+				;;
+			esac
+			cat >> "$DEST/$version/Dockerfile.build" <<-EOF
+				RUN dpkg-buildpackage -uc -us
+			EOF
+			tempImage="docker-temp/build-deb:$version"
+			( set -x && docker build -t "$tempImage" -f "$DEST/$version/Dockerfile.build" . )
+			docker run --rm "$tempImage" bash -c 'cd .. && tar -c *_*' | tar -xvC "$DEST/$version"
+			docker rmi "$tempImage"
+		) &> "$DEST/build-$version.log" &
+	done
+	for i in $(seq 1 ${#n[@]}); do
+		wait %$i
+		echo "DONE: ${n[$i]}"
 	done
 
 	bundle .integration-daemon-stop
