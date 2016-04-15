@@ -16,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
+	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
 	// register the windows graph driver
@@ -94,10 +95,34 @@ func (daemon *Daemon) adaptContainerSettings(hostConfig *containertypes.HostConf
 	return nil
 }
 
+func verifyContainerResources(resources *containertypes.Resources, sysInfo *sysinfo.SysInfo) ([]string, error) {
+	warnings := []string{}
+
+	// cpu subsystem checks and adjustments
+	if resources.CPUPercent < 0 || resources.CPUPercent > 100 {
+		return warnings, fmt.Errorf("Range of CPU percent is from 1 to 100")
+	}
+
+	if resources.CPUPercent > 0 && resources.CPUShares > 0 {
+		return warnings, fmt.Errorf("Conflicting options: CPU Shares and CPU Percent cannot both be set")
+	}
+
+	return warnings, nil
+}
+
 // verifyPlatformContainerSettings performs platform-specific validation of the
 // hostconfig and config structures.
 func verifyPlatformContainerSettings(daemon *Daemon, hostConfig *containertypes.HostConfig, config *containertypes.Config, update bool) ([]string, error) {
-	return nil, nil
+
+	warnings := []string{}
+
+	w, err := verifyContainerResources(&hostConfig.Resources, nil)
+	warnings = append(warnings, w...)
+	if err != nil {
+		return warnings, err
+	}
+
+	return warnings, nil
 }
 
 // verifyDaemonSettings performs validation of daemon config struct
