@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	cliflags "github.com/tiborvass/docker/cli/flags"
 	"github.com/tiborvass/docker/cliconfig"
+	"github.com/tiborvass/docker/cliconfig/configfile"
 	"github.com/tiborvass/docker/cliconfig/credentials"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/opts"
@@ -27,7 +28,7 @@ type DockerCli struct {
 	init func() error
 
 	// configFile has the client configuration file
-	configFile *cliconfig.ConfigFile
+	configFile *configfile.ConfigFile
 	// in holds the input stream and closer (io.ReadCloser) for the client.
 	in io.ReadCloser
 	// out holds the output stream (io.Writer) for the client.
