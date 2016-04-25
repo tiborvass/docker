@@ -12,7 +12,6 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
-	apiserver "github.com/tiborvass/docker/api/server"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/mflag"
@@ -21,13 +20,6 @@ import (
 )
 
 const defaultDaemonConfigFile = "/etc/docker/daemon.json"
-
-func setPlatformServerConfig(serverConfig *apiserver.Config, daemonCfg *daemon.Config) *apiserver.Config {
-	serverConfig.EnableCors = daemonCfg.EnableCors
-	serverConfig.CorsHeaders = daemonCfg.CorsHeaders
-
-	return serverConfig
-}
 
 // currentUserIsOwner checks whether the current user is the owner of the given
 // file.
