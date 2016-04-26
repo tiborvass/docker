@@ -9,6 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	containertypes "github.com/tiborvass/docker/api/types/container"
+	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/opencontainers/runc/libcontainer/label"
@@ -63,7 +64,11 @@ func (daemon *Daemon) createContainerPlatformSpecificSettings(container *contain
 // this is only called when the container is created.
 func (daemon *Daemon) populateVolumes(c *container.Container) error {
 	for _, mnt := range c.MountPoints {
-		if !mnt.CopyData || mnt.Volume == nil {
+		if mnt.Volume == nil {
+			continue
+		}
+
+		if mnt.Type != mounttypes.TypeVolume || !mnt.CopyData {
 			continue
 		}
 
