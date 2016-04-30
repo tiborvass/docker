@@ -23,7 +23,6 @@ import (
 	systemrouter "github.com/tiborvass/docker/api/server/router/system"
 	"github.com/tiborvass/docker/api/server/router/volume"
 	"github.com/tiborvass/docker/builder/dockerfile"
-	"github.com/tiborvass/docker/cli"
 	cliflags "github.com/tiborvass/docker/cli/flags"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
@@ -51,7 +50,7 @@ const (
 // DaemonCli represents the daemon CLI.
 type DaemonCli struct {
 	*daemon.Config
-	commonFlags *cli.CommonFlags
+	commonFlags *cliflags.CommonFlags
 	configFile  *string
 
 	api *apiserver.Server
@@ -346,7 +345,7 @@ func shutdownDaemon(d *daemon.Daemon, timeout time.Duration) {
 	}
 }
 
-func loadDaemonCliConfig(config *daemon.Config, flags *flag.FlagSet, commonConfig *cli.CommonFlags, configFile string) (*daemon.Config, error) {
+func loadDaemonCliConfig(config *daemon.Config, flags *flag.FlagSet, commonConfig *cliflags.CommonFlags, configFile string) (*daemon.Config, error) {
 	config.Debug = commonConfig.Debug
 	config.Hosts = commonConfig.Hosts
 	config.LogLevel = commonConfig.LogLevel
