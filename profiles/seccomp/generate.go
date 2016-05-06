@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/profiles/seccomp"
 )
 
@@ -20,8 +21,10 @@ func main() {
 	}
 	f := filepath.Join(wd, "default.json")
 
+	rs := oci.DefaultSpec()
+
 	// write the default profile to the file
-	b, err := json.MarshalIndent(seccomp.DefaultProfile, "", "\t")
+	b, err := json.MarshalIndent(seccomp.DefaultProfile(&rs), "", "\t")
 	if err != nil {
 		panic(err)
 	}
