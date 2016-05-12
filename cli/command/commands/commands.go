@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/cli/command/checkpoint"
 	"github.com/tiborvass/docker/cli/command/container"
 	"github.com/tiborvass/docker/cli/command/image"
 	"github.com/tiborvass/docker/cli/command/network"
@@ -67,5 +68,6 @@ func AddCommands(cmd *cobra.Command, dockerCli *command.DockerCli) {
 		volume.NewVolumeCommand(dockerCli),
 		system.NewInfoCommand(dockerCli),
 	)
+	checkpoint.NewCheckpointCommand(cmd, dockerCli)
 	plugin.NewPluginCommand(cmd, dockerCli)
 }
