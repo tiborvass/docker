@@ -31,7 +31,7 @@ func NewPlugins(names []string) []Plugin {
 
 // authorizationPlugin is an internal adapter to docker plugin system
 type authorizationPlugin struct {
-	plugin *plugins.Plugin
+	plugin *plugins.Client
 	name   string
 }
 
@@ -49,7 +49,7 @@ func (a *authorizationPlugin) AuthZRequest(authReq *Request) (*Response, error) 
 	}
 
 	authRes := &Response{}
-	if err := a.plugin.Client.Call(AuthZApiRequest, authReq, authRes); err != nil {
+	if err := a.plugin.Call(AuthZApiRequest, authReq, authRes); err != nil {
 		return nil, err
 	}
 
@@ -62,7 +62,7 @@ func (a *authorizationPlugin) AuthZResponse(authReq *Request) (*Response, error)
 	}
 
 	authRes := &Response{}
-	if err := a.plugin.Client.Call(AuthZApiResponse, authReq, authRes); err != nil {
+	if err := a.plugin.Call(AuthZApiResponse, authReq, authRes); err != nil {
 		return nil, err
 	}
 
@@ -73,11 +73,11 @@ func (a *authorizationPlugin) AuthZResponse(authReq *Request) (*Response, error)
 func (a *authorizationPlugin) initPlugin() error {
 	// Lazy loading of plugins
 	if a.plugin == nil {
-		var err error
-		a.plugin, err = plugins.Get(a.name, AuthZApiImplements)
+		plugin, err := plugins.Get(a.name, AuthZApiImplements)
 		if err != nil {
 			return err
 		}
+		a.plugin = plugin.Client()
 	}
 	return nil
 }

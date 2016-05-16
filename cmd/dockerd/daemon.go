@@ -15,14 +15,7 @@ import (
 	"github.com/docker/docker/api"
 	apiserver "github.com/docker/docker/api/server"
 	"github.com/docker/docker/api/server/middleware"
-	"github.com/docker/docker/api/server/router"
-	"github.com/docker/docker/api/server/router/build"
-	"github.com/docker/docker/api/server/router/container"
-	"github.com/docker/docker/api/server/router/image"
 	"github.com/docker/docker/api/server/router/network"
-	systemrouter "github.com/docker/docker/api/server/router/system"
-	"github.com/docker/docker/api/server/router/volume"
-	"github.com/docker/docker/builder/dockerfile"
 	cliflags "github.com/docker/docker/cli/flags"
 	"github.com/docker/docker/cliconfig"
 	"github.com/docker/docker/daemon"
@@ -37,8 +30,8 @@ import (
 	"github.com/docker/docker/pkg/pidfile"
 	"github.com/docker/docker/pkg/signal"
 	"github.com/docker/docker/pkg/system"
+	"github.com/docker/docker/plugin"
 	"github.com/docker/docker/registry"
-	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
 	"github.com/docker/go-connections/tlsconfig"
 )
@@ -259,6 +252,10 @@ func (cli *DaemonCli) start() (err error) {
 		return err
 	}
 
+	if err := plugin.Init(cli.Config.Root, cli.Config.ExecRoot, containerdRemote, registryService); err != nil {
+		return err
+	}
+
 	d, err := daemon.NewDaemon(cli.Config, registryService, containerdRemote)
 	if err != nil {
 		return fmt.Errorf("Error starting daemon: %v", err)
@@ -387,15 +384,7 @@ func loadDaemonCliConfig(config *daemon.Config, flags *flag.FlagSet, commonConfi
 }
 
 func initRouter(s *apiserver.Server, d *daemon.Daemon) {
-	decoder := runconfig.ContainerDecoder{}
-
-	routers := []router.Router{
-		container.NewRouter(d, decoder),
-		image.NewRouter(d, decoder),
-		systemrouter.NewRouter(d),
-		volume.NewRouter(d),
-		build.NewRouter(dockerfile.NewBuildManager(d)),
-	}
+	routers := routes(d)
 	if d.NetworkControllerEnabled() {
 		routers = append(routers, network.NewRouter(d))
 	}

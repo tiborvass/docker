@@ -6,6 +6,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/plugins"
+	"github.com/docker/docker/plugin"
 	"github.com/docker/libnetwork/discoverapi"
 	"github.com/docker/libnetwork/ipamapi"
 	"github.com/docker/libnetwork/ipams/remote/api"
@@ -30,7 +31,7 @@ func newAllocator(name string, client *plugins.Client) ipamapi.Ipam {
 
 // Init registers a remote ipam when its plugin is activated
 func Init(cb ipamapi.Callback, l, g interface{}) error {
-	plugins.Handle(ipamapi.PluginEndpointType, func(name string, client *plugins.Client) {
+	plugin.Handle(ipamapi.PluginEndpointType, func(name string, client *plugins.Client) {
 		a := newAllocator(name, client)
 		if cps, err := a.(*allocator).getCapabilities(); err == nil {
 			if err := cb.RegisterIpamDriverWithCapabilities(name, a, cps); err != nil {

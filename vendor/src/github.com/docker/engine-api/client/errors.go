@@ -120,3 +120,11 @@ func IsErrUnauthorized(err error) bool {
 	_, ok := err.(unauthorizedError)
 	return ok
 }
+
+type pluginPermissionDenied struct {
+	name string
+}
+
+func (e pluginPermissionDenied) Error() string {
+	return "Permission denied while installing plugin " + e.name
+}
