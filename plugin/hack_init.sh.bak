@@ -1,0 +1,130 @@
+#!/bin/sh
+
+remote_name=tiborvass/no-remove
+
+set -e
+name="$1"
+echo $name
+mkdir -p /var/lib/docker/plugins/$name/rootfs
+
+id=$(docker create "$remote_name" true)
+docker export "$id" | tar -x -C /var/lib/docker/plugins/$name/rootfs
+docker rm -vf "$id"
+
+
+#Create a sample manifest file
+cat <<EOF > /var/lib/docker/plugins/$name/manifest.json
+{
+	"name": "$name",
+	"version": "latest",
+	"description": "A test plugin for Docker",
+	"documentation": "https://docs.docker.com/engine/extend/plugins/",
+	"entrypoint": ["plugin-no-remove", "/data"],
+	"provides" : {
+		"type": "docker.volumedriver-1.0",
+		"socket": "/var/run/docker/plugins/$name.sock"
+	},
+	"network": {
+		"type": "host"
+	},
+	"arguments": [
+		"mount": 
+		"device":
+			
+	],
+
+	"arguments": [
+		{
+			"name": "hostnamepath",
+			"description": "Path to the directory where all mountpoints will reside",
+			"default": "/data",
+		}
+		{
+			"name": 
+		}
+	],
+
+	"mounts": [
+		{
+			"name": "hostnamepath",
+			"type": "bind",
+			"destination": "/data",
+		}
+	],
+
+	"devices": [
+		{
+			"name": "somedevice",
+		}
+	],
+
+
+
+
+
+
+
+
+
+	"mounts": [
+		{
+			"destination": "/run/docker/plugins",
+			"type": "docker.plugins.runtime"
+		},
+		{
+			"destination": "/state",
+			"type": "docker.plugins.state"
+		},
+		{
+			"source": {
+				"name": "hostnamepath",
+				"description": "Path to the directory where all mountpoints will reside",
+				"default": "/data",
+			}
+			"destination": "/data",
+			"type": "bind",
+			"options": ["shared", "rbind"]
+		},
+		{
+			"destination": "/foobar",
+			"type": "tmpfs"
+		}
+	],
+
+	"args": [
+		{
+			"name": "arg1",
+			"description": "a command line argument",
+			"default": "value1"
+		}
+	],
+
+	"env": [
+		{
+			"name": "DEBUG",
+			"description": "If set, prints debug messages",
+			"default": "1"
+		}
+	],
+
+	"devices": [
+		{
+			"name": "device",
+			"description": "a host device to mount",
+			"default": "/dev/cpu_dma_latency"
+		},
+		"/dev/cpu",
+	]
+}
+EOF
+
+cat <<EOF > /var/lib/docker/plugins/plugins.json
+{
+	"$name": {
+		"name": "$name",
+		"version": "latest",
+		"active": false,
+		"id": "deadbeef"
+	}
+}
+EOF

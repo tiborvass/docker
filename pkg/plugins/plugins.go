@@ -38,11 +38,11 @@ var (
 
 type plugins struct {
 	sync.Mutex
-	plugins map[string]*Plugin
+	plugins map[string]*plugin
 }
 
 var (
-	storage          = plugins{plugins: make(map[string]*Plugin)}
+	storage          = plugins{plugins: make(map[string]*plugin)}
 	extpointHandlers = make(map[string]func(string, *Client))
 )
 
@@ -53,15 +53,15 @@ type Manifest struct {
 }
 
 // Plugin is the definition of a docker plugin.
-type Plugin struct {
+type plugin struct {
 	// Name of the plugin
-	Name string `json:"-"`
+	name string `json:"-"`
 	// Address of the plugin
 	Addr string
 	// TLS configuration of the plugin
-	TLSConfig tlsconfig.Options
+	TLSConfig *tlsconfig.Options
 	// Client attached to the plugin
-	Client *Client `json:"-"`
+	client *Client `json:"-"`
 	// Manifest of the plugin (see above)
 	Manifest *Manifest `json:"-"`
 
@@ -73,16 +73,25 @@ type Plugin struct {
 	activateWait *sync.Cond
 }
 
-func newLocalPlugin(name, addr string) *Plugin {
-	return &Plugin{
-		Name:         name,
-		Addr:         addr,
-		TLSConfig:    tlsconfig.Options{InsecureSkipVerify: true},
+func (p *plugin) Name() string {
+	return p.name
+}
+
+func (p *plugin) Client() *Client {
+	return p.client
+}
+
+func newLocalPlugin(name, addr string) *plugin {
+	return &plugin{
+		name: name,
+		Addr: addr,
+		// TODO: change to nil
+		TLSConfig:    &tlsconfig.Options{InsecureSkipVerify: true},
 		activateWait: sync.NewCond(&sync.Mutex{}),
 	}
 }
 
-func (p *Plugin) activate() error {
+func (p *plugin) activate() error {
 	p.activateWait.L.Lock()
 	if p.activated {
 		p.activateWait.L.Unlock()
@@ -97,15 +106,15 @@ func (p *Plugin) activate() error {
 	return p.activateErr
 }
 
-func (p *Plugin) activateWithLock() error {
+func (p *plugin) activateWithLock() error {
 	c, err := NewClient(p.Addr, p.TLSConfig)
 	if err != nil {
 		return err
 	}
-	p.Client = c
+	p.client = c
 
 	m := new(Manifest)
-	if err = p.Client.Call("Plugin.Activate", nil, m); err != nil {
+	if err = p.client.Call("Plugin.Activate", nil, m); err != nil {
 		return err
 	}
 
@@ -116,12 +125,12 @@ func (p *Plugin) activateWithLock() error {
 		if !handled {
 			continue
 		}
-		handler(p.Name, p.Client)
+		handler(p.name, p.client)
 	}
 	return nil
 }
 
-func (p *Plugin) waitActive() error {
+func (p *plugin) waitActive() error {
 	p.activateWait.L.Lock()
 	for !p.activated {
 		p.activateWait.Wait()
@@ -130,7 +139,7 @@ func (p *Plugin) waitActive() error {
 	return p.activateErr
 }
 
-func (p *Plugin) implements(kind string) bool {
+func (p *plugin) implements(kind string) bool {
 	if err := p.waitActive(); err != nil {
 		return false
 	}
@@ -142,11 +151,11 @@ func (p *Plugin) implements(kind string) bool {
 	return false
 }
 
-func load(name string) (*Plugin, error) {
+func load(name string) (*plugin, error) {
 	return loadWithRetry(name, true)
 }
 
-func loadWithRetry(name string, retry bool) (*Plugin, error) {
+func loadWithRetry(name string, retry bool) (*plugin, error) {
 	registry := newLocalRegistry()
 	start := time.Now()
 
@@ -184,7 +193,7 @@ func loadWithRetry(name string, retry bool) (*Plugin, error) {
 	}
 }
 
-func get(name string) (*Plugin, error) {
+func get(name string) (*plugin, error) {
 	storage.Lock()
 	pl, ok := storage.plugins[name]
 	storage.Unlock()
@@ -195,7 +204,7 @@ func get(name string) (*Plugin, error) {
 }
 
 // Get returns the plugin given the specified name and requested implementation.
-func Get(name, imp string) (*Plugin, error) {
+func Get(name, imp string) (*plugin, error) {
 	pl, err := get(name)
 	if err != nil {
 		return nil, err
@@ -213,14 +222,14 @@ func Handle(iface string, fn func(string, *Client)) {
 }
 
 // GetAll returns all the plugins for the specified implementation
-func GetAll(imp string) ([]*Plugin, error) {
+func GetAll(imp string) ([]*plugin, error) {
 	pluginNames, err := Scan()
 	if err != nil {
 		return nil, err
 	}
 
 	type plLoad struct {
-		pl  *Plugin
+		pl  *plugin
 		err error
 	}
 
@@ -243,7 +252,7 @@ func GetAll(imp string) ([]*Plugin, error) {
 	wg.Wait()
 	close(chPl)
 
-	var out []*Plugin
+	var out []*plugin
 	for pl := range chPl {
 		if pl.err != nil {
 			logrus.Error(pl.err)

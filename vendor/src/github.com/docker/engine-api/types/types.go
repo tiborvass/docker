@@ -1,6 +1,8 @@
 package types
 
 import (
+	"bytes"
+	"fmt"
 	"os"
 	"time"
 
@@ -510,4 +512,144 @@ var DefaultRuntimeName = "default"
 type Runtime struct {
 	Path string   `json:"path"`
 	Args []string `json:"runtimeArgs,omitempty"`
+}
+
+type PluginConfig struct {
+	Mounts  []PluginMount
+	Env     []string
+	Args    []string
+	Devices []PluginDevice
+}
+
+// Plugin represents the configuration of a plugin for the remote API
+type Plugin struct {
+	Manifest PluginManifest
+	Config   PluginConfig
+	Active   bool
+	Name     string
+	Version  string
+	ID       string
+}
+
+// PluginListResponse contains the response for the remote API
+type PluginsListResponse []*Plugin
+
+const (
+	authzDriver   = "AuthzDriver"
+	graphDriver   = "GraphDriver"
+	ipamDriver    = "IpamDriver"
+	networkDriver = "NetworkDriver"
+	volumeDriver  = "VolumeDriver"
+)
+
+type InterfaceType struct {
+	Prefix     string // This is always "docker"
+	Capability string // Capability should be validated against the above list.
+	Version    string // Plugin API version. Depends on the capability
+}
+
+func (t *InterfaceType) UnmarshalJSON(p []byte) error {
+	versionIndex := len(p)
+	prefixIndex := 0
+	if len(p) < 2 || p[0] != '"' || p[len(p)-1] != '"' {
+		return fmt.Errorf("%q is not a plugin interface type", p)
+	}
+	p = p[1 : len(p)-1]
+loop:
+	for i, b := range p {
+		switch b {
+		case '.':
+			prefixIndex = i
+		case '/':
+			versionIndex = i
+			break loop
+		}
+	}
+	t.Prefix = string(p[:prefixIndex])
+	t.Capability = string(p[prefixIndex+1 : versionIndex])
+	if versionIndex < len(p) {
+		t.Version = string(p[versionIndex+1:])
+	}
+	return nil
+}
+
+func (t *InterfaceType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	buf.WriteByte('"')
+	buf.WriteString(t.String())
+	buf.WriteByte('"')
+	return buf.Bytes(), nil
+}
+
+func (t InterfaceType) String() string {
+	return fmt.Sprintf("%s.%s/%s", t.Prefix, t.Capability, t.Version)
+}
+
+type PluginInterface struct {
+	Types []InterfaceType // ex. "docker.VolumeDriver.v1"
+	/* default plugin-root= "/var/run/docker/plugins". user can change plugin-root
+	   While displaying using inspect, display full path
+	*/
+	Socket string // For ex. flocker/flocker.sock. Rooted at plugin-root
+}
+
+type PluginSetting struct {
+	Name        string
+	Description string
+	Settable    bool
+}
+
+type PluginNetwork struct {
+	Type string
+}
+
+type PluginMount struct {
+	Source      *string
+	Destination string
+	Type        string
+	Options     []string
+}
+
+type PluginEnv struct {
+	Value *string
+}
+type PluginDevice struct {
+	Path *string
+}
+
+type PluginArg struct {
+	Value *string
+}
+
+type PluginManifest struct {
+	ManifestVersion string
+	Description     string
+	Documentation   string
+	Entrypoint      []string
+	Interface       PluginInterface
+	Network         PluginNetwork
+	Capabilities    []string
+	Mounts          []struct {
+		PluginSetting
+		PluginMount
+	}
+	Devices []struct {
+		PluginSetting
+		PluginDevice
+	}
+	Env []struct {
+		PluginSetting
+		PluginEnv
+	}
+	Args []struct {
+		PluginSetting
+		PluginArg
+	}
+}
+
+type PluginPrivileges struct {
+	Network      *string
+	Mounts       []string
+	Devices      []string
+	Capabilities []string
 }

@@ -463,7 +463,7 @@ func NewDaemon(config *Config, registryService registry.Service, containerdRemot
 	}
 
 	// Configure the volumes driver
-	volStore, err := configureVolumes(config, rootUID, rootGID)
+	volStore, err := d.configureVolumes(rootUID, rootGID)
 	if err != nil {
 		return nil, err
 	}
@@ -739,8 +739,8 @@ func setDefaultMtu(config *Config) {
 	config.Mtu = defaultNetworkMtu
 }
 
-func configureVolumes(config *Config, rootUID, rootGID int) (*store.VolumeStore, error) {
-	volumesDriver, err := local.New(config.Root, rootUID, rootGID)
+func (daemon *Daemon) configureVolumes(rootUID, rootGID int) (*store.VolumeStore, error) {
+	volumesDriver, err := local.New(daemon.configStore.Root, rootUID, rootGID)
 	if err != nil {
 		return nil, err
 	}
@@ -748,7 +748,7 @@ func configureVolumes(config *Config, rootUID, rootGID int) (*store.VolumeStore,
 	if !volumedrivers.Register(volumesDriver, volumesDriver.Name()) {
 		return nil, fmt.Errorf("local volume driver could not be registered")
 	}
-	return store.New(config.Root)
+	return store.New(daemon.configStore.Root)
 }
 
 // IsShuttingDown tells whether the daemon is shutting down or not

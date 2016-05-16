@@ -59,7 +59,7 @@ func Scan() ([]string, error) {
 }
 
 // Plugin returns the plugin registered with the given name (or returns an error).
-func (l *localRegistry) Plugin(name string) (*Plugin, error) {
+func (l *localRegistry) Plugin(name string) (*plugin, error) {
 	socketpaths := pluginPaths(socketsPath, name, ".sock")
 
 	for _, p := range socketpaths {
@@ -85,7 +85,7 @@ func (l *localRegistry) Plugin(name string) (*Plugin, error) {
 	return nil, ErrNotFound
 }
 
-func readPluginInfo(name, path string) (*Plugin, error) {
+func readPluginInfo(name, path string) (*plugin, error) {
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -104,18 +104,18 @@ func readPluginInfo(name, path string) (*Plugin, error) {
 	return newLocalPlugin(name, addr), nil
 }
 
-func readPluginJSONInfo(name, path string) (*Plugin, error) {
+func readPluginJSONInfo(name, path string) (*plugin, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
 
-	var p Plugin
+	var p plugin
 	if err := json.NewDecoder(f).Decode(&p); err != nil {
 		return nil, err
 	}
-	p.Name = name
+	p.name = name
 	if len(p.TLSConfig.CAFile) == 0 {
 		p.TLSConfig.InsecureSkipVerify = true
 	}

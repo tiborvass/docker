@@ -20,6 +20,7 @@ import (
 	"github.com/docker/docker/api/server/router/container"
 	"github.com/docker/docker/api/server/router/image"
 	"github.com/docker/docker/api/server/router/network"
+	pluginrouter "github.com/docker/docker/api/server/router/plugin"
 	systemrouter "github.com/docker/docker/api/server/router/system"
 	"github.com/docker/docker/api/server/router/volume"
 	"github.com/docker/docker/builder/dockerfile"
@@ -37,6 +38,7 @@ import (
 	"github.com/docker/docker/pkg/pidfile"
 	"github.com/docker/docker/pkg/signal"
 	"github.com/docker/docker/pkg/system"
+	"github.com/docker/docker/plugin"
 	"github.com/docker/docker/registry"
 	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/utils"
@@ -259,6 +261,10 @@ func (cli *DaemonCli) start() (err error) {
 		return err
 	}
 
+	if err := plugin.Init(cli.Config.Root, cli.Config.ExecRoot, containerdRemote, registryService); err != nil {
+		return err
+	}
+
 	d, err := daemon.NewDaemon(cli.Config, registryService, containerdRemote)
 	if err != nil {
 		return fmt.Errorf("Error starting daemon: %v", err)
@@ -395,6 +401,7 @@ func initRouter(s *apiserver.Server, d *daemon.Daemon) {
 		systemrouter.NewRouter(d),
 		volume.NewRouter(d),
 		build.NewRouter(dockerfile.NewBuildManager(d)),
+		pluginrouter.NewRouter(plugin.GetManager()),
 	}
 	if d.NetworkControllerEnabled() {
 		routers = append(routers, network.NewRouter(d))

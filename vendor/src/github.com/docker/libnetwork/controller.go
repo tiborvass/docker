@@ -52,8 +52,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/discovery"
-	"github.com/docker/docker/pkg/plugins"
 	"github.com/docker/docker/pkg/stringid"
+	"github.com/docker/docker/plugin"
 	"github.com/docker/libnetwork/config"
 	"github.com/docker/libnetwork/datastore"
 	"github.com/docker/libnetwork/discoverapi"
@@ -792,9 +792,9 @@ func SandboxKeyWalker(out *Sandbox, key string) SandboxWalker {
 func (c *controller) loadDriver(networkType string) error {
 	// Plugins pkg performs lazy loading of plugins that acts as remote drivers.
 	// As per the design, this Get call will result in remote driver discovery if there is a corresponding plugin available.
-	_, err := plugins.Get(networkType, driverapi.NetworkPluginEndpointType)
+	_, err := plugin.LookupWithCapability(networkType, driverapi.NetworkPluginEndpointType)
 	if err != nil {
-		if err == plugins.ErrNotFound {
+		if _, ok := err.(plugin.ErrNotFound); ok {
 			return types.NotFoundErrorf(err.Error())
 		}
 		return err
@@ -804,8 +804,8 @@ func (c *controller) loadDriver(networkType string) error {
 }
 
 func (c *controller) loadIPAMDriver(name string) error {
-	if _, err := plugins.Get(name, ipamapi.PluginEndpointType); err != nil {
-		if err == plugins.ErrNotFound {
+	if _, err := plugin.LookupWithCapability(name, ipamapi.PluginEndpointType); err != nil {
+		if _, ok := err.(plugin.ErrNotFound); ok {
 			return types.NotFoundErrorf(err.Error())
 		}
 		return err
