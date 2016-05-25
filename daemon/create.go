@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/runconfig"
 	volumestore "github.com/tiborvass/docker/volume/store"
 	"github.com/docker/engine-api/types"
 	containertypes "github.com/docker/engine-api/types/container"
@@ -122,6 +123,9 @@ func (daemon *Daemon) create(params types.ContainerCreateConfig) (retC *containe
 	if params.NetworkingConfig != nil {
 		endpointsConfigs = params.NetworkingConfig.EndpointsConfig
 	}
+	// Make sure NetworkMode has an acceptable value. We do this to ensure
+	// backwards API compatibility.
+	container.HostConfig = runconfig.SetDefaultNetModeIfBlank(container.HostConfig)
 
 	if err := daemon.updateContainerNetworkSettings(container, endpointsConfigs); err != nil {
 		return nil, err
