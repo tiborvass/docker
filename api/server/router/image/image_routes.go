@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	"github.com/tiborvass/docker/registry"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/container"
 	"github.com/docker/engine-api/types/versions"
@@ -301,7 +303,15 @@ func (s *imageRouter) getImagesSearch(ctx context.Context, w http.ResponseWriter
 			headers[k] = v
 		}
 	}
-	query, err := s.backend.SearchRegistryForImages(ctx, r.Form.Get("filters"), r.Form.Get("term"), config, headers)
+	limit := registry.DefaultSearchLimit
+	if r.Form.Get("limit") != "" {
+		limitValue, err := strconv.Atoi(r.Form.Get("limit"))
+		if err != nil {
+			return err
+		}
+		limit = limitValue
+	}
+	query, err := s.backend.SearchRegistryForImages(ctx, r.Form.Get("filters"), r.Form.Get("term"), limit, config, headers)
 	if err != nil {
 		return err
 	}
