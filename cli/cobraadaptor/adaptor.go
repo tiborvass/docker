@@ -5,6 +5,7 @@ import (
 	"github.com/tiborvass/docker/api/client/container"
 	"github.com/tiborvass/docker/api/client/image"
 	"github.com/tiborvass/docker/api/client/network"
+	"github.com/tiborvass/docker/api/client/registry"
 	"github.com/tiborvass/docker/api/client/system"
 	"github.com/tiborvass/docker/api/client/volume"
 	"github.com/tiborvass/docker/cli"
@@ -64,6 +65,8 @@ func NewCobraAdaptor(clientFlags *cliflags.ClientFlags) CobraAdaptor {
 		image.NewTagCommand(dockerCli),
 		network.NewNetworkCommand(dockerCli),
 		system.NewEventsCommand(dockerCli),
+		registry.NewLoginCommand(dockerCli),
+		registry.NewLogoutCommand(dockerCli),
 		system.NewVersionCommand(dockerCli),
 		volume.NewVolumeCommand(dockerCli),
 	)
