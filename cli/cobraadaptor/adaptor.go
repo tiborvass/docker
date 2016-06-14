@@ -5,7 +5,10 @@ import (
 	"github.com/tiborvass/docker/api/client/container"
 	"github.com/tiborvass/docker/api/client/image"
 	"github.com/tiborvass/docker/api/client/network"
+	"github.com/tiborvass/docker/api/client/node"
 	"github.com/tiborvass/docker/api/client/registry"
+	"github.com/tiborvass/docker/api/client/service"
+	"github.com/tiborvass/docker/api/client/swarm"
 	"github.com/tiborvass/docker/api/client/system"
 	"github.com/tiborvass/docker/api/client/volume"
 	"github.com/tiborvass/docker/cli"
@@ -36,6 +39,9 @@ func NewCobraAdaptor(clientFlags *cliflags.ClientFlags) CobraAdaptor {
 	rootCmd.SetFlagErrorFunc(cli.FlagErrorFunc)
 	rootCmd.SetOutput(stdout)
 	rootCmd.AddCommand(
+		node.NewNodeCommand(dockerCli),
+		service.NewServiceCommand(dockerCli),
+		swarm.NewSwarmCommand(dockerCli),
 		container.NewAttachCommand(dockerCli),
 		container.NewCommitCommand(dockerCli),
 		container.NewCreateCommand(dockerCli),
