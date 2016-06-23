@@ -6,19 +6,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
-	"github.com/tiborvass/docker/api/client/container"
-	"github.com/tiborvass/docker/api/client/image"
-	"github.com/tiborvass/docker/api/client/network"
-	"github.com/tiborvass/docker/api/client/node"
-	"github.com/tiborvass/docker/api/client/plugin"
-	"github.com/tiborvass/docker/api/client/registry"
-	"github.com/tiborvass/docker/api/client/service"
-	"github.com/tiborvass/docker/api/client/stack"
-	"github.com/tiborvass/docker/api/client/swarm"
-	"github.com/tiborvass/docker/api/client/system"
-	"github.com/tiborvass/docker/api/client/volume"
+	"github.com/tiborvass/docker/api/client/command"
 	"github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/cli/cobraadaptor"
 	cliflags "github.com/tiborvass/docker/cli/flags"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/dockerversion"
@@ -50,7 +39,7 @@ func newDockerCommand(dockerCli *client.DockerCli) *cobra.Command {
 			return dockerCli.Initialize(opts)
 		},
 	}
-	cobraadaptor.SetupRootCommand(cmd)
+	cli.SetupRootCommand(cmd)
 
 	flags := cmd.Flags()
 	flags.BoolVarP(&opts.Version, "version", "v", false, "Print version information and quit")
@@ -58,57 +47,8 @@ func newDockerCommand(dockerCli *client.DockerCli) *cobra.Command {
 	opts.Common.InstallFlags(flags)
 
 	cmd.SetOutput(dockerCli.Out())
-	cmd.AddCommand(
-		newDaemonCommand(),
-		node.NewNodeCommand(dockerCli),
-		service.NewServiceCommand(dockerCli),
-		stack.NewStackCommand(dockerCli),
-		stack.NewTopLevelDeployCommand(dockerCli),
-		swarm.NewSwarmCommand(dockerCli),
-		container.NewAttachCommand(dockerCli),
-		container.NewCommitCommand(dockerCli),
-		container.NewCopyCommand(dockerCli),
-		container.NewCreateCommand(dockerCli),
-		container.NewDiffCommand(dockerCli),
-		container.NewExecCommand(dockerCli),
-		container.NewExportCommand(dockerCli),
-		container.NewKillCommand(dockerCli),
-		container.NewLogsCommand(dockerCli),
-		container.NewPauseCommand(dockerCli),
-		container.NewPortCommand(dockerCli),
-		container.NewPsCommand(dockerCli),
-		container.NewRenameCommand(dockerCli),
-		container.NewRestartCommand(dockerCli),
-		container.NewRmCommand(dockerCli),
-		container.NewRunCommand(dockerCli),
-		container.NewStartCommand(dockerCli),
-		container.NewStatsCommand(dockerCli),
-		container.NewStopCommand(dockerCli),
-		container.NewTopCommand(dockerCli),
-		container.NewUnpauseCommand(dockerCli),
-		container.NewUpdateCommand(dockerCli),
-		container.NewWaitCommand(dockerCli),
-		image.NewBuildCommand(dockerCli),
-		image.NewHistoryCommand(dockerCli),
-		image.NewImagesCommand(dockerCli),
-		image.NewLoadCommand(dockerCli),
-		image.NewRemoveCommand(dockerCli),
-		image.NewSaveCommand(dockerCli),
-		image.NewPullCommand(dockerCli),
-		image.NewPushCommand(dockerCli),
-		image.NewSearchCommand(dockerCli),
-		image.NewImportCommand(dockerCli),
-		image.NewTagCommand(dockerCli),
-		network.NewNetworkCommand(dockerCli),
-		system.NewEventsCommand(dockerCli),
-		system.NewInspectCommand(dockerCli),
-		registry.NewLoginCommand(dockerCli),
-		registry.NewLogoutCommand(dockerCli),
-		system.NewVersionCommand(dockerCli),
-		volume.NewVolumeCommand(dockerCli),
-		system.NewInfoCommand(dockerCli),
-	)
-	plugin.NewPluginCommand(cmd, dockerCli)
+	cmd.AddCommand(newDaemonCommand())
+	command.AddCommands(cmd, dockerCli)
 
 	return cmd
 }

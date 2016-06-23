@@ -5,7 +5,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/cli/cobraadaptor"
 	cliflags "github.com/tiborvass/docker/cli/flags"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/dockerversion"
@@ -41,7 +40,7 @@ func newDaemonCommand() *cobra.Command {
 			return runDaemon(opts)
 		},
 	}
-	cobraadaptor.SetupRootCommand(cmd)
+	cli.SetupRootCommand(cmd)
 
 	flags := cmd.Flags()
 	flags.BoolVarP(&opts.version, "version", "v", false, "Print version information and quit")
