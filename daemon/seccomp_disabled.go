@@ -1,4 +1,4 @@
-// +build !seccomp,!windows
+// +build linux,!seccomp
 
 package daemon
 
@@ -8,6 +8,8 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/opencontainers/specs/specs-go"
 )
+
+var supportsSeccomp = false
 
 func setSeccomp(daemon *Daemon, rs *specs.Spec, c *container.Container) error {
 	if c.SeccompProfile != "" && c.SeccompProfile != "unconfined" {
