@@ -19,12 +19,10 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
-	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/sysinfo"
-	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/runconfig"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/engine-api/types"
@@ -1066,11 +1064,6 @@ func (daemon *Daemon) conditionalMountOnStart(container *container.Container) er
 // during the cleanup of a container to unmount.
 func (daemon *Daemon) conditionalUnmountOnCleanup(container *container.Container) error {
 	return daemon.Unmount(container)
-}
-
-func restoreCustomImage(is image.Store, ls layer.Store, rs reference.Store) error {
-	// Unix has no custom images to register
-	return nil
 }
 
 func (daemon *Daemon) stats(c *container.Container) (*types.StatsJSON, error) {
