@@ -5,6 +5,7 @@ import (
 
 	executorpkg "github.com/docker/docker/daemon/cluster/executor"
 	clustertypes "github.com/docker/docker/daemon/cluster/provider"
+	"github.com/docker/docker/plugin"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/network"
 	networktypes "github.com/docker/libnetwork/types"
@@ -32,7 +33,7 @@ func (e *executor) Describe(ctx context.Context) (*api.NodeDescription, error) {
 	}
 
 	var plugins []api.PluginDescription
-	addPlugins := func(typ string, names []string) {
+	addPlugins := func(typ string, names ...string) {
 		for _, name := range names {
 			plugins = append(plugins, api.PluginDescription{
 				Type: typ,
@@ -41,11 +42,20 @@ func (e *executor) Describe(ctx context.Context) (*api.NodeDescription, error) {
 		}
 	}
 
-	addPlugins("Volume", info.Plugins.Volume)
-	// Add builtin driver "overlay" (the only builtin multi-host driver) to
-	// the plugin list by default.
-	addPlugins("Network", append([]string{"overlay"}, info.Plugins.Network...))
-	addPlugins("Authorization", info.Plugins.Authorization)
+	addPlugins("Network", "overlay")
+	for _, pl := range plugin.FindWithCapabilities() {
+		for _, typ := range pl.Types() {
+			addPlugins(typ, pl.Name())
+		}
+	}
+
+	/*
+		addPlugins("Volume", info.Plugins.Volume)
+		// Add builtin driver "overlay" (the only builtin multi-host driver) to
+		// the plugin list by default.
+		addPlugins("Network", append([]string{"overlay"}, info.Plugins.Network...))
+		addPlugins("Authorization", info.Plugins.Authorization)
+	*/
 
 	// parse []string labels into a map[string]string
 	labels := map[string]string{}

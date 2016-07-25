@@ -170,8 +170,8 @@ func (pm *Manager) get(name string) (*plugin, error) {
 	return p, nil
 }
 
-// FindWithCapability returns a list of plugins matching the given capability.
-func FindWithCapability(capability string) ([]Plugin, error) {
+// FindWithCapabilities returns a list of plugins matching all given capabilities.
+func FindWithCapabilities(capabilities ...string) ([]Plugin, error) {
 	handleLegacy := true
 	result := make([]Plugin, 0, 1)
 	if manager != nil {
@@ -181,15 +181,20 @@ func FindWithCapability(capability string) ([]Plugin, error) {
 	pluginLoop:
 		for _, p := range manager.plugins {
 			for _, typ := range p.P.Manifest.Interface.Types {
-				if typ.Capability != capability || typ.Prefix != "docker" {
+				if typ.Prefix != "docker" {
 					continue pluginLoop
+				}
+				for _, capability := range capabilities {
+					if typ.Capability != capability {
+						continue pluginLoop
+					}
 				}
 			}
 			result = append(result, p)
 		}
 	}
 	if handleLegacy {
-		pl, err := plugins.GetAll(capability)
+		pl, err := plugins.GetAll(capabilities...)
 		if err != nil {
 			return nil, fmt.Errorf("legacy plugin: %v", err)
 		}

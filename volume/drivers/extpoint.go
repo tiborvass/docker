@@ -151,7 +151,7 @@ func GetDriverList() []string {
 
 // GetAllDrivers lists all the registered drivers
 func GetAllDrivers() ([]volume.Driver, error) {
-	plugins, err := plugin.FindWithCapability(extName)
+	plugins, err := plugin.FindWithCapabilities(extName)
 	if err != nil {
 		return nil, fmt.Errorf("error listing plugins: %v", err)
 	}

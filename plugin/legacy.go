@@ -4,9 +4,9 @@ package plugin
 
 import "github.com/docker/docker/pkg/plugins"
 
-// FindWithCapability returns a list of plugins matching the given capability.
-func FindWithCapability(capability string) ([]Plugin, error) {
-	pl, err := plugins.GetAll(capability)
+// FindWithCapabilities returns a list of plugins matching all given capabilities.
+func FindWithCapabilities(capabilities ...string) ([]Plugin, error) {
+	pl, err := plugins.GetAll(capabilities...)
 	if err != nil {
 		return nil, err
 	}

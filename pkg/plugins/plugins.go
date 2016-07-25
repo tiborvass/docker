@@ -230,7 +230,7 @@ func Handle(iface string, fn func(string, *Client)) {
 }
 
 // GetAll returns all the plugins for the specified implementation
-func GetAll(imp string) ([]*Plugin, error) {
+func GetAll(types ...string) ([]*Plugin, error) {
 	pluginNames, err := Scan()
 	if err != nil {
 		return nil, err
@@ -261,14 +261,18 @@ func GetAll(imp string) ([]*Plugin, error) {
 	close(chPl)
 
 	var out []*Plugin
+pluginLoop:
 	for pl := range chPl {
 		if pl.err != nil {
 			logrus.Error(pl.err)
 			continue
 		}
-		if pl.pl.implements(imp) {
-			out = append(out, pl.pl)
+		for _, typ := range types {
+			if !pl.pl.implements(typ) {
+				continue pluginLoop
+			}
 		}
+		out = append(out, pl.pl)
 	}
 	return out, nil
 }
