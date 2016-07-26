@@ -6,4 +6,5 @@ import "github.com/tiborvass/docker/pkg/plugins"
 type Plugin interface {
 	Client() *plugins.Client
 	Name() string
+	IsLegacy() bool
 }

@@ -43,7 +43,6 @@ import (
 	"github.com/tiborvass/docker/pkg/directory"
 	"github.com/tiborvass/docker/pkg/idtools"
 	mountpk "github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/pkg/stringid"
 
 	"github.com/opencontainers/runc/libcontainer/label"
 	rsystem "github.com/opencontainers/runc/libcontainer/system"
@@ -305,7 +304,7 @@ func (a *Driver) Remove(id string) error {
 }
 
 // Get returns the rootfs path for the id.
-// This will mount the dir at it's given path
+// This will mount the dir at its given path
 func (a *Driver) Get(id, mountLabel string) (string, error) {
 	parents, err := a.getParentLayerPaths(id)
 	if err != nil && !os.IsNotExist(err) {
@@ -492,7 +491,7 @@ func (a *Driver) Cleanup() error {
 
 	for _, m := range dirs {
 		if err := a.unmount(m); err != nil {
-			logrus.Debugf("aufs error unmounting %s: %s", stringid.TruncateID(m), err)
+			logrus.Debugf("aufs error unmounting %s: %s", m, err)
 		}
 	}
 	return mountpk.Unmount(a.root)
