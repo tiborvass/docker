@@ -1,69 +1,69 @@
-package service
+// +build experimental
+
+package stack
 
 import (
+	"fmt"
+
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/client/idresolver"
-	"github.com/tiborvass/docker/api/client/node"
 	"github.com/tiborvass/docker/api/client/task"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/swarm"
 	"github.com/spf13/cobra"
 )
 
-type tasksOptions struct {
-	serviceID string
-	noResolve bool
+type psOptions struct {
+	all       bool
 	filter    opts.FilterOpt
+	namespace string
+	noResolve bool
 }
 
-func newTasksCommand(dockerCli *client.DockerCli) *cobra.Command {
-	opts := tasksOptions{filter: opts.NewFilterOpt()}
+func newPSCommand(dockerCli *client.DockerCli) *cobra.Command {
+	opts := psOptions{filter: opts.NewFilterOpt()}
 
 	cmd := &cobra.Command{
-		Use:   "tasks [OPTIONS] SERVICE",
-		Short: "List the tasks of a service",
+		Use:   "ps [OPTIONS] STACK",
+		Short: "List the tasks in the stack",
 		Args:  cli.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.serviceID = args[0]
-			return runTasks(dockerCli, opts)
+			opts.namespace = args[0]
+			return runPS(dockerCli, opts)
 		},
 	}
 	flags := cmd.Flags()
+	flags.BoolVarP(&opts.all, "all", "a", false, "Display all tasks")
 	flags.BoolVar(&opts.noResolve, "no-resolve", false, "Do not map IDs to Names")
 	flags.VarP(&opts.filter, "filter", "f", "Filter output based on conditions provided")
 
 	return cmd
 }
 
-func runTasks(dockerCli *client.DockerCli, opts tasksOptions) error {
+func runPS(dockerCli *client.DockerCli, opts psOptions) error {
+	namespace := opts.namespace
 	client := dockerCli.Client()
 	ctx := context.Background()
 
-	service, _, err := client.ServiceInspectWithRaw(ctx, opts.serviceID)
-	if err != nil {
-		return err
-	}
-
 	filter := opts.filter.Value()
-	filter.Add("service", service.ID)
-	if filter.Include("node") {
-		nodeFilters := filter.Get("node")
-		for _, nodeFilter := range nodeFilters {
-			nodeReference, err := node.Reference(client, ctx, nodeFilter)
-			if err != nil {
-				return err
-			}
-			filter.Del("node", nodeFilter)
-			filter.Add("node", nodeReference)
-		}
+	filter.Add("label", labelNamespace+"="+opts.namespace)
+	if !opts.all && !filter.Include("desired-state") {
+		filter.Add("desired-state", string(swarm.TaskStateRunning))
+		filter.Add("desired-state", string(swarm.TaskStateAccepted))
 	}
 
 	tasks, err := client.TaskList(ctx, types.TaskListOptions{Filter: filter})
 	if err != nil {
 		return err
+	}
+
+	if len(tasks) == 0 {
+		fmt.Fprintf(dockerCli.Out(), "Nothing found in stack: %s\n", namespace)
+		return nil
 	}
 
 	return task.Print(dockerCli, ctx, tasks, idresolver.New(client, opts.noResolve))

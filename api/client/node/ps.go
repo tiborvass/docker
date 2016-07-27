@@ -12,22 +12,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type tasksOptions struct {
+type psOptions struct {
 	nodeID    string
 	noResolve bool
 	filter    opts.FilterOpt
 }
 
-func newTasksCommand(dockerCli *client.DockerCli) *cobra.Command {
-	opts := tasksOptions{filter: opts.NewFilterOpt()}
+func newPSCommand(dockerCli *client.DockerCli) *cobra.Command {
+	opts := psOptions{filter: opts.NewFilterOpt()}
 
 	cmd := &cobra.Command{
-		Use:   "tasks [OPTIONS] self|NODE",
+		Use:   "ps [OPTIONS] self|NODE",
 		Short: "List tasks running on a node",
 		Args:  cli.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.nodeID = args[0]
-			return runTasks(dockerCli, opts)
+			return runPS(dockerCli, opts)
 		},
 	}
 	flags := cmd.Flags()
@@ -37,7 +37,7 @@ func newTasksCommand(dockerCli *client.DockerCli) *cobra.Command {
 	return cmd
 }
 
-func runTasks(dockerCli *client.DockerCli, opts tasksOptions) error {
+func runPS(dockerCli *client.DockerCli, opts psOptions) error {
 	client := dockerCli.Client()
 	ctx := context.Background()
 
