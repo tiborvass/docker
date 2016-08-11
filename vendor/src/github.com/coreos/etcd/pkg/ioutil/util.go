@@ -12,34 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package fileutil
+package ioutil
 
 import (
+	"io"
 	"os"
-	"syscall"
-	"time"
+
+	"github.com/coreos/etcd/pkg/fileutil"
 )
 
-func TryLockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
-	if err := os.Chmod(path, syscall.DMEXCL|PrivateFileMode); err != nil {
-		return nil, err
-	}
-	f, err := os.Open(path, flag, perm)
+// WriteAndSyncFile behaves just like ioutil.WriteFile in the standard library,
+// but calls Sync before closing the file. WriteAndSyncFile guarantees the data
+// is synced if there is no error returned.
+func WriteAndSyncFile(filename string, data []byte, perm os.FileMode) error {
+	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
-		return nil, ErrLocked
+		return err
 	}
-	return &LockedFile{f}, nil
-}
-
-func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
-	if err := os.Chmod(path, syscall.DMEXCL|PrivateFileMode); err != nil {
-		return nil, err
+	n, err := f.Write(data)
+	if err == nil && n < len(data) {
+		err = io.ErrShortWrite
 	}
-	for {
-		f, err := os.OpenFile(path, flag, perm)
-		if err == nil {
-			return &LockedFile{f}, nil
-		}
-		time.Sleep(10 * time.Millisecond)
+	if err == nil {
+		err = fileutil.Fsync(f)
 	}
+	if err1 := f.Close(); err == nil {
+		err = err1
+	}
+	return err
 }

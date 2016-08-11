@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package types
+// +build !linux,!darwin
 
-// Uint64Slice implements sort interface
-type Uint64Slice []uint64
+package fileutil
 
-func (p Uint64Slice) Len() int           { return len(p) }
-func (p Uint64Slice) Less(i, j int) bool { return p[i] < p[j] }
-func (p Uint64Slice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+import "os"
+
+func preallocExtend(f *os.File, sizeInBytes int64) error {
+	return preallocExtendTrunc(f, sizeInBytes)
+}
+
+func preallocFixed(f *os.File, sizeInBytes int64) error { return nil }
