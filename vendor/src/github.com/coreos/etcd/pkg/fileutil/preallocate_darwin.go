@@ -12,23 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build linux
+// +build darwin
 
 package fileutil
 
 import (
 	"os"
 	"syscall"
+	"unsafe"
 )
 
-// Fsync is a wrapper around file.Sync(). Special handling is needed on darwin platform.
-func Fsync(f *os.File) error {
-	return f.Sync()
+func preallocExtend(f *os.File, sizeInBytes int64) error {
+	if err := preallocFixed(f, sizeInBytes); err != nil {
+		return err
+	}
+	return preallocExtendTrunc(f, sizeInBytes)
 }
 
-// Fdatasync is similar to fsync(), but does not flush modified metadata
-// unless that metadata is needed in order to allow a subsequent data retrieval
-// to be correctly handled.
-func Fdatasync(f *os.File) error {
-	return syscall.Fdatasync(int(f.Fd()))
+func preallocFixed(f *os.File, sizeInBytes int64) error {
+	fstore := &syscall.Fstore_t{
+		Flags:   syscall.F_ALLOCATEALL,
+		Posmode: syscall.F_PEOFPOSMODE,
+		Length:  sizeInBytes}
+	p := unsafe.Pointer(fstore)
+	_, _, errno := syscall.Syscall(syscall.SYS_FCNTL, f.Fd(), uintptr(syscall.F_PREALLOCATE), uintptr(p))
+	if errno == 0 || errno == syscall.ENOTSUP {
+		return nil
+	}
+	return errno
 }
