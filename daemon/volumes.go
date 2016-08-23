@@ -7,12 +7,14 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Sirupsen/logrus"
 	dockererrors "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/volume"
+	"github.com/tiborvass/docker/volume/drivers"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 
@@ -275,4 +277,30 @@ func backportMountSpec(container *container.Container) error {
 		}
 	}
 	return container.ToDiskLocking()
+}
+
+func (daemon *Daemon) traverseLocalVolumes(fn func(volume.Volume) error) error {
+	localVolumeDriver, err := volumedrivers.GetDriver(volume.DefaultDriverName)
+	if err != nil {
+		return fmt.Errorf("can't retrieve local volume driver: %v", err)
+	}
+	vols, err := localVolumeDriver.List()
+	if err != nil {
+		return fmt.Errorf("can't retrieve local volumes: %v", err)
+	}
+
+	for _, v := range vols {
+		name := v.Name()
+		_, err := daemon.volumes.Get(name)
+		if err != nil {
+			logrus.Warnf("failed to retrieve volume %s from store: %v", name, err)
+		}
+
+		err = fn(v)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
