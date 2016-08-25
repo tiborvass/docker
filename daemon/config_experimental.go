@@ -2,7 +2,9 @@
 
 package daemon
 
-import flag "github.com/tiborvass/docker/pkg/mflag"
+import (
+	"github.com/spf13/pflag"
+)
 
-func (config *Config) attachExperimentalFlags(cmd *flag.FlagSet, usageFn func(string) string) {
+func (config *Config) attachExperimentalFlags(cmd *pflag.FlagSet) {
 }

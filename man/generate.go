@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tiborvass/docker/cli/cobraadaptor"
-	cliflags "github.com/tiborvass/docker/cli/flags"
+	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/client/command"
+	"github.com/tiborvass/docker/pkg/term"
+	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 )
 
@@ -15,10 +17,12 @@ func generateManPages(path string) error {
 		Section: "1",
 		Source:  "Docker Community",
 	}
-	flags := &cliflags.ClientFlags{
-		Common: cliflags.InitCommonFlags(),
-	}
-	cmd := cobraadaptor.NewCobraAdaptor(flags).GetRootCommand()
+
+	stdin, stdout, stderr := term.StdStreams()
+	dockerCli := client.NewDockerCli(stdin, stdout, stderr)
+	cmd := &cobra.Command{Use: "docker"}
+	command.AddCommands(cmd, dockerCli)
+
 	cmd.DisableAutoGenTag = true
 	return doc.GenManTreeFromOpts(cmd, doc.GenManTreeOptions{
 		Header:           header,
