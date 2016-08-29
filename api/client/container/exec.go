@@ -10,9 +10,8 @@ import (
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/pkg/promise"
 	apiclient "github.com/tiborvass/docker/client"
-	"github.com/docker/engine-api/types"
+	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/spf13/cobra"
 )
 
@@ -127,7 +126,7 @@ func runExec(dockerCli *client.DockerCli, opts *execOptions, container string, e
 	}
 	defer resp.Close()
 	errCh = promise.Go(func() error {
-		return dockerCli.HoldHijackedConnection(ctx, execConfig.Tty, in, out, stderr, resp)
+		return holdHijackedConnection(ctx, dockerCli, execConfig.Tty, in, out, stderr, resp)
 	})
 
 	if execConfig.Tty && dockerCli.In().IsTerminal() {
