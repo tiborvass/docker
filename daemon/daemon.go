@@ -23,11 +23,11 @@ import (
 	"github.com/Sirupsen/logrus"
 	containerd "github.com/docker/containerd/api/grpc/types"
 	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/api/types"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/exec"
-	"github.com/docker/engine-api/types"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/libnetwork/cluster"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"

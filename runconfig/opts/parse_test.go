@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/container"
+	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/docker/engine-api/types/container"
-	networktypes "github.com/docker/engine-api/types/network"
 	"github.com/docker/go-connections/nat"
 	"github.com/spf13/pflag"
 )

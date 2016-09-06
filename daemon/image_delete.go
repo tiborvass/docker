@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
 )
 
 type conflictType int

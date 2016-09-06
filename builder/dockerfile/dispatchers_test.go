@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
-	"github.com/docker/engine-api/types/strslice"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/docker/go-connections/nat"
 )
 

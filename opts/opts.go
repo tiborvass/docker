@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/docker/engine-api/types/filters"
+	"github.com/tiborvass/docker/api/types/filters"
 )
 
 var (

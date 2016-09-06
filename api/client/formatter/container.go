@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/docker/engine-api/types"
 	"github.com/docker/go-units"
 )
 

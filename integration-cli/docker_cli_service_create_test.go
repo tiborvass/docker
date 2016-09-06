@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/go-check/check"
 )
 

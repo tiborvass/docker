@@ -7,11 +7,11 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	dockeropts "github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/urlutil"
-	"github.com/docker/engine-api/types"
 	"github.com/spf13/cobra"
 )
 

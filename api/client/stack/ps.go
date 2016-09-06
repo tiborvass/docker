@@ -10,10 +10,10 @@ import (
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/client/idresolver"
 	"github.com/tiborvass/docker/api/client/task"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/spf13/cobra"
 )
 

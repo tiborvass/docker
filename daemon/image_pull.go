@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/docker/distribution/digest"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/distribution"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/docker/engine-api/types"
 	"golang.org/x/net/context"
 )
 

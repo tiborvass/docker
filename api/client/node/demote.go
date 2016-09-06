@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/spf13/cobra"
 )
 

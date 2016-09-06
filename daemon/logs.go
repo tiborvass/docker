@@ -10,13 +10,13 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/backend"
+	containertypes "github.com/tiborvass/docker/api/types/container"
+	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	containertypes "github.com/docker/engine-api/types/container"
-	timetypes "github.com/docker/engine-api/types/time"
 )
 
 // ContainerLogs hooks up a container's stdout and stderr streams

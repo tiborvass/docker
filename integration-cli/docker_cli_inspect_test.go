@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
 	"github.com/go-check/check"
 )
 

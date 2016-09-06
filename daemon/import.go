@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
@@ -18,7 +19,6 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types/container"
 )
 
 // ImportImage imports an image, getting the archived layer data either from

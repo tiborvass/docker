@@ -11,10 +11,10 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/restartmanager"
-	"github.com/docker/engine-api/types"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 

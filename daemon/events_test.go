@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
+	eventtypes "github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/events"
-	containertypes "github.com/docker/engine-api/types/container"
-	eventtypes "github.com/docker/engine-api/types/events"
 )
 
 func TestLogContainerEventCopyLabels(t *testing.T) {

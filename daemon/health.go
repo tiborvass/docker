@@ -10,10 +10,10 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/strslice"
 )
 
 const (

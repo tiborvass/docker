@@ -12,9 +12,9 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/docker/engine-api/types"
 	"github.com/docker/libtrust"
 )
 

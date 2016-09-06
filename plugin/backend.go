@@ -12,12 +12,12 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/plugin/distribution"
 	"github.com/tiborvass/docker/plugin/v2"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
 )
 
 // Disable deactivates a plugin, which implies that they cannot be used by containers.

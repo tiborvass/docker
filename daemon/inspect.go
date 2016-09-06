@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
+	networktypes "github.com/tiborvass/docker/api/types/network"
+	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
-	"github.com/docker/engine-api/types"
-	networktypes "github.com/docker/engine-api/types/network"
-	"github.com/docker/engine-api/types/versions"
-	"github.com/docker/engine-api/types/versions/v1p20"
 )
 
 // ContainerInspect returns low-level information about a

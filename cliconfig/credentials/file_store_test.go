@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/cliconfig/configfile"
-	"github.com/docker/engine-api/types"
 )
 
 func newConfigFile(auths map[string]types.AuthConfig) *configfile.ConfigFile {

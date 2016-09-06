@@ -3,8 +3,8 @@ package credentials
 import (
 	"github.com/tiborvass/docker-credential-helpers/client"
 	"github.com/tiborvass/docker-credential-helpers/credentials"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig/configfile"
-	"github.com/docker/engine-api/types"
 )
 
 const (

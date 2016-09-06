@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/docker/engine-api/types"
 )
 
 func TestVolumeContext(t *testing.T) {

@@ -3,8 +3,8 @@ package registry
 import (
 	"testing"
 
-	"github.com/docker/engine-api/types"
-	registrytypes "github.com/docker/engine-api/types/registry"
+	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 )
 
 func buildAuthConfigs() map[string]types.AuthConfig {

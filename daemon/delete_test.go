@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/tiborvass/docker/api/types"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
-	"github.com/docker/engine-api/types"
-	containertypes "github.com/docker/engine-api/types/container"
 )
 
 func TestContainerDoubleDelete(t *testing.T) {

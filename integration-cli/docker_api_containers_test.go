@@ -15,12 +15,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
+	containertypes "github.com/tiborvass/docker/api/types/container"
+	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/pkg/integration"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/docker/engine-api/types"
-	containertypes "github.com/docker/engine-api/types/container"
-	networktypes "github.com/docker/engine-api/types/network"
 	"github.com/go-check/check"
 )
 

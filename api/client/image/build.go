@@ -15,6 +15,8 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerignore"
 	"github.com/tiborvass/docker/cli"
@@ -27,8 +29,6 @@ import (
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/reference"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
 	"github.com/docker/go-units"
 	"github.com/spf13/cobra"
 )

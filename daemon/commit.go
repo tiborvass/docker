@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types/backend"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/dockerversion"
@@ -16,7 +17,6 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/reference"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/go-connections/nat"
 )
 

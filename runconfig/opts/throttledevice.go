@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/docker/engine-api/types/blkiodev"
+	"github.com/tiborvass/docker/api/types/blkiodev"
 	"github.com/docker/go-units"
 )
 

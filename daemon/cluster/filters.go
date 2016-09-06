@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types/filters"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/engine-api/types/filters"
 	swarmapi "github.com/docker/swarmkit/api"
 )
 

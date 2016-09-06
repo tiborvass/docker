@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	mounttypes "github.com/docker/engine-api/types/mount"
-	types "github.com/docker/engine-api/types/swarm"
+	mounttypes "github.com/tiborvass/docker/api/types/mount"
+	types "github.com/tiborvass/docker/api/types/swarm"
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/docker/swarmkit/protobuf/ptypes"
 )

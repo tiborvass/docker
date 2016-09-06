@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/executor/container"
 	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/go-check/check"
 )
 

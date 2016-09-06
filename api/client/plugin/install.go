@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/docker/engine-api/types"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

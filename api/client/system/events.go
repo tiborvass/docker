@@ -10,11 +10,11 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
+	eventtypes "github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/docker/engine-api/types"
-	eventtypes "github.com/docker/engine-api/types/events"
-	"github.com/docker/engine-api/types/filters"
 	"github.com/spf13/cobra"
 )
 

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/events"
+	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/daemon/events/testutils"
-	"github.com/docker/engine-api/types/events"
-	timetypes "github.com/docker/engine-api/types/time"
 )
 
 func TestEventsLog(t *testing.T) {

@@ -5,10 +5,10 @@ package stack
 import (
 	"golang.org/x/net/context"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/docker/engine-api/client"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
-	"github.com/docker/engine-api/types/swarm"
 )
 
 const (

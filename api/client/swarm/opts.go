@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/opts"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/spf13/pflag"
 )
 

@@ -8,12 +8,12 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
+	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/versions"
-	"github.com/docker/engine-api/types/versions/v1p20"
 )
 
 // ContainerStats writes information about the container to the stream

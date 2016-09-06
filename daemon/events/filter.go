@@ -1,9 +1,9 @@
 package events
 
 import (
+	"github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types/events"
-	"github.com/docker/engine-api/types/filters"
 )
 
 // Filter can filter out docker events from a stream

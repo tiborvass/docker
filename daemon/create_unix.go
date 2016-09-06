@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/stringid"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 
