@@ -17,6 +17,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/docker/engine-api/types/events"
 	"github.com/docker/go-connections/sockets"
 	"github.com/docker/go-connections/tlsconfig"
@@ -61,7 +62,7 @@ func NewDaemon(c *check.C) *Daemon {
 	err := os.MkdirAll(daemonSockRoot, 0700)
 	c.Assert(err, checker.IsNil, check.Commentf("could not create daemon socket root"))
 
-	id := fmt.Sprintf("d%d", time.Now().UnixNano()%100000000)
+	id := fmt.Sprintf("d%s", stringid.TruncateID(stringid.GenerateRandomID()))
 	dir := filepath.Join(dest, id)
 	daemonFolder, err := filepath.Abs(dir)
 	c.Assert(err, check.IsNil, check.Commentf("Could not make %q an absolute path", dir))
