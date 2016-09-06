@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/swarm"
-	"github.com/docker/engine-api/client"
+	"github.com/tiborvass/docker/client"
 )
 
 const (

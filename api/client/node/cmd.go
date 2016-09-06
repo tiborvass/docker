@@ -5,7 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/cli"
-	apiclient "github.com/docker/engine-api/client"
+	apiclient "github.com/tiborvass/docker/client"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

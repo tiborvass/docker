@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/events"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/events"
 	"github.com/docker/libnetwork"
 	"github.com/docker/swarmkit/agent/exec"
 	"github.com/docker/swarmkit/api"

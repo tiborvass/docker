@@ -11,7 +11,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/docker/engine-api/client"
+	"github.com/tiborvass/docker/client"
 	"github.com/docker/go-units"
 	"golang.org/x/net/context"
 )

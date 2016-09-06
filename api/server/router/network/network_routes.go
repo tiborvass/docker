@@ -8,10 +8,10 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/server/httputils"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/errors"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
-	"github.com/docker/engine-api/types/network"
 	"github.com/docker/libnetwork"
 )
 

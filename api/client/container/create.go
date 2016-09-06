@@ -14,10 +14,10 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
+	apiclient "github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	apiclient "github.com/docker/engine-api/client"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

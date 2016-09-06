@@ -15,9 +15,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/term"
-	"github.com/docker/engine-api/client"
 )
 
 func (cli *DockerCli) resizeTty(ctx context.Context, id string, isExec bool) {

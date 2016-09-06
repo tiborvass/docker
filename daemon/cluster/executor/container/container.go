@@ -9,13 +9,13 @@ import (
 
 	"github.com/Sirupsen/logrus"
 
+	"github.com/tiborvass/docker/api/types"
+	enginecontainer "github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/api/types/network"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
-	enginecontainer "github.com/docker/engine-api/types/container"
-	"github.com/docker/engine-api/types/events"
-	"github.com/docker/engine-api/types/filters"
-	"github.com/docker/engine-api/types/network"
 	"github.com/docker/swarmkit/agent/exec"
 	"github.com/docker/swarmkit/api"
 )

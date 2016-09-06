@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/events"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/swarmkit/api"
 	"golang.org/x/net/context"
 )

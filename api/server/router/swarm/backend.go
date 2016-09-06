@@ -1,8 +1,8 @@
 package swarm
 
 import (
-	basictypes "github.com/docker/engine-api/types"
-	types "github.com/docker/engine-api/types/swarm"
+	basictypes "github.com/tiborvass/docker/api/types"
+	types "github.com/tiborvass/docker/api/types/swarm"
 )
 
 // Backend abstracts an swarm commands manager.

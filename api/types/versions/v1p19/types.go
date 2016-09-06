@@ -2,9 +2,9 @@
 package v1p19
 
 import (
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
-	"github.com/docker/engine-api/types/versions/v1p20"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/docker/go-connections/nat"
 )
 
