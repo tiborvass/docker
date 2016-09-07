@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/docker/engine-api/types"
+	"github.com/tiborvass/docker/api/types"
 )
 
 // RuntimeOpt defines a map of Runtimes

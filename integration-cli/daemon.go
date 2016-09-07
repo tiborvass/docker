@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/docker/engine-api/types/events"
 	"github.com/docker/go-connections/sockets"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/go-check/check"

@@ -4,10 +4,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/container"
 	daemonevents "github.com/tiborvass/docker/daemon/events"
-	"github.com/docker/engine-api/types/events"
-	"github.com/docker/engine-api/types/filters"
 	"github.com/docker/libnetwork"
 )
 

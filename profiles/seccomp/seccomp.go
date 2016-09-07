@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/docker/engine-api/types"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	libseccomp "github.com/seccomp/libseccomp-golang"
 )

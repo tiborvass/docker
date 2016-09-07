@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/docker/engine-api/types"
 )
 
 // ErrExtractPointNotDirectory is used to convey that the operation to extract

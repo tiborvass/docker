@@ -5,7 +5,7 @@ package plugin
 import (
 	"net/http"
 
-	enginetypes "github.com/docker/engine-api/types"
+	enginetypes "github.com/tiborvass/docker/api/types"
 )
 
 // Backend for Plugin

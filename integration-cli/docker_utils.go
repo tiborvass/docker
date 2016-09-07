@@ -22,12 +22,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/httputils"
 	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/docker/engine-api/types"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/docker/go-units"
 	"github.com/go-check/check"

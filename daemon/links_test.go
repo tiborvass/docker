@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/graphdb"
 	"github.com/tiborvass/docker/pkg/stringid"
-	containertypes "github.com/docker/engine-api/types/container"
 )
 
 func TestMigrateLegacySqliteLinks(t *testing.T) {

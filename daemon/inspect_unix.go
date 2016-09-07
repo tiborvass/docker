@@ -3,11 +3,11 @@
 package daemon
 
 import (
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
+	"github.com/tiborvass/docker/api/types/versions/v1p19"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/versions/v1p19"
 )
 
 // This sets platform-specific fields

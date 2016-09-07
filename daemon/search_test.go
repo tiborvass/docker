@@ -7,9 +7,9 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/registry"
-	"github.com/docker/engine-api/types"
-	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 type FakeService struct {

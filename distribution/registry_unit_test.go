@@ -9,11 +9,11 @@ import (
 	"testing"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
-	"github.com/docker/engine-api/types"
-	registrytypes "github.com/docker/engine-api/types/registry"
 	"golang.org/x/net/context"
 )
 

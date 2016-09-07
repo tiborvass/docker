@@ -12,11 +12,11 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/docker/engine-api/types"
-	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 // ElectAuthServer returns the default registry to use (by asking the daemon)

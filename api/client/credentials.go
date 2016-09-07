@@ -1,9 +1,9 @@
 package client
 
 import (
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig/configfile"
 	"github.com/tiborvass/docker/cliconfig/credentials"
-	"github.com/docker/engine-api/types"
 )
 
 // GetCredentials loads the user credentials from a credentials store.

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/tiborvass/docker/api/types/container"
+	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/volume"
-	"github.com/docker/engine-api/types/container"
-	networktypes "github.com/docker/engine-api/types/network"
 )
 
 // ContainerDecoder implements httputils.ContainerDecoder

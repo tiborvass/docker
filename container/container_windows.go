@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/volume"
-	containertypes "github.com/docker/engine-api/types/container"
 )
 
 // Container holds fields specific to the Windows implementation. See

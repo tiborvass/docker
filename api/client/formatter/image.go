@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
 	"github.com/docker/go-units"
 )
 

@@ -13,12 +13,12 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	opttypes "github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/promise"
 	"github.com/tiborvass/docker/pkg/signal"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/engine-api/types"
 	"github.com/docker/libnetwork/resolvconf/dns"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"

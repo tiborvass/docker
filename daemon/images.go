@@ -5,11 +5,11 @@ import (
 	"path"
 	"sort"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
 )
 
 var acceptedImageFilterTags = map[string]bool{

@@ -11,13 +11,13 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/volume"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 

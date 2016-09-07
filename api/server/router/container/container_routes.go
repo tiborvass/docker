@@ -12,13 +12,13 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/server/httputils"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
+	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
-	"github.com/docker/engine-api/types/filters"
-	"github.com/docker/engine-api/types/versions"
 	"golang.org/x/net/context"
 	"golang.org/x/net/websocket"
 )

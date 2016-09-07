@@ -8,10 +8,10 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
-	"github.com/docker/engine-api/types/network"
 	"github.com/go-check/check"
 )
 

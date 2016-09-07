@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
+	eventtypes "github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/pkg/pubsub"
-	eventtypes "github.com/docker/engine-api/types/events"
 )
 
 const (

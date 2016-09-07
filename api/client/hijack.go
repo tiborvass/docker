@@ -7,8 +7,8 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"github.com/docker/engine-api/types"
 )
 
 // HoldHijackedConnection handles copying input to and output from streams to the

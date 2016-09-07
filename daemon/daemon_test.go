@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/discovery"
 	_ "github.com/tiborvass/docker/pkg/discovery/memory"
@@ -17,7 +18,6 @@ import (
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
 	"github.com/tiborvass/docker/volume/store"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/go-connections/nat"
 )
 

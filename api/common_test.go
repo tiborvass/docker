@@ -7,7 +7,7 @@ import (
 
 	"os"
 
-	"github.com/docker/engine-api/types"
+	"github.com/tiborvass/docker/api/types"
 )
 
 type ports struct {

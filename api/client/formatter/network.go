@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/docker/engine-api/types"
 )
 
 const (

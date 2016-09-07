@@ -8,12 +8,12 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/utils/templates"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/docker/go-units"
 	"github.com/spf13/cobra"
 )

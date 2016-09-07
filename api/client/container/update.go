@@ -7,9 +7,9 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/client"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/cli"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/go-units"
 	"github.com/spf13/cobra"
 )

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/docker/distribution/digest"
-	"github.com/docker/engine-api/types/container"
+	"github.com/tiborvass/docker/api/types/container"
 )
 
 // ID is the content-addressable ID of an image.

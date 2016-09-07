@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/fileutils"
@@ -18,7 +19,6 @@ import (
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/volume/drivers"
-	"github.com/docker/engine-api/types"
 	"github.com/docker/go-connections/sockets"
 )
 

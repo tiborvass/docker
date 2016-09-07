@@ -3,9 +3,9 @@ package network
 import (
 	"fmt"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
 )
 
 var (

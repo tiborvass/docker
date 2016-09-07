@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/go-check/check"
 )
 

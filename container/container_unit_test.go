@@ -3,8 +3,8 @@ package container
 import (
 	"testing"
 
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/docker/engine-api/types/container"
 )
 
 func TestContainerStopSignal(t *testing.T) {

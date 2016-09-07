@@ -6,8 +6,8 @@ package backend
 import (
 	"io"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/streamformatter"
-	"github.com/docker/engine-api/types"
 )
 
 // ContainerAttachConfig holds the streams to use when connecting to a container to view logs.

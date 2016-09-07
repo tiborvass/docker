@@ -4,10 +4,10 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/engine-api/types/network"
 	"github.com/spf13/cobra"
 )
 

@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/pkg/testutil/assert"
-	mounttypes "github.com/docker/engine-api/types/mount"
 )
 
 func TestMemBytesString(t *testing.T) {

@@ -11,7 +11,7 @@ import (
 
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/client/idresolver"
-	"github.com/docker/engine-api/types/swarm"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/docker/go-units"
 )
 

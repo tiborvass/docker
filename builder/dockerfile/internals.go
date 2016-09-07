@@ -20,7 +20,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
+	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -34,9 +37,6 @@ import (
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
-	"github.com/docker/engine-api/types/strslice"
 )
 
 func (b *Builder) commit(id string, autoCmd strslice.StrSlice, comment string) error {

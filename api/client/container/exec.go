@@ -8,9 +8,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/pkg/promise"
-	"github.com/docker/engine-api/types"
 	"github.com/spf13/cobra"
 )
 

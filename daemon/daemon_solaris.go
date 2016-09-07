@@ -5,14 +5,14 @@ package daemon
 import (
 	"fmt"
 
+	"github.com/tiborvass/docker/api/types"
+	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
-	containertypes "github.com/docker/engine-api/types/container"
 	"github.com/docker/libnetwork"
 	nwconfig "github.com/docker/libnetwork/config"
 )

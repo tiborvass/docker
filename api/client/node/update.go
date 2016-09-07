@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/tiborvass/docker/api/client"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/opts"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/engine-api/types/swarm"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"golang.org/x/net/context"

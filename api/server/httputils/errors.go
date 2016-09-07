@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/versions"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 )

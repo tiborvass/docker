@@ -6,9 +6,9 @@ import (
 	"strings"
 	"syscall"
 
+	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/stringid"
-	mounttypes "github.com/docker/engine-api/types/mount"
 	"github.com/opencontainers/runc/libcontainer/label"
 )
 

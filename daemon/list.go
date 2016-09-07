@@ -8,12 +8,12 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
+	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/volume"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
-	networktypes "github.com/docker/engine-api/types/network"
 	"github.com/docker/go-connections/nat"
 )
 

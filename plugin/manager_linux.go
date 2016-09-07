@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/tiborvass/docker/plugin/v2"
 	"github.com/tiborvass/docker/restartmanager"
-	"github.com/docker/engine-api/types/container"
 )
 
 func (pm *Manager) enable(p *v2.Plugin, force bool) error {

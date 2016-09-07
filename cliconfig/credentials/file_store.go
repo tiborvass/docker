@@ -1,9 +1,9 @@
 package credentials
 
 import (
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig/configfile"
 	"github.com/tiborvass/docker/registry"
-	"github.com/docker/engine-api/types"
 )
 
 // fileStore implements a credentials store using

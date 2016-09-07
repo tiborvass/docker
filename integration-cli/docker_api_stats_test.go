@@ -11,9 +11,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/pkg/integration/checker"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/versions"
 	"github.com/go-check/check"
 )
 

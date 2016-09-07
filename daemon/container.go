@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"time"
 
+	containertypes "github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/errors"
@@ -13,8 +15,6 @@ import (
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
-	containertypes "github.com/docker/engine-api/types/container"
-	"github.com/docker/engine-api/types/strslice"
 	"github.com/docker/go-connections/nat"
 )
 

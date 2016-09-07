@@ -14,10 +14,10 @@ import (
 	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/cliconfig/configfile"
 	"github.com/tiborvass/docker/cliconfig/credentials"
+	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/dockerversion"
 	dopts "github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/term"
-	"github.com/docker/engine-api/client"
 	"github.com/docker/go-connections/sockets"
 	"github.com/docker/go-connections/tlsconfig"
 )

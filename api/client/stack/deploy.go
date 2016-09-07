@@ -10,9 +10,9 @@ import (
 
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/client/bundlefile"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/swarm"
 )
 
 const (

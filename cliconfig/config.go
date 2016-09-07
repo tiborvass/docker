@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cliconfig/configfile"
 	"github.com/tiborvass/docker/pkg/homedir"
-	"github.com/docker/engine-api/types"
 )
 
 const (

@@ -20,13 +20,13 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/registry/api/errcode"
+	"github.com/tiborvass/docker/api/types"
+	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/reference"
-	"github.com/docker/engine-api/types"
-	registrytypes "github.com/docker/engine-api/types/registry"
 )
 
 var (

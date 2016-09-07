@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
-	types "github.com/docker/engine-api/types/swarm"
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/docker/swarmkit/protobuf/ptypes"
 )

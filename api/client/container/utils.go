@@ -9,10 +9,10 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/client/system"
-	clientapi "github.com/docker/engine-api/client"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/events"
-	"github.com/docker/engine-api/types/filters"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/api/types/filters"
+	clientapi "github.com/tiborvass/docker/client"
 )
 
 func waitExitOrRemoved(dockerCli *client.DockerCli, ctx context.Context, containerID string, waitRemove bool) (chan int, error) {

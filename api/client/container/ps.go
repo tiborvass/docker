@@ -5,9 +5,9 @@ import (
 
 	"github.com/tiborvass/docker/api/client"
 	"github.com/tiborvass/docker/api/client/formatter"
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/cli"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
 
 	"io/ioutil"
 
