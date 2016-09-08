@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"golang.org/x/net/context"
 )
