@@ -6,7 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 	log "github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/discovery"
-	"github.com/tiborvass/docker/pkg/tlsconfig"
+	"github.com/docker/go-connections/tlsconfig"
 	"github.com/docker/libkv/store"
 	"github.com/docker/libnetwork/cluster"
 	"github.com/docker/libnetwork/datastore"
