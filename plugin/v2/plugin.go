@@ -20,10 +20,12 @@ type Plugin struct {
 	PluginObj         types.Plugin    `json:"plugin"`
 	PClient           *plugins.Client `json:"-"`
 	RuntimeSourcePath string          `json:"-"`
+	Rootfs            string          `json:"-"`
 	RefCount          int             `json:"-"`
 	Restart           bool            `json:"-"`
 	ExitChan          chan bool       `json:"-"`
 	LibRoot           string          `json:"-"`
+	NeedPropagation   bool            `json:"-"`
 }
 
 const defaultPluginRuntimeDestination = "/run/docker/plugins"
@@ -48,6 +50,12 @@ func NewPlugin(name, id, runRoot, libRoot, tag string) *Plugin {
 		RuntimeSourcePath: filepath.Join(runRoot, id),
 		LibRoot:           libRoot,
 	}
+}
+
+// BasePath returns the path to which all paths returned by the plugin are relative to.
+// For Plugin objects this returns the host path of the plugin container's rootfs.
+func (p *Plugin) BasePath() string {
+	return p.Rootfs
 }
 
 // Client returns the plugin client.
@@ -286,9 +294,9 @@ func (p *Plugin) GetTypes() []types.PluginInterfaceType {
 
 // InitSpec creates an OCI spec from the plugin's config.
 func (p *Plugin) InitSpec(s specs.Spec, libRoot string) (*specs.Spec, error) {
-	rootfs := filepath.Join(libRoot, p.PluginObj.ID, "rootfs")
+	p.Rootfs = filepath.Join(libRoot, p.PluginObj.ID, "rootfs")
 	s.Root = specs.Root{
-		Path:     rootfs,
+		Path:     p.Rootfs,
 		Readonly: false, // TODO: all plugins should be readonly? settable in config?
 	}
 
@@ -309,7 +317,7 @@ func (p *Plugin) InitSpec(s specs.Spec, libRoot string) (*specs.Spec, error) {
 			m.Source = *mount.Source
 		}
 		if m.Source != "" && m.Type == "bind" {
-			fi, err := os.Lstat(filepath.Join(rootfs, m.Destination)) // TODO: followsymlinks
+			fi, err := os.Lstat(filepath.Join(p.Rootfs, string(os.PathSeparator), m.Destination)) // TODO: followsymlinks
 			if err != nil {
 				return nil, err
 			}
@@ -336,6 +344,15 @@ func (p *Plugin) InitSpec(s specs.Spec, libRoot string) (*specs.Spec, error) {
 		Args:     args,
 		Cwd:      cwd,
 		Env:      envs,
+	}
+
+	// We should only enable rootfs propagation for certain plugin types that need it.
+	for _, typ := range p.PluginObj.Config.Interface.Types {
+		if typ.Capability == "volumedriver" && typ.Prefix == "docker" && strings.HasPrefix(typ.Version, "1.") {
+			p.NeedPropagation = true
+			s.Linux.RootfsPropagation = "rshared"
+			break
+		}
 	}
 
 	return &s, nil

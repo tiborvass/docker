@@ -10,6 +10,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/oci"
+	"github.com/docker/docker/pkg/mount"
 	"github.com/docker/docker/pkg/plugins"
 	"github.com/docker/docker/plugin/v2"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
@@ -26,8 +27,21 @@ func (pm *Manager) enable(p *v2.Plugin, force bool) error {
 	p.Lock()
 	p.Restart = true
 	p.Unlock()
+
+	if p.NeedPropagation {
+		if err := mount.Mount(p.Rootfs, p.Rootfs, "bind", "rbind,rshared,rw"); err != nil {
+			return err
+		}
+	}
+
 	if err := pm.containerdClient.Create(p.GetID(), "", "", specs.Spec(*spec), attachToLog(p.GetID())); err != nil {
 		return err
+	}
+
+	if p.NeedPropagation {
+		if err := syscall.Unmount(p.Rootfs, syscall.MNT_DETACH); err != nil {
+			logrus.Warnf("could not lazy unmount %s: %v", p.Rootfs, err)
+		}
 	}
 
 	p.PClient, err = plugins.NewClient("unix://"+filepath.Join(p.RuntimeSourcePath, p.GetSocket()), nil)

@@ -126,7 +126,7 @@ func (pm *Manager) Push(name string, metaHeader http.Header, authConfig *types.A
 		return err
 	}
 
-	rootfs, err := archive.Tar(filepath.Join(dest, "rootfs"), archive.Gzip)
+	rootfs, err := archive.Tar(p.Rootfs, archive.Gzip)
 	if err != nil {
 		return err
 	}
