@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tiborvass/docker/api/client"
-	"github.com/tiborvass/docker/api/client/command"
+	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/cli/command/commands"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -19,9 +19,9 @@ func generateManPages(path string) error {
 	}
 
 	stdin, stdout, stderr := term.StdStreams()
-	dockerCli := client.NewDockerCli(stdin, stdout, stderr)
+	dockerCli := command.NewDockerCli(stdin, stdout, stderr)
 	cmd := &cobra.Command{Use: "docker"}
-	command.AddCommands(cmd, dockerCli)
+	commands.AddCommands(cmd, dockerCli)
 
 	cmd.DisableAutoGenTag = true
 	return doc.GenManTreeFromOpts(cmd, doc.GenManTreeOptions{
