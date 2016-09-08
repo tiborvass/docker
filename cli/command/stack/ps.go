@@ -7,12 +7,12 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/tiborvass/docker/api/client"
-	"github.com/tiborvass/docker/api/client/idresolver"
-	"github.com/tiborvass/docker/api/client/task"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
+	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/cli/command/idresolver"
+	"github.com/tiborvass/docker/cli/command/task"
 	"github.com/tiborvass/docker/opts"
 	"github.com/spf13/cobra"
 )
@@ -25,7 +25,7 @@ type psOptions struct {
 	noResolve bool
 }
 
-func newPsCommand(dockerCli *client.DockerCli) *cobra.Command {
+func newPsCommand(dockerCli *command.DockerCli) *cobra.Command {
 	opts := psOptions{filter: opts.NewFilterOpt()}
 
 	cmd := &cobra.Command{
@@ -46,7 +46,7 @@ func newPsCommand(dockerCli *client.DockerCli) *cobra.Command {
 	return cmd
 }
 
-func runPS(dockerCli *client.DockerCli, opts psOptions) error {
+func runPS(dockerCli *command.DockerCli, opts psOptions) error {
 	namespace := opts.namespace
 	client := dockerCli.Client()
 	ctx := context.Background()
