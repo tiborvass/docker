@@ -107,15 +107,14 @@ func (p *Plugin) InitPlugin() error {
 	}
 
 	p.PluginObj.Settings.Mounts = make([]types.PluginMount, len(p.PluginObj.Config.Mounts))
-	for i, mount := range p.PluginObj.Config.Mounts {
-		p.PluginObj.Settings.Mounts[i] = mount
-	}
+	copy(p.PluginObj.Settings.Mounts, p.PluginObj.Config.Mounts)
 	p.PluginObj.Settings.Env = make([]string, 0, len(p.PluginObj.Config.Env))
 	for _, env := range p.PluginObj.Config.Env {
 		if env.Value != nil {
 			p.PluginObj.Settings.Env = append(p.PluginObj.Settings.Env, fmt.Sprintf("%s=%s", env.Name, *env.Value))
 		}
 	}
+	p.PluginObj.Settings.Args = make([]string, len(p.PluginObj.Config.Args.Value))
 	copy(p.PluginObj.Settings.Args, p.PluginObj.Config.Args.Value)
 
 	return p.writeSettings()
