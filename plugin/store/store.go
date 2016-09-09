@@ -151,7 +151,12 @@ func (ps *Store) Get(name, capability string, mode int) (plugingetter.CompatPlug
 			p.Lock()
 			p.RefCount += mode
 			p.Unlock()
-			return p.FilterByCap(capability)
+			if p.IsEnabled() {
+				return p.FilterByCap(capability)
+			}
+			// Plugin was found but it is disabled, so we should not fall back to legacy plugins
+			// but we should error out right away
+			return nil, ErrNotFound(fullName)
 		}
 		if _, ok := err.(ErrNotFound); !ok {
 			return nil, err
