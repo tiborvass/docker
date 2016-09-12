@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"os"
+
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/command/checkpoint"
 	"github.com/tiborvass/docker/cli/command/container"
@@ -75,6 +77,9 @@ func AddCommands(cmd *cobra.Command, dockerCli *command.DockerCli) {
 }
 
 func hide(cmd *cobra.Command) *cobra.Command {
+	if os.Getenv("DOCKER_HIDE_LEGACY_COMMANDS") == "" {
+		return cmd
+	}
 	cmdCopy := *cmd
 	cmdCopy.Hidden = true
 	cmdCopy.Aliases = []string{}
