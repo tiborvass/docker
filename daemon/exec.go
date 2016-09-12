@@ -17,7 +17,9 @@ import (
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/tiborvass/docker/utils"
 )
 
 // Seconds to wait after sending TERM before trying KILL
@@ -121,6 +123,13 @@ func (d *Daemon) ContainerExecCreate(name string, config *types.ExecConfig) (str
 	execConfig.Tty = config.Tty
 	execConfig.Privileged = config.Privileged
 	execConfig.User = config.User
+	execConfig.Env = []string{
+		"PATH=" + system.DefaultPathEnv,
+	}
+	if config.Tty {
+		execConfig.Env = append(execConfig.Env, "TERM=xterm")
+	}
+	execConfig.Env = utils.ReplaceOrAppendEnvValues(execConfig.Env, container.Config.Env)
 	if len(execConfig.User) == 0 {
 		execConfig.User = container.Config.User
 	}
@@ -195,6 +204,7 @@ func (d *Daemon) ContainerExecStart(ctx context.Context, name string, stdin io.R
 
 	p := libcontainerd.Process{
 		Args:     append([]string{ec.Entrypoint}, ec.Args...),
+		Env:      ec.Env,
 		Terminal: ec.Tty,
 	}
 
