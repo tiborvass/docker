@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
-	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 )

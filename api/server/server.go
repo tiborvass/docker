@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/server/middleware"
 	"github.com/tiborvass/docker/api/server/router"
-	"github.com/tiborvass/docker/errors"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/context"
 )

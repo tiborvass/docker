@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/errors"
 	apitypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
@@ -21,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/daemon/cluster/convert"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	"github.com/tiborvass/docker/daemon/cluster/executor/container"
-	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"

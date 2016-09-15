@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	dockererrors "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
-	dockererrors "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/label"
 )

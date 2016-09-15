@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tiborvass/docker/errors"
+	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/reference"
 )
 
