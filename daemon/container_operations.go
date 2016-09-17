@@ -9,11 +9,11 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	derr "github.com/tiborvass/docker/api/errors"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
-	derr "github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/go-connections/nat"

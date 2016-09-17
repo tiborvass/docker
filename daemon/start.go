@@ -10,10 +10,10 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
-	"github.com/tiborvass/docker/errors"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/runconfig"
 )
