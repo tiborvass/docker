@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/platform"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig"
@@ -379,7 +380,62 @@ func driverOptions(config *Config) []nwconfig.Option {
 }
 
 func (daemon *Daemon) stats(c *container.Container) (*types.StatsJSON, error) {
-	return nil, nil
+	if !c.IsRunning() {
+		return nil, errNotRunning{c.ID}
+	}
+
+	// Obtain the stats from HCS via libcontainerd
+	stats, err := daemon.containerd.Stats(c.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Start with an empty structure
+	s := &types.StatsJSON{}
+
+	// Populate the CPU/processor statistics
+	s.CPUStats = types.CPUStats{
+		CPUUsage: types.CPUUsage{
+			TotalUsage:        stats.Processor.TotalRuntime100ns,
+			UsageInKernelmode: stats.Processor.RuntimeKernel100ns,
+			UsageInUsermode:   stats.Processor.RuntimeKernel100ns,
+		},
+	}
+
+	// Populate the memory statistics
+	s.MemoryStats = types.MemoryStats{
+		Commit:            stats.Memory.UsageCommitBytes,
+		CommitPeak:        stats.Memory.UsageCommitPeakBytes,
+		PrivateWorkingSet: stats.Memory.UsagePrivateWorkingSetBytes,
+	}
+
+	// Populate the storage statistics
+	s.StorageStats = types.StorageStats{
+		ReadCountNormalized:  stats.Storage.ReadCountNormalized,
+		ReadSizeBytes:        stats.Storage.ReadSizeBytes,
+		WriteCountNormalized: stats.Storage.WriteCountNormalized,
+		WriteSizeBytes:       stats.Storage.WriteSizeBytes,
+	}
+
+	// Populate the network statistics
+	s.Networks = make(map[string]types.NetworkStats)
+
+	for _, nstats := range stats.Network {
+		s.Networks[nstats.EndpointId] = types.NetworkStats{
+			RxBytes:   nstats.BytesReceived,
+			RxPackets: nstats.PacketsReceived,
+			RxDropped: nstats.DroppedPacketsIncoming,
+			TxBytes:   nstats.BytesSent,
+			TxPackets: nstats.PacketsSent,
+			TxDropped: nstats.DroppedPacketsOutgoing,
+		}
+	}
+
+	// Set the timestamp
+	s.Stats.Read = stats.Timestamp
+	s.Stats.NumProcs = platform.NumProcs()
+
+	return s, nil
 }
 
 // setDefaultIsolation determine the default isolation mode for the
