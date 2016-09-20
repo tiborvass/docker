@@ -2,10 +2,11 @@ package opts
 
 import (
 	"fmt"
-	fopts "github.com/tiborvass/docker/opts"
 	"net"
 	"os"
 	"strings"
+
+	fopts "github.com/tiborvass/docker/opts"
 )
 
 // ValidateAttach validates that the specified string is a valid attach option.
