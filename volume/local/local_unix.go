@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"src/github.com/pkg/errors"
+	"github.com/pkg/errors"
 
 	"github.com/tiborvass/docker/pkg/mount"
 )
