@@ -1,5 +1,3 @@
-// +build experimental
-
 package checkpoint
 
 import "github.com/tiborvass/docker/api/types"
