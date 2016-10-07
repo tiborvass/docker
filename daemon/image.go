@@ -5,6 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/reference"
 )
 
@@ -34,11 +35,15 @@ func (daemon *Daemon) GetImageID(refOrID string) (image.ID, error) {
 	if id, err := daemon.referenceStore.Get(ref); err == nil {
 		return image.IDFromDigest(id), nil
 	}
+
+	// deprecated: repo:shortid https://github.com/docker/docker/pull/799
 	if tagged, ok := ref.(reference.NamedTagged); ok {
-		if id, err := daemon.imageStore.Search(tagged.Tag()); err == nil {
-			for _, namedRef := range daemon.referenceStore.References(id.Digest()) {
-				if namedRef.Name() == ref.Name() {
-					return id, nil
+		if tag := tagged.Tag(); stringid.IsShortID(stringid.TruncateID(tag)) {
+			if id, err := daemon.imageStore.Search(tag); err == nil {
+				for _, namedRef := range daemon.referenceStore.References(id.Digest()) {
+					if namedRef.Name() == ref.Name() {
+						return id, nil
+					}
 				}
 			}
 		}
