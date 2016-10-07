@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/tiborvass/docker/pkg/locker"
-	"github.com/tiborvass/docker/plugin/getter"
+	getter "github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/volume"
 )
 
