@@ -13,8 +13,8 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/idtools"
+	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/plugin/getter"
 	"github.com/vbatts/tar-split/tar/asm"
 	"github.com/vbatts/tar-split/tar/storage"
 )
@@ -45,7 +45,7 @@ type StoreOptions struct {
 	GraphDriverOptions        []string
 	UIDMaps                   []idtools.IDMap
 	GIDMaps                   []idtools.IDMap
-	PluginGetter              getter.PluginGetter
+	PluginGetter              plugingetter.PluginGetter
 }
 
 // NewStoreFromOptions creates a new Store instance
