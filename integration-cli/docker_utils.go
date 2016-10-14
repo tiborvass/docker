@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	volumetypes "github.com/tiborvass/docker/api/server/types/volume"
 	"github.com/tiborvass/docker/api/types"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/httputils"
 	icmd "github.com/tiborvass/docker/pkg/integration/cmd"

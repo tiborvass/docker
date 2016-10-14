@@ -9,12 +9,12 @@ import (
 
 	"github.com/Sirupsen/logrus"
 
-	volumetypes "github.com/tiborvass/docker/api/server/types/volume"
 	"github.com/tiborvass/docker/api/types"
 	enginecontainer "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
 	"github.com/tiborvass/docker/reference"
 	"github.com/docker/swarmkit/agent/exec"

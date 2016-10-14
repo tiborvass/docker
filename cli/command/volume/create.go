@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	volumetypes "github.com/tiborvass/docker/api/server/types/volume"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/opts"

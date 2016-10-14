@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	volumetypes "github.com/tiborvass/docker/api/server/types/volume"
 	"github.com/tiborvass/docker/api/types"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/go-check/check"
 )

@@ -4,7 +4,6 @@ import (
 	"io"
 	"time"
 
-	volumetypes "github.com/tiborvass/docker/api/server/types/volume"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/events"
@@ -12,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/api/types/swarm"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"golang.org/x/net/context"
 )
 
