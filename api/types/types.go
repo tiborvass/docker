@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/registry"
@@ -508,4 +509,16 @@ type ImagesPruneReport struct {
 // POST "/networks/prune"
 type NetworksPruneReport struct {
 	NetworksDeleted []string
+}
+
+// SecretCreateResponse contains the information returned to a client
+// on the creation of a new secret.
+type SecretCreateResponse struct {
+	// ID is the id of the created secret.
+	ID string
+}
+
+// SecretListOptions holds parameters to list secrets
+type SecretListOptions struct {
+	Filter filters.Args
 }
