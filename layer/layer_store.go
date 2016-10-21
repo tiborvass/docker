@@ -11,7 +11,6 @@ import (
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/daemon/graphdriver"
-	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -221,7 +220,7 @@ func (ls *layerStore) applyTar(tx MetadataTransaction, ts io.Reader, parent stri
 		return err
 	}
 
-	applySize, err := ls.driver.ApplyDiff(layer.cacheID, parent, archive.Reader(rdr))
+	applySize, err := ls.driver.ApplyDiff(layer.cacheID, parent, rdr)
 	if err != nil {
 		return err
 	}
