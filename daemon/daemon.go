@@ -52,7 +52,6 @@ import (
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/utils"
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
 	"github.com/tiborvass/docker/volume/store"
@@ -107,27 +106,20 @@ type Daemon struct {
 
 func (daemon *Daemon) restore() error {
 	var (
-		debug         = utils.IsDebugEnabled()
 		currentDriver = daemon.GraphDriverName()
 		containers    = make(map[string]*container.Container)
 	)
 
-	if !debug {
-		logrus.Info("Loading containers: start.")
-	}
+	logrus.Info("Loading containers: start.")
+
 	dir, err := ioutil.ReadDir(daemon.repository)
 	if err != nil {
 		return err
 	}
 
-	containerCount := 0
 	for _, v := range dir {
 		id := v.Name()
 		container, err := daemon.load(id)
-		if !debug && logrus.GetLevel() == logrus.InfoLevel {
-			fmt.Print(".")
-			containerCount++
-		}
 		if err != nil {
 			logrus.Errorf("Failed to load container %v: %v", id, err)
 			continue
@@ -352,12 +344,7 @@ func (daemon *Daemon) restore() error {
 
 	group.Wait()
 
-	if !debug {
-		if logrus.GetLevel() == logrus.InfoLevel && containerCount > 0 {
-			fmt.Println()
-		}
-		logrus.Info("Loading containers: done.")
-	}
+	logrus.Info("Loading containers: done.")
 
 	return nil
 }
