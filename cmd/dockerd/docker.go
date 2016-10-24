@@ -13,7 +13,6 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
-	"github.com/tiborvass/docker/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -85,11 +84,7 @@ func runDaemon(opts daemonOptions) error {
 }
 
 func showVersion() {
-	if utils.ExperimentalBuild() {
-		fmt.Printf("Docker version %s, build %s, experimental\n", dockerversion.Version, dockerversion.GitCommit)
-	} else {
-		fmt.Printf("Docker version %s, build %s\n", dockerversion.Version, dockerversion.GitCommit)
-	}
+	fmt.Printf("Docker version %s, build %s\n", dockerversion.Version, dockerversion.GitCommit)
 }
 
 func main() {
