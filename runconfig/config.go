@@ -7,6 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
+	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/volume"
 )
 
@@ -68,6 +69,10 @@ func DecodeContainerConfig(src io.Reader) (*container.Config, *container.HostCon
 		return nil, nil, nil, err
 	}
 
+	// Validate Resources
+	if err := ValidateResources(hc, sysinfo.New(true)); err != nil {
+		return nil, nil, nil, err
+	}
 	return w.Config, hc, w.NetworkingConfig, nil
 }
 
