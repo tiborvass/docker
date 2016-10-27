@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/exec"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/docker/libnetwork/cluster"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"
@@ -684,12 +685,25 @@ func NewDaemon(config *Config, registryService registry.Service, containerdRemot
 		return nil, err
 	}
 
+	// FIXME: this method never returns an error
+	info, _ := d.SystemInfo()
+
+	engineVersion.WithValues(
+		dockerversion.Version,
+		dockerversion.GitCommit,
+		info.Architecture,
+		info.Driver,
+		info.KernelVersion,
+		info.OperatingSystem,
+	).Set(1)
+	engineCpus.Set(float64(info.NCPU))
+	engineMemory.Set(float64(info.MemTotal))
+
 	return d, nil
 }
 
 func (daemon *Daemon) shutdownContainer(c *container.Container) error {
 	stopTimeout := c.StopTimeout()
-
 	// TODO(windows): Handle docker restart with paused containers
 	if c.IsPaused() {
 		// To terminate a process in freezer cgroup, we should send
