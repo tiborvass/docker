@@ -8,6 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -39,7 +40,11 @@ func runUpdate(dockerCli *command.DockerCli, flags *pflag.FlagSet, opts swarmOpt
 		return err
 	}
 
+	prevAutoLock := swarm.Spec.EncryptionConfig.AutoLockManagers
+
 	opts.mergeSwarmSpec(&swarm.Spec, flags)
+
+	curAutoLock := swarm.Spec.EncryptionConfig.AutoLockManagers
 
 	err = client.SwarmUpdate(ctx, swarm.Version, swarm.Spec, updateFlags)
 	if err != nil {
@@ -47,6 +52,14 @@ func runUpdate(dockerCli *command.DockerCli, flags *pflag.FlagSet, opts swarmOpt
 	}
 
 	fmt.Fprintln(dockerCli.Out(), "Swarm updated.")
+
+	if curAutoLock && !prevAutoLock {
+		unlockKeyResp, err := client.SwarmGetUnlockKey(ctx)
+		if err != nil {
+			return errors.Wrap(err, "could not fetch unlock key")
+		}
+		printUnlockCommand(ctx, dockerCli, unlockKeyResp.UnlockKey)
+	}
 
 	return nil
 }
