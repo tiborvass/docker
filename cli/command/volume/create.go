@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/tiborvass/docker/api/types"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/opts"
@@ -55,7 +55,7 @@ func newCreateCommand(dockerCli *command.DockerCli) *cobra.Command {
 func runCreate(dockerCli *command.DockerCli, opts createOptions) error {
 	client := dockerCli.Client()
 
-	volReq := types.VolumeCreateRequest{
+	volReq := volumetypes.VolumesCreateBody{
 		Driver:     opts.driver,
 		DriverOpts: opts.driverOpts.GetAll(),
 		Name:       opts.name,

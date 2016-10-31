@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
+	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
 	"github.com/tiborvass/docker/reference"
 	"github.com/docker/swarmkit/agent/exec"
@@ -335,7 +336,7 @@ func (c *containerConfig) hostConfig() *enginecontainer.HostConfig {
 }
 
 // This handles the case of volumes that are defined inside a service Mount
-func (c *containerConfig) volumeCreateRequest(mount *api.Mount) *types.VolumeCreateRequest {
+func (c *containerConfig) volumeCreateRequest(mount *api.Mount) *volumetypes.VolumesCreateBody {
 	var (
 		driverName string
 		driverOpts map[string]string
@@ -349,7 +350,7 @@ func (c *containerConfig) volumeCreateRequest(mount *api.Mount) *types.VolumeCre
 	}
 
 	if mount.VolumeOptions != nil {
-		return &types.VolumeCreateRequest{
+		return &volumetypes.VolumesCreateBody{
 			Name:       mount.Source,
 			Driver:     driverName,
 			DriverOpts: driverOpts,
