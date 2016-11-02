@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/dockerversion"
@@ -156,13 +157,14 @@ func (daemon *Daemon) SystemInfo() (*types.Info, error) {
 // SystemVersion returns version information about the daemon.
 func (daemon *Daemon) SystemVersion() types.Version {
 	v := types.Version{
-		Version:      dockerversion.Version,
-		GitCommit:    dockerversion.GitCommit,
-		GoVersion:    runtime.Version(),
-		Os:           runtime.GOOS,
-		Arch:         runtime.GOARCH,
-		BuildTime:    dockerversion.BuildTime,
-		Experimental: daemon.configStore.Experimental,
+		Version:       dockerversion.Version,
+		GitCommit:     dockerversion.GitCommit,
+		MinAPIVersion: api.MinVersion,
+		GoVersion:     runtime.Version(),
+		Os:            runtime.GOOS,
+		Arch:          runtime.GOARCH,
+		BuildTime:     dockerversion.BuildTime,
+		Experimental:  daemon.configStore.Experimental,
 	}
 
 	kernelVersion := "<unknown>"
