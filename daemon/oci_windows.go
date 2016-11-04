@@ -6,6 +6,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/oci"
+	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -82,6 +83,9 @@ func (daemon *Daemon) createSpec(c *container.Container) (*specs.Spec, error) {
 	// @darrenstahlmsft implement these resources
 	cpuShares := uint16(c.HostConfig.CPUShares)
 	cpuPercent := uint8(c.HostConfig.CPUPercent)
+	if c.HostConfig.NanoCPUs > 0 {
+		cpuPercent = uint8(c.HostConfig.NanoCPUs * 100 / int64(sysinfo.NumCPU()) / 1e9)
+	}
 	memoryLimit := uint64(c.HostConfig.Memory)
 	s.Windows.Resources = &specs.WindowsResources{
 		CPU: &specs.WindowsCPUResources{
