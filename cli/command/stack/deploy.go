@@ -19,8 +19,8 @@ import (
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	servicecmd "github.com/tiborvass/docker/cli/command/service"
-	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/tiborvass/docker/opts"
+	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/go-connections/nat"
 )
 
@@ -85,7 +85,12 @@ func runDeploy(dockerCli *command.DockerCli, opts deployOptions) error {
 
 	ctx := context.Background()
 	namespace := namespace{name: opts.namespace}
-	if err := createNetworks(ctx, dockerCli, config.Networks, namespace); err != nil {
+
+	networks := config.Networks
+	if networks == nil {
+		networks = make(map[string]composetypes.NetworkConfig)
+	}
+	if err := createNetworks(ctx, dockerCli, networks, namespace); err != nil {
 		return err
 	}
 	return deployServices(ctx, dockerCli, config, namespace, opts.sendRegistryAuth)
