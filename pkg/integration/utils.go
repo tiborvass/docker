@@ -15,6 +15,7 @@ import (
 
 	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
 	"github.com/tiborvass/docker/pkg/stringutils"
+	"github.com/tiborvass/docker/pkg/system"
 )
 
 // IsKilled process the specified error and returns whether the process was killed or not.
@@ -35,7 +36,7 @@ func IsKilled(err error) bool {
 func runCommandWithOutput(cmd *exec.Cmd) (output string, exitCode int, err error) {
 	exitCode = 0
 	out, err := cmd.CombinedOutput()
-	exitCode = icmd.ProcessExitCode(err)
+	exitCode = system.ProcessExitCode(err)
 	output = string(out)
 	return
 }
