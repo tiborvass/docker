@@ -5,6 +5,7 @@ import (
 	// therefore they register themselves to the logdriver factory.
 	_ "github.com/tiborvass/docker/daemon/logger/awslogs"
 	_ "github.com/tiborvass/docker/daemon/logger/etwlogs"
+	_ "github.com/tiborvass/docker/daemon/logger/fluentd"
 	_ "github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	_ "github.com/tiborvass/docker/daemon/logger/logentries"
 	_ "github.com/tiborvass/docker/daemon/logger/splunk"
