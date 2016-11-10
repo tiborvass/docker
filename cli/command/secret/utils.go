@@ -1,12 +1,11 @@
 package secret
 
 import (
-	"context"
-
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
+	"golang.org/x/net/context"
 )
 
 func getSecretsByName(client client.APIClient, ctx context.Context, names []string) ([]swarm.Secret, error) {
