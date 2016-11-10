@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	pName        = "tiborvass/no-remove"
-	pTag         = "latest"
-	pNameWithTag = pName + ":" + pTag
+	pluginProcessName = "sample-volume-plugin"
+	pName             = "tiborvass/sample-volume-plugin"
+	pTag              = "latest"
+	pNameWithTag      = pName + ":" + pTag
 )
 
 func (s *DockerSuite) TestPluginBasicOps(c *check.C) {
