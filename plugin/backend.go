@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -12,9 +13,11 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/plugin/distribution"
 	"github.com/tiborvass/docker/plugin/v2"
+	"golang.org/x/net/context"
 )
 
 // Disable deactivates a plugin, which implies that they cannot be used by containers.
@@ -174,4 +177,38 @@ func (pm *Manager) Set(name string, args []string) error {
 		return err
 	}
 	return p.Set(args)
+}
+
+// CreateFromContext creates a plugin from the given pluginDir which contains
+// both the rootfs and the manifest.json and a repoName with optional tag.
+func (pm *Manager) CreateFromContext(ctx context.Context, tarCtx io.Reader, options *types.PluginCreateOptions) error {
+	pluginID := stringid.GenerateNonCryptoID()
+
+	pluginDir := filepath.Join(pm.libRoot, pluginID)
+	if err := os.MkdirAll(pluginDir, 0755); err != nil {
+		return err
+	}
+
+	if err := chrootarchive.Untar(tarCtx, pluginDir, nil); err != nil {
+		return err
+	}
+
+	repoName := options.RepoName
+	ref, err := distribution.GetRef(repoName)
+	if err != nil {
+		return err
+	}
+	name := ref.Name()
+	tag := distribution.GetTag(ref)
+
+	p := v2.NewPlugin(name, pluginID, pm.runRoot, pm.libRoot, tag)
+	if err := p.InitPlugin(); err != nil {
+		return err
+	}
+
+	pm.pluginStore.Add(p)
+
+	pm.pluginEventLogger(p.GetID(), repoName, "create")
+
+	return nil
 }
