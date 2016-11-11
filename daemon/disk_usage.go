@@ -6,6 +6,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/directory"
 	"github.com/tiborvass/docker/volume"
@@ -44,7 +45,7 @@ func (daemon *Daemon) SystemDiskUsage() (*types.DiskUsage, error) {
 	}
 
 	// Get all top images with extra attributes
-	allImages, err := daemon.Images("", "", false, true)
+	allImages, err := daemon.Images(filters.NewArgs(), false, true)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve image list: %v", err)
 	}
