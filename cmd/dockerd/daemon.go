@@ -19,6 +19,7 @@ import (
 	"github.com/tiborvass/docker/api/server/router/container"
 	"github.com/tiborvass/docker/api/server/router/image"
 	"github.com/tiborvass/docker/api/server/router/network"
+	pluginrouter "github.com/tiborvass/docker/api/server/router/plugin"
 	swarmrouter "github.com/tiborvass/docker/api/server/router/swarm"
 	systemrouter "github.com/tiborvass/docker/api/server/router/system"
 	"github.com/tiborvass/docker/api/server/router/volume"
@@ -38,6 +39,7 @@ import (
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/tiborvass/docker/utils"
@@ -457,6 +459,7 @@ func initRouter(s *apiserver.Server, d *daemon.Daemon, c *cluster.Cluster) {
 		volume.NewRouter(d),
 		build.NewRouter(dockerfile.NewBuildManager(d)),
 		swarmrouter.NewRouter(d, c),
+		pluginrouter.NewRouter(plugin.GetManager()),
 	}...)
 
 	if d.NetworkControllerEnabled() {
