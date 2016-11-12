@@ -13,7 +13,7 @@ import (
 	clientapi "github.com/tiborvass/docker/client"
 )
 
-func waitExitOrRemoved(dockerCli *command.DockerCli, ctx context.Context, containerID string, waitRemove bool) chan int {
+func waitExitOrRemoved(ctx context.Context, dockerCli *command.DockerCli, containerID string, waitRemove bool) chan int {
 	if len(containerID) == 0 {
 		// containerID can never be empty
 		panic("Internal Error: waitExitOrRemoved needs a containerID as parameter")
@@ -87,7 +87,7 @@ func waitExitOrRemoved(dockerCli *command.DockerCli, ctx context.Context, contai
 
 // getExitCode performs an inspect on the container. It returns
 // the running state and the exit code.
-func getExitCode(dockerCli *command.DockerCli, ctx context.Context, containerID string) (bool, int, error) {
+func getExitCode(ctx context.Context, dockerCli *command.DockerCli, containerID string) (bool, int, error) {
 	c, err := dockerCli.Client().ContainerInspect(ctx, containerID)
 	if err != nil {
 		// If we can't connect, then the daemon probably died.
