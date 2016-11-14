@@ -236,7 +236,7 @@ func (s *DockerDaemonSuite) TestVolumePlugin(c *check.C) {
 
 	out, err = s.d.Cmd("run", "--rm", "-v", volName+":"+destDir, "busybox", "touch", destDir+destFile)
 	c.Assert(err, checker.IsNil, check.Commentf(out))
-	path := filepath.Join(dockerBasePath, "plugins", pluginId, "rootfs", mountPoint, destFile)
+	path := filepath.Join(s.d.RootDir(), "plugins", pluginId, "rootfs", mountPoint, destFile)
 	_, err = os.Lstat(path)
 	c.Assert(err, checker.IsNil)
 
