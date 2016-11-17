@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/pkg/archive"
 )
 
@@ -64,7 +65,7 @@ type attachBackend interface {
 
 // systemBackend includes functions to implement to provide system wide containers functionality
 type systemBackend interface {
-	ContainersPrune(config *types.ContainersPruneConfig) (*types.ContainersPruneReport, error)
+	ContainersPrune(pruneFilters filters.Args) (*types.ContainersPruneReport, error)
 }
 
 // Backend is all the methods that need to be implemented to provide container specific functionality.
