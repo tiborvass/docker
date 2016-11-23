@@ -1,13 +1,14 @@
 package main
 
 import (
+	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/tiborvass/docker/utils"
-
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/pkg/testutil/assert"
+	"github.com/tiborvass/docker/utils"
 )
 
 func TestClientDebugEnabled(t *testing.T) {
@@ -16,14 +17,16 @@ func TestClientDebugEnabled(t *testing.T) {
 	cmd := newDockerCommand(&command.DockerCli{})
 	cmd.Flags().Set("debug", "true")
 
-	if err := cmd.PersistentPreRunE(cmd, []string{}); err != nil {
-		t.Fatalf("Unexpected error: %s", err.Error())
-	}
+	err := cmd.PersistentPreRunE(cmd, []string{})
+	assert.NilError(t, err)
+	assert.Equal(t, os.Getenv("DEBUG"), "1")
+	assert.Equal(t, logrus.GetLevel(), logrus.DebugLevel)
+}
 
-	if os.Getenv("DEBUG") != "1" {
-		t.Fatal("expected debug enabled, got false")
-	}
-	if logrus.GetLevel() != logrus.DebugLevel {
-		t.Fatalf("expected logrus debug level, got %v", logrus.GetLevel())
-	}
+func TestExitStatusForInvalidSubcommandWithHelpFlag(t *testing.T) {
+	discard := ioutil.Discard
+	cmd := newDockerCommand(command.NewDockerCli(os.Stdin, discard, discard))
+	cmd.SetArgs([]string{"help", "invalid"})
+	err := cmd.Execute()
+	assert.Error(t, err, "unknown help topic: invalid")
 }
