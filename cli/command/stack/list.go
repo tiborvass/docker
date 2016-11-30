@@ -9,10 +9,10 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/client"
+	"github.com/tiborvass/docker/pkg/composetransform"
 	"github.com/spf13/cobra"
 )
 
@@ -81,23 +81,19 @@ func getStacks(
 	ctx context.Context,
 	apiclient client.APIClient,
 ) ([]*stack, error) {
-
-	filter := filters.NewArgs()
-	filter.Add("label", labelNamespace)
-
 	services, err := apiclient.ServiceList(
 		ctx,
-		types.ServiceListOptions{Filters: filter})
+		types.ServiceListOptions{Filters: getAllStacksFilter()})
 	if err != nil {
 		return nil, err
 	}
 	m := make(map[string]*stack, 0)
 	for _, service := range services {
 		labels := service.Spec.Labels
-		name, ok := labels[labelNamespace]
+		name, ok := labels[composetransform.LabelNamespace]
 		if !ok {
 			return nil, fmt.Errorf("cannot get label %s for service %s",
-				labelNamespace, service.ID)
+				composetransform.LabelNamespace, service.ID)
 		}
 		ztack, ok := m[name]
 		if !ok {
