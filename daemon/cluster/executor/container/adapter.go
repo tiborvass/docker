@@ -11,12 +11,10 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
-	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/events"
-	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	"github.com/tiborvass/docker/reference"
@@ -215,8 +213,6 @@ func (c *containerAdapter) waitForDetach(ctx context.Context) error {
 func (c *containerAdapter) create(ctx context.Context) error {
 	var cr containertypes.ContainerCreateCreatedBody
 	var err error
-	version := httputils.VersionFromContext(ctx)
-	validateHostname := versions.GreaterThanOrEqualTo(version, "1.24")
 
 	if cr, err = c.backend.CreateManagedContainer(types.ContainerCreateConfig{
 		Name:       c.container.name(),
@@ -224,7 +220,7 @@ func (c *containerAdapter) create(ctx context.Context) error {
 		HostConfig: c.container.hostConfig(),
 		// Use the first network in container create
 		NetworkingConfig: c.container.createNetworkingConfig(),
-	}, validateHostname); err != nil {
+	}); err != nil {
 		return err
 	}
 
@@ -263,9 +259,7 @@ func (c *containerAdapter) create(ctx context.Context) error {
 }
 
 func (c *containerAdapter) start(ctx context.Context) error {
-	version := httputils.VersionFromContext(ctx)
-	validateHostname := versions.GreaterThanOrEqualTo(version, "1.24")
-	return c.backend.ContainerStart(c.container.name(), nil, validateHostname, "", "")
+	return c.backend.ContainerStart(c.container.name(), nil, "", "")
 }
 
 func (c *containerAdapter) inspect(ctx context.Context) (types.ContainerJSON, error) {
