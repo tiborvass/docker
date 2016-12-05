@@ -14,8 +14,8 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/cli/compose/convert"
 	dockerclient "github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/pkg/composetransform"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -114,17 +114,17 @@ func deployCompose(ctx context.Context, dockerCli *command.DockerCli, opts deplo
 		return err
 	}
 
-	namespace := composetransform.NewNamespace(opts.namespace)
+	namespace := convert.NewNamespace(opts.namespace)
 
 	serviceNetworks := getServicesDeclaredNetworks(config.Services)
-	networks, externalNetworks := composetransform.ConvertNetworks(namespace, config.Networks, serviceNetworks)
+	networks, externalNetworks := convert.Networks(namespace, config.Networks, serviceNetworks)
 	if err := validateExternalNetworks(ctx, dockerCli, externalNetworks); err != nil {
 		return err
 	}
 	if err := createNetworks(ctx, dockerCli, namespace, networks); err != nil {
 		return err
 	}
-	services, err := composetransform.ConvertServices(namespace, config)
+	services, err := convert.Services(namespace, config)
 	if err != nil {
 		return err
 	}
@@ -211,7 +211,7 @@ func validateExternalNetworks(
 func createNetworks(
 	ctx context.Context,
 	dockerCli *command.DockerCli,
-	namespace composetransform.Namespace,
+	namespace convert.Namespace,
 	networks map[string]types.NetworkCreate,
 ) error {
 	client := dockerCli.Client()
@@ -249,7 +249,7 @@ func deployServices(
 	ctx context.Context,
 	dockerCli *command.DockerCli,
 	services map[string]swarm.ServiceSpec,
-	namespace composetransform.Namespace,
+	namespace convert.Namespace,
 	sendAuth bool,
 ) error {
 	apiClient := dockerCli.Client()
