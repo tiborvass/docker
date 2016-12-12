@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/jsonlog"
-	"github.com/tiborvass/docker/utils/templates"
+	"github.com/tiborvass/docker/pkg/templates"
 	"github.com/spf13/cobra"
 )
 

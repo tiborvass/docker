@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/debug"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/utils/templates"
+	"github.com/tiborvass/docker/pkg/templates"
 	"github.com/docker/go-units"
 	"github.com/spf13/cobra"
 )
