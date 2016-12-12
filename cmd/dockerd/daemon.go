@@ -42,7 +42,6 @@ import (
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/go-connections/tlsconfig"
@@ -471,7 +470,7 @@ func initRouter(s *apiserver.Server, d *daemon.Daemon, c *cluster.Cluster) {
 		volume.NewRouter(d),
 		build.NewRouter(dockerfile.NewBuildManager(d)),
 		swarmrouter.NewRouter(c),
-		pluginrouter.NewRouter(plugin.GetManager()),
+		pluginrouter.NewRouter(d.PluginManager()),
 	}
 
 	if d.NetworkControllerEnabled() {
