@@ -2,6 +2,7 @@ package network
 
 import (
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/docker/libnetwork"
 )
@@ -17,5 +18,5 @@ type Backend interface {
 	ConnectContainerToNetwork(containerName, networkName string, endpointConfig *network.EndpointSettings) error
 	DisconnectContainerFromNetwork(containerName string, networkName string, force bool) error
 	DeleteNetwork(name string) error
-	NetworksPrune(config *types.NetworksPruneConfig) (*types.NetworksPruneReport, error)
+	NetworksPrune(pruneFilters filters.Args) (*types.NetworksPruneReport, error)
 }
