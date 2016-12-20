@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	composetypes "github.com/aanand/compose-file/types"
 	"github.com/tiborvass/docker/api/types/mount"
+	composetypes "github.com/tiborvass/docker/cli/compose/types"
 )
 
 type volumes map[string]composetypes.VolumeConfig

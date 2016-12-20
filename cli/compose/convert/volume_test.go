@@ -3,8 +3,8 @@ package convert
 import (
 	"testing"
 
-	composetypes "github.com/aanand/compose-file/types"
 	"github.com/tiborvass/docker/api/types/mount"
+	composetypes "github.com/tiborvass/docker/cli/compose/types"
 	"github.com/tiborvass/docker/pkg/testutil/assert"
 )
 
