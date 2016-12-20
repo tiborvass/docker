@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	composetypes "github.com/aanand/compose-file/types"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/swarm"
+	composetypes "github.com/tiborvass/docker/cli/compose/types"
 	"github.com/tiborvass/docker/opts"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/go-connections/nat"

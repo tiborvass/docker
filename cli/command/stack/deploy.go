@@ -11,13 +11,13 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/aanand/compose-file/loader"
-	composetypes "github.com/aanand/compose-file/types"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/compose/convert"
+	"github.com/tiborvass/docker/cli/compose/loader"
+	composetypes "github.com/tiborvass/docker/cli/compose/types"
 	dockerclient "github.com/tiborvass/docker/client"
 )
 
