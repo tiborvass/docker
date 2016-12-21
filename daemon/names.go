@@ -5,16 +5,16 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/registrar"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/utils"
 )
 
 var (
-	validContainerNameChars   = utils.RestrictedNameChars
-	validContainerNamePattern = utils.RestrictedNamePattern
+	validContainerNameChars   = api.RestrictedNameChars
+	validContainerNamePattern = api.RestrictedNamePattern
 )
 
 func (daemon *Daemon) registerName(container *container.Container) error {
