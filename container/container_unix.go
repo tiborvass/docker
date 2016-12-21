@@ -16,7 +16,6 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/utils"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/label"
 	"golang.org/x/sys/unix"
@@ -69,7 +68,7 @@ func (container *Container) CreateDaemonEnvironment(tty bool, linkedEnv []string
 	// because the env on the container can override certain default values
 	// we need to replace the 'env' keys where they match and append anything
 	// else.
-	env = utils.ReplaceOrAppendEnvValues(env, container.Config.Env)
+	env = ReplaceOrAppendEnvValues(env, container.Config.Env)
 	return env
 }
 
