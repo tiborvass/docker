@@ -16,10 +16,10 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
-	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerignore"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/cli/command/image/build"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/fileutils"
@@ -29,7 +29,7 @@ import (
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/tiborvass/docker/reference"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/spf13/cobra"
 )
 
@@ -156,13 +156,13 @@ func runBuild(dockerCli *command.DockerCli, options buildOptions) error {
 
 	switch {
 	case specifiedContext == "-":
-		buildCtx, relDockerfile, err = builder.GetContextFromReader(dockerCli.In(), options.dockerfileName)
+		buildCtx, relDockerfile, err = build.GetContextFromReader(dockerCli.In(), options.dockerfileName)
 	case urlutil.IsGitURL(specifiedContext):
-		tempDir, relDockerfile, err = builder.GetContextFromGitURL(specifiedContext, options.dockerfileName)
+		tempDir, relDockerfile, err = build.GetContextFromGitURL(specifiedContext, options.dockerfileName)
 	case urlutil.IsURL(specifiedContext):
-		buildCtx, relDockerfile, err = builder.GetContextFromURL(progBuff, specifiedContext, options.dockerfileName)
+		buildCtx, relDockerfile, err = build.GetContextFromURL(progBuff, specifiedContext, options.dockerfileName)
 	default:
-		contextDir, relDockerfile, err = builder.GetContextFromLocalDir(specifiedContext, options.dockerfileName)
+		contextDir, relDockerfile, err = build.GetContextFromLocalDir(specifiedContext, options.dockerfileName)
 	}
 
 	if err != nil {
@@ -198,7 +198,7 @@ func runBuild(dockerCli *command.DockerCli, options buildOptions) error {
 			}
 		}
 
-		if err := builder.ValidateContextDirectory(contextDir, excludes); err != nil {
+		if err := build.ValidateContextDirectory(contextDir, excludes); err != nil {
 			return fmt.Errorf("Error checking context: '%s'.", err)
 		}
 

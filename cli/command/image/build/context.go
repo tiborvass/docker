@@ -1,4 +1,4 @@
-package builder
+package build
 
 import (
 	"bufio"
@@ -18,6 +18,11 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+)
+
+const (
+	// DefaultDockerfileName is the Default filename with Docker commands, read by docker build
+	DefaultDockerfileName string = "Dockerfile"
 )
 
 // ValidateContextDirectory checks if all the contents of the directory
