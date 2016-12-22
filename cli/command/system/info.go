@@ -12,9 +12,9 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/cli/debug"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/utils"
-	"github.com/tiborvass/docker/utils/templates"
+	"github.com/tiborvass/docker/pkg/templates"
 	"github.com/docker/go-units"
 	"github.com/spf13/cobra"
 )
@@ -206,7 +206,7 @@ func prettyPrintInfo(dockerCli *command.DockerCli, info types.Info) error {
 	ioutils.FprintfIfNotEmpty(dockerCli.Out(), "Name: %s\n", info.Name)
 	ioutils.FprintfIfNotEmpty(dockerCli.Out(), "ID: %s\n", info.ID)
 	fmt.Fprintf(dockerCli.Out(), "Docker Root Dir: %s\n", info.DockerRootDir)
-	fmt.Fprintf(dockerCli.Out(), "Debug Mode (client): %v\n", utils.IsDebugEnabled())
+	fmt.Fprintf(dockerCli.Out(), "Debug Mode (client): %v\n", debug.IsEnabled())
 	fmt.Fprintf(dockerCli.Out(), "Debug Mode (server): %v\n", info.Debug)
 
 	if info.Debug {

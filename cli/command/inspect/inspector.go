@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/cli"
-	"github.com/tiborvass/docker/utils/templates"
+	"github.com/tiborvass/docker/pkg/templates"
 )
 
 // Inspector defines an interface to implement to process elements

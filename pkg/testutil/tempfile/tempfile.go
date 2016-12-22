@@ -1,10 +1,9 @@
 package tempfile
 
 import (
+	"github.com/tiborvass/docker/pkg/testutil/assert"
 	"io/ioutil"
 	"os"
-
-	"github.com/tiborvass/docker/pkg/testutil/assert"
 )
 
 // TempFile is a temporary file that can be used with unit tests. TempFile

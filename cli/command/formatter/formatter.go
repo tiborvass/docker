@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 	"text/template"
 
-	"github.com/tiborvass/docker/utils/templates"
+	"github.com/tiborvass/docker/pkg/templates"
 )
 
 // Format keys used to specify certain kinds of output formats

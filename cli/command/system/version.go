@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/dockerversion"
-	"github.com/tiborvass/docker/utils/templates"
+	"github.com/tiborvass/docker/pkg/templates"
 	"github.com/spf13/cobra"
 )
 
