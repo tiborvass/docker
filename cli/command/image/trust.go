@@ -9,19 +9,17 @@ import (
 	"path"
 	"sort"
 
-	"golang.org/x/net/context"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/trust"
-	"github.com/tiborvass/docker/distribution"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/notary/client"
 	"github.com/docker/notary/tuf/data"
+	"golang.org/x/net/context"
 )
 
 type target struct {
@@ -52,17 +50,19 @@ func trustedPush(ctx context.Context, cli *command.DockerCli, repoInfo *registry
 			return
 		}
 
-		var pushResult distribution.PushResult
+		var pushResult types.PushResult
 		err := json.Unmarshal(*aux, &pushResult)
-		if err == nil && pushResult.Tag != "" && pushResult.Digest.Validate() == nil {
-			h, err := hex.DecodeString(pushResult.Digest.Hex())
-			if err != nil {
-				target = nil
-				return
+		if err == nil && pushResult.Tag != "" {
+			if dgst, err := digest.ParseDigest(pushResult.Digest); err == nil {
+				h, err := hex.DecodeString(dgst.Hex())
+				if err != nil {
+					target = nil
+					return
+				}
+				target.Name = pushResult.Tag
+				target.Hashes = data.Hashes{string(dgst.Algorithm()): h}
+				target.Length = int64(pushResult.Size)
 			}
-			target.Name = pushResult.Tag
-			target.Hashes = data.Hashes{string(pushResult.Digest.Algorithm()): h}
-			target.Length = int64(pushResult.Size)
 		}
 	}
 
