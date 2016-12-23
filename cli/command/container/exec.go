@@ -13,7 +13,6 @@ import (
 	apiclient "github.com/tiborvass/docker/client"
 	options "github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/promise"
-	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +29,7 @@ type execOptions struct {
 func newExecOptions() *execOptions {
 	var values []string
 	return &execOptions{
-		env: options.NewListOptsRef(&values, runconfigopts.ValidateEnv),
+		env: options.NewListOptsRef(&values, options.ValidateEnv),
 	}
 }
 
