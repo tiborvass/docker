@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/distribution"
+	progressutils "github.com/tiborvass/docker/distribution/utils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
@@ -84,7 +85,7 @@ func (daemon *Daemon) pullImageWithReference(ctx context.Context, ref reference.
 	ctx, cancelFunc := context.WithCancel(ctx)
 
 	go func() {
-		writeDistributionProgress(cancelFunc, outStream, progressChan)
+		progressutils.WriteDistributionProgress(cancelFunc, outStream, progressChan)
 		close(writesDone)
 	}()
 

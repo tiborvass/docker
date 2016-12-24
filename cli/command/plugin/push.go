@@ -7,6 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/spf13/cobra"
@@ -49,5 +50,10 @@ func runPush(dockerCli *command.DockerCli, name string) error {
 	if err != nil {
 		return err
 	}
-	return dockerCli.Client().PluginPush(ctx, ref.String(), encodedAuth)
+	responseBody, err := dockerCli.Client().PluginPush(ctx, ref.String(), encodedAuth)
+	if err != nil {
+		return err
+	}
+	defer responseBody.Close()
+	return jsonmessage.DisplayJSONMessagesToStream(responseBody, dockerCli.Out(), nil)
 }
