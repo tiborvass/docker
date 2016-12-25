@@ -5,11 +5,10 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"golang.org/x/net/context"
-
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
 )
 
 type topOptions struct {

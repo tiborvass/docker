@@ -3,8 +3,6 @@ package container
 import (
 	"io/ioutil"
 
-	"golang.org/x/net/context"
-
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
@@ -12,6 +10,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/templates"
 	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
 )
 
 type psOptions struct {
