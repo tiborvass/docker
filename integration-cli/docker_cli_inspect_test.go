@@ -10,6 +10,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/integration-cli/environment"
 	"github.com/tiborvass/docker/pkg/integration/checker"
 	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
 	"github.com/go-check/check"
@@ -212,7 +213,7 @@ func (s *DockerSuite) TestInspectBindMountPoint(c *check.C) {
 	if daemonPlatform == "windows" {
 		modifier = ""
 		// TODO Windows: Temporary check - remove once TP5 support is dropped
-		if windowsDaemonKV < 14350 {
+		if environment.WindowsKernelVersion(testEnv.DaemonKernelVersion()) < 14350 {
 			c.Skip("Needs later Windows build for RO volumes")
 		}
 		// Linux creates the host directory if it doesn't exist. Windows does not.
