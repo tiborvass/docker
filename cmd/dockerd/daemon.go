@@ -26,9 +26,9 @@ import (
 	systemrouter "github.com/tiborvass/docker/api/server/router/system"
 	"github.com/tiborvass/docker/api/server/router/volume"
 	"github.com/tiborvass/docker/builder/dockerfile"
+	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/cli/debug"
 	cliflags "github.com/tiborvass/docker/cli/flags"
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/cluster"
 	"github.com/tiborvass/docker/daemon/logger"
@@ -75,7 +75,7 @@ func migrateKey(config *daemon.Config) (err error) {
 	}
 
 	// Migrate trust key if exists at ~/.docker/key.json and owned by current user
-	oldPath := filepath.Join(cliconfig.ConfigDir(), cliflags.DefaultTrustKeyFile)
+	oldPath := filepath.Join(cliconfig.Dir(), cliflags.DefaultTrustKeyFile)
 	newPath := filepath.Join(getDaemonConfDir(config.Root), cliflags.DefaultTrustKeyFile)
 	if _, statErr := os.Stat(newPath); os.IsNotExist(statErr) && currentUserIsOwner(oldPath) {
 		defer func() {

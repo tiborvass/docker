@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types/swarm"
-	"github.com/tiborvass/docker/cliconfig"
+	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/go-check/check"
@@ -359,7 +359,7 @@ func (s *DockerTrustSuite) TearDownTest(c *check.C) {
 	}
 
 	// Remove trusted keys and metadata after test
-	os.RemoveAll(filepath.Join(cliconfig.ConfigDir(), "trust"))
+	os.RemoveAll(filepath.Join(cliconfig.Dir(), "trust"))
 	s.ds.TearDownTest(c)
 }
 

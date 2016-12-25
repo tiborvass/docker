@@ -10,9 +10,9 @@ import (
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/command/commands"
+	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/cli/debug"
 	cliflags "github.com/tiborvass/docker/cli/flags"
-	"github.com/tiborvass/docker/cliconfig"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/spf13/cobra"
@@ -75,7 +75,7 @@ func newDockerCommand(dockerCli *command.DockerCli) *cobra.Command {
 
 	flags = cmd.Flags()
 	flags.BoolVarP(&opts.Version, "version", "v", false, "Print version information and quit")
-	flags.StringVar(&opts.ConfigDir, "config", cliconfig.ConfigDir(), "Location of client config files")
+	flags.StringVar(&opts.ConfigDir, "config", cliconfig.Dir(), "Location of client config files")
 	opts.Common.InstallFlags(flags)
 
 	cmd.SetOutput(dockerCli.Out())
@@ -126,7 +126,7 @@ func dockerPreRun(opts *cliflags.ClientOptions) {
 	cliflags.SetLogLevel(opts.Common.LogLevel)
 
 	if opts.ConfigDir != "" {
-		cliconfig.SetConfigDir(opts.ConfigDir)
+		cliconfig.SetDir(opts.ConfigDir)
 	}
 
 	if opts.Common.Debug {

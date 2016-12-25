@@ -18,7 +18,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/cli/command"
-	"github.com/tiborvass/docker/cliconfig"
+	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/docker/notary"
@@ -37,7 +37,7 @@ var (
 )
 
 func trustDirectory() string {
-	return filepath.Join(cliconfig.ConfigDir(), "trust")
+	return filepath.Join(cliconfig.Dir(), "trust")
 }
 
 // certificateDirectory returns the directory containing
@@ -49,7 +49,7 @@ func certificateDirectory(server string) (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(cliconfig.ConfigDir(), "tls", u.Host), nil
+	return filepath.Join(cliconfig.Dir(), "tls", u.Host), nil
 }
 
 // Server returns the base URL for the trust server.

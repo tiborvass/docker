@@ -3,7 +3,7 @@ package credentials
 import (
 	"os/exec"
 
-	"github.com/tiborvass/docker/cliconfig/configfile"
+	"github.com/tiborvass/docker/cli/config/configfile"
 )
 
 // DetectDefaultStore sets the default credentials store

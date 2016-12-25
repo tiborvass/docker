@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/cliconfig"
-	"github.com/tiborvass/docker/cliconfig/configfile"
+	cliconfig "github.com/tiborvass/docker/cli/config"
+	"github.com/tiborvass/docker/cli/config/configfile"
 )
 
 func newConfigFile(auths map[string]types.AuthConfig) *configfile.ConfigFile {
