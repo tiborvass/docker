@@ -6,7 +6,6 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/command/idresolver"
@@ -16,7 +15,6 @@ import (
 )
 
 type psOptions struct {
-	all       bool
 	filter    opts.FilterOpt
 	noTrunc   bool
 	namespace string
@@ -36,7 +34,6 @@ func newPsCommand(dockerCli *command.DockerCli) *cobra.Command {
 		},
 	}
 	flags := cmd.Flags()
-	flags.BoolVarP(&opts.all, "all", "a", false, "Display all tasks")
 	flags.BoolVar(&opts.noTrunc, "no-trunc", false, "Do not truncate output")
 	flags.BoolVar(&opts.noResolve, "no-resolve", false, "Do not map IDs to Names")
 	flags.VarP(&opts.filter, "filter", "f", "Filter output based on conditions provided")
@@ -51,10 +48,6 @@ func runPS(dockerCli *command.DockerCli, opts psOptions) error {
 
 	filter := opts.filter.Value()
 	filter.Add("label", labelNamespace+"="+opts.namespace)
-	if !opts.all && !filter.Include("desired-state") {
-		filter.Add("desired-state", string(swarm.TaskStateRunning))
-		filter.Add("desired-state", string(swarm.TaskStateAccepted))
-	}
 
 	tasks, err := client.TaskList(ctx, types.TaskListOptions{Filters: filter})
 	if err != nil {
