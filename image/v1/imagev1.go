@@ -2,9 +2,7 @@ package v1
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
-	"regexp"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
@@ -12,9 +10,8 @@ import (
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
+	"github.com/tiborvass/docker/pkg/stringid"
 )
-
-var validHex = regexp.MustCompile(`^([a-f0-9]{64})$`)
 
 // noFallbackMinVersion is the minimum version for which v1compatibility
 // information will not be marshaled through the Image struct to remove
@@ -149,8 +146,5 @@ func rawJSON(value interface{}) *json.RawMessage {
 
 // ValidateID checks whether an ID string is a valid image ID.
 func ValidateID(id string) error {
-	if ok := validHex.MatchString(id); !ok {
-		return fmt.Errorf("image ID %q is invalid", id)
-	}
-	return nil
+	return stringid.ValidateID(id)
 }
