@@ -12,10 +12,10 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
+	cliconfig "github.com/tiborvass/docker/cli/config"
+	"github.com/tiborvass/docker/cli/config/configfile"
+	"github.com/tiborvass/docker/cli/config/credentials"
 	cliflags "github.com/tiborvass/docker/cli/flags"
-	"github.com/tiborvass/docker/cliconfig"
-	"github.com/tiborvass/docker/cliconfig/configfile"
-	"github.com/tiborvass/docker/cliconfig/credentials"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/dockerversion"
 	dopts "github.com/tiborvass/docker/opts"
@@ -150,7 +150,7 @@ func (cli *DockerCli) Initialize(opts *cliflags.ClientOptions) error {
 	cli.defaultVersion = cli.client.ClientVersion()
 
 	if opts.Common.TrustKey == "" {
-		cli.keyFile = filepath.Join(cliconfig.ConfigDir(), cliflags.DefaultTrustKeyFile)
+		cli.keyFile = filepath.Join(cliconfig.Dir(), cliflags.DefaultTrustKeyFile)
 	} else {
 		cli.keyFile = opts.Common.TrustKey
 	}
@@ -179,7 +179,7 @@ func NewDockerCli(in io.ReadCloser, out, err io.Writer) *DockerCli {
 // LoadDefaultConfigFile attempts to load the default config file and returns
 // an initialized ConfigFile struct if none is found.
 func LoadDefaultConfigFile(err io.Writer) *configfile.ConfigFile {
-	configFile, e := cliconfig.Load(cliconfig.ConfigDir())
+	configFile, e := cliconfig.Load(cliconfig.Dir())
 	if e != nil {
 		fmt.Fprintf(err, "WARNING: Error loading config file:%v\n", e)
 	}
