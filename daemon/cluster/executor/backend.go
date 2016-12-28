@@ -13,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
+	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/reference"
 	"github.com/docker/libnetwork"
 	"github.com/docker/libnetwork/cluster"
@@ -54,4 +55,5 @@ type Backend interface {
 	WaitForDetachment(context.Context, string, string, string, string) error
 	GetRepository(context.Context, reference.NamedTagged, *types.AuthConfig) (distribution.Repository, bool, error)
 	LookupImage(name string) (*types.ImageInspect, error)
+	PluginManager() *plugin.Manager
 }

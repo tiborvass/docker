@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/distribution"
+	progressutils "github.com/tiborvass/docker/distribution/utils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
@@ -84,20 +85,23 @@ func (daemon *Daemon) pullImageWithReference(ctx context.Context, ref reference.
 	ctx, cancelFunc := context.WithCancel(ctx)
 
 	go func() {
-		writeDistributionProgress(cancelFunc, outStream, progressChan)
+		progressutils.WriteDistributionProgress(cancelFunc, outStream, progressChan)
 		close(writesDone)
 	}()
 
 	imagePullConfig := &distribution.ImagePullConfig{
-		MetaHeaders:      metaHeaders,
-		AuthConfig:       authConfig,
-		ProgressOutput:   progress.ChanOutput(progressChan),
-		RegistryService:  daemon.RegistryService,
-		ImageEventLogger: daemon.LogImageEvent,
-		MetadataStore:    daemon.distributionMetadataStore,
-		ImageStore:       daemon.imageStore,
-		ReferenceStore:   daemon.referenceStore,
-		DownloadManager:  daemon.downloadManager,
+		Config: distribution.Config{
+			MetaHeaders:      metaHeaders,
+			AuthConfig:       authConfig,
+			ProgressOutput:   progress.ChanOutput(progressChan),
+			RegistryService:  daemon.RegistryService,
+			ImageEventLogger: daemon.LogImageEvent,
+			MetadataStore:    daemon.distributionMetadataStore,
+			ImageStore:       distribution.NewImageConfigStoreFromStore(daemon.imageStore),
+			ReferenceStore:   daemon.referenceStore,
+		},
+		DownloadManager: daemon.downloadManager,
+		Schema2Types:    distribution.ImageTypes,
 	}
 
 	err := distribution.Pull(ctx, ref, imagePullConfig)

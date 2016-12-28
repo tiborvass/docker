@@ -7,15 +7,11 @@ import (
 	"strings"
 	"testing"
 
-	pluginstore "github.com/tiborvass/docker/plugin/store"
 	"github.com/tiborvass/docker/volume/drivers"
 	volumetestutils "github.com/tiborvass/docker/volume/testutils"
 )
 
 func TestCreate(t *testing.T) {
-	pluginStore := pluginstore.NewStore("/var/lib/docker")
-	volumedrivers.RegisterPluginGetter(pluginStore)
-
 	volumedrivers.Register(volumetestutils.NewFakeDriver("fake"), "fake")
 	defer volumedrivers.Unregister("fake")
 	dir, err := ioutil.TempDir("", "test-create")
