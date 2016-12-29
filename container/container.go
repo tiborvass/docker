@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/libcontainerd"
+	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/promise"
@@ -35,7 +36,6 @@ import (
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/restartmanager"
 	"github.com/tiborvass/docker/runconfig"
-	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	"github.com/tiborvass/docker/volume"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork"
@@ -815,7 +815,7 @@ func (container *Container) BuildJoinOptions(n libnetwork.Network) ([]libnetwork
 	var joinOptions []libnetwork.EndpointOption
 	if epConfig, ok := container.NetworkSettings.Networks[n.Name()]; ok {
 		for _, str := range epConfig.Links {
-			name, alias, err := runconfigopts.ParseLink(str)
+			name, alias, err := opts.ParseLink(str)
 			if err != nil {
 				return nil, err
 			}

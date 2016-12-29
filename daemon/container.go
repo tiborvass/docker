@@ -12,10 +12,10 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
-	"github.com/tiborvass/docker/runconfig/opts"
 	"github.com/docker/go-connections/nat"
 )
 
