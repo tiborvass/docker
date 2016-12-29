@@ -1,12 +1,11 @@
 package container
 
 import (
-	"golang.org/x/net/context"
-
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/command/inspect"
 	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
 )
 
 type inspectOptions struct {
