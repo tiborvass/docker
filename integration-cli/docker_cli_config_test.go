@@ -11,8 +11,8 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/homedir"
-	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/go-check/check"
 )
 

@@ -12,7 +12,7 @@ import (
 	"time"
 
 	cliconfig "github.com/tiborvass/docker/cli/config"
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/go-check/check"
 )

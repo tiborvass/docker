@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/go-check/check"
 )
 

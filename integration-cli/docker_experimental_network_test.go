@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 

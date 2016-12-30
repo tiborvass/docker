@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/go-check/check"
 )

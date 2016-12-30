@@ -9,7 +9,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/go-check/check"
 )

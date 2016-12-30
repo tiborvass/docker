@@ -23,13 +23,13 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/opts"
-	"github.com/tiborvass/docker/pkg/integration"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringutils"
+	"github.com/tiborvass/docker/pkg/testutil"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 
@@ -59,7 +59,7 @@ func sockRequest(method, endpoint string, data interface{}) (int, []byte, error)
 	if err != nil {
 		return -1, nil, err
 	}
-	b, err := integration.ReadBody(body)
+	b, err := testutil.ReadBody(body)
 	return res.StatusCode, b, err
 }
 

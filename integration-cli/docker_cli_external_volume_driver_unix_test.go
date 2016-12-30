@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/volume"
 	"github.com/go-check/check"

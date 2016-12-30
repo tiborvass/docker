@@ -16,8 +16,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/homedir"
-	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/sysinfo"

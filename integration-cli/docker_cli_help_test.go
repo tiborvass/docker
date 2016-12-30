@@ -7,9 +7,9 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/homedir"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 

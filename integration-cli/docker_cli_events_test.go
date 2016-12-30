@@ -14,9 +14,9 @@ import (
 
 	eventtypes "github.com/tiborvass/docker/api/types/events"
 	eventstestutils "github.com/tiborvass/docker/daemon/events/testutils"
-	"github.com/tiborvass/docker/pkg/integration"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
+	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/pkg/testutil"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 
@@ -222,7 +222,7 @@ func (s *DockerSuite) TestEventsImageImport(c *check.C) {
 	cleanedContainerID := strings.TrimSpace(out)
 
 	since := daemonUnixTime(c)
-	out, _, err := integration.RunCommandPipelineWithOutput(
+	out, _, err := testutil.RunCommandPipelineWithOutput(
 		exec.Command(dockerBinary, "export", cleanedContainerID),
 		exec.Command(dockerBinary, "import", "-"),
 	)

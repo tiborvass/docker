@@ -12,7 +12,7 @@ import (
 	"github.com/docker/distribution/manifest/schema1"
 	"github.com/docker/distribution/manifest/schema2"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
 )

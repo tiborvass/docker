@@ -11,7 +11,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	eventstestutils "github.com/tiborvass/docker/daemon/events/testutils"
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/go-check/check"
 )
 

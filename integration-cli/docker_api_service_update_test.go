@@ -4,8 +4,8 @@ package main
 
 import (
 	"github.com/tiborvass/docker/api/types/swarm"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/go-check/check"
 )
 

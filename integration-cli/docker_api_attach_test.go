@@ -12,9 +12,9 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/pkg/integration"
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/stdcopy"
+	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/go-check/check"
 	"golang.org/x/net/websocket"
 )
@@ -80,7 +80,7 @@ func (s *DockerSuite) TestPostContainersAttachContainerNotFound(c *check.C) {
 	// connection will shutdown, err should be "persistent connection closed"
 	c.Assert(err, checker.NotNil) // Server shutdown connection
 
-	body, err := integration.ReadBody(resp.Body)
+	body, err := testutil.ReadBody(resp.Body)
 	c.Assert(err, checker.IsNil)
 	c.Assert(resp.StatusCode, checker.Equals, http.StatusNotFound)
 	expected := "No such container: doesnotexist\r\n"

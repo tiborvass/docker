@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types/swarm"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/docker/libnetwork/driverapi"
 	"github.com/docker/libnetwork/ipamapi"
 	remoteipam "github.com/docker/libnetwork/ipams/remote/api"

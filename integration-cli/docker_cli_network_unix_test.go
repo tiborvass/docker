@@ -16,10 +16,10 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
 	"github.com/tiborvass/docker/pkg/stringid"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/libnetwork/driverapi"
 	remoteapi "github.com/docker/libnetwork/drivers/remote/api"

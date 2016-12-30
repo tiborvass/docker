@@ -7,7 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
-	"github.com/tiborvass/docker/pkg/integration/checker"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/go-check/check"
 )
 

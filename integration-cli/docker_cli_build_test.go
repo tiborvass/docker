@@ -18,11 +18,11 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/builder/dockerfile/command"
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/integration"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
 	"github.com/tiborvass/docker/pkg/stringutils"
+	"github.com/tiborvass/docker/pkg/testutil"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 
@@ -2086,7 +2086,7 @@ func (s *DockerSuite) TestBuildContextCleanup(c *check.C) {
 	if err != nil {
 		c.Fatalf("failed to list contents of tmp dir: %s", err)
 	}
-	if err = integration.CompareDirectoryEntries(entries, entriesFinal); err != nil {
+	if err = testutil.CompareDirectoryEntries(entries, entriesFinal); err != nil {
 		c.Fatalf("context should have been deleted, but wasn't")
 	}
 
@@ -2111,7 +2111,7 @@ func (s *DockerSuite) TestBuildContextCleanupFailedBuild(c *check.C) {
 	if err != nil {
 		c.Fatalf("failed to list contents of tmp dir: %s", err)
 	}
-	if err = integration.CompareDirectoryEntries(entries, entriesFinal); err != nil {
+	if err = testutil.CompareDirectoryEntries(entries, entriesFinal); err != nil {
 		c.Fatalf("context should have been deleted, but wasn't")
 	}
 
@@ -5342,7 +5342,7 @@ func (s *DockerSuite) TestBuildContainerWithCgroupParent(c *check.C) {
 	if err != nil {
 		c.Fatalf("failed to read '/proc/self/cgroup - %v", err)
 	}
-	selfCgroupPaths := integration.ParseCgroupPaths(string(data))
+	selfCgroupPaths := testutil.ParseCgroupPaths(string(data))
 	_, found := selfCgroupPaths["memory"]
 	if !found {
 		c.Fatalf("unable to find self memory cgroup path. CgroupsPath: %v", selfCgroupPaths)

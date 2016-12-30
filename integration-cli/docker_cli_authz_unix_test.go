@@ -22,9 +22,9 @@ import (
 	"net/http/httputil"
 	"net/url"
 
+	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/pkg/authorization"
-	"github.com/tiborvass/docker/pkg/integration/checker"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/go-check/check"
 )

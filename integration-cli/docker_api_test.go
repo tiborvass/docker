@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/pkg/integration"
-	"github.com/tiborvass/docker/pkg/integration/checker"
-	icmd "github.com/tiborvass/docker/pkg/integration/cmd"
+	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/pkg/testutil"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 
@@ -79,7 +79,7 @@ func (s *DockerSuite) TestAPIErrorJSON(c *check.C) {
 	c.Assert(err, checker.IsNil)
 	c.Assert(httpResp.StatusCode, checker.Equals, http.StatusInternalServerError)
 	c.Assert(httpResp.Header.Get("Content-Type"), checker.Equals, "application/json")
-	b, err := integration.ReadBody(body)
+	b, err := testutil.ReadBody(body)
 	c.Assert(err, checker.IsNil)
 	c.Assert(getErrorMessage(c, b), checker.Equals, "Config cannot be empty in order to create a container")
 }
@@ -92,7 +92,7 @@ func (s *DockerSuite) TestAPIErrorPlainText(c *check.C) {
 	c.Assert(err, checker.IsNil)
 	c.Assert(httpResp.StatusCode, checker.Equals, http.StatusInternalServerError)
 	c.Assert(httpResp.Header.Get("Content-Type"), checker.Contains, "text/plain")
-	b, err := integration.ReadBody(body)
+	b, err := testutil.ReadBody(body)
 	c.Assert(err, checker.IsNil)
 	c.Assert(strings.TrimSpace(string(b)), checker.Equals, "Config cannot be empty in order to create a container")
 }
@@ -103,7 +103,7 @@ func (s *DockerSuite) TestAPIErrorNotFoundJSON(c *check.C) {
 	c.Assert(err, checker.IsNil)
 	c.Assert(httpResp.StatusCode, checker.Equals, http.StatusNotFound)
 	c.Assert(httpResp.Header.Get("Content-Type"), checker.Equals, "application/json")
-	b, err := integration.ReadBody(body)
+	b, err := testutil.ReadBody(body)
 	c.Assert(err, checker.IsNil)
 	c.Assert(getErrorMessage(c, b), checker.Equals, "page not found")
 }
@@ -113,7 +113,7 @@ func (s *DockerSuite) TestAPIErrorNotFoundPlainText(c *check.C) {
 	c.Assert(err, checker.IsNil)
 	c.Assert(httpResp.StatusCode, checker.Equals, http.StatusNotFound)
 	c.Assert(httpResp.Header.Get("Content-Type"), checker.Contains, "text/plain")
-	b, err := integration.ReadBody(body)
+	b, err := testutil.ReadBody(body)
 	c.Assert(err, checker.IsNil)
 	c.Assert(strings.TrimSpace(string(b)), checker.Equals, "page not found")
 }

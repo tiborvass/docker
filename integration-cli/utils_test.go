@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/tiborvass/docker/pkg/integration/cmd"
+	"github.com/tiborvass/docker/pkg/testutil/cmd"
 	"os/exec"
 )
 
