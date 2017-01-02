@@ -25,6 +25,7 @@ import (
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
+	"github.com/tiborvass/docker/integration-cli/registry"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringutils"
@@ -1083,8 +1084,8 @@ func parseEventTime(t time.Time) string {
 	return fmt.Sprintf("%d.%09d", t.Unix(), int64(t.Nanosecond()))
 }
 
-func setupRegistry(c *check.C, schema1 bool, auth, tokenURL string) *testRegistryV2 {
-	reg, err := newTestRegistryV2(c, schema1, auth, tokenURL)
+func setupRegistry(c *check.C, schema1 bool, auth, tokenURL string) *registry.V2 {
+	reg, err := registry.NewV2(schema1, auth, tokenURL, privateRegistryURL)
 	c.Assert(err, check.IsNil)
 
 	// Wait for registry to be ready to serve requests.
