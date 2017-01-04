@@ -26,14 +26,13 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/exec"
-	"github.com/tiborvass/docker/daemon/initlayer"
-	"github.com/tiborvass/docker/dockerversion"
-	"github.com/tiborvass/docker/plugin"
-	"github.com/docker/libnetwork/cluster"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"
+	"github.com/tiborvass/docker/daemon/initlayer"
+	"github.com/tiborvass/docker/daemon/stats"
 	dmetadata "github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/distribution/xfer"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/libcontainerd"
@@ -46,6 +45,7 @@ import (
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
+	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -53,6 +53,7 @@ import (
 	"github.com/tiborvass/docker/volume/local"
 	"github.com/tiborvass/docker/volume/store"
 	"github.com/docker/libnetwork"
+	"github.com/docker/libnetwork/cluster"
 	nwconfig "github.com/docker/libnetwork/config"
 	"github.com/docker/libtrust"
 	"github.com/pkg/errors"
@@ -82,7 +83,7 @@ type Daemon struct {
 	trustKey                  libtrust.PrivateKey
 	idIndex                   *truncindex.TruncIndex
 	configStore               *Config
-	statsCollector            *statsCollector
+	statsCollector            *stats.Collector
 	defaultLogConfig          containertypes.LogConfig
 	RegistryService           registry.Service
 	EventsService             *events.Events
@@ -105,6 +106,8 @@ type Daemon struct {
 	defaultIsolation          containertypes.Isolation // Default isolation mode on Windows
 	clusterProvider           cluster.Provider
 	cluster                   Cluster
+
+	machineMemory uint64
 
 	seccompProfile     []byte
 	seccompProfilePath string
