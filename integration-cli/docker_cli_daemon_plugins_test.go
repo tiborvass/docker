@@ -4,14 +4,13 @@ package main
 
 import (
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"syscall"
 
-	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/pkg/mount"
+	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
 )
 
@@ -153,7 +152,7 @@ func (s *DockerDaemonSuite) TestDaemonShutdownWithPlugins(c *check.C) {
 
 	icmd.RunCommand("pgrep", "-f", pluginProcessName).Assert(c, icmd.Expected{
 		ExitCode: 1,
-		Error: "exit status 1",
+		Error:    "exit status 1",
 	})
 
 	s.d.Start(c, "--live-restore")
