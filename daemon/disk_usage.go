@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/directory"
 	"github.com/tiborvass/docker/volume"
+	"github.com/opencontainers/go-digest"
 )
 
 func (daemon *Daemon) getLayerRefs() map[layer.ChainID]int {

@@ -7,7 +7,6 @@ import (
 	"runtime"
 
 	"github.com/docker/distribution"
-	"github.com/docker/distribution/digest"
 	"github.com/docker/distribution/manifest/schema2"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/distribution/metadata"
@@ -18,6 +17,7 @@ import (
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/libtrust"
+	"github.com/opencontainers/go-digest"
 	"golang.org/x/net/context"
 )
 

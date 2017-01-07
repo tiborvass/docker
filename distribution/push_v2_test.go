@@ -7,13 +7,13 @@ import (
 
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/context"
-	"github.com/docker/distribution/digest"
 	"github.com/docker/distribution/manifest/schema2"
 	distreference "github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/reference"
+	"github.com/opencontainers/go-digest"
 )
 
 func TestGetRepositoryMountCandidates(t *testing.T) {

@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/opencontainers/go-digest"
 	"golang.org/x/net/context"
 )
 

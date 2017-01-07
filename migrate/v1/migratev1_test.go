@@ -13,11 +13,11 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/reference"
+	"github.com/opencontainers/go-digest"
 )
 
 func TestMigrateRefs(t *testing.T) {

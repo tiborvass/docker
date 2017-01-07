@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/digest"
 	"github.com/docker/distribution/registry/client/transport"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/dockerversion"
@@ -17,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/opencontainers/go-digest"
 	"golang.org/x/net/context"
 )
 

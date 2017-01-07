@@ -13,7 +13,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
-	"github.com/docker/distribution/digest"
 	"github.com/docker/distribution/manifest/schema1"
 	"github.com/docker/distribution/manifest/schema2"
 	distreference "github.com/docker/distribution/reference"
@@ -27,6 +26,7 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
+	"github.com/opencontainers/go-digest"
 )
 
 const (
@@ -435,7 +435,7 @@ func (pd *v2PushDescriptor) uploadUsingSession(
 		return distribution.Descriptor{}, fmt.Errorf("unsupported layer media type %s", m)
 	}
 
-	digester := digest.Canonical.New()
+	digester := digest.Canonical.Digester()
 	tee := io.TeeReader(reader, digester.Hash())
 
 	nn, err := layerUpload.ReadFrom(tee)
