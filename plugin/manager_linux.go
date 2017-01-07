@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/distribution/digest"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/initlayer"
 	"github.com/tiborvass/docker/libcontainerd"
@@ -19,6 +18,7 @@ import (
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/plugin/v2"
+	"github.com/opencontainers/go-digest"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
 )
