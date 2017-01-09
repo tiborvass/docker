@@ -8,6 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
 )
@@ -107,7 +108,7 @@ func (s *DockerSuite) TestInspectAPIImageResponse(c *check.C) {
 	dockerCmd(c, "tag", "busybox:latest", "busybox:mytag")
 
 	endpoint := "/images/busybox/json"
-	status, body, err := sockRequest("GET", endpoint, nil)
+	status, body, err := request.SockRequest("GET", endpoint, nil, daemonHost())
 
 	c.Assert(err, checker.IsNil)
 	c.Assert(status, checker.Equals, http.StatusOK)
