@@ -8,18 +8,18 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/reference"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
 
 // validateTag checks if the given repoName can be resolved.
 func validateTag(rawRepo string) error {
-	_, err := reference.ParseNamed(rawRepo)
+	_, err := reference.ParseNormalizedNamed(rawRepo)
 
 	return err
 }
