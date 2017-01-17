@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/tiborvass/docker/pkg/testutil/cmd"
 	"os/exec"
+
+	"github.com/tiborvass/docker/pkg/testutil/cmd"
 )
 
 func getPrefixAndSlashFromDaemonPlatform() (prefix, slash string) {
-	if daemonPlatform == "windows" {
+	if testEnv.DaemonPlatform() == "windows" {
 		return "c:", `\`
 	}
 	return "", "/"
