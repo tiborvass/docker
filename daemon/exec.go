@@ -13,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/container/stream"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/pools"
@@ -209,7 +210,15 @@ func (d *Daemon) ContainerExecStart(ctx context.Context, name string, stdin io.R
 		return err
 	}
 
-	attachErr := container.AttachStreams(ctx, ec.StreamConfig, ec.OpenStdin, true, ec.Tty, cStdin, cStdout, cStderr, ec.DetachKeys)
+	attachConfig := &stream.AttachConfig{
+		TTY:        ec.Tty,
+		Stdin:      cStdin,
+		Stdout:     cStdout,
+		Stderr:     cStderr,
+		DetachKeys: ec.DetachKeys,
+		CloseStdin: true,
+	}
+	attachErr := ec.StreamConfig.Attach(ctx, attachConfig)
 
 	systemPid, err := d.containerd.AddProcess(ctx, c.ID, name, p, ec.InitializeStdio)
 	if err != nil {
@@ -233,7 +242,7 @@ func (d *Daemon) ContainerExecStart(ctx context.Context, name string, stdin io.R
 		return fmt.Errorf("context cancelled")
 	case err := <-attachErr:
 		if err != nil {
-			if _, ok := err.(container.DetachError); !ok {
+			if _, ok := err.(stream.DetachError); !ok {
 				return fmt.Errorf("exec attach failed with error: %v", err)
 			}
 			d.LogContainerEvent(c, "exec_detach")
