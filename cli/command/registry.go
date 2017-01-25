@@ -12,10 +12,10 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/term"
-	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 )
 
@@ -174,7 +174,7 @@ func RetrieveAuthTokenFromImage(ctx context.Context, cli *DockerCli, image strin
 
 // resolveAuthConfigFromImage retrieves that AuthConfig using the image string
 func resolveAuthConfigFromImage(ctx context.Context, cli *DockerCli, image string) (types.AuthConfig, error) {
-	registryRef, err := reference.ParseNamed(image)
+	registryRef, err := reference.ParseNormalizedNamed(image)
 	if err != nil {
 		return types.AuthConfig{}, err
 	}
