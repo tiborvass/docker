@@ -2,13 +2,13 @@ package daemon
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 	"net/url"
 	"runtime"
 	"time"
 
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/dockerversion"
@@ -18,7 +18,7 @@ import (
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
-	"github.com/tiborvass/docker/reference"
+	"github.com/pkg/errors"
 )
 
 // ImportImage imports an image, getting the archived layer data either from
@@ -35,11 +35,10 @@ func (daemon *Daemon) ImportImage(src string, repository, tag string, msg string
 
 	if repository != "" {
 		var err error
-		newRef, err = reference.ParseNamed(repository)
+		newRef, err = reference.ParseNormalizedNamed(repository)
 		if err != nil {
 			return err
 		}
-
 		if _, isCanonical := newRef.(reference.Canonical); isCanonical {
 			return errors.New("cannot import digest reference")
 		}
