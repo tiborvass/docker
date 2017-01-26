@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/image"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/go-check/check"
@@ -106,7 +107,7 @@ func (s *DockerSuite) TestAPIImagesHistory(c *check.C) {
 	c.Assert(err, checker.IsNil)
 	c.Assert(status, checker.Equals, http.StatusOK)
 
-	var historydata []types.ImageHistory
+	var historydata []image.HistoryResponseItem
 	err = json.Unmarshal(body, &historydata)
 	c.Assert(err, checker.IsNil, check.Commentf("Error on unmarshal"))
 
