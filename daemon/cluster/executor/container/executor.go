@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
@@ -53,7 +54,7 @@ func (e *executor) Describe(ctx context.Context) (*api.NodeDescription, error) {
 	addPlugins("Authorization", info.Plugins.Authorization)
 
 	// add v2 plugins
-	v2Plugins, err := e.backend.PluginManager().List()
+	v2Plugins, err := e.backend.PluginManager().List(filters.NewArgs())
 	if err == nil {
 		for _, plgn := range v2Plugins {
 			for _, typ := range plgn.Config.Interface.Types {
