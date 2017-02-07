@@ -11,6 +11,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/image/v1"
 	"github.com/tiborvass/docker/layer"
@@ -21,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/reference"
 	"github.com/opencontainers/go-digest"
 )
 
@@ -117,7 +117,7 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
 
 		imageRefCount = 0
 		for _, repoTag := range m.RepoTags {
-			named, err := reference.ParseNamed(repoTag)
+			named, err := reference.ParseNormalizedNamed(repoTag)
 			if err != nil {
 				return err
 			}
@@ -126,7 +126,7 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
 				return fmt.Errorf("invalid tag %q", repoTag)
 			}
 			l.setLoadedTag(ref, imgID.Digest(), outStream)
-			outStream.Write([]byte(fmt.Sprintf("Loaded image: %s\n", ref)))
+			outStream.Write([]byte(fmt.Sprintf("Loaded image: %s\n", reference.FamiliarString(ref))))
 			imageRefCount++
 		}
 
@@ -201,7 +201,7 @@ func (l *tarexporter) loadLayer(filename string, rootFS image.RootFS, id string,
 
 func (l *tarexporter) setLoadedTag(ref reference.NamedTagged, imgID digest.Digest, outStream io.Writer) error {
 	if prevID, err := l.rs.Get(ref); err == nil && prevID != imgID {
-		fmt.Fprintf(outStream, "The image %s already exists, renaming the old one with ID %s to empty string\n", ref.String(), string(prevID)) // todo: this message is wrong in case of multiple tags
+		fmt.Fprintf(outStream, "The image %s already exists, renaming the old one with ID %s to empty string\n", reference.FamiliarString(ref), string(prevID)) // todo: this message is wrong in case of multiple tags
 	}
 
 	if err := l.rs.AddTag(ref, imgID, true); err != nil {
@@ -249,7 +249,7 @@ func (l *tarexporter) legacyLoad(tmpDir string, outStream io.Writer, progressOut
 			if !ok {
 				return fmt.Errorf("invalid target ID: %v", oldID)
 			}
-			named, err := reference.WithName(name)
+			named, err := reference.ParseNormalizedNamed(name)
 			if err != nil {
 				return err
 			}

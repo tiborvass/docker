@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
-	"github.com/tiborvass/docker/reference"
+	refstore "github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/libtrust"
 	"github.com/opencontainers/go-digest"
@@ -44,7 +44,7 @@ type Config struct {
 	ImageStore ImageConfigStore
 	// ReferenceStore manages tags. This value is optional, when excluded
 	// content will not be tagged.
-	ReferenceStore reference.Store
+	ReferenceStore refstore.Store
 	// RequireSchema2 ensures that only schema2 manifests are used.
 	RequireSchema2 bool
 }

@@ -4,9 +4,9 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/docker/distribution/reference"
 	enginetypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
-	"github.com/tiborvass/docker/reference"
 	"golang.org/x/net/context"
 )
 

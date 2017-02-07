@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/docker/distribution"
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
@@ -14,7 +15,6 @@ import (
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
 	"github.com/tiborvass/docker/plugin"
-	"github.com/tiborvass/docker/reference"
 	"github.com/docker/libnetwork"
 	"github.com/docker/libnetwork/cluster"
 	networktypes "github.com/docker/libnetwork/types"

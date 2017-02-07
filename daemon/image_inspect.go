@@ -3,9 +3,9 @@ package daemon
 import (
 	"time"
 
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/layer"
-	"github.com/tiborvass/docker/reference"
 	"github.com/pkg/errors"
 )
 
@@ -23,9 +23,9 @@ func (daemon *Daemon) LookupImage(name string) (*types.ImageInspect, error) {
 	for _, ref := range refs {
 		switch ref.(type) {
 		case reference.NamedTagged:
-			repoTags = append(repoTags, ref.String())
+			repoTags = append(repoTags, reference.FamiliarString(ref))
 		case reference.Canonical:
-			repoDigests = append(repoDigests, ref.String())
+			repoDigests = append(repoDigests, reference.FamiliarString(ref))
 		}
 	}
 

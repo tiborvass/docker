@@ -12,11 +12,11 @@ import (
 	"testing"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"golang.org/x/net/context"
 )
@@ -61,9 +61,9 @@ func testTokenPassThru(t *testing.T, ts *httptest.Server) {
 		TrimHostname: false,
 		TLSConfig:    nil,
 	}
-	n, _ := reference.ParseNamed("testremotename")
+	n, _ := reference.ParseNormalizedNamed("testremotename")
 	repoInfo := &registry.RepositoryInfo{
-		Named: n,
+		Name: n,
 		Index: &registrytypes.IndexInfo{
 			Name:     "testrepo",
 			Mirrors:  nil,
