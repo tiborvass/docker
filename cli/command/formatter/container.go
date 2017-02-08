@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -115,7 +116,22 @@ func (c *containerContext) Image() string {
 		if trunc := stringid.TruncateID(c.c.ImageID); trunc == stringid.TruncateID(c.c.Image) {
 			return trunc
 		}
+		// truncate digest if no-trunc option was not selected
+		ref, err := reference.ParseNormalizedNamed(c.c.Image)
+		if err == nil {
+			if nt, ok := ref.(reference.NamedTagged); ok {
+				// case for when a tag is provided
+				if namedTagged, err := reference.WithTag(reference.TrimNamed(nt), nt.Tag()); err == nil {
+					return reference.FamiliarString(namedTagged)
+				}
+			} else {
+				// case for when a tag is not provided
+				named := reference.TrimNamed(ref)
+				return reference.FamiliarString(named)
+			}
+		}
 	}
+
 	return c.c.Image
 }
 
