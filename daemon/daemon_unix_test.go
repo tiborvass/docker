@@ -10,6 +10,7 @@ import (
 
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
@@ -181,8 +182,8 @@ func TestParseSecurityOpt(t *testing.T) {
 
 func TestNetworkOptions(t *testing.T) {
 	daemon := &Daemon{}
-	dconfigCorrect := &Config{
-		CommonConfig: CommonConfig{
+	dconfigCorrect := &config.Config{
+		CommonConfig: config.CommonConfig{
 			ClusterStore:     "consul://localhost:8500",
 			ClusterAdvertise: "192.168.0.1:8000",
 		},
@@ -192,8 +193,8 @@ func TestNetworkOptions(t *testing.T) {
 		t.Fatalf("Expect networkOptions success, got error: %v", err)
 	}
 
-	dconfigWrong := &Config{
-		CommonConfig: CommonConfig{
+	dconfigWrong := &config.Config{
+		CommonConfig: config.CommonConfig{
 			ClusterStore: "consul://localhost:8500://test://bbb",
 		},
 	}

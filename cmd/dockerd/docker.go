@@ -9,7 +9,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/cli"
 	cliflags "github.com/tiborvass/docker/cli/flags"
-	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
@@ -20,14 +20,14 @@ import (
 type daemonOptions struct {
 	version      bool
 	configFile   string
-	daemonConfig *daemon.Config
+	daemonConfig *config.Config
 	common       *cliflags.CommonOptions
 	flags        *pflag.FlagSet
 }
 
 func newDaemonCommand() *cobra.Command {
 	opts := daemonOptions{
-		daemonConfig: daemon.NewConfig(),
+		daemonConfig: config.New(),
 		common:       cliflags.NewCommonOptions(),
 	}
 
@@ -48,7 +48,7 @@ func newDaemonCommand() *cobra.Command {
 	flags.BoolVarP(&opts.version, "version", "v", false, "Print version information and quit")
 	flags.StringVar(&opts.configFile, flagDaemonConfigFile, defaultDaemonConfigFile, "Daemon configuration file")
 	opts.common.InstallFlags(flags)
-	opts.daemonConfig.InstallFlags(flags)
+	installConfigFlags(opts.daemonConfig, flags)
 	installServiceFlags(flags)
 
 	return cmd

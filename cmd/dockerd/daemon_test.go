@@ -5,7 +5,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	cliflags "github.com/tiborvass/docker/cli/flags"
-	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/pkg/testutil/assert"
 	"github.com/tiborvass/docker/pkg/testutil/tempfile"
 	"github.com/spf13/pflag"
@@ -13,12 +13,12 @@ import (
 
 func defaultOptions(configFile string) daemonOptions {
 	opts := daemonOptions{
-		daemonConfig: &daemon.Config{},
+		daemonConfig: &config.Config{},
 		flags:        &pflag.FlagSet{},
 		common:       cliflags.NewCommonOptions(),
 	}
 	opts.common.InstallFlags(opts.flags)
-	opts.daemonConfig.InstallFlags(opts.flags)
+	installConfigFlags(opts.daemonConfig, opts.flags)
 	opts.flags.StringVar(&opts.configFile, flagDaemonConfigFile, defaultDaemonConfigFile, "")
 	opts.configFile = configFile
 	return opts
