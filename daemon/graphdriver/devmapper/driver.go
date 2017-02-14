@@ -16,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/mount"
+	"github.com/tiborvass/docker/pkg/system"
 	units "github.com/docker/go-units"
 )
 
@@ -160,7 +161,7 @@ func (d *Driver) Remove(id string) error {
 	}
 
 	mp := path.Join(d.home, "mnt", id)
-	if err := os.RemoveAll(mp); err != nil && !os.IsNotExist(err) {
+	if err := system.EnsureRemoveAll(mp); err != nil {
 		return err
 	}
 

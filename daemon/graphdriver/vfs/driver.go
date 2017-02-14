@@ -8,6 +8,7 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/idtools"
+	"github.com/tiborvass/docker/pkg/system"
 
 	"github.com/opencontainers/selinux/go-selinux/label"
 )
@@ -114,7 +115,7 @@ func (d *Driver) dir(id string) string {
 
 // Remove deletes the content from the directory for a given id.
 func (d *Driver) Remove(id string) error {
-	if err := os.RemoveAll(d.dir(id)); err != nil && !os.IsNotExist(err) {
+	if err := system.EnsureRemoveAll(d.dir(id)); err != nil {
 		return err
 	}
 	return nil

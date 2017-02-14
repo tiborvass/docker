@@ -27,6 +27,7 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/parsers"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-units"
 	"github.com/opencontainers/selinux/go-selinux/label"
 )
@@ -535,7 +536,7 @@ func (d *Driver) Remove(id string) error {
 	if err := subvolDelete(d.subvolumesDir(), id); err != nil {
 		return err
 	}
-	if err := os.RemoveAll(dir); err != nil && !os.IsNotExist(err) {
+	if err := system.EnsureRemoveAll(dir); err != nil {
 		return err
 	}
 	if err := d.subvolRescanQuota(); err != nil {
