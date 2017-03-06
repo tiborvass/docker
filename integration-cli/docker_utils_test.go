@@ -22,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/integration-cli/environment"
 	"github.com/tiborvass/docker/integration-cli/registry"
 	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/pkg/stringutils"
@@ -32,7 +31,7 @@ import (
 
 // Deprecated
 func daemonHost() string {
-	return environment.DaemonHost()
+	return request.DaemonHost()
 }
 
 // FIXME(vdemeester) move this away are remove ignoreNoSuchContainer bool
