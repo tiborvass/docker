@@ -1,8 +1,8 @@
 package container
 
 import (
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 
 	containertypes "github.com/tiborvass/docker/api/types/container"

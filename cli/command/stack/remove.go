@@ -7,6 +7,7 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -61,7 +62,7 @@ func runRemove(dockerCli *command.DockerCli, opts removeOptions) error {
 	hasError = removeNetworks(ctx, dockerCli, networks) || hasError
 
 	if hasError {
-		return fmt.Errorf("Failed to remove some resources")
+		return errors.Errorf("Failed to remove some resources")
 	}
 	return nil
 }

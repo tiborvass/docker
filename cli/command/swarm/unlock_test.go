@@ -2,7 +2,6 @@ package swarm
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -11,6 +10,7 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli/internal/test"
 	"github.com/tiborvass/docker/pkg/testutil/assert"
+	"github.com/pkg/errors"
 )
 
 func TestSwarmUnlockErrors(t *testing.T) {
@@ -59,7 +59,7 @@ func TestSwarmUnlockErrors(t *testing.T) {
 				}, nil
 			},
 			swarmUnlockFunc: func(req swarm.UnlockRequest) error {
-				return fmt.Errorf("error unlocking the swarm")
+				return errors.Errorf("error unlocking the swarm")
 			},
 			expectedError: "error unlocking the swarm",
 		},
@@ -90,7 +90,7 @@ func TestSwarmUnlock(t *testing.T) {
 		},
 		swarmUnlockFunc: func(req swarm.UnlockRequest) error {
 			if req.UnlockKey != input {
-				return fmt.Errorf("Invalid unlock key")
+				return errors.Errorf("Invalid unlock key")
 			}
 			return nil
 		},

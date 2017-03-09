@@ -2,13 +2,13 @@ package node
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli/internal/test"
+	"github.com/pkg/errors"
 	// Import builders to get the builder function as package function
 	. "github.com/tiborvass/docker/cli/internal/test/builders"
 	"github.com/tiborvass/docker/pkg/testutil/assert"
@@ -22,7 +22,7 @@ func TestNodeListErrorOnAPIFailure(t *testing.T) {
 	}{
 		{
 			nodeListFunc: func() ([]swarm.Node, error) {
-				return []swarm.Node{}, fmt.Errorf("error listing nodes")
+				return []swarm.Node{}, errors.Errorf("error listing nodes")
 			},
 			expectedError: "error listing nodes",
 		},
@@ -35,7 +35,7 @@ func TestNodeListErrorOnAPIFailure(t *testing.T) {
 				}, nil
 			},
 			infoFunc: func() (types.Info, error) {
-				return types.Info{}, fmt.Errorf("error asking for node info")
+				return types.Info{}, errors.Errorf("error asking for node info")
 			},
 			expectedError: "error asking for node info",
 		},

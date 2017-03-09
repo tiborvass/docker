@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -71,7 +72,7 @@ func runRemove(dockerCli *command.DockerCli, opts removeOptions, images []string
 	}
 
 	if len(errs) > 0 {
-		return fmt.Errorf("%s", strings.Join(errs, "\n"))
+		return errors.Errorf("%s", strings.Join(errs, "\n"))
 	}
 	return nil
 }
