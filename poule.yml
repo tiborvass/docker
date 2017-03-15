@@ -72,8 +72,8 @@
         }
       - type:       rebuild
         settings: {
-            configurations: [ powerpc ],
-            label:          "rebuild/powerpc",
+            configurations: [ power ],
+            label:          "rebuild/power",
         }
       - type:       rebuild
         settings: {
