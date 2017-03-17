@@ -3,6 +3,7 @@ set -e
 set -x
 
 . $(dirname "$0")/binaries-commits
+. $(dirname "$0")/.binary-setup
 
 RM_GOPATH=0
 
@@ -24,7 +25,7 @@ install_runc() {
 	cd "$GOPATH/src/github.com/opencontainers/runc"
 	git checkout -q "$RUNC_COMMIT"
 	make BUILDTAGS="$RUNC_BUILDTAGS" $1
-	cp runc /usr/local/bin/docker-runc
+	cp runc /usr/local/bin/${RUNC_BINARY_NAME}
 }
 
 install_containerd() {
@@ -33,17 +34,18 @@ install_containerd() {
 	cd "$GOPATH/src/github.com/containerd/containerd"
 	git checkout -q "$CONTAINERD_COMMIT"
 	make $1
-	cp bin/containerd /usr/local/bin/docker-containerd
-	cp bin/containerd-shim /usr/local/bin/docker-containerd-shim
-	cp bin/ctr /usr/local/bin/docker-containerd-ctr
+
+	cp bin/containerd /usr/local/bin/${CONTAINERD_BINARY_NAME}
+	cp bin/containerd-shim /usr/local/bin/${CONTAINERD_SHIM_BINARY_NAME}
+	cp bin/ctr /usr/local/bin/${CONTAINERD_CTR_BINARY_NAME}
 }
 
 install_proxy() {
-	echo "Install docker-proxy version $LIBNETWORK_COMMIT"
+	echo "Install ${PROXY_BINARY_NAME} version $LIBNETWORK_COMMIT"
 	git clone https://github.com/docker/libnetwork.git "$GOPATH/src/github.com/docker/libnetwork"
 	cd "$GOPATH/src/github.com/docker/libnetwork"
 	git checkout -q "$LIBNETWORK_COMMIT"
-	go build -ldflags="$PROXY_LDFLAGS" -o /usr/local/bin/docker-proxy github.com/docker/libnetwork/cmd/proxy
+	go build -ldflags="$PROXY_LDFLAGS" -o /usr/local/bin/${PROXY_BINARY_NAME} github.com/docker/libnetwork/cmd/proxy
 }
 
 install_dockercli() {
@@ -87,7 +89,7 @@ do
 			git checkout -q "$TINI_COMMIT"
 			cmake .
 			make tini-static
-			cp tini-static /usr/local/bin/docker-init
+			cp tini-static /usr/local/bin/${INIT_BINARY_NAME}
 			;;
 
 		proxy)

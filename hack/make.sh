@@ -231,12 +231,19 @@ copy_binaries() {
 	# them available, but only if the native OS/ARCH is the same as the
 	# OS/ARCH of the build target
 	if [ "$(go env GOOS)/$(go env GOARCH)" == "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" ]; then
-		if [ -x /usr/local/bin/docker-runc ]; then
+		if [ -x "/usr/local/bin/${RUNC_BINARY_NAME}" ]; then
 			echo "Copying nested executables into $dir"
-			for file in containerd containerd-shim containerd-ctr runc init proxy; do
-				cp -f `which "docker-$file"` "$dir/"
+			for file in \
+				"${CONTAINERD_BINARY_NAME}" \
+				"${CONTAINERD_CTR_BINARY_NAME}" \
+				"${CONTAINERD_SHIM_BINARY_NAME}" \
+				"${RUNC_BINARY_NAME}" \
+				"${PROXY_BINARY_NAME}" \
+				"${INIT_BINARY_NAME}" \
+			; do
+				cp -f `which "$file"` "$dir/"
 				if [ "$2" == "hash" ]; then
-					hash_files "$dir/docker-$file"
+					hash_files "$dir/$file"
 				fi
 			done
 		fi
