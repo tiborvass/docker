@@ -36,7 +36,7 @@ if [ -z "$DOCKER_TEST_HOST" ]; then
 	fi
 fi
 
-if ! command -v dockerd &> /dev/null; then
+if ! command -v "${DOCKER_DAEMON_BINARY_NAME}" &> /dev/null; then
 	echo >&2 'error: binary-daemon or dynbinary-daemon must be run before .integration-daemon-start'
 	false
 fi
@@ -83,7 +83,7 @@ if [ -z "$DOCKER_TEST_HOST" ]; then
 
 	export DOCKER_HOST="unix://$(cd "$DEST" && pwd)/docker.sock" # "pwd" tricks to make sure $DEST is an absolute path, not a relative one
 	( set -x; exec \
-		dockerd --debug \
+		"${DOCKER_DAEMON_BINARY_NAME}" --debug \
 		--host "$DOCKER_HOST" \
 		--storage-driver "$DOCKER_GRAPHDRIVER" \
 		--pidfile "$DEST/docker.pid" \
