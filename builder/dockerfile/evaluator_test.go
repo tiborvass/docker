@@ -7,8 +7,8 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
-	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
+	"github.com/tiborvass/docker/builder/remotecontext"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/reexec"
 )
@@ -158,7 +158,7 @@ func executeTestCase(t *testing.T, testCase dispatchTestCase) {
 		}
 	}()
 
-	context, err := builder.MakeTarSumContext(tarStream)
+	context, err := remotecontext.MakeTarSumContext(tarStream)
 
 	if err != nil {
 		t.Fatalf("Error when creating tar context: %s", err)
@@ -186,7 +186,7 @@ func executeTestCase(t *testing.T, testCase dispatchTestCase) {
 		runConfig: config,
 		options:   options,
 		Stdout:    ioutil.Discard,
-		context:   context,
+		source:    context,
 		buildArgs: newBuildArgs(options.BuildArgs),
 	}
 
