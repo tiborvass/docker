@@ -24,6 +24,7 @@ import (
 	"github.com/tiborvass/docker/distribution"
 	progressutils "github.com/tiborvass/docker/distribution/utils"
 	"github.com/tiborvass/docker/distribution/xfer"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
@@ -757,6 +758,8 @@ func (pm *Manager) CreateFromContext(ctx context.Context, tarCtx io.ReadCloser, 
 		Type:    "layers",
 		DiffIds: []string{layerDigester.Digest().String()},
 	}
+
+	config.DockerVersion = dockerversion.Version
 
 	configBlob, err := pm.blobStore.New()
 	if err != nil {
