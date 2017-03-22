@@ -24,6 +24,7 @@ import (
 	"github.com/tiborvass/docker/distribution"
 	progressutils "github.com/tiborvass/docker/distribution/utils"
 	"github.com/tiborvass/docker/distribution/xfer"
+	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
@@ -148,6 +149,20 @@ func computePrivileges(c types.PluginConfig) (types.PluginPrivileges, error) {
 			Name:        "network",
 			Description: "permissions to access a network",
 			Value:       []string{c.Network.Type},
+		})
+	}
+	if c.IpcHost {
+		privileges = append(privileges, types.PluginPrivilege{
+			Name:        "host ipc namespace",
+			Description: "allow access to host ipc namespace",
+			Value:       []string{"true"},
+		})
+	}
+	if c.PidHost {
+		privileges = append(privileges, types.PluginPrivilege{
+			Name:        "host pid namespace",
+			Description: "allow access to host pid namespace",
+			Value:       []string{"true"},
 		})
 	}
 	for _, mount := range c.Mounts {
@@ -743,6 +758,8 @@ func (pm *Manager) CreateFromContext(ctx context.Context, tarCtx io.ReadCloser, 
 		Type:    "layers",
 		DiffIds: []string{layerDigester.Digest().String()},
 	}
+
+	config.DockerVersion = dockerversion.Version
 
 	configBlob, err := pm.blobStore.New()
 	if err != nil {
