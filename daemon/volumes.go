@@ -16,7 +16,6 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
-	"github.com/opencontainers/runc/libcontainer/label"
 )
 
 var (
@@ -195,9 +194,6 @@ func (daemon *Daemon) registerMountPoints(container *container.Container, hostCo
 				return err
 			}
 
-			if err := label.Relabel(mp.Source, container.MountLabel, false); err != nil {
-				return err
-			}
 			mp.Volume = v
 			mp.Name = v.Name()
 			mp.Driver = v.DriverName()
