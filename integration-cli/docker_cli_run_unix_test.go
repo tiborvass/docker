@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/pkg/homedir"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/parsers"
@@ -828,7 +829,7 @@ func (s *DockerSuite) TestRunTmpfsMounts(c *check.C) {
 
 func (s *DockerSuite) TestRunTmpfsMountsOverrideImageVolumes(c *check.C) {
 	name := "img-with-volumes"
-	buildImageSuccessfully(c, name, withDockerfile(`
+	buildImageSuccessfully(c, name, build.WithDockerfile(`
     FROM busybox
     VOLUME /run
     RUN touch /run/stuff

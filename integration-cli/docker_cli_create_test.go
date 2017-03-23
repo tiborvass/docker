@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/testutil"
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
@@ -204,7 +205,7 @@ func (s *DockerSuite) TestCreateLabels(c *check.C) {
 
 func (s *DockerSuite) TestCreateLabelFromImage(c *check.C) {
 	imageName := "testcreatebuildlabel"
-	buildImageSuccessfully(c, imageName, withDockerfile(`FROM busybox
+	buildImageSuccessfully(c, imageName, build.WithDockerfile(`FROM busybox
 		LABEL k1=v1 k2=v2`))
 
 	name := "test_create_labels_from_image"
@@ -259,7 +260,7 @@ func (s *DockerSuite) TestCreateModeIpcContainer(c *check.C) {
 
 func (s *DockerSuite) TestCreateByImageID(c *check.C) {
 	imageName := "testcreatebyimageid"
-	buildImageSuccessfully(c, imageName, withDockerfile(`FROM busybox
+	buildImageSuccessfully(c, imageName, build.WithDockerfile(`FROM busybox
 		MAINTAINER dockerio`))
 	imageID := getIDByName(c, imageName)
 	truncatedImageID := stringid.TruncateID(imageID)
