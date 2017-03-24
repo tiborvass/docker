@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
@@ -142,7 +143,7 @@ func (s *DockerSuite) TestTagInvalidRepoName(c *check.C) {
 
 // ensure tags cannot create ambiguity with image ids
 func (s *DockerSuite) TestTagTruncationAmbiguity(c *check.C) {
-	buildImageSuccessfully(c, "notbusybox:latest", withDockerfile(`FROM busybox
+	buildImageSuccessfully(c, "notbusybox:latest", build.WithDockerfile(`FROM busybox
 		MAINTAINER dockerio`))
 	imageID := getIDByName(c, "notbusybox:latest")
 	truncatedImageID := stringid.TruncateID(imageID)

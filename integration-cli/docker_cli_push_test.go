@@ -15,6 +15,7 @@ import (
 	"github.com/docker/distribution/reference"
 	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/pkg/testutil"
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
@@ -161,7 +162,7 @@ func testConcurrentPush(c *check.C) {
 	repos := []string{}
 	for _, tag := range []string{"push1", "push2", "push3"} {
 		repo := fmt.Sprintf("%v:%v", repoName, tag)
-		buildImageSuccessfully(c, repo, withDockerfile(fmt.Sprintf(`
+		buildImageSuccessfully(c, repo, build.WithDockerfile(fmt.Sprintf(`
 	FROM busybox
 	ENTRYPOINT ["/bin/echo"]
 	ENV FOO foo
