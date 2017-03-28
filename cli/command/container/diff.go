@@ -2,11 +2,11 @@ package container
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

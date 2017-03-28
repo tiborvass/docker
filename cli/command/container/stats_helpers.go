@@ -2,7 +2,6 @@ package container
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"io"
 	"strings"
 	"sync"
@@ -12,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli/command/formatter"
 	"github.com/tiborvass/docker/client"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
