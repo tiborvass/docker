@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker-credential-helpers/client"
 	"github.com/tiborvass/docker-credential-helpers/credentials"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -20,7 +21,7 @@ const (
 	missingCredsAddress  = "https://missing.docker.io/v1"
 )
 
-var errCommandExited = fmt.Errorf("exited 1")
+var errCommandExited = errors.Errorf("exited 1")
 
 // mockCommand simulates interactions between the docker client and a remote
 // credentials helper.

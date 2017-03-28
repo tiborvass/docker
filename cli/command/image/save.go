@@ -1,14 +1,13 @@
 package image
 
 import (
-	"errors"
 	"io"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/cli/command"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
 )
 
 type saveOptions struct {

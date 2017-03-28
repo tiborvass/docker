@@ -1,7 +1,6 @@
 package node
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/tiborvass/docker/api/types"
@@ -12,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/cli/command/idresolver"
 	"github.com/tiborvass/docker/cli/command/task"
 	"github.com/tiborvass/docker/opts"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -100,7 +100,7 @@ func runPs(dockerCli command.Cli, opts psOptions) error {
 	}
 
 	if len(errs) > 0 {
-		return fmt.Errorf("%s", strings.Join(errs, "\n"))
+		return errors.Errorf("%s", strings.Join(errs, "\n"))
 	}
 
 	return nil

@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/system"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -58,7 +59,7 @@ func runSecretCreate(dockerCli *command.DockerCli, options createOptions) error 
 
 	secretData, err := ioutil.ReadAll(in)
 	if err != nil {
-		return fmt.Errorf("Error reading content from %q: %v", options.file, err)
+		return errors.Errorf("Error reading content from %q: %v", options.file, err)
 	}
 
 	spec := swarm.SecretSpec{
