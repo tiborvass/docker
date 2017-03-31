@@ -4,7 +4,6 @@ package dockerfile
 // non-contiguous functionality. Please read the comments.
 
 import (
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -24,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/remotecontext"
+	containerpkg "github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -597,7 +597,7 @@ func (b *Builder) run(cID string, cmd []string) (err error) {
 		return err
 	}
 
-	waitC, err := b.docker.ContainerWait(context.Background(), cID, false)
+	waitC, err := b.docker.ContainerWait(b.clientCtx, cID, containerpkg.WaitConditionNotRunning)
 	if err != nil {
 		// Unable to begin waiting for container.
 		close(finished)
