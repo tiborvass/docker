@@ -10,6 +10,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/cli/command"
 	"github.com/tiborvass/docker/cli/internal/test"
 	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/tiborvass/docker/pkg/testutil/golden"
@@ -91,7 +92,7 @@ func TestVolumePrunePromptYes(t *testing.T) {
 			volumePruneFunc: simplePruneFunc,
 		}, buf)
 
-		cli.SetIn(ioutil.NopCloser(strings.NewReader(input)))
+		cli.SetIn(command.NewInStream(ioutil.NopCloser(strings.NewReader(input))))
 		cmd := NewPruneCommand(
 			cli,
 		)
@@ -113,7 +114,7 @@ func TestVolumePrunePromptNo(t *testing.T) {
 			volumePruneFunc: simplePruneFunc,
 		}, buf)
 
-		cli.SetIn(ioutil.NopCloser(strings.NewReader(input)))
+		cli.SetIn(command.NewInStream(ioutil.NopCloser(strings.NewReader(input))))
 		cmd := NewPruneCommand(
 			cli,
 		)
