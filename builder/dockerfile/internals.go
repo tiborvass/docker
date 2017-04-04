@@ -35,7 +35,6 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/tarsum"
 	"github.com/tiborvass/docker/pkg/urlutil"
-	"github.com/tiborvass/docker/runconfig/opts"
 	"github.com/pkg/errors"
 )
 
@@ -433,11 +432,7 @@ func (b *Builder) processImageFrom(img builder.Image) error {
 	// Check to see if we have a default PATH, note that windows won't
 	// have one as it's set by HCS
 	if system.DefaultPathEnv != "" {
-		// Convert the slice of strings that represent the current list
-		// of env vars into a map so we can see if PATH is already set.
-		// If it's not set then go ahead and give it our default value
-		configEnv := opts.ConvertKVStringsToMap(b.runConfig.Env)
-		if _, ok := configEnv["PATH"]; !ok {
+		if _, ok := b.runConfigEnvMapping()["PATH"]; !ok {
 			b.runConfig.Env = append(b.runConfig.Env,
 				"PATH="+system.DefaultPathEnv)
 		}
