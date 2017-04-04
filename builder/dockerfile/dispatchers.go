@@ -22,7 +22,6 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
-	"github.com/tiborvass/docker/pkg/shellvar"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/docker/go-connections/nat"
 	"github.com/pkg/errors"
@@ -219,14 +218,8 @@ func from(b *Builder, args []string, attributes map[string]bool, original string
 		return err
 	}
 
-	getBuildArg := func(key string) (string, bool) {
-		value, ok := b.options.BuildArgs[key]
-		if value != nil {
-			return *value, ok
-		}
-		return "", ok
-	}
-	name, err := shellvar.Substitute(args[0], getBuildArg)
+	substituionArgs := b.buildArgsWithoutConfigEnv()
+	name, err := ProcessWord(args[0], substituionArgs, b.directive.EscapeToken)
 	if err != nil {
 		return err
 	}
