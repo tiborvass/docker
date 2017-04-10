@@ -15,6 +15,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/caps"
+	daemonconfig "github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
@@ -624,7 +625,7 @@ func (daemon *Daemon) populateCommonSpec(s *specs.Spec, c *container.Container) 
 			s.Process.Args = append([]string{"/dev/init", "--", c.Path}, c.Args...)
 			var path string
 			if daemon.configStore.InitPath == "" && c.HostConfig.InitPath == "" {
-				path, err = exec.LookPath(DefaultInitBinary)
+				path, err = exec.LookPath(daemonconfig.DefaultInitBinary)
 				if err != nil {
 					return err
 				}

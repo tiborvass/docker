@@ -9,6 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
+	daemonconfig "github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/pkg/errors"
@@ -55,15 +56,15 @@ func (daemon *Daemon) FillPlatformInfo(v *types.Info, sysInfo *sysinfo.SysInfo) 
 		v.RuncCommit.ID = "N/A"
 	}
 
-	if rv, err := exec.Command(DefaultInitBinary, "--version").Output(); err == nil {
+	if rv, err := exec.Command(daemonconfig.DefaultInitBinary, "--version").Output(); err == nil {
 		ver, err := parseInitVersion(string(rv))
 
 		if err != nil {
-			logrus.Warnf("failed to retrieve %s version: %s", DefaultInitBinary, err)
+			logrus.Warnf("failed to retrieve %s version: %s", daemonconfig.DefaultInitBinary, err)
 		}
 		v.InitCommit = ver
 	} else {
-		logrus.Warnf("failed to retrieve %s version: %s", DefaultInitBinary, err)
+		logrus.Warnf("failed to retrieve %s version: %s", daemonconfig.DefaultInitBinary, err)
 		v.InitCommit.ID = "N/A"
 	}
 }
