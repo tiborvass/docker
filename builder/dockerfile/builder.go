@@ -16,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
+	"github.com/tiborvass/docker/builder/dockerfile/command"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -253,6 +254,10 @@ func (b *Builder) build(stdout io.Writer, stderr io.Writer, out io.Writer) (stri
 			// Not cancelled yet, keep going...
 		}
 
+		if command.From == n.Value && b.imageContexts.isCurrentTarget(b.options.Target) {
+			break
+		}
+
 		if err := b.dispatch(i, total, n); err != nil {
 			if b.options.ForceRemove {
 				b.clearTmp()
@@ -265,6 +270,10 @@ func (b *Builder) build(stdout io.Writer, stderr io.Writer, out io.Writer) (stri
 		if b.options.Remove {
 			b.clearTmp()
 		}
+	}
+
+	if b.options.Target != "" && !b.imageContexts.isCurrentTarget(b.options.Target) {
+		return "", perrors.Errorf("failed to reach build target %s in Dockerfile", b.options.Target)
 	}
 
 	b.warnOnUnusedBuildArgs()
