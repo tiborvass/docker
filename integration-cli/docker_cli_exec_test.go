@@ -16,11 +16,11 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/integration-cli/request"
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
-	"github.com/tiborvass/docker/integration-cli/cli"
 )
 
 func (s *DockerSuite) TestExec(c *check.C) {
