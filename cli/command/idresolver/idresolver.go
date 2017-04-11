@@ -3,6 +3,7 @@ package idresolver
 import (
 	"golang.org/x/net/context"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
 	"github.com/pkg/errors"
@@ -39,7 +40,7 @@ func (r *IDResolver) get(ctx context.Context, t interface{}, id string) (string,
 		}
 		return id, nil
 	case swarm.Service:
-		service, _, err := r.client.ServiceInspectWithRaw(ctx, id)
+		service, _, err := r.client.ServiceInspectWithRaw(ctx, id, types.ServiceInspectOptions{})
 		if err != nil {
 			return id, nil
 		}
