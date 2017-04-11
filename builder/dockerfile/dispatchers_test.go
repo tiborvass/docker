@@ -9,10 +9,10 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
+	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/tiborvass/docker/pkg/testutil"
 )
 
 type commandWithFunction struct {

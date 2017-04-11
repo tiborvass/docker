@@ -20,9 +20,9 @@
 package dockerfile
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
-	"bytes"
 
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile/command"
