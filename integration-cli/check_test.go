@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/integration-cli/cli"
+	"github.com/tiborvass/docker/integration-cli/cli/build/fakestorage"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/integration-cli/environment"
 	"github.com/tiborvass/docker/integration-cli/registry"
@@ -65,6 +66,7 @@ func TestMain(m *testing.M) {
 
 func Test(t *testing.T) {
 	cli.EnsureTestEnvIsLoaded(t)
+	fakestorage.EnsureTestEnvIsLoaded(t)
 	cmd := exec.Command(dockerBinary, "images", "-f", "dangling=false", "--format", "{{.Repository}}:{{.Tag}}")
 	cmd.Env = appendBaseEnv(true)
 	out, err := cmd.CombinedOutput()
