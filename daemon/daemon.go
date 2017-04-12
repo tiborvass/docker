@@ -59,13 +59,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	// DefaultRuntimeBinary is the default runtime to be used by
-	// containerd if none is specified
-	DefaultRuntimeBinary = "docker-runc"
-
-	errSystemNotSupported = errors.New("The Docker daemon is not supported on this platform.")
-)
+var errSystemNotSupported = errors.New("The Docker daemon is not supported on this platform.")
 
 type daemonStore struct {
 	graphDriver               string
