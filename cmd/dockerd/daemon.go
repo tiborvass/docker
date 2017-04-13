@@ -14,6 +14,7 @@ import (
 	"github.com/docker/distribution/uuid"
 	"github.com/tiborvass/docker/api"
 	apiserver "github.com/tiborvass/docker/api/server"
+	buildbackend "github.com/tiborvass/docker/api/server/backend/build"
 	"github.com/tiborvass/docker/api/server/middleware"
 	"github.com/tiborvass/docker/api/server/router"
 	"github.com/tiborvass/docker/api/server/router/build"
@@ -25,7 +26,6 @@ import (
 	swarmrouter "github.com/tiborvass/docker/api/server/router/swarm"
 	systemrouter "github.com/tiborvass/docker/api/server/router/system"
 	"github.com/tiborvass/docker/api/server/router/volume"
-	"github.com/tiborvass/docker/builder/dockerfile"
 	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/cli/debug"
 	cliflags "github.com/tiborvass/docker/cli/flags"
@@ -484,7 +484,7 @@ func initRouter(s *apiserver.Server, d *daemon.Daemon, c *cluster.Cluster) {
 		image.NewRouter(d, decoder),
 		systemrouter.NewRouter(d, c),
 		volume.NewRouter(d),
-		build.NewRouter(dockerfile.NewBuildManager(d)),
+		build.NewRouter(buildbackend.NewBackend(d, d), d),
 		swarmrouter.NewRouter(c),
 		pluginrouter.NewRouter(d.PluginManager()),
 	}
