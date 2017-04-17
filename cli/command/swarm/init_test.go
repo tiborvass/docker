@@ -9,9 +9,10 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/cli/internal/test"
-	"github.com/tiborvass/docker/pkg/testutil/assert"
+	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/tiborvass/docker/pkg/testutil/golden"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSwarmInitErrorOnAPIFailure(t *testing.T) {
@@ -76,7 +77,7 @@ func TestSwarmInitErrorOnAPIFailure(t *testing.T) {
 			cmd.Flags().Set(key, value)
 		}
 		cmd.SetOutput(ioutil.Discard)
-		assert.Error(t, cmd.Execute(), tc.expectedError)
+		assert.EqualError(t, cmd.Execute(), tc.expectedError)
 	}
 }
 
@@ -122,9 +123,9 @@ func TestSwarmInit(t *testing.T) {
 		for key, value := range tc.flags {
 			cmd.Flags().Set(key, value)
 		}
-		assert.NilError(t, cmd.Execute())
+		assert.NoError(t, cmd.Execute())
 		actual := buf.String()
 		expected := golden.Get(t, []byte(actual), fmt.Sprintf("init-%s.golden", tc.name))
-		assert.EqualNormalizedString(t, assert.RemoveSpace, actual, string(expected))
+		testutil.EqualNormalizedString(t, testutil.RemoveSpace, actual, string(expected))
 	}
 }
