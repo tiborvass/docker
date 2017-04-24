@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
+	"github.com/tiborvass/docker/pkg/system"
 	refstore "github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/libtrust"
@@ -143,8 +144,8 @@ func (s *imageConfigStore) RootFSFromConfig(c []byte) (*image.RootFS, error) {
 	}
 
 	// fail immediately on Windows when downloading a non-Windows image
-	// and vice versa
-	if runtime.GOOS == "windows" && unmarshalledConfig.OS == "linux" {
+	// and vice versa. Exception on Windows if Linux Containers are enabled.
+	if runtime.GOOS == "windows" && unmarshalledConfig.OS == "linux" && !system.LCOWSupported() {
 		return nil, fmt.Errorf("image operating system %q cannot be used on this platform", unmarshalledConfig.OS)
 	} else if runtime.GOOS != "windows" && unmarshalledConfig.OS == "windows" {
 		return nil, fmt.Errorf("image operating system %q cannot be used on this platform", unmarshalledConfig.OS)
