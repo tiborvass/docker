@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/cli/debug"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
@@ -175,6 +176,7 @@ func (daemon *Daemon) showPluginsInfo() types.PluginsInfo {
 	pluginsInfo.Volume = volumedrivers.GetDriverList()
 	pluginsInfo.Network = daemon.GetNetworkDriverList()
 	pluginsInfo.Authorization = daemon.configStore.GetAuthorizationPlugins()
+	pluginsInfo.Log = logger.ListDrivers()
 
 	return pluginsInfo
 }
