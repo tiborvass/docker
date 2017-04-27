@@ -1,14 +1,15 @@
-package builder
+package remotecontext
 
 import (
 	"os"
 
+	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/gitutils"
 )
 
 // MakeGitContext returns a Context from gitURL that is cloned in a temporary directory.
-func MakeGitContext(gitURL string) (ModifiableContext, error) {
+func MakeGitContext(gitURL string) (builder.Source, error) {
 	root, err := gitutils.Clone(gitURL)
 	if err != nil {
 		return nil, err
