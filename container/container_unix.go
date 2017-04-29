@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/volume"
-	"github.com/opencontainers/runc/libcontainer/label"
+	"github.com/opencontainers/selinux/go-selinux/label"
 	"golang.org/x/sys/unix"
 )
 
