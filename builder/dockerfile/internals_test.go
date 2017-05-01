@@ -1,10 +1,11 @@
 package dockerfile
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
+	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/remotecontext"
@@ -69,7 +70,11 @@ func readAndCheckDockerfile(t *testing.T, testName, contextDir, dockerfilePath, 
 		dockerfilePath = builder.DefaultDockerfileName
 	}
 
-	_, _, err = remotecontext.Detect(context.Background(), "", dockerfilePath, tarStream, nil)
+	config := backend.BuildConfig{
+		Options: &types.ImageBuildOptions{Dockerfile: dockerfilePath},
+		Source:  tarStream,
+	}
+	_, _, err = remotecontext.Detect(config)
 	assert.EqualError(t, err, expectedError)
 }
 
