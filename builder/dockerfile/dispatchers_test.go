@@ -13,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
@@ -192,8 +193,9 @@ func TestFromScratch(t *testing.T) {
 	}
 
 	require.NoError(t, err)
+	assert.True(t, req.state.hasFromImage())
 	assert.Equal(t, "", req.state.imageID)
-	assert.Equal(t, true, req.state.noBaseImage)
+	assert.Equal(t, []string{"PATH=" + system.DefaultPathEnv}, req.state.runConfig.Env)
 }
 
 func TestFromWithArg(t *testing.T) {
