@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	containerd "github.com/docker/containerd/api/grpc/types"
+	containerd "github.com/containerd/containerd/api/grpc/types"
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/golang/protobuf/ptypes"
