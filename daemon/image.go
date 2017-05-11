@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 )
@@ -74,13 +73,4 @@ func (daemon *Daemon) GetImage(refOrID string) (*image.Image, error) {
 		return nil, err
 	}
 	return daemon.imageStore.Get(imgID)
-}
-
-// GetImageOnBuild looks up a Docker image referenced by `name`.
-func (daemon *Daemon) GetImageOnBuild(name string) (builder.Image, error) {
-	img, err := daemon.GetImage(name)
-	if err != nil {
-		return nil, err
-	}
-	return img, nil
 }
