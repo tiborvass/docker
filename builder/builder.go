@@ -11,6 +11,9 @@ import (
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
 	containerpkg "github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/layer"
+	"github.com/tiborvass/docker/pkg/idtools"
 	"golang.org/x/net/context"
 )
 
@@ -42,11 +45,9 @@ type Backend interface {
 	// ContainerCreateWorkdir creates the workdir
 	ContainerCreateWorkdir(containerID string) error
 
-	// ContainerCopy copies/extracts a source FileInfo to a destination path inside a container
-	// specified by a container object.
-	// TODO: extract in the builder instead of passing `decompress`
-	// TODO: use containerd/fs.changestream instead as a source
-	CopyOnBuild(containerID string, destPath string, srcRoot string, srcPath string, decompress bool) error
+	CreateImage(config []byte, parent string) (string, error)
+
+	IDMappings() *idtools.IDMappings
 
 	ImageCacheBuilder
 }
@@ -96,10 +97,13 @@ type ImageCache interface {
 type Image interface {
 	ImageID() string
 	RunConfig() *container.Config
+	MarshalJSON() ([]byte, error)
+	NewChild(child image.ChildConfig) *image.Image
 }
 
 // ReleaseableLayer is an image layer that can be mounted and released
 type ReleaseableLayer interface {
 	Release() error
 	Mount() (string, error)
+	DiffID() layer.DiffID
 }

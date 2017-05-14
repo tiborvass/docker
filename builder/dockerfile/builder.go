@@ -15,6 +15,8 @@ import (
 	"github.com/tiborvass/docker/builder/dockerfile/command"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/builder/remotecontext"
+	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/pkg/errors"
@@ -98,6 +100,7 @@ type Builder struct {
 	docker    builder.Backend
 	clientCtx context.Context
 
+	archiver         *archive.Archiver
 	buildStages      *buildStages
 	disableCommit    bool
 	buildArgs        *buildArgs
@@ -121,6 +124,7 @@ func newBuilder(clientCtx context.Context, options builderOptions) *Builder {
 		Aux:              options.ProgressWriter.AuxFormatter,
 		Output:           options.ProgressWriter.Output,
 		docker:           options.Backend,
+		archiver:         chrootarchive.NewArchiver(options.Backend.IDMappings()),
 		buildArgs:        newBuildArgs(config.BuildArgs),
 		buildStages:      newBuildStages(),
 		imageSources:     newImageSources(clientCtx, options),

@@ -8,6 +8,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
+	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/registry"
 	"github.com/pkg/errors"
@@ -38,6 +39,10 @@ func (rl *releaseableLayer) Mount() (string, error) {
 func (rl *releaseableLayer) Release() error {
 	rl.releaseRWLayer()
 	return rl.releaseROLayer()
+}
+
+func (rl *releaseableLayer) DiffID() layer.DiffID {
+	return rl.roLayer.DiffID()
 }
 
 func (rl *releaseableLayer) releaseRWLayer() error {
@@ -119,4 +124,27 @@ func (daemon *Daemon) GetImageAndReleasableLayer(ctx context.Context, refOrID st
 	}
 	layer, err := newReleasableLayerForImage(image, daemon.layerStore)
 	return image, layer, err
+}
+
+// CreateImage creates a new image by adding a config and ID to the image store.
+// This is similar to LoadImage() except that it receives JSON encoded bytes of
+// an image instead of a tar archive.
+func (daemon *Daemon) CreateImage(config []byte, parent string) (string, error) {
+	id, err := daemon.imageStore.Create(config)
+	if err != nil {
+		return "", err
+	}
+
+	if parent != "" {
+		if err := daemon.imageStore.SetParent(id, image.ID(parent)); err != nil {
+			return "", err
+		}
+	}
+	// TODO: do we need any daemon.LogContainerEventWithAttributes?
+	return id.String(), nil
+}
+
+// IDMappings returns uid/gid mappings for the builder
+func (daemon *Daemon) IDMappings() *idtools.IDMappings {
+	return daemon.idMappings
 }
