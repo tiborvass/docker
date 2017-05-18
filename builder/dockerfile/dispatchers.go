@@ -26,6 +26,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-connections/nat"
 	"github.com/pkg/errors"
 )
@@ -270,10 +271,12 @@ func (b *Builder) getFromImage(shlex *ShellLex, name string) (builder.Image, err
 		name = stage.ImageID()
 	}
 
-	// Windows cannot support a container with no base image.
+	// Windows cannot support a container with no base image unless it is LCOW.
 	if name == api.NoBaseImageSpecifier {
 		if runtime.GOOS == "windows" {
-			return nil, errors.New("Windows does not support FROM scratch")
+			if b.platform == "windows" || (b.platform != "windows" && !system.LCOWSupported()) {
+				return nil, errors.New("Windows does not support FROM scratch")
+			}
 		}
 		return scratchImage, nil
 	}
