@@ -18,6 +18,7 @@ import (
 	enginemount "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/api/types/network"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
+	"github.com/tiborvass/docker/daemon/cluster/convert"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
 	"github.com/docker/go-connections/nat"
@@ -590,7 +591,7 @@ func (c *containerConfig) networkCreateRequest(name string) (clustertypes.Networ
 		Labels:         na.Network.Spec.Annotations.Labels,
 		Internal:       na.Network.Spec.Internal,
 		Attachable:     na.Network.Spec.Attachable,
-		Ingress:        na.Network.Spec.Ingress,
+		Ingress:        convert.IsIngressNetwork(na.Network),
 		EnableIPv6:     na.Network.Spec.Ipv6Enabled,
 		CheckDuplicate: true,
 		Scope:          netconst.SwarmScope,
