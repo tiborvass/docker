@@ -9,7 +9,6 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/libcontainerd"
-	"github.com/tiborvass/docker/pkg/system"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -32,12 +31,6 @@ func (daemon *Daemon) getLibcontainerdCreateOptions(container *container.Contain
 	}
 
 	dnsSearch := daemon.getDNSSearchSettings(container)
-	if dnsSearch != nil {
-		osv := system.GetOSVersion()
-		if osv.Build < 14997 {
-			return nil, fmt.Errorf("dns-search option is not supported on the current platform")
-		}
-	}
 
 	// Generate the layer folder of the layer options
 	layerOpts := &libcontainerd.LayerOption{}
