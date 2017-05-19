@@ -11,6 +11,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	_ "github.com/tiborvass/docker/pkg/discovery/memory"
+	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/registrar"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/volume"
@@ -127,7 +128,7 @@ func initDaemonWithVolumeStore(tmp string) (*Daemon, error) {
 		return nil, err
 	}
 
-	volumesDriver, err := local.New(tmp, 0, 0)
+	volumesDriver, err := local.New(tmp, idtools.IDPair{UID: 0, GID: 0})
 	if err != nil {
 		return nil, err
 	}
