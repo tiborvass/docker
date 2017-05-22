@@ -13,6 +13,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
+	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
@@ -220,7 +221,9 @@ func (container *Container) UnmountIpcMounts(unmount func(pth string) error) {
 			warnings = append(warnings, err.Error())
 		} else if shmPath != "" {
 			if err := unmount(shmPath); err != nil && !os.IsNotExist(err) {
-				warnings = append(warnings, fmt.Sprintf("failed to umount %s: %v", shmPath, err))
+				if mounted, mErr := mount.Mounted(shmPath); mounted || mErr != nil {
+					warnings = append(warnings, fmt.Sprintf("failed to umount %s: %v", shmPath, err))
+				}
 			}
 
 		}
