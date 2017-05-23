@@ -1,14 +1,13 @@
 package daemon
 
 import (
-	"syscall"
-
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/opencontainers/runtime-spec/specs-go"
+	"golang.org/x/sys/windows"
 )
 
 func (daemon *Daemon) createSpec(c *container.Container) (*specs.Spec, error) {
@@ -196,7 +195,7 @@ func (daemon *Daemon) createSpecLinuxFields(c *container.Container, s *specs.Spe
 func escapeArgs(args []string) []string {
 	escapedArgs := make([]string, len(args))
 	for i, a := range args {
-		escapedArgs[i] = syscall.EscapeArg(a)
+		escapedArgs[i] = windows.EscapeArg(a)
 	}
 	return escapedArgs
 }
