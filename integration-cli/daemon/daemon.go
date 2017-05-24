@@ -14,8 +14,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/opts"
@@ -750,6 +752,16 @@ func (d *Daemon) ReloadConfig() error {
 		return errors.New("timeout waiting for daemon reload event")
 	}
 	return nil
+}
+
+// NewClient creates new client based on daemon's socket path
+func (d *Daemon) NewClient() (*client.Client, error) {
+	httpClient, err := request.NewHTTPClient(d.Sock())
+	if err != nil {
+		return nil, err
+	}
+
+	return client.NewClient(d.Sock(), api.DefaultVersion, httpClient, nil)
 }
 
 // WaitInspectWithArgs waits for the specified expression to be equals to the specified expected string in the given time.

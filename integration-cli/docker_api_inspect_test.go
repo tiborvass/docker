@@ -2,13 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
 	"strings"
+
+	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
+	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
 )
@@ -106,18 +107,14 @@ func (s *DockerSuite) TestInspectAPIContainerVolumeDriver(c *check.C) {
 
 func (s *DockerSuite) TestInspectAPIImageResponse(c *check.C) {
 	dockerCmd(c, "tag", "busybox:latest", "busybox:mytag")
-
-	endpoint := "/images/busybox/json"
-	status, body, err := request.SockRequest("GET", endpoint, nil, daemonHost())
-
+	cli, err := client.NewEnvClient()
 	c.Assert(err, checker.IsNil)
-	c.Assert(status, checker.Equals, http.StatusOK)
+	defer cli.Close()
 
-	var imageJSON types.ImageInspect
-	err = json.Unmarshal(body, &imageJSON)
-	c.Assert(err, checker.IsNil, check.Commentf("Unable to unmarshal body for latest version"))
+	imageJSON, _, err := cli.ImageInspectWithRaw(context.Background(), "busybox")
+	c.Assert(err, checker.IsNil)
+
 	c.Assert(imageJSON.RepoTags, checker.HasLen, 2)
-
 	c.Assert(stringutils.InSlice(imageJSON.RepoTags, "busybox:latest"), checker.Equals, true)
 	c.Assert(stringutils.InSlice(imageJSON.RepoTags, "busybox:mytag"), checker.Equals, true)
 }
