@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/controllers/plugin"
+	"github.com/tiborvass/docker/daemon/cluster/convert"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
 	networktypes "github.com/docker/libnetwork/types"
@@ -119,6 +120,7 @@ func (e *executor) Describe(ctx context.Context) (*api.NodeDescription, error) {
 		Resources: &api.Resources{
 			NanoCPUs:    int64(info.NCPU) * 1e9,
 			MemoryBytes: info.MemTotal,
+			Generic:     convert.GenericResourcesToGRPC(info.GenericResources),
 		},
 	}
 

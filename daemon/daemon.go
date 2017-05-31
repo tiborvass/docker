@@ -23,12 +23,14 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/daemon/discovery"
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/tiborvass/docker/opts"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"
 	"github.com/tiborvass/docker/daemon/initlayer"
@@ -111,6 +113,7 @@ type Daemon struct {
 	defaultIsolation      containertypes.Isolation // Default isolation mode on Windows
 	clusterProvider       cluster.Provider
 	cluster               Cluster
+	genericResources      []swarm.GenericResource
 	metricsPluginListener net.Listener
 
 	machineMemory uint64
@@ -568,6 +571,9 @@ func NewDaemon(config *config.Config, registryService registry.Service, containe
 		}
 	}()
 
+	if err := d.setGenericResources(config); err != nil {
+		return nil, err
+	}
 	// set up SIGUSR1 handler on Unix-like systems, or a Win32 global event
 	// on Windows to dump Go routine stacks
 	stackDumpDir := config.Root
@@ -1034,6 +1040,17 @@ func prepareTempDir(rootDir string, rootIDs idtools.IDPair) (string, error) {
 func (daemon *Daemon) setupInitLayer(initPath string) error {
 	rootIDs := daemon.idMappings.RootPair()
 	return initlayer.Setup(initPath, rootIDs)
+}
+
+func (daemon *Daemon) setGenericResources(conf *config.Config) error {
+	genericResources, err := opts.ParseGenericResources(conf.NodeGenericResources)
+	if err != nil {
+		return err
+	}
+
+	daemon.genericResources = genericResources
+
+	return nil
 }
 
 func setDefaultMtu(conf *config.Config) {
