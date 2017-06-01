@@ -27,6 +27,7 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/tarsum"
+	"github.com/tiborvass/docker/registry/resumable"
 )
 
 var (
@@ -313,7 +314,7 @@ func (r *Session) GetRemoteImageLayer(imgID, registry string, imgSize int64) (io
 
 	if res.Header.Get("Accept-Ranges") == "bytes" && imgSize > 0 {
 		logrus.Debug("server supports resume")
-		return httputils.ResumableRequestReaderWithInitialResponse(r.client, req, 5, imgSize, res), nil
+		return resumable.NewRequestReaderWithInitialResponse(r.client, req, 5, imgSize, res), nil
 	}
 	logrus.Debug("server doesn't support resume")
 	return res.Body, nil
