@@ -12,11 +12,11 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
+	"github.com/tiborvass/docker/builder/remotecontext"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/pkg/errors"
@@ -67,7 +67,7 @@ func (daemon *Daemon) ImportImage(src string, repository, tag string, msg string
 			return err
 		}
 
-		resp, err = httputils.Download(u.String())
+		resp, err = remotecontext.GetWithStatusError(u.String())
 		if err != nil {
 			return err
 		}
