@@ -14,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/builder/dockerignore"
 	"github.com/tiborvass/docker/pkg/fileutils"
-	"github.com/tiborvass/docker/pkg/httputils"
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/pkg/errors"
@@ -93,7 +92,7 @@ func newURLRemote(url string, dockerfilePath string, progressReader func(in io.R
 	var dockerfile io.ReadCloser
 	dockerfileFoundErr := errors.New("found-dockerfile")
 	c, err := MakeRemoteContext(url, map[string]func(io.ReadCloser) (io.ReadCloser, error){
-		httputils.MimeTypes.TextPlain: func(rc io.ReadCloser) (io.ReadCloser, error) {
+		mimeTypes.TextPlain: func(rc io.ReadCloser) (io.ReadCloser, error) {
 			dockerfile = rc
 			return nil, dockerfileFoundErr
 		},
