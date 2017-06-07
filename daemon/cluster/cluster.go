@@ -49,6 +49,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/network"
 	types "github.com/tiborvass/docker/api/types/swarm"
+	"github.com/tiborvass/docker/daemon/cluster/controllers/plugin"
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	"github.com/tiborvass/docker/pkg/signal"
 	lncluster "github.com/docker/libnetwork/cluster"
@@ -97,6 +98,7 @@ type Config struct {
 	Root                   string
 	Name                   string
 	Backend                executorpkg.Backend
+	PluginBackend          plugin.Backend
 	NetworkSubnetsProvider NetworkSubnetsProvider
 
 	// DefaultAdvertiseAddr is the default host/IP or network interface to use
