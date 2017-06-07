@@ -11,6 +11,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
+	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
@@ -277,7 +278,7 @@ func TestMigratePre17Volumes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	drv, err := local.New(volumeRoot, 0, 0)
+	drv, err := local.New(volumeRoot, idtools.IDPair{UID: 0, GID: 0})
 	if err != nil {
 		t.Fatal(err)
 	}
