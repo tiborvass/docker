@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/mount"
 )
 
@@ -85,4 +86,8 @@ func getCleanPatterns(id string) (regexps []*regexp.Regexp) {
 		}
 	}
 	return
+}
+
+func getRealPath(path string) (string, error) {
+	return fileutils.ReadSymlinkedDirectory(path)
 }
