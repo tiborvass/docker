@@ -17,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api"
 	dclient "github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
@@ -170,7 +171,7 @@ func NewClient() (dclient.APIClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	return dclient.NewClient(host, "", httpClient, nil)
+	return dclient.NewClient(host, api.DefaultVersion, httpClient, nil)
 }
 
 // FIXME(vdemeester) httputil.ClientConn is deprecated, use http.Client instead (closer to actual client)
