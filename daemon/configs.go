@@ -2,6 +2,7 @@ package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
+	"github.com/tiborvass/docker/container"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +18,9 @@ func (daemon *Daemon) SetContainerConfigReferences(name string, refs []*swarmtyp
 		return err
 	}
 
-	c.ConfigReferences = refs
+	for _, ref := range refs {
+		c.ConfigReferences = append(c.ConfigReferences, &container.ConfigReference{ConfigReference: ref})
+	}
 
 	return nil
 }
