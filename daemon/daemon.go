@@ -42,7 +42,6 @@ import (
 	"github.com/tiborvass/docker/migrate/v1"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/plugingetter"
-	"github.com/tiborvass/docker/pkg/registrar"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
@@ -104,7 +103,6 @@ type Daemon struct {
 	stores                map[string]daemonStore // By container target platform
 	PluginStore           *plugin.Store          // todo: remove
 	pluginManager         *plugin.Manager
-	nameIndex             *registrar.Registrar
 	linkIndex             *linkIndex
 	containerd            libcontainerd.Client
 	containerdRemote      libcontainerd.Remote
@@ -448,8 +446,8 @@ func (daemon *Daemon) parents(c *container.Container) map[string]*container.Cont
 
 func (daemon *Daemon) registerLink(parent, child *container.Container, alias string) error {
 	fullName := path.Join(parent.Name, alias)
-	if err := daemon.nameIndex.Reserve(fullName, child.ID); err != nil {
-		if err == registrar.ErrNameReserved {
+	if err := daemon.containersReplica.ReserveName(fullName, child.ID); err != nil {
+		if err == container.ErrNameReserved {
 			logrus.Warnf("error registering link for %s, to %s, as alias %s, ignoring: %v", parent.ID, child.ID, alias, err)
 			return nil
 		}
@@ -780,7 +778,6 @@ func NewDaemon(config *config.Config, registryService registry.Service, containe
 	d.seccompEnabled = sysInfo.Seccomp
 	d.apparmorEnabled = sysInfo.AppArmor
 
-	d.nameIndex = registrar.NewRegistrar()
 	d.linkIndex = newLinkIndex()
 	d.containerdRemote = containerdRemote
 
