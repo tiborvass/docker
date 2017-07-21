@@ -12,6 +12,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog/multireader"
 	"github.com/tiborvass/docker/pkg/filenotify"
@@ -27,11 +28,18 @@ func decodeLogLine(dec *json.Decoder, l *jsonlog.JSONLog) (*logger.Message, erro
 	if err := dec.Decode(l); err != nil {
 		return nil, err
 	}
+	var attrs []backend.LogAttr
+	if len(l.Attrs) != 0 {
+		attrs = make([]backend.LogAttr, 0, len(l.Attrs))
+		for k, v := range l.Attrs {
+			attrs = append(attrs, backend.LogAttr{Key: k, Value: v})
+		}
+	}
 	msg := &logger.Message{
 		Source:    l.Stream,
 		Timestamp: l.Created,
 		Line:      []byte(l.Log),
-		Attrs:     l.Attrs,
+		Attrs:     attrs,
 	}
 	return msg, nil
 }
