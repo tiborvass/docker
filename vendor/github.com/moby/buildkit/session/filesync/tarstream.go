@@ -3,10 +3,10 @@ package filesync
 import (
 	"io"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 

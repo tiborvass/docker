@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/discovery"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/docker/go-connections/tlsconfig"
@@ -13,6 +12,7 @@ import (
 	"github.com/docker/libnetwork/datastore"
 	"github.com/docker/libnetwork/netlabel"
 	"github.com/docker/libnetwork/osl"
+	"github.com/sirupsen/logrus"
 )
 
 // Config encapsulates configurations of various Libnetwork components
