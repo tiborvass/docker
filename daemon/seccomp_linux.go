@@ -5,10 +5,10 @@ package daemon
 import (
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/profiles/seccomp"
 	"github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/sirupsen/logrus"
 )
 
 var supportsSeccomp = true

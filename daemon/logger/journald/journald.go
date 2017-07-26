@@ -9,10 +9,10 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
+	"github.com/sirupsen/logrus"
 )
 
 const name = "journald"

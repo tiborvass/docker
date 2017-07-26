@@ -4,10 +4,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

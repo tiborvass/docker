@@ -5,9 +5,9 @@ package logentries
 import (
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/bsphere/le_go"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/sirupsen/logrus"
 )
 
 type logentries struct {

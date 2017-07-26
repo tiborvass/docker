@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver/devmapper"
 	"github.com/tiborvass/docker/pkg/devicemapper"
+	"github.com/sirupsen/logrus"
 )
 
 func usage() {

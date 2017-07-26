@@ -17,7 +17,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
@@ -29,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-connections/nat"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // ENV foo bar

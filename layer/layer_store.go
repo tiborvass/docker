@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -16,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/opencontainers/go-digest"
+	"github.com/sirupsen/logrus"
 	"github.com/vbatts/tar-split/tar/asm"
 	"github.com/vbatts/tar-split/tar/storage"
 )

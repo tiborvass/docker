@@ -12,13 +12,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	daemondiscovery "github.com/tiborvass/docker/daemon/discovery"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/tiborvass/docker/pkg/discovery"
 	"github.com/tiborvass/docker/registry"
 	"github.com/imdario/mergo"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 

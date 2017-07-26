@@ -7,7 +7,6 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
@@ -27,6 +26,7 @@ import (
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 //#include <zone.h>

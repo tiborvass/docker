@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/server/httputils"
 	basictypes "github.com/tiborvass/docker/api/types"
@@ -14,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

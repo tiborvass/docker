@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	container "github.com/tiborvass/docker/api/types/container"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	swarmapi "github.com/docker/swarmkit/api"
 	gogotypes "github.com/gogo/protobuf/types"
+	"github.com/sirupsen/logrus"
 )
 
 func containerSpecFromGRPC(c *swarmapi.ContainerSpec) *types.ContainerSpec {

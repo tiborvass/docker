@@ -32,13 +32,13 @@ import (
 	"time"
 
 	"github.com/Microsoft/hcsshim"
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/jhowardmsft/opengcs/gogcs/client"
+	"github.com/sirupsen/logrus"
 )
 
 // init registers this driver to the register. It gets initialised by the

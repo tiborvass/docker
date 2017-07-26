@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/container"
@@ -13,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/sirupsen/logrus"
 )
 
 // ContainerAttach attaches to logs according to the config passed in. See ContainerAttachConfig.

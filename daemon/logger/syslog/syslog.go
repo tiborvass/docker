@@ -14,11 +14,11 @@ import (
 
 	syslog "github.com/RackSec/srslog"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/docker/go-connections/tlsconfig"
+	"github.com/sirupsen/logrus"
 )
 
 const (

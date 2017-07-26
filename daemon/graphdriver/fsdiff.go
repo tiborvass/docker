@@ -4,11 +4,11 @@ import (
 	"io"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/sirupsen/logrus"
 )
 
 var (

@@ -3,10 +3,10 @@ package main
 import (
 	"testing"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/tiborvass/docker/pkg/testutil/tempfile"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

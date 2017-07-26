@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	dockererrors "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
@@ -17,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
+	"github.com/sirupsen/logrus"
 )
 
 var (

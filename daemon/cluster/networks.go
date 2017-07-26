@@ -3,7 +3,6 @@ package cluster
 import (
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
 	apierrors "github.com/tiborvass/docker/api/errors"
 	apitypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/network"
@@ -12,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/runconfig"
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

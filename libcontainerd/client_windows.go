@@ -15,9 +15,9 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/Microsoft/hcsshim"
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/sirupsen/logrus"
 )
 
 type client struct {

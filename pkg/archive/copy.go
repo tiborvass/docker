@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/sirupsen/logrus"
 )
 
 // Errors used or returned by this file.

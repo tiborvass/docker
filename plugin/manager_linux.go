@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/initlayer"
 	"github.com/tiborvass/docker/libcontainerd"
@@ -22,6 +21,7 @@ import (
 	"github.com/opencontainers/go-digest"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
 

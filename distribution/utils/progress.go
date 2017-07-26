@@ -6,9 +6,9 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	"github.com/sirupsen/logrus"
 )
 
 // WriteDistributionProgress is a helper for writing progress from chan to JSON

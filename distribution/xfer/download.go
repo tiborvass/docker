@@ -7,13 +7,13 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/progress"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

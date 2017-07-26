@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/daemon/discovery"
 	"github.com/tiborvass/docker/libcontainerd"
+	"github.com/sirupsen/logrus"
 )
 
 // Reload reads configuration changes and modifies the

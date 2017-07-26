@@ -6,13 +6,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/directory"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/go-digest"
+	"github.com/sirupsen/logrus"
 )
 
 func (daemon *Daemon) getLayerRefs(platform string) map[layer.ChainID]int {

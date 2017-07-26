@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
 

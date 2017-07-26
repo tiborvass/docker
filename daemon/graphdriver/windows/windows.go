@@ -24,7 +24,6 @@ import (
 	"github.com/Microsoft/go-winio/archive/tar"
 	"github.com/Microsoft/go-winio/backuptar"
 	"github.com/Microsoft/hcsshim"
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -33,6 +32,7 @@ import (
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/system"
 	units "github.com/docker/go-units"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )
 

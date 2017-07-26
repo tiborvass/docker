@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )
 

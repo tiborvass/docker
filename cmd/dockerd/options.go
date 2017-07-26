@@ -5,11 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Sirupsen/logrus"
 	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/opts"
 	"github.com/docker/go-connections/tlsconfig"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 

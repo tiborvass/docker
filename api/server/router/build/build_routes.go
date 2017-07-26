@@ -12,7 +12,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	apierrors "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
@@ -24,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	units "github.com/docker/go-units"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

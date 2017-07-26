@@ -3,8 +3,8 @@ package daemon
 import (
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
+	"github.com/sirupsen/logrus"
 )
 
 // ContainerRestart stops and starts a container. It attempts to

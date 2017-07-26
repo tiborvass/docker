@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
@@ -17,6 +16,7 @@ import (
 	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // ClientSessionRemote is identifier for client-session context transport

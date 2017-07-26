@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/discovery"
+	"github.com/sirupsen/logrus"
 
 	// Register the libkv backends for discovery.
 	_ "github.com/tiborvass/docker/pkg/discovery/kv"
