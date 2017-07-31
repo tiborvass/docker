@@ -5,8 +5,8 @@ import (
 
 	"github.com/tiborvass/docker/builder/fscache"
 	"github.com/tiborvass/docker/builder/remotecontext"
-	"github.com/tiborvass/docker/client/session"
-	"github.com/tiborvass/docker/client/session/filesync"
+	"github.com/moby/buildkit/session"
+	"github.com/moby/buildkit/session/filesync"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )

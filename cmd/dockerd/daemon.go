@@ -30,7 +30,6 @@ import (
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/builder/fscache"
 	"github.com/tiborvass/docker/cli/debug"
-	"github.com/tiborvass/docker/client/session"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/cluster"
 	"github.com/tiborvass/docker/daemon/config"
@@ -50,6 +49,7 @@ import (
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/go-connections/tlsconfig"
 	swarmapi "github.com/docker/swarmkit/api"
+	"github.com/moby/buildkit/session"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )
