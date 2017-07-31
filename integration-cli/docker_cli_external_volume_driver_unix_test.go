@@ -15,12 +15,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/daemon"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/volume"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/daemon"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/volume"
 )
 
 const volumePluginName = "test-external-volume-driver"

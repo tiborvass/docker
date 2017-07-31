@@ -11,19 +11,19 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	derr "github.com/docker/docker/api/errors"
-	containertypes "github.com/docker/docker/api/types/container"
-	networktypes "github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/daemon/network"
-	"github.com/docker/docker/opts"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/runconfig"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork"
 	"github.com/docker/libnetwork/netlabel"
 	"github.com/docker/libnetwork/options"
 	"github.com/docker/libnetwork/types"
+	derr "github.com/moby/moby-core/api/errors"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	networktypes "github.com/moby/moby-core/api/types/network"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/daemon/network"
+	"github.com/moby/moby-core/opts"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/runconfig"
 )
 
 var (

@@ -9,13 +9,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/docker/docker/api"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/request"
-	"github.com/docker/docker/pkg/testutil"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/request"
+	"github.com/moby/moby-core/pkg/testutil"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 func (s *DockerSuite) TestAPIOptionsRoute(c *check.C) {

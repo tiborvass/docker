@@ -9,16 +9,16 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/errors"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/strslice"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/container/stream"
-	"github.com/docker/docker/daemon/exec"
-	"github.com/docker/docker/libcontainerd"
-	"github.com/docker/docker/pkg/pools"
-	"github.com/docker/docker/pkg/signal"
-	"github.com/docker/docker/pkg/term"
+	"github.com/moby/moby-core/api/errors"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/strslice"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/container/stream"
+	"github.com/moby/moby-core/daemon/exec"
+	"github.com/moby/moby-core/libcontainerd"
+	"github.com/moby/moby-core/pkg/pools"
+	"github.com/moby/moby-core/pkg/signal"
+	"github.com/moby/moby-core/pkg/term"
 )
 
 // Seconds to wait after sending TERM before trying KILL

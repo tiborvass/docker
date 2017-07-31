@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/docker/docker/pkg/jsonmessage"
-	"github.com/docker/docker/pkg/progress"
+	"github.com/moby/moby-core/pkg/jsonmessage"
+	"github.com/moby/moby-core/pkg/progress"
 )
 
 const streamNewline = "\r\n"

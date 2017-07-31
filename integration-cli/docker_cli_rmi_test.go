@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/pkg/stringid"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/pkg/stringid"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 func (s *DockerSuite) TestRmiWithContainerFails(c *check.C) {
@@ -140,7 +140,7 @@ func (s *DockerSuite) TestRmiImgIDForce(c *check.C) {
 	}
 }
 
-// See https://github.com/docker/docker/issues/14116
+// See https://github.com/moby/moby-core/issues/14116
 func (s *DockerSuite) TestRmiImageIDForceWithRunningContainersAndMultipleTags(c *check.C) {
 	dockerfile := "FROM busybox\nRUN echo test 14116\n"
 	buildImageSuccessfully(c, "test-14116", build.WithDockerfile(dockerfile))

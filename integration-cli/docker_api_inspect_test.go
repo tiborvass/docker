@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/versions/v1p20"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/request"
-	"github.com/docker/docker/pkg/stringutils"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/versions/v1p20"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/request"
+	"github.com/moby/moby-core/pkg/stringutils"
 )
 
 func (s *DockerSuite) TestInspectAPIContainerResponse(c *check.C) {

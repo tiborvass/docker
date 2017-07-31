@@ -7,8 +7,8 @@ import (
 
 	winio "github.com/Microsoft/go-winio"
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/signal"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/pkg/signal"
+	"github.com/moby/moby-core/pkg/system"
 	"golang.org/x/sys/windows"
 )
 

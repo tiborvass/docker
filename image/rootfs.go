@@ -4,7 +4,7 @@ import (
 	"runtime"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/layer"
+	"github.com/moby/moby-core/layer"
 )
 
 // TypeLayers is used for RootFS.Type for filesystems organized into layers.
@@ -13,7 +13,7 @@ const TypeLayers = "layers"
 // typeLayersWithBase is an older format used by Windows up to v1.12. We
 // explicitly handle this as an error case to ensure that a daemon which still
 // has an older image like this on disk can still start, even though the
-// image itself is not usable. See https://github.com/docker/docker/pull/25806.
+// image itself is not usable. See https://github.com/moby/moby-core/pull/25806.
 const typeLayersWithBase = "layers+base"
 
 // RootFS describes images root filesystem

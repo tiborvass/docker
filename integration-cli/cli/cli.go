@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/integration-cli/daemon"
-	"github.com/docker/docker/integration-cli/environment"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
+	"github.com/moby/moby-core/integration-cli/daemon"
+	"github.com/moby/moby-core/integration-cli/environment"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 	"github.com/pkg/errors"
 )
 

@@ -238,7 +238,7 @@ Function Validate-DCO($headCommit, $upstreamCommit) {
         $badCommits | %{ $e+=" - $_`n"}
         $e += "`nPlease amend each commit to include a properly formatted DCO marker.`n`n"
         $e += "Visit the following URL for information about the Docker DCO:`n"
-        $e += "https://github.com/docker/docker/blob/master/CONTRIBUTING.md#sign-your-work`n"
+        $e += "https://github.com/moby/moby-core/blob/master/CONTRIBUTING.md#sign-your-work`n"
         Throw $e
     }
 }
@@ -256,9 +256,9 @@ Function Validate-PkgImports($headCommit, $upstreamCommit) {
         if ($LASTEXITCODE -ne 0) { Throw "Failed go list for dependencies on $file" }
         $imports = $imports -Replace "\[" -Replace "\]", "" -Split(" ") | Sort-Object | Get-Unique
         # Filter out what we are looking for
-        $imports = $imports -NotMatch "^github.com/docker/docker/pkg/" `
-                            -NotMatch "^github.com/docker/docker/vendor" `
-                            -Match "^github.com/docker/docker" `
+        $imports = $imports -NotMatch "^github.com/moby/moby-core/pkg/" `
+                            -NotMatch "^github.com/moby/moby-core/vendor" `
+                            -Match "^github.com/moby/moby-core" `
                             -Replace "`n", ""
         $imports | % { $badFiles+="$file imports $_`n" }
     }
@@ -315,10 +315,10 @@ Function Run-UnitTests() {
     $goListCommand = "go list -e -f '{{if ne .Name """ + '\"github.com/docker/docker\"' + """}}{{.ImportPath}}{{end}}' $testPath"
     $pkgList = $(Invoke-Expression $goListCommand)
     if ($LASTEXITCODE -ne 0) { Throw "go list for unit tests failed" }
-    $pkgList = $pkgList | Select-String -Pattern "github.com/docker/docker"
-    $pkgList = $pkgList | Select-String -NotMatch "github.com/docker/docker/vendor"
-    $pkgList = $pkgList | Select-String -NotMatch "github.com/docker/docker/man"
-    $pkgList = $pkgList | Select-String -NotMatch "github.com/docker/docker/integration-cli"
+    $pkgList = $pkgList | Select-String -Pattern "github.com/moby/moby-core"
+    $pkgList = $pkgList | Select-String -NotMatch "github.com/moby/moby-core/vendor"
+    $pkgList = $pkgList | Select-String -NotMatch "github.com/moby/moby-core/man"
+    $pkgList = $pkgList | Select-String -NotMatch "github.com/moby/moby-core/integration-cli"
     $pkgList = $pkgList -replace "`r`n", " "
     $goTestCommand = "go test" + $raceParm + " -cover -ldflags -w -tags """ + "autogen daemon" + """ -a """ + "-test.timeout=10m" + """ $pkgList"
     Invoke-Expression $goTestCommand

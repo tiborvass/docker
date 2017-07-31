@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/integration-cli/requirement"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/requirement"
 )
 
 func PlatformIs(platform string) bool {

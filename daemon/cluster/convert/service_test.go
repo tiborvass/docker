@@ -3,10 +3,10 @@ package convert
 import (
 	"testing"
 
-	swarmtypes "github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/api/types/swarm/runtime"
 	swarmapi "github.com/docker/swarmkit/api"
 	google_protobuf3 "github.com/gogo/protobuf/types"
+	swarmtypes "github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/api/types/swarm/runtime"
 )
 
 func TestServiceConvertFromGRPCRuntimeContainer(t *testing.T) {

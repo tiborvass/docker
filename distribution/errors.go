@@ -12,7 +12,7 @@ import (
 	"github.com/docker/distribution/registry/api/v2"
 	"github.com/docker/distribution/registry/client"
 	"github.com/docker/distribution/registry/client/auth"
-	"github.com/docker/docker/distribution/xfer"
+	"github.com/moby/moby-core/distribution/xfer"
 	"github.com/pkg/errors"
 )
 

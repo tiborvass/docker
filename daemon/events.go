@@ -7,13 +7,13 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types/events"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/container"
-	daemonevents "github.com/docker/docker/daemon/events"
 	"github.com/docker/libnetwork"
 	swarmapi "github.com/docker/swarmkit/api"
 	gogotypes "github.com/gogo/protobuf/types"
+	"github.com/moby/moby-core/api/types/events"
+	"github.com/moby/moby-core/api/types/filters"
+	"github.com/moby/moby-core/container"
+	daemonevents "github.com/moby/moby-core/daemon/events"
 )
 
 var (

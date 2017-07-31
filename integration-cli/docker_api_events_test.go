@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/request"
-	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/request"
+	"github.com/moby/moby-core/pkg/jsonmessage"
 )
 
 func (s *DockerSuite) TestEventsAPIEmptyOutput(c *check.C) {

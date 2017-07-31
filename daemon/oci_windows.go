@@ -1,11 +1,11 @@
 package daemon
 
 import (
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/oci"
-	"github.com/docker/docker/pkg/sysinfo"
-	"github.com/docker/docker/pkg/system"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/oci"
+	"github.com/moby/moby-core/pkg/sysinfo"
+	"github.com/moby/moby-core/pkg/system"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"golang.org/x/sys/windows"
 )

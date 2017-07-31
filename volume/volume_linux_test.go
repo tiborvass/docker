@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	mounttypes "github.com/docker/docker/api/types/mount"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
 )
 
 func TestConvertTmpfsOptions(t *testing.T) {

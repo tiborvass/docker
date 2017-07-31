@@ -6,7 +6,7 @@
 # docker build -t docker .
 #
 # # Mount your source in an interactive container for quick testing:
-# docker run -v `pwd`:/go/src/github.com/docker/docker --privileged -i -t docker bash
+# docker run -v `pwd`:/go/src/github.com/moby/moby-core --privileged -i -t docker bash
 #
 # # Run the test suite:
 # docker run --privileged docker hack/make.sh test-unit test-integration-cli test-docker-py
@@ -60,7 +60,7 @@ RUN	cd /usr/local/lvm2 && ./configure --enable-static_link && make device-mapper
 # Install Go
 RUN	curl -sSL https://golang.org/dl/go1.3.src.tar.gz | tar -v -C /usr/local -xz
 ENV	PATH	/usr/local/go/bin:$PATH
-ENV	GOPATH	/go:/go/src/github.com/docker/docker/vendor
+ENV	GOPATH	/go:/go/src/github.com/moby/moby-core/vendor
 RUN	cd /usr/local/go/src && ./make.bash --no-clean 2>&1
 
 # Compile Go for cross compilation
@@ -92,11 +92,11 @@ RUN groupadd -r docker
 RUN useradd --create-home --gid docker unprivilegeduser
 
 VOLUME	/var/lib/docker
-WORKDIR	/go/src/github.com/docker/docker
+WORKDIR	/go/src/github.com/moby/moby-core
 ENV	DOCKER_BUILDTAGS	apparmor selinux
 
 # Wrap all commands in the "docker-in-docker" script to allow nested containers
 ENTRYPOINT	["hack/dind"]
 
 # Upload docker source
-COPY	.	/go/src/github.com/docker/docker
+COPY	.	/go/src/github.com/moby/moby-core

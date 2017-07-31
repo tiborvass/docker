@@ -10,9 +10,9 @@ import (
 
 	"github.com/Nvveen/Gotty"
 
-	"github.com/docker/docker/pkg/jsonlog"
-	"github.com/docker/docker/pkg/term"
 	"github.com/docker/go-units"
+	"github.com/moby/moby-core/pkg/jsonlog"
+	"github.com/moby/moby-core/pkg/term"
 )
 
 // JSONError wraps a concrete Code and Message, `Code` is

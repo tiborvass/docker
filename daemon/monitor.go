@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/libcontainerd"
-	"github.com/docker/docker/restartmanager"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/libcontainerd"
+	"github.com/moby/moby-core/restartmanager"
 )
 
 func (daemon *Daemon) setStateCounter(c *container.Container) {

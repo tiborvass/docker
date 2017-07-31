@@ -69,7 +69,7 @@ set -e
 			COPY . /usr/src/docker
 			ENV DOCKER_GITCOMMIT $GITCOMMIT
 			RUN mkdir -p /go/src/github.com/docker && mkdir -p /go/src/github.com/opencontainers \
-				&& ln -snf /usr/src/docker /go/src/github.com/docker/docker
+				&& ln -snf /usr/src/docker /go/src/github.com/moby/moby-core
 		EOF
 
 		cat >> "$DEST/$version/Dockerfile.build" <<-EOF

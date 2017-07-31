@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/docker/api"
-	"github.com/docker/docker/api/types"
+	"github.com/moby/moby-core/api"
+	"github.com/moby/moby-core/api/types"
 	"github.com/stretchr/testify/assert"
 )
 

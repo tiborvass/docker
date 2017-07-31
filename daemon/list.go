@@ -8,12 +8,12 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/volume"
 	"github.com/docker/go-connections/nat"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/filters"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/volume"
 )
 
 var acceptedVolumeFilterTags = map[string]bool{

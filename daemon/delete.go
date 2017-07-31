@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	apierrors "github.com/docker/docker/api/errors"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/layer"
-	"github.com/docker/docker/pkg/system"
-	volumestore "github.com/docker/docker/volume/store"
+	apierrors "github.com/moby/moby-core/api/errors"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/layer"
+	"github.com/moby/moby-core/pkg/system"
+	volumestore "github.com/moby/moby-core/volume/store"
 	"github.com/pkg/errors"
 )
 

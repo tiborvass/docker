@@ -1,7 +1,7 @@
 FROM	ubuntu:14.04
 LABEL	maintainer	Seongyeol Lim <seongyeol37@gmail.com>
 
-COPY	.	/go/src/github.com/docker/docker
+COPY	.	/go/src/github.com/moby/moby-core
 ADD		.	/
 ADD		null /
 COPY	nullfile /tmp

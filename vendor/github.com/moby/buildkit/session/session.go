@@ -3,7 +3,7 @@ package session
 import (
 	"net"
 
-	"github.com/docker/docker/pkg/stringid"
+	"github.com/moby/moby-core/pkg/stringid"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

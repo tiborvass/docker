@@ -10,12 +10,12 @@ import (
 
 	"github.com/docker/distribution/manifest/schema1"
 	"github.com/docker/distribution/manifest/schema2"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/pkg/stringutils"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/pkg/stringutils"
 	"github.com/opencontainers/go-digest"
 )
 

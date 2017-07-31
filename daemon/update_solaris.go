@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/libcontainerd"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/libcontainerd"
 )
 
 func toContainerdResources(resources container.Resources) libcontainerd.Resources {

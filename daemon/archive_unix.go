@@ -3,7 +3,7 @@
 package daemon
 
 import (
-	"github.com/docker/docker/container"
+	"github.com/moby/moby-core/container"
 )
 
 // checkIfPathIsInAVolume checks if the path is in a volume. If it is, it

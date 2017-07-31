@@ -14,8 +14,8 @@ understand that such patches might take longer for us to review.
 
 ### How can I help?
 
-Short term objectives are listed in the [wiki](https://github.com/docker/docker/wiki) and described
-in [Issues](https://github.com/docker/docker/issues?q=is%3Aopen+is%3Aissue+label%3Aroadmap). Our
+Short term objectives are listed in the [wiki](https://github.com/moby/moby-core/wiki) and described
+in [Issues](https://github.com/moby/moby-core/issues?q=is%3Aopen+is%3Aissue+label%3Aroadmap). Our
 goal is to split down the workload in such way that anybody can jump in and help. Please comment on
 issues if you want to take it to avoid duplicating effort! Similarly, if a maintainer is already
 assigned on an issue you'd like to participate in, pinging him on IRC or GitHub to offer your help is
@@ -64,7 +64,7 @@ containers, and not as easily dismissed).
 
 A lot of work has been done in trying to decouple the Docker Engine's internals. In particular, the
 API implementation has been refactored, and the Builder side of the daemon is now
-[fully independent](https://github.com/docker/docker/tree/master/builder) while still residing in
+[fully independent](https://github.com/moby/moby-core/tree/master/builder) while still residing in
 the same repository.
 
 We are exploring ways to go further with that decoupling, capitalizing on the work introduced by the

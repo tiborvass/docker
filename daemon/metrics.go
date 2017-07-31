@@ -5,9 +5,9 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/mount"
-	"github.com/docker/docker/pkg/plugingetter"
 	"github.com/docker/go-metrics"
+	"github.com/moby/moby-core/pkg/mount"
+	"github.com/moby/moby-core/pkg/plugingetter"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 )

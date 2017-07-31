@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
 )
 
 func (s *DockerSuite) TestPortList(c *check.C) {

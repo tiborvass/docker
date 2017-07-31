@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/docker/docker/pkg/symlink"
-	"github.com/docker/docker/pkg/urlutil"
+	"github.com/moby/moby-core/pkg/symlink"
+	"github.com/moby/moby-core/pkg/urlutil"
 	"github.com/pkg/errors"
 )
 

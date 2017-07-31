@@ -16,7 +16,7 @@ import (
 
 	"github.com/Microsoft/hcsshim"
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/sysinfo"
+	"github.com/moby/moby-core/pkg/sysinfo"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
 

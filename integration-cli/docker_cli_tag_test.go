@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/stringutils"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/pkg/stringutils"
 )
 
 // tagging a named image in a new unprefixed repo should work

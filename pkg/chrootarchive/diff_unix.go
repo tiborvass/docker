@@ -13,9 +13,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/reexec"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/reexec"
+	"github.com/moby/moby-core/pkg/system"
 	rsystem "github.com/opencontainers/runc/libcontainer/system"
 )
 

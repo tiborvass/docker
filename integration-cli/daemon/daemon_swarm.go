@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/filters"
+	"github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/client"
+	"github.com/moby/moby-core/integration-cli/checker"
 	"github.com/pkg/errors"
 )
 

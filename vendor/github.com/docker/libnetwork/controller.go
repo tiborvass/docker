@@ -53,11 +53,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/discovery"
-	"github.com/docker/docker/pkg/locker"
-	"github.com/docker/docker/pkg/plugingetter"
-	"github.com/docker/docker/pkg/plugins"
-	"github.com/docker/docker/pkg/stringid"
 	"github.com/docker/libnetwork/cluster"
 	"github.com/docker/libnetwork/config"
 	"github.com/docker/libnetwork/datastore"
@@ -69,6 +64,11 @@ import (
 	"github.com/docker/libnetwork/netlabel"
 	"github.com/docker/libnetwork/osl"
 	"github.com/docker/libnetwork/types"
+	"github.com/moby/moby-core/pkg/discovery"
+	"github.com/moby/moby-core/pkg/locker"
+	"github.com/moby/moby-core/pkg/plugingetter"
+	"github.com/moby/moby-core/pkg/plugins"
+	"github.com/moby/moby-core/pkg/stringid"
 )
 
 // NetworkController provides the interface for controller instance which manages

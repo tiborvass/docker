@@ -6,8 +6,8 @@ import (
 	"runtime"
 
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/pkg/system"
 	"github.com/pkg/errors"
 )
 

@@ -5,8 +5,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/boltdb/bolt"
-	"github.com/docker/docker/volume"
-	"github.com/docker/docker/volume/drivers"
+	"github.com/moby/moby-core/volume"
+	"github.com/moby/moby-core/volume/drivers"
 )
 
 // restore is called when a new volume store is created.

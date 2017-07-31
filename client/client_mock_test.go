@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/docker/docker/api/types"
+	"github.com/moby/moby-core/api/types"
 )
 
 func newMockClient(doer func(*http.Request) (*http.Response, error)) *http.Client {

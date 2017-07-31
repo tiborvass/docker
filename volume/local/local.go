@@ -16,10 +16,10 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/mount"
-	"github.com/docker/docker/volume"
+	"github.com/moby/moby-core/api"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/mount"
+	"github.com/moby/moby-core/volume"
 )
 
 // VolumeDataPathName is the name of the directory where the volume data is stored.

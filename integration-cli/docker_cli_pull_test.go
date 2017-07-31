@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
 	"github.com/opencontainers/go-digest"
 )
 
@@ -269,14 +269,14 @@ func (s *DockerRegistryAuthHtpasswdSuite) TestPullNoCredentialsNotFound(c *check
 	c.Assert(out, checker.Contains, "Error: image busybox:latest not found")
 }
 
-// Regression test for https://github.com/docker/docker/issues/26429
+// Regression test for https://github.com/moby/moby-core/issues/26429
 func (s *DockerSuite) TestPullLinuxImageFailsOnWindows(c *check.C) {
 	testRequires(c, DaemonIsWindows, Network)
 	_, _, err := dockerCmdWithError("pull", "ubuntu")
 	c.Assert(err.Error(), checker.Contains, "cannot be used on this platform")
 }
 
-// Regression test for https://github.com/docker/docker/issues/28892
+// Regression test for https://github.com/moby/moby-core/issues/28892
 func (s *DockerSuite) TestPullWindowsImageFailsOnLinux(c *check.C) {
 	testRequires(c, DaemonIsLinux, Network)
 	_, _, err := dockerCmdWithError("pull", "microsoft/nanoserver")

@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/pubsub"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/pubsub"
 )
 
 // Collect registers the container with the collector and adds it to

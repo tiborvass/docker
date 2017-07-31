@@ -2,7 +2,7 @@
 
 package volume
 
-import mounttypes "github.com/docker/docker/api/types/mount"
+import mounttypes "github.com/moby/moby-core/api/types/mount"
 
 // DefaultPropagationMode is used only in linux. In other cases it returns
 // empty string.

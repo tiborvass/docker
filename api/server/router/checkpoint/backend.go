@@ -1,6 +1,6 @@
 package checkpoint
 
-import "github.com/docker/docker/api/types"
+import "github.com/moby/moby-core/api/types"
 
 // Backend for Checkpoint
 type Backend interface {

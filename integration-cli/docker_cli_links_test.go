@@ -6,10 +6,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/pkg/testutil"
-	"github.com/docker/docker/runconfig"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/pkg/testutil"
+	"github.com/moby/moby-core/runconfig"
 )
 
 func (s *DockerSuite) TestLinksPingUnlinkedContainers(c *check.C) {

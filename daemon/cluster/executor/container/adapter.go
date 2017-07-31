@@ -14,19 +14,19 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/backend"
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/events"
-	containerpkg "github.com/docker/docker/container"
-	"github.com/docker/docker/daemon/cluster/convert"
-	executorpkg "github.com/docker/docker/daemon/cluster/executor"
-	"github.com/docker/docker/pkg/system"
 	"github.com/docker/libnetwork"
 	"github.com/docker/swarmkit/agent/exec"
 	"github.com/docker/swarmkit/api"
 	"github.com/docker/swarmkit/log"
 	gogotypes "github.com/gogo/protobuf/types"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/backend"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/api/types/events"
+	containerpkg "github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/daemon/cluster/convert"
+	executorpkg "github.com/moby/moby-core/daemon/cluster/executor"
+	"github.com/moby/moby-core/pkg/system"
 	"github.com/opencontainers/go-digest"
 	"golang.org/x/net/context"
 	"golang.org/x/time/rate"
@@ -427,7 +427,7 @@ func (c *containerAdapter) logs(ctx context.Context, options api.LogSubscription
 		}
 		// print since as this formatted string because the docker container
 		// logs interface expects it like this.
-		// see github.com/docker/docker/api/types/time.ParseTimestamps
+		// see github.com/moby/moby-core/api/types/time.ParseTimestamps
 		apiOptions.Since = fmt.Sprintf("%d.%09d", since.Unix(), int64(since.Nanosecond()))
 	}
 

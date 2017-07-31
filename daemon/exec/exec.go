@@ -5,9 +5,9 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/container/stream"
-	"github.com/docker/docker/libcontainerd"
-	"github.com/docker/docker/pkg/stringid"
+	"github.com/moby/moby-core/container/stream"
+	"github.com/moby/moby-core/libcontainerd"
+	"github.com/moby/moby-core/pkg/stringid"
 )
 
 // Config holds the configurations for execs. The Daemon keeps

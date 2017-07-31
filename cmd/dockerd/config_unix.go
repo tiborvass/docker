@@ -3,9 +3,9 @@
 package main
 
 import (
-	"github.com/docker/docker/daemon/config"
-	"github.com/docker/docker/opts"
 	units "github.com/docker/go-units"
+	"github.com/moby/moby-core/daemon/config"
+	"github.com/moby/moby-core/opts"
 	"github.com/spf13/pflag"
 )
 

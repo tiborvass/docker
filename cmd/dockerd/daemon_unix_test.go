@@ -8,8 +8,8 @@ package main
 import (
 	"testing"
 
-	"github.com/docker/docker/daemon/config"
-	"github.com/docker/docker/pkg/testutil/tempfile"
+	"github.com/moby/moby-core/daemon/config"
+	"github.com/moby/moby-core/pkg/testutil/tempfile"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -9,13 +9,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/docker/docker/api/types/container"
+	"github.com/moby/moby-core/api/types/container"
 )
 
 func validatePSArgs(psArgs string) error {
 	// NOTE: \\s does not detect unicode whitespaces.
 	// So we use fieldsASCII instead of strings.Fields in parsePSOutput.
-	// See https://github.com/docker/docker/pull/24358
+	// See https://github.com/moby/moby-core/pull/24358
 	re := regexp.MustCompile("\\s+([^\\s]*)=\\s*(PID[^\\s]*)")
 	for _, group := range re.FindAllStringSubmatch(psArgs, -1) {
 		if len(group) >= 3 {

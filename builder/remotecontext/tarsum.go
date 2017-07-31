@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/docker/docker/pkg/symlink"
 	iradix "github.com/hashicorp/go-immutable-radix"
+	"github.com/moby/moby-core/pkg/symlink"
 	"github.com/pkg/errors"
 	"github.com/tonistiigi/fsutil"
 )

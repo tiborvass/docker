@@ -10,8 +10,8 @@ import (
 	"runtime"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/reexec"
 	"github.com/docker/libnetwork/iptables"
+	"github.com/moby/moby-core/pkg/reexec"
 	"github.com/vishvananda/netns"
 )
 

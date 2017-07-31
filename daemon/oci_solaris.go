@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strconv"
 
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/oci"
 	"github.com/docker/libnetwork"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 

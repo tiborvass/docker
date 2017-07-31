@@ -1351,7 +1351,7 @@ func (d *driver) RevokeExternalConnectivity(nid, eid string) error {
 	// The host kernel keeps track of the connections (TCP and UDP), so if a new endpoint gets the same IP of
 	// this one (that is going down), is possible that some of the packets would not be routed correctly inside
 	// the new endpoint
-	// Deeper details: https://github.com/docker/docker/issues/8795
+	// Deeper details: https://github.com/moby/moby-core/issues/8795
 	clearEndpointConnections(d.nlh, endpoint)
 
 	if err = d.storeUpdate(endpoint); err != nil {

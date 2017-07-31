@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/libcontainerd"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/libcontainerd"
+	"github.com/moby/moby-core/pkg/system"
 	"golang.org/x/sys/windows"
 )
 

@@ -21,20 +21,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/integration-cli/cli/build/fakecontext"
-	"github.com/docker/docker/pkg/mount"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/stringutils"
-	"github.com/docker/docker/pkg/testutil"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
-	"github.com/docker/docker/runconfig"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork/resolvconf"
 	"github.com/docker/libnetwork/types"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/integration-cli/cli/build/fakecontext"
+	"github.com/moby/moby-core/pkg/mount"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/pkg/stringutils"
+	"github.com/moby/moby-core/pkg/testutil"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
+	"github.com/moby/moby-core/runconfig"
 	libcontainerUser "github.com/opencontainers/runc/libcontainer/user"
 )
 
@@ -546,7 +546,7 @@ func (s *DockerSuite) TestRunNoDupVolumes(c *check.C) {
 		}
 	}
 
-	// Test for https://github.com/docker/docker/issues/22093
+	// Test for https://github.com/moby/moby-core/issues/22093
 	volumename1 := "test1"
 	volumename2 := "test2"
 	volume1 := volumename1 + someplace
@@ -2055,7 +2055,7 @@ func (s *DockerSuite) TestRunPortInUse(c *check.C) {
 	}
 }
 
-// https://github.com/docker/docker/issues/12148
+// https://github.com/moby/moby-core/issues/12148
 func (s *DockerSuite) TestRunAllocatePortInReservedRange(c *check.C) {
 	// TODO Windows. -P is not yet supported
 	testRequires(c, DaemonIsLinux)
@@ -2121,7 +2121,7 @@ func (s *DockerSuite) TestRunMountOrdering(c *check.C) {
 		"ls "+prefix+"/tmp/touch-me && ls "+prefix+"/tmp/foo/touch-me && ls "+prefix+"/tmp/tmp2/touch-me && ls "+prefix+"/tmp/tmp2/foo/touch-me")
 }
 
-// Regression test for https://github.com/docker/docker/issues/8259
+// Regression test for https://github.com/moby/moby-core/issues/8259
 func (s *DockerSuite) TestRunReuseBindVolumeThatIsSymlink(c *check.C) {
 	// Not applicable on Windows as Windows does not support volumes
 	testRequires(c, SameHostDaemon, DaemonIsLinux, NotUserNamespace)
@@ -2864,7 +2864,7 @@ func (s *DockerSuite) TestRunWithTooSmallMemoryLimit(c *check.C) {
 	// memory limits on containers
 	testRequires(c, DaemonIsLinux)
 	// this memory limit is 1 byte less than the min, which is 4MB
-	// https://github.com/docker/docker/blob/v1.5.0/daemon/create.go#L22
+	// https://github.com/moby/moby-core/blob/v1.5.0/daemon/create.go#L22
 	out, _, err := dockerCmdWithError("run", "-m", "4194303", "busybox")
 	if err == nil || !strings.Contains(out, "Minimum memory limit allowed is 4MB") {
 		c.Fatalf("expected run to fail when using too low a memory limit: %q", out)
@@ -3048,7 +3048,7 @@ func (s *DockerSuite) TestRunCapAddCHOWN(c *check.C) {
 	}
 }
 
-// https://github.com/docker/docker/pull/14498
+// https://github.com/moby/moby-core/pull/14498
 func (s *DockerSuite) TestVolumeFromMixedRWOptions(c *check.C) {
 	prefix, slash := getPrefixAndSlashFromDaemonPlatform()
 

@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/integration-cli/checker"
 )
 
 func (s *DockerSwarmSuite) TestServiceCreateMountVolume(c *check.C) {

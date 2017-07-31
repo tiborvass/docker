@@ -3,7 +3,7 @@ package chrootarchive
 import (
 	"io"
 
-	"github.com/docker/docker/pkg/archive"
+	"github.com/moby/moby-core/pkg/archive"
 )
 
 // ApplyLayer parses a diff in the standard layer format from `layer`,

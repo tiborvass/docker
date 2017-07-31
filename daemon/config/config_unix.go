@@ -5,8 +5,8 @@ package config
 import (
 	"fmt"
 
-	"github.com/docker/docker/opts"
 	units "github.com/docker/go-units"
+	"github.com/moby/moby-core/opts"
 )
 
 // Config defines the configuration of a docker daemon.

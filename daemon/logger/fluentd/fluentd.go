@@ -12,11 +12,11 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/daemon/logger"
-	"github.com/docker/docker/daemon/logger/loggerutils"
-	"github.com/docker/docker/pkg/urlutil"
 	"github.com/docker/go-units"
 	"github.com/fluent/fluent-logger-golang/fluent"
+	"github.com/moby/moby-core/daemon/logger"
+	"github.com/moby/moby-core/daemon/logger/loggerutils"
+	"github.com/moby/moby-core/pkg/urlutil"
 	"github.com/pkg/errors"
 )
 

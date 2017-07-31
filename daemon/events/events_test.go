@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/docker/api/types/events"
-	timetypes "github.com/docker/docker/api/types/time"
-	eventstestutils "github.com/docker/docker/daemon/events/testutils"
+	"github.com/moby/moby-core/api/types/events"
+	timetypes "github.com/moby/moby-core/api/types/time"
+	eventstestutils "github.com/moby/moby-core/daemon/events/testutils"
 )
 
 func TestEventsLog(t *testing.T) {
@@ -153,7 +153,7 @@ func TestLogEvents(t *testing.T) {
 	}
 }
 
-// https://github.com/docker/docker/issues/20999
+// https://github.com/moby/moby-core/issues/20999
 // Fixtures:
 //
 //2016-03-07T17:28:03.022433271+02:00 container die 0b863f2a26c18557fc6cdadda007c459f9ec81b874780808138aea78a3595079 (image=ubuntu, name=small_hoover)

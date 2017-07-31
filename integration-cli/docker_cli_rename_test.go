@@ -3,10 +3,10 @@ package main
 import (
 	"strings"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/pkg/stringid"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/pkg/stringid"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 func (s *DockerSuite) TestRenameStoppedContainer(c *check.C) {

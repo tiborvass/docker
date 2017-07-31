@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/container"
+	"github.com/moby/moby-core/container"
 )
 
 // ContainerRestart stops and starts a container. It attempts to

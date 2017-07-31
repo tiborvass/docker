@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 
-	"github.com/docker/docker/api/types/container"
+	"github.com/moby/moby-core/api/types/container"
 	"golang.org/x/net/context"
 )
 

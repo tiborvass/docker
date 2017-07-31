@@ -6,9 +6,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/pkg/plugingetter"
-	"github.com/docker/docker/pkg/plugins"
-	"github.com/docker/docker/plugin/v2"
+	"github.com/moby/moby-core/pkg/plugingetter"
+	"github.com/moby/moby-core/pkg/plugins"
+	"github.com/moby/moby-core/plugin/v2"
 	"github.com/pkg/errors"
 )
 

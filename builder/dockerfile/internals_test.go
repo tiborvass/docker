@@ -5,12 +5,12 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/backend"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/builder"
-	"github.com/docker/docker/builder/remotecontext"
-	"github.com/docker/docker/pkg/archive"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/backend"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/builder"
+	"github.com/moby/moby-core/builder/remotecontext"
+	"github.com/moby/moby-core/pkg/archive"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

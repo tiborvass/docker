@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/integration-cli/checker"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/integration-cli/checker"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 func checkValidGraphDriver(c *check.C, name string) {

@@ -3,8 +3,8 @@ set -e
 
 if ! docker inspect -t image emptyfs &> /dev/null; then
 	# let's build a "docker save" tarball for "emptyfs"
-	# see https://github.com/docker/docker/pull/5262
-	# and also https://github.com/docker/docker/issues/4242
+	# see https://github.com/moby/moby-core/pull/5262
+	# and also https://github.com/moby/moby-core/issues/4242
 	dir="$DEST/emptyfs"
 	mkdir -p "$dir"
 	(

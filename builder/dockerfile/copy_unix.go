@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/docker/docker/pkg/idtools"
+	"github.com/moby/moby-core/pkg/idtools"
 )
 
 func fixPermissions(source, destination string, rootIDs idtools.IDPair) error {

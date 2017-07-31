@@ -6,11 +6,11 @@ import (
 
 	"github.com/docker/distribution/manifest/schema2"
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/distribution"
-	progressutils "github.com/docker/docker/distribution/utils"
-	"github.com/docker/docker/pkg/progress"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/distribution"
+	progressutils "github.com/moby/moby-core/distribution/utils"
+	"github.com/moby/moby-core/pkg/progress"
+	"github.com/moby/moby-core/pkg/system"
 	"golang.org/x/net/context"
 )
 

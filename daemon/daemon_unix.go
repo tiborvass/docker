@@ -17,20 +17,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/blkiodev"
-	pblkiodev "github.com/docker/docker/api/types/blkiodev"
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/daemon/config"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/opts"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/parsers"
-	"github.com/docker/docker/pkg/parsers/kernel"
-	"github.com/docker/docker/pkg/sysinfo"
-	"github.com/docker/docker/runconfig"
-	"github.com/docker/docker/volume"
 	"github.com/docker/libnetwork"
 	nwconfig "github.com/docker/libnetwork/config"
 	"github.com/docker/libnetwork/drivers/bridge"
@@ -39,6 +25,20 @@ import (
 	"github.com/docker/libnetwork/options"
 	lntypes "github.com/docker/libnetwork/types"
 	"github.com/golang/protobuf/ptypes"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/blkiodev"
+	pblkiodev "github.com/moby/moby-core/api/types/blkiodev"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/daemon/config"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/opts"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/parsers"
+	"github.com/moby/moby-core/pkg/parsers/kernel"
+	"github.com/moby/moby-core/pkg/sysinfo"
+	"github.com/moby/moby-core/runconfig"
+	"github.com/moby/moby-core/volume"
 	"github.com/opencontainers/runc/libcontainer/cgroups"
 	rsystem "github.com/opencontainers/runc/libcontainer/system"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
@@ -241,7 +241,7 @@ func checkKernel() error {
 	// Unfortunately we can't test for the feature "does not cause a kernel panic"
 	// without actually causing a kernel panic, so we need this workaround until
 	// the circumstances of pre-3.10 crashes are clearer.
-	// For details see https://github.com/docker/docker/issues/407
+	// For details see https://github.com/moby/moby-core/issues/407
 	// Docker 1.11 and above doesn't actually run on kernels older than 3.4,
 	// due to containerd-shim usage of PR_SET_CHILD_SUBREAPER (introduced in 3.4).
 	if !kernel.CheckKernelVersion(3, 10, 0) {

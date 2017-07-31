@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/docker/docker/daemon/graphdriver"
-	"github.com/docker/docker/pkg/chrootarchive"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/daemon/graphdriver"
+	"github.com/moby/moby-core/pkg/chrootarchive"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/system"
 	"github.com/opencontainers/selinux/go-selinux/label"
 )
 

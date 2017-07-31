@@ -9,16 +9,16 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
-	timetypes "github.com/docker/docker/api/types/time"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/layer"
-	"github.com/docker/docker/pkg/directory"
-	"github.com/docker/docker/pkg/system"
-	"github.com/docker/docker/runconfig"
-	"github.com/docker/docker/volume"
 	"github.com/docker/libnetwork"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/filters"
+	timetypes "github.com/moby/moby-core/api/types/time"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/layer"
+	"github.com/moby/moby-core/pkg/directory"
+	"github.com/moby/moby-core/pkg/system"
+	"github.com/moby/moby-core/runconfig"
+	"github.com/moby/moby-core/volume"
 	digest "github.com/opencontainers/go-digest"
 	"golang.org/x/net/context"
 )
@@ -385,7 +385,7 @@ func (daemon *Daemon) clusterNetworksPrune(ctx context.Context, pruneFilters fil
 			if !matchLabels(pruneFilters, nw.Labels) {
 				continue
 			}
-			// https://github.com/docker/docker/issues/24186
+			// https://github.com/moby/moby-core/issues/24186
 			// `docker network inspect` unfortunately displays ONLY those containers that are local to that node.
 			// So we try to remove it anyway and check the error
 			err = cluster.RemoveNetwork(nw.ID)

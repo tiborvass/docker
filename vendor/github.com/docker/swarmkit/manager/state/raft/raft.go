@@ -13,7 +13,6 @@ import (
 	"github.com/coreos/etcd/pkg/idutil"
 	"github.com/coreos/etcd/raft"
 	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/docker/docker/pkg/signal"
 	"github.com/docker/go-events"
 	"github.com/docker/swarmkit/api"
 	"github.com/docker/swarmkit/ca"
@@ -26,6 +25,7 @@ import (
 	"github.com/docker/swarmkit/manager/state/store"
 	"github.com/docker/swarmkit/watch"
 	"github.com/gogo/protobuf/proto"
+	"github.com/moby/moby-core/pkg/signal"
 	"github.com/pivotal-golang/clock"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
@@ -1275,7 +1275,7 @@ func (n *Node) ProcessRaftMessage(ctx context.Context, msg *api.ProcessRaftMessa
 	defer cancel()
 
 	// TODO(aaronl): Address changes are temporarily disabled.
-	// See https://github.com/docker/docker/issues/30455.
+	// See https://github.com/moby/moby-core/issues/30455.
 	// This should be reenabled in the future with additional
 	// safeguards (perhaps storing multiple addresses per node).
 	//if err := n.reportNewAddress(ctx, msg.Message.From); err != nil {

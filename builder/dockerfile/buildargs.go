@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/docker/docker/runconfig/opts"
+	"github.com/moby/moby-core/runconfig/opts"
 )
 
 // builtinAllowedBuildArgs is list of built-in allowed build args

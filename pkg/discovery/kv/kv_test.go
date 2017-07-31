@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/docker/pkg/discovery"
 	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
+	"github.com/moby/moby-core/pkg/discovery"
 
 	"github.com/go-check/check"
 )

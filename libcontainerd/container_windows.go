@@ -10,7 +10,7 @@ import (
 
 	"github.com/Microsoft/hcsshim"
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/pkg/system"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"golang.org/x/sys/windows"
 )

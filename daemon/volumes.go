@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	dockererrors "github.com/docker/docker/api/errors"
-	"github.com/docker/docker/api/types"
-	containertypes "github.com/docker/docker/api/types/container"
-	mounttypes "github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/volume"
-	"github.com/docker/docker/volume/drivers"
+	dockererrors "github.com/moby/moby-core/api/errors"
+	"github.com/moby/moby-core/api/types"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/volume"
+	"github.com/moby/moby-core/volume/drivers"
 )
 
 var (

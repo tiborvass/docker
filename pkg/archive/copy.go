@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/pkg/system"
 )
 
 // Errors used or returned by this file.

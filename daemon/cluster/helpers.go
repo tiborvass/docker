@@ -3,8 +3,8 @@ package cluster
 import (
 	"fmt"
 
-	"github.com/docker/docker/api/errors"
 	swarmapi "github.com/docker/swarmkit/api"
+	"github.com/moby/moby-core/api/errors"
 	"golang.org/x/net/context"
 )
 

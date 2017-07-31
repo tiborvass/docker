@@ -19,17 +19,17 @@ import (
 	"github.com/docker/distribution/registry/api/errcode"
 	"github.com/docker/distribution/registry/client/auth"
 	"github.com/docker/distribution/registry/client/transport"
-	"github.com/docker/docker/distribution/metadata"
-	"github.com/docker/docker/distribution/xfer"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/image/v1"
-	"github.com/docker/docker/layer"
-	"github.com/docker/docker/pkg/ioutils"
-	"github.com/docker/docker/pkg/progress"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/system"
-	refstore "github.com/docker/docker/reference"
-	"github.com/docker/docker/registry"
+	"github.com/moby/moby-core/distribution/metadata"
+	"github.com/moby/moby-core/distribution/xfer"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/image/v1"
+	"github.com/moby/moby-core/layer"
+	"github.com/moby/moby-core/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/progress"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/pkg/system"
+	refstore "github.com/moby/moby-core/reference"
+	"github.com/moby/moby-core/registry"
 	"github.com/opencontainers/go-digest"
 	"golang.org/x/net/context"
 )
@@ -583,7 +583,7 @@ func (p *v2Puller) pullSchema2(ctx context.Context, ref reference.Named, mfst *s
 		platform         layer.Platform // for LCOW when registering downloaded layers
 	)
 
-	// https://github.com/docker/docker/issues/24766 - Err on the side of caution,
+	// https://github.com/moby/moby-core/issues/24766 - Err on the side of caution,
 	// explicitly blocking images intended for linux from the Windows daemon. On
 	// Windows, we do this before the attempt to download, effectively serialising
 	// the download slightly slowing it down. We have to do it this way, as

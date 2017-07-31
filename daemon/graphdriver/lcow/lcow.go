@@ -33,12 +33,12 @@ import (
 
 	"github.com/Microsoft/hcsshim"
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/daemon/graphdriver"
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/ioutils"
-	"github.com/docker/docker/pkg/system"
 	"github.com/jhowardmsft/opengcs/gogcs/client"
+	"github.com/moby/moby-core/daemon/graphdriver"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/system"
 )
 
 // init registers this driver to the register. It gets initialised by the

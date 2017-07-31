@@ -7,9 +7,9 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/docker/docker/pkg/locker"
-	getter "github.com/docker/docker/pkg/plugingetter"
-	"github.com/docker/docker/volume"
+	"github.com/moby/moby-core/pkg/locker"
+	getter "github.com/moby/moby-core/pkg/plugingetter"
+	"github.com/moby/moby-core/volume"
 )
 
 // currently created by hand. generation tool would generate this like:

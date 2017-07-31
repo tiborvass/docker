@@ -3,7 +3,7 @@ package loggerutils
 import (
 	"testing"
 
-	"github.com/docker/docker/daemon/logger"
+	"github.com/moby/moby-core/daemon/logger"
 )
 
 func TestParseLogTagDefaultTag(t *testing.T) {

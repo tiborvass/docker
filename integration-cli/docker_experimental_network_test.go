@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/pkg/parsers/kernel"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/pkg/parsers/kernel"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 // ensure Kernel version is >= v3.9 for macvlan support

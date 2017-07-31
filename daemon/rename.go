@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	dockercontainer "github.com/docker/docker/container"
 	"github.com/docker/libnetwork"
+	dockercontainer "github.com/moby/moby-core/container"
 )
 
 // ContainerRename changes the name of a container, using the oldName

@@ -4,9 +4,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/docker/docker/api/types/container"
-	swarmtypes "github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/pkg/signal"
+	"github.com/moby/moby-core/api/types/container"
+	swarmtypes "github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/pkg/signal"
 )
 
 func TestContainerStopSignal(t *testing.T) {

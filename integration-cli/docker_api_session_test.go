@@ -3,10 +3,10 @@ package main
 import (
 	"net/http"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/request"
-	"github.com/docker/docker/pkg/testutil"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/request"
+	"github.com/moby/moby-core/pkg/testutil"
 )
 
 func (s *DockerSuite) TestSessionCreate(c *check.C) {

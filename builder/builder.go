@@ -7,11 +7,11 @@ package builder
 import (
 	"io"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/backend"
-	"github.com/docker/docker/api/types/container"
-	containerpkg "github.com/docker/docker/container"
-	"github.com/docker/docker/layer"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/backend"
+	"github.com/moby/moby-core/api/types/container"
+	containerpkg "github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/layer"
 	"golang.org/x/net/context"
 )
 

@@ -1,9 +1,9 @@
 package network
 
 import (
-	networktypes "github.com/docker/docker/api/types/network"
-	clustertypes "github.com/docker/docker/daemon/cluster/provider"
 	"github.com/docker/go-connections/nat"
+	networktypes "github.com/moby/moby-core/api/types/network"
+	clustertypes "github.com/moby/moby-core/daemon/cluster/provider"
 )
 
 // Settings stores configuration details about the daemon network config

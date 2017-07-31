@@ -2,7 +2,7 @@
 
 package daemon
 
-import "github.com/docker/docker/pkg/plugingetter"
+import "github.com/moby/moby-core/pkg/plugingetter"
 
 func registerMetricsPluginCallback(getter plugingetter.PluginGetter, sockPath string) {
 }

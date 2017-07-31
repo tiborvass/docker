@@ -1,8 +1,8 @@
 package runconfig
 
 import (
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/pkg/sysinfo"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/pkg/sysinfo"
 )
 
 // DefaultDaemonNetworkMode returns the default network stack the daemon should

@@ -15,7 +15,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution"
-	"github.com/docker/docker/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/ioutils"
 	"github.com/opencontainers/go-digest"
 )
 

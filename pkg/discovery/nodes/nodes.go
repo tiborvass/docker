@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/pkg/discovery"
+	"github.com/moby/moby-core/pkg/discovery"
 )
 
 // Discovery is exported

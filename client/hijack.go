@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/pkg/tlsconfig"
 	"github.com/docker/go-connections/sockets"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/pkg/tlsconfig"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )

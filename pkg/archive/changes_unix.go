@@ -6,7 +6,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/pkg/system"
 	"golang.org/x/sys/unix"
 )
 

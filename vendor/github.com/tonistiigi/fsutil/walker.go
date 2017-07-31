@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/pkg/fileutils"
+	"github.com/moby/moby-core/pkg/fileutils"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )

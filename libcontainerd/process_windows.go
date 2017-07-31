@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/Microsoft/hcsshim"
-	"github.com/docker/docker/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/ioutils"
 )
 
 // process keeps the state for both main container process and exec process.

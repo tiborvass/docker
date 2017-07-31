@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	eventstestutils "github.com/docker/docker/daemon/events/testutils"
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/go-check/check"
+	eventstestutils "github.com/moby/moby-core/daemon/events/testutils"
+	"github.com/moby/moby-core/integration-cli/checker"
 )
 
 // eventMatcher is a function that tries to match an event input.

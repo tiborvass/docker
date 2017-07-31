@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/docker/daemon/discovery"
-	"github.com/docker/docker/opts"
-	"github.com/docker/docker/pkg/testutil"
+	"github.com/moby/moby-core/daemon/discovery"
+	"github.com/moby/moby-core/opts"
+	"github.com/moby/moby-core/pkg/testutil"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )

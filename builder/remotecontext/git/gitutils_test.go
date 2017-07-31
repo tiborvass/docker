@@ -82,7 +82,7 @@ func TestCloneArgsDumbHttp(t *testing.T) {
 }
 
 func TestCloneArgsGit(t *testing.T) {
-	args := fetchArgs("git://github.com/docker/docker", "master")
+	args := fetchArgs("git://github.com/moby/moby-core", "master")
 	exp := []string{"fetch", "--recurse-submodules=yes", "--depth", "1", "origin", "master"}
 	assert.Equal(t, exp, args)
 }
@@ -212,7 +212,7 @@ func TestCheckoutGit(t *testing.T) {
 
 func TestValidGitTransport(t *testing.T) {
 	gitUrls := []string{
-		"git://github.com/docker/docker",
+		"git://github.com/moby/moby-core",
 		"git@github.com:docker/docker.git",
 		"git@bitbucket.org:atlassianlabs/atlassian-docker.git",
 		"https://github.com/docker/docker.git",
@@ -221,7 +221,7 @@ func TestValidGitTransport(t *testing.T) {
 		"http://github.com/docker/docker.git#:dir",
 	}
 	incompleteGitUrls := []string{
-		"github.com/docker/docker",
+		"github.com/moby/moby-core",
 	}
 
 	for _, url := range gitUrls {

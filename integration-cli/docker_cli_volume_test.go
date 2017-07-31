@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/integration-cli/request"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/integration-cli/request"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 func (s *DockerSuite) TestVolumeCLICreate(c *check.C) {
@@ -433,7 +433,7 @@ func (s *DockerSuite) TestVolumeCLIRmForce(c *check.C) {
 }
 
 // TestVolumeCLIRmForceInUse verifies that repeated `docker volume rm -f` calls does not remove a volume
-// if it is in use. Test case for https://github.com/docker/docker/issues/31446
+// if it is in use. Test case for https://github.com/moby/moby-core/issues/31446
 func (s *DockerSuite) TestVolumeCLIRmForceInUse(c *check.C) {
 	name := "testvolume"
 	out, _ := dockerCmd(c, "volume", "create", name)

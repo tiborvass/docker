@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/registry"
-	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/go-connections/nat"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/api/types/filters"
+	"github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/api/types/network"
+	"github.com/moby/moby-core/api/types/registry"
+	"github.com/moby/moby-core/api/types/swarm"
 )
 
 // RootFS returns Image's RootFS description including the layer IDs.

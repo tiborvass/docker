@@ -11,11 +11,11 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
-	enginetypes "github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/swarm/runtime"
-	"github.com/docker/docker/pkg/pubsub"
-	"github.com/docker/docker/plugin"
-	"github.com/docker/docker/plugin/v2"
+	enginetypes "github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/swarm/runtime"
+	"github.com/moby/moby-core/pkg/pubsub"
+	"github.com/moby/moby-core/plugin"
+	"github.com/moby/moby-core/plugin/v2"
 	"golang.org/x/net/context"
 )
 

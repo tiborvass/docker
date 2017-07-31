@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/docker/docker/daemon/config"
-	runconfigopts "github.com/docker/docker/runconfig/opts"
 	units "github.com/docker/go-units"
+	"github.com/moby/moby-core/daemon/config"
+	runconfigopts "github.com/moby/moby-core/runconfig/opts"
 	"github.com/spf13/pflag"
 )
 

@@ -25,12 +25,12 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/builder"
-	"github.com/docker/docker/builder/dockerfile/command"
-	"github.com/docker/docker/builder/dockerfile/parser"
-	"github.com/docker/docker/pkg/system"
-	"github.com/docker/docker/runconfig/opts"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/builder"
+	"github.com/moby/moby-core/builder/dockerfile/command"
+	"github.com/moby/moby-core/builder/dockerfile/parser"
+	"github.com/moby/moby-core/pkg/system"
+	"github.com/moby/moby-core/runconfig/opts"
 	"github.com/pkg/errors"
 )
 

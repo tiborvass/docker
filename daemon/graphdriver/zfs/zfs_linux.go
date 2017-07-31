@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/daemon/graphdriver"
+	"github.com/moby/moby-core/daemon/graphdriver"
 	"golang.org/x/sys/unix"
 )
 

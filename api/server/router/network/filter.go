@@ -3,9 +3,9 @@ package network
 import (
 	"fmt"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/runconfig"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/filters"
+	"github.com/moby/moby-core/runconfig"
 )
 
 func filterNetworkByType(nws []types.NetworkResource, netType string) ([]types.NetworkResource, error) {

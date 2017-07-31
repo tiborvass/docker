@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/daemon/cluster/convert"
 	units "github.com/docker/go-units"
 	"github.com/docker/swarmkit/api/genericresource"
+	"github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/daemon/cluster/convert"
 )
 
 var (

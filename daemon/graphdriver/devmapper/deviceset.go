@@ -19,14 +19,14 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/daemon/graphdriver"
-	"github.com/docker/docker/dockerversion"
-	"github.com/docker/docker/pkg/devicemapper"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/loopback"
-	"github.com/docker/docker/pkg/mount"
-	"github.com/docker/docker/pkg/parsers"
 	units "github.com/docker/go-units"
+	"github.com/moby/moby-core/daemon/graphdriver"
+	"github.com/moby/moby-core/dockerversion"
+	"github.com/moby/moby-core/pkg/devicemapper"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/loopback"
+	"github.com/moby/moby-core/pkg/mount"
+	"github.com/moby/moby-core/pkg/parsers"
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/pkg/errors"
 	"golang.org/x/sys/unix"
@@ -1669,7 +1669,7 @@ func (devices *DeviceSet) initDevmapper(doInit bool) (retErr error) {
 		return err
 	}
 
-	// https://github.com/docker/docker/issues/4036
+	// https://github.com/moby/moby-core/issues/4036
 	if supported := devicemapper.UdevSetSyncSupport(true); !supported {
 		if dockerversion.IAmStatic == "true" {
 			logrus.Error("devmapper: Udev sync is not supported. This will lead to data loss and unexpected behavior. Install a dynamic binary to use devicemapper or select a different storage driver. For more information, see https://docs.docker.com/engine/reference/commandline/dockerd/#storage-driver-options")

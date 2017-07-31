@@ -4,9 +4,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/docker/docker/integration-cli/checker"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 // export an image and try to import it into a new one

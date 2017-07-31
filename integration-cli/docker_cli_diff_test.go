@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
 )
 
 // ensure that an added file shows up in docker diff
@@ -90,7 +90,7 @@ func (s *DockerSuite) TestDiffEnsureDefaultDevs(c *check.C) {
 	}
 }
 
-// https://github.com/docker/docker/pull/14381#discussion_r33859347
+// https://github.com/moby/moby-core/pull/14381#discussion_r33859347
 func (s *DockerSuite) TestDiffEmptyArgClientError(c *check.C) {
 	out, _, err := dockerCmdWithError("diff", "")
 	c.Assert(err, checker.NotNil)

@@ -3,7 +3,7 @@ package dockerfile
 import (
 	"testing"
 
-	"github.com/docker/docker/pkg/testutil/tempfile"
+	"github.com/moby/moby-core/pkg/testutil/tempfile"
 	"github.com/stretchr/testify/assert"
 )
 

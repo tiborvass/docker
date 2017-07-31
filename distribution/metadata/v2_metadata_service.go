@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/layer"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/layer"
 	"github.com/opencontainers/go-digest"
 )
 

@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
-	containertypes "github.com/docker/docker/api/types/container"
-	mounttypes "github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/stringid"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/stringid"
 	"github.com/opencontainers/selinux/go-selinux/label"
 )
 

@@ -22,11 +22,11 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/daemon"
-	"github.com/docker/docker/pkg/authorization"
-	"github.com/docker/docker/pkg/plugins"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/daemon"
+	"github.com/moby/moby-core/pkg/authorization"
+	"github.com/moby/moby-core/pkg/plugins"
 )
 
 const (

@@ -9,13 +9,13 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types/backend"
-	"github.com/docker/docker/builder"
-	"github.com/docker/docker/builder/dockerfile/parser"
-	"github.com/docker/docker/builder/dockerignore"
-	"github.com/docker/docker/pkg/fileutils"
-	"github.com/docker/docker/pkg/symlink"
-	"github.com/docker/docker/pkg/urlutil"
+	"github.com/moby/moby-core/api/types/backend"
+	"github.com/moby/moby-core/builder"
+	"github.com/moby/moby-core/builder/dockerfile/parser"
+	"github.com/moby/moby-core/builder/dockerignore"
+	"github.com/moby/moby-core/pkg/fileutils"
+	"github.com/moby/moby-core/pkg/symlink"
+	"github.com/moby/moby-core/pkg/urlutil"
 	"github.com/pkg/errors"
 )
 

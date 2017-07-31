@@ -13,12 +13,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/fileutils"
-	"github.com/docker/docker/pkg/mount"
-	"github.com/docker/docker/volume"
-	"github.com/docker/docker/volume/drivers"
-	"github.com/docker/docker/volume/local"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/fileutils"
+	"github.com/moby/moby-core/pkg/mount"
+	"github.com/moby/moby-core/volume"
+	"github.com/moby/moby-core/volume/drivers"
+	"github.com/moby/moby-core/volume/local"
 	"github.com/pkg/errors"
 )
 

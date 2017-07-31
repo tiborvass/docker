@@ -16,27 +16,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	containertypes "github.com/docker/docker/api/types/container"
-	mounttypes "github.com/docker/docker/api/types/mount"
-	networktypes "github.com/docker/docker/api/types/network"
-	swarmtypes "github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/container/stream"
-	"github.com/docker/docker/daemon/exec"
-	"github.com/docker/docker/daemon/logger"
-	"github.com/docker/docker/daemon/logger/jsonfilelog"
-	"github.com/docker/docker/daemon/network"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/layer"
-	"github.com/docker/docker/libcontainerd"
-	"github.com/docker/docker/opts"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/ioutils"
-	"github.com/docker/docker/pkg/signal"
-	"github.com/docker/docker/pkg/symlink"
-	"github.com/docker/docker/pkg/system"
-	"github.com/docker/docker/restartmanager"
-	"github.com/docker/docker/runconfig"
-	"github.com/docker/docker/volume"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/go-units"
 	"github.com/docker/libnetwork"
@@ -44,6 +23,27 @@ import (
 	"github.com/docker/libnetwork/options"
 	"github.com/docker/libnetwork/types"
 	agentexec "github.com/docker/swarmkit/agent/exec"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
+	networktypes "github.com/moby/moby-core/api/types/network"
+	swarmtypes "github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/container/stream"
+	"github.com/moby/moby-core/daemon/exec"
+	"github.com/moby/moby-core/daemon/logger"
+	"github.com/moby/moby-core/daemon/logger/jsonfilelog"
+	"github.com/moby/moby-core/daemon/network"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/layer"
+	"github.com/moby/moby-core/libcontainerd"
+	"github.com/moby/moby-core/opts"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/signal"
+	"github.com/moby/moby-core/pkg/symlink"
+	"github.com/moby/moby-core/pkg/system"
+	"github.com/moby/moby-core/restartmanager"
+	"github.com/moby/moby-core/runconfig"
+	"github.com/moby/moby-core/volume"
 	"golang.org/x/net/context"
 )
 
@@ -497,7 +497,7 @@ func (container *Container) StopTimeout() int {
 // The non-recommended host configuration in the start api can
 // make these fields nil again, this corrects that issue until
 // we remove that behavior for good.
-// See https://github.com/docker/docker/pull/17779
+// See https://github.com/moby/moby-core/pull/17779
 // for a more detailed explanation on why we don't want that.
 func (container *Container) InitDNSHostConfig() {
 	container.Lock()

@@ -3,9 +3,9 @@
 package daemon
 
 import (
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/runconfig"
 	"github.com/docker/libnetwork"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/runconfig"
 )
 
 func (daemon *Daemon) setupLinkedContainers(container *container.Container) ([]string, error) {

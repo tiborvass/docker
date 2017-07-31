@@ -17,13 +17,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api"
-	dclient "github.com/docker/docker/client"
-	"github.com/docker/docker/opts"
-	"github.com/docker/docker/pkg/ioutils"
-	"github.com/docker/docker/pkg/testutil"
 	"github.com/docker/go-connections/sockets"
 	"github.com/docker/go-connections/tlsconfig"
+	"github.com/moby/moby-core/api"
+	dclient "github.com/moby/moby-core/client"
+	"github.com/moby/moby-core/opts"
+	"github.com/moby/moby-core/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/testutil"
 	"github.com/pkg/errors"
 )
 

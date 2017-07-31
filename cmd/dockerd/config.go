@@ -3,8 +3,8 @@ package main
 import (
 	"runtime"
 
-	"github.com/docker/docker/daemon/config"
-	"github.com/docker/docker/opts"
+	"github.com/moby/moby-core/daemon/config"
+	"github.com/moby/moby-core/opts"
 	"github.com/spf13/pflag"
 )
 

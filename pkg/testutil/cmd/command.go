@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/pkg/system"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/pkg/system"
 )
 
 type testingT interface {

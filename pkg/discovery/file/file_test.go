@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/docker/docker/pkg/discovery"
+	"github.com/moby/moby-core/pkg/discovery"
 
 	"github.com/go-check/check"
 )

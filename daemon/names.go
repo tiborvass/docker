@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/namesgenerator"
-	"github.com/docker/docker/pkg/stringid"
+	"github.com/moby/moby-core/api"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/namesgenerator"
+	"github.com/moby/moby-core/pkg/stringid"
 )
 
 var (

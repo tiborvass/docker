@@ -8,14 +8,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/daemon/config"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/volume"
-	"github.com/docker/docker/volume/drivers"
-	"github.com/docker/docker/volume/local"
-	"github.com/docker/docker/volume/store"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/daemon/config"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/volume"
+	"github.com/moby/moby-core/volume/drivers"
+	"github.com/moby/moby-core/volume/local"
+	"github.com/moby/moby-core/volume/store"
 )
 
 // Unix test as uses settings which are not available on Windows

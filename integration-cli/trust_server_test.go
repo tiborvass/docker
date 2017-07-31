@@ -12,15 +12,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	cliconfig "github.com/docker/docker/cli/config"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/fixtures/plugin"
-	"github.com/docker/docker/integration-cli/request"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	cliconfig "github.com/moby/moby-core/cli/config"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/fixtures/plugin"
+	"github.com/moby/moby-core/integration-cli/request"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 var notaryBinary = "notary"

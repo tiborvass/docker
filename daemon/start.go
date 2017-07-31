@@ -11,10 +11,10 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/Sirupsen/logrus"
-	apierrors "github.com/docker/docker/api/errors"
-	"github.com/docker/docker/api/types"
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/container"
+	apierrors "github.com/moby/moby-core/api/errors"
+	"github.com/moby/moby-core/api/types"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/container"
 )
 
 // ContainerStart starts a container.

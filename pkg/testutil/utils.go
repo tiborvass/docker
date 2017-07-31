@@ -14,8 +14,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/docker/docker/pkg/stringutils"
-	"github.com/docker/docker/pkg/system"
+	"github.com/moby/moby-core/pkg/stringutils"
+	"github.com/moby/moby-core/pkg/system"
 )
 
 // IsKilled process the specified error and returns whether the process was killed or not.

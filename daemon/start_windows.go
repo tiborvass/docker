@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/layer"
-	"github.com/docker/docker/libcontainerd"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/layer"
+	"github.com/moby/moby-core/libcontainerd"
 	"golang.org/x/sys/windows/registry"
 )
 

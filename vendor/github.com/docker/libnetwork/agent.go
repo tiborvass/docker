@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/stringid"
 	"github.com/docker/go-events"
 	"github.com/docker/libnetwork/cluster"
 	"github.com/docker/libnetwork/datastore"
@@ -20,6 +19,7 @@ import (
 	"github.com/docker/libnetwork/networkdb"
 	"github.com/docker/libnetwork/types"
 	"github.com/gogo/protobuf/proto"
+	"github.com/moby/moby-core/pkg/stringid"
 )
 
 const (

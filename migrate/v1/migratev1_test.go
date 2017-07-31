@@ -14,9 +14,9 @@ import (
 	"testing"
 
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/distribution/metadata"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/layer"
+	"github.com/moby/moby-core/distribution/metadata"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/layer"
 	"github.com/opencontainers/go-digest"
 )
 

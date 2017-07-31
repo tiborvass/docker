@@ -3,8 +3,8 @@ package authorization
 import (
 	"sync"
 
-	"github.com/docker/docker/pkg/plugingetter"
-	"github.com/docker/docker/pkg/plugins"
+	"github.com/moby/moby-core/pkg/plugingetter"
+	"github.com/moby/moby-core/pkg/plugins"
 )
 
 // Plugin allows third party plugins to authorize requests and responses

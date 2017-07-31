@@ -7,10 +7,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/docker/docker/daemon/graphdriver"
-	"github.com/docker/docker/daemon/graphdriver/graphtest"
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/reexec"
+	"github.com/moby/moby-core/daemon/graphdriver"
+	"github.com/moby/moby-core/daemon/graphdriver/graphtest"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/reexec"
 	"golang.org/x/sys/unix"
 )
 

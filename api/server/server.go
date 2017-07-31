@@ -8,13 +8,13 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/errors"
-	"github.com/docker/docker/api/server/httputils"
-	"github.com/docker/docker/api/server/middleware"
-	"github.com/docker/docker/api/server/router"
-	"github.com/docker/docker/api/server/router/debug"
-	"github.com/docker/docker/dockerversion"
 	"github.com/gorilla/mux"
+	"github.com/moby/moby-core/api/errors"
+	"github.com/moby/moby-core/api/server/httputils"
+	"github.com/moby/moby-core/api/server/middleware"
+	"github.com/moby/moby-core/api/server/router"
+	"github.com/moby/moby-core/api/server/router/debug"
+	"github.com/moby/moby-core/dockerversion"
 	"golang.org/x/net/context"
 )
 

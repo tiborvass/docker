@@ -6,8 +6,8 @@ import (
 	"hash"
 	"os"
 
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/tarsum"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/tarsum"
 )
 
 // NewFileHash returns new hash that is used for the builder cache keys

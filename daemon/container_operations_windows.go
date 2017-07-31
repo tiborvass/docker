@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/system"
 	"github.com/docker/libnetwork"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/system"
 	"github.com/pkg/errors"
 )
 

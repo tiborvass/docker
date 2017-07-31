@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/docker/docker/pkg/namesgenerator"
+	"github.com/moby/moby-core/pkg/namesgenerator"
 )
 
 func main() {

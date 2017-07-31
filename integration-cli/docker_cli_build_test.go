@@ -16,18 +16,18 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/docker/docker/builder/dockerfile/command"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/integration-cli/cli/build/fakecontext"
-	"github.com/docker/docker/integration-cli/cli/build/fakegit"
-	"github.com/docker/docker/integration-cli/cli/build/fakestorage"
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/stringutils"
-	"github.com/docker/docker/pkg/testutil"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/builder/dockerfile/command"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/integration-cli/cli/build/fakecontext"
+	"github.com/moby/moby-core/integration-cli/cli/build/fakegit"
+	"github.com/moby/moby-core/integration-cli/cli/build/fakestorage"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/stringutils"
+	"github.com/moby/moby-core/pkg/testutil"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 	"github.com/opencontainers/go-digest"
 )
 
@@ -437,7 +437,7 @@ ADD %s/file /`
 
 }
 
-// Regression for https://github.com/docker/docker/pull/27805
+// Regression for https://github.com/moby/moby-core/pull/27805
 // Makes sure that we don't use the cache if the contents of
 // a file in a subfolder of the context is modified and we re-build.
 func (s *DockerSuite) TestBuildModifyFileInFolder(c *check.C) {
@@ -6243,7 +6243,7 @@ func (s *DockerSuite) TestBuildIntermediateTarget(c *check.C) {
 
 // TestBuildOpaqueDirectory tests that a build succeeds which
 // creates opaque directories.
-// See https://github.com/docker/docker/issues/25244
+// See https://github.com/moby/moby-core/issues/25244
 func (s *DockerSuite) TestBuildOpaqueDirectory(c *check.C) {
 	testRequires(c, DaemonIsLinux)
 	dockerFile := `

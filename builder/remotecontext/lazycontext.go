@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/docker/docker/builder"
-	"github.com/docker/docker/pkg/pools"
+	"github.com/moby/moby-core/builder"
+	"github.com/moby/moby-core/pkg/pools"
 	"github.com/pkg/errors"
 )
 

@@ -2,8 +2,8 @@ package dockerfile
 
 import (
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/builder"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/builder"
 )
 
 // ImageProber exposes an Image cache to the Builder. It supports resetting a

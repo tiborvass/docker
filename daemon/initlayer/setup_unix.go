@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/docker/docker/pkg/idtools"
+	"github.com/moby/moby-core/pkg/idtools"
 	"golang.org/x/sys/unix"
 )
 

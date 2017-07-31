@@ -3,7 +3,7 @@ package daemon
 import (
 	"fmt"
 
-	"github.com/docker/docker/libcontainerd"
+	"github.com/moby/moby-core/libcontainerd"
 )
 
 // ContainerResize changes the size of the TTY of the process running

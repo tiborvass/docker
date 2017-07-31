@@ -2,6 +2,6 @@ package register
 
 import (
 	// register the windows graph drivers
-	_ "github.com/docker/docker/daemon/graphdriver/lcow"
-	_ "github.com/docker/docker/daemon/graphdriver/windows"
+	_ "github.com/moby/moby-core/daemon/graphdriver/lcow"
+	_ "github.com/moby/moby-core/daemon/graphdriver/windows"
 )

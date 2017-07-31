@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	types "github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/daemon/cluster/executor/container"
 	lncluster "github.com/docker/libnetwork/cluster"
 	swarmapi "github.com/docker/swarmkit/api"
 	swarmnode "github.com/docker/swarmkit/node"
+	types "github.com/moby/moby-core/api/types/swarm"
+	"github.com/moby/moby-core/daemon/cluster/executor/container"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

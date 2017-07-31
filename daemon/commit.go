@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/api/types/backend"
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/builder/dockerfile"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/image"
-	"github.com/docker/docker/layer"
-	"github.com/docker/docker/pkg/ioutils"
+	"github.com/moby/moby-core/api/types/backend"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/builder/dockerfile"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/image"
+	"github.com/moby/moby-core/layer"
+	"github.com/moby/moby-core/pkg/ioutils"
 	"github.com/pkg/errors"
 )
 

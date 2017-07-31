@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/docker/docker/pkg/archive"
+	"github.com/moby/moby-core/pkg/archive"
 )
 
 type testingT interface {

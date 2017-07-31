@@ -12,12 +12,12 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types/backend"
-	"github.com/docker/docker/daemon/logger"
-	"github.com/docker/docker/daemon/logger/jsonfilelog/multireader"
-	"github.com/docker/docker/pkg/filenotify"
-	"github.com/docker/docker/pkg/jsonlog"
-	"github.com/docker/docker/pkg/tailfile"
+	"github.com/moby/moby-core/api/types/backend"
+	"github.com/moby/moby-core/daemon/logger"
+	"github.com/moby/moby-core/daemon/logger/jsonfilelog/multireader"
+	"github.com/moby/moby-core/pkg/filenotify"
+	"github.com/moby/moby-core/pkg/jsonlog"
+	"github.com/moby/moby-core/pkg/tailfile"
 	"github.com/pkg/errors"
 )
 

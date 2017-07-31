@@ -9,12 +9,12 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/backend"
-	"github.com/docker/docker/api/types/versions"
-	"github.com/docker/docker/api/types/versions/v1p20"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/ioutils"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/backend"
+	"github.com/moby/moby-core/api/types/versions"
+	"github.com/moby/moby-core/api/types/versions/v1p20"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/ioutils"
 )
 
 // ContainerStats writes information about the container to the stream

@@ -38,8 +38,8 @@ EOF
 [ "$AWS_S3_BUCKET" ] || usage
 [ "$AWS_ACCESS_KEY_ID" ] || usage
 [ "$AWS_SECRET_ACCESS_KEY" ] || usage
-[ -d /go/src/github.com/docker/docker ] || usage
-cd /go/src/github.com/docker/docker
+[ -d /go/src/github.com/moby/moby-core ] || usage
+cd /go/src/github.com/moby/moby-core
 [ -x hack/make.sh ] || usage
 
 export AWS_DEFAULT_REGION

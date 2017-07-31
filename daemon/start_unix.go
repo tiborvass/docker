@@ -5,8 +5,8 @@ package daemon
 import (
 	"fmt"
 
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/libcontainerd"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/libcontainerd"
 )
 
 // getLibcontainerdCreateOptions callers must hold a lock on the container

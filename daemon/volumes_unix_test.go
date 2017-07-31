@@ -8,10 +8,10 @@ import (
 	"reflect"
 	"testing"
 
-	containertypes "github.com/docker/docker/api/types/container"
-	mounttypes "github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/volume"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/volume"
 )
 
 func TestBackportMountSpec(t *testing.T) {

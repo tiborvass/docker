@@ -9,7 +9,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/docker/docker/builder"
+	"github.com/moby/moby-core/builder"
 )
 
 const (

@@ -16,20 +16,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	containertypes "github.com/docker/docker/api/types/container"
-	mounttypes "github.com/docker/docker/api/types/mount"
-	networktypes "github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/cli"
-	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/docker/docker/integration-cli/request"
-	"github.com/docker/docker/pkg/ioutils"
-	"github.com/docker/docker/pkg/mount"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/pkg/testutil"
-	"github.com/docker/docker/volume"
 	"github.com/go-check/check"
+	"github.com/moby/moby-core/api/types"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
+	networktypes "github.com/moby/moby-core/api/types/network"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/cli"
+	"github.com/moby/moby-core/integration-cli/cli/build"
+	"github.com/moby/moby-core/integration-cli/request"
+	"github.com/moby/moby-core/pkg/ioutils"
+	"github.com/moby/moby-core/pkg/mount"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/pkg/testutil"
+	"github.com/moby/moby-core/volume"
 )
 
 func (s *DockerSuite) TestContainerAPIGetAll(c *check.C) {
@@ -1136,7 +1136,7 @@ func (s *DockerSuite) TestContainerAPIDeleteRemoveVolume(c *check.C) {
 	c.Assert(os.IsNotExist(err), checker.True, check.Commentf("expected to get ErrNotExist error, got %v", err))
 }
 
-// Regression test for https://github.com/docker/docker/issues/6231
+// Regression test for https://github.com/moby/moby-core/issues/6231
 func (s *DockerSuite) TestContainerAPIChunkedEncoding(c *check.C) {
 
 	config := map[string]interface{}{

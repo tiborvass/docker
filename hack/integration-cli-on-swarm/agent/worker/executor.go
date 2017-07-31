@@ -8,11 +8,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/client"
-	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/client"
+	"github.com/moby/moby-core/pkg/stdcopy"
 )
 
 // testChunkExecutor executes integration-cli binary.

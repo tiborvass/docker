@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/integration-cli/checker"
-	"github.com/docker/docker/integration-cli/request"
-	"github.com/docker/docker/pkg/parsers/kernel"
 	"github.com/go-check/check"
 	"github.com/kr/pty"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/integration-cli/checker"
+	"github.com/moby/moby-core/integration-cli/request"
+	"github.com/moby/moby-core/pkg/parsers/kernel"
 )
 
 func (s *DockerSuite) TestUpdateRunningContainer(c *check.C) {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	containertypes "github.com/docker/docker/api/types/container"
 	"github.com/docker/go-units"
+	containertypes "github.com/moby/moby-core/api/types/container"
 )
 
 // ContainerTop handles `docker top` client requests.

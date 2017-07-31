@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	mounttypes "github.com/docker/docker/api/types/mount"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
 )
 
 var platformRawValidationOpts = []func(o *validateOpts){

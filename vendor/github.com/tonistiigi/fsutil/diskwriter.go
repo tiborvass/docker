@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/tarsum"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/tarsum"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"golang.org/x/sync/errgroup"

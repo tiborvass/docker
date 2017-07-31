@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/daemon/config"
-	"github.com/docker/docker/pkg/testutil"
-	"github.com/docker/docker/pkg/testutil/tempfile"
+	"github.com/moby/moby-core/daemon/config"
+	"github.com/moby/moby-core/pkg/testutil"
+	"github.com/moby/moby-core/pkg/testutil/tempfile"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

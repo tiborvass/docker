@@ -27,7 +27,7 @@ fi
 ! taskkill -F -IM docker.exe -T >& /dev/null
 
 # Remove everything
-! cd /c/jenkins/gopath/src/github.com/docker/docker
+! cd /c/jenkins/gopath/src/github.com/moby/moby-core
 ! rm -rfd * >& /dev/null
 ! rm -rfd .* >& /dev/null
 

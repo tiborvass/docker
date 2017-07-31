@@ -248,9 +248,9 @@ installed and available at runtime:
 * a [properly
   mounted](https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount)
   cgroupfs hierarchy (having a single, all-encompassing "cgroup" mount point
-  [is](https://github.com/docker/docker/issues/2683)
-  [not](https://github.com/docker/docker/issues/3485)
-  [sufficient](https://github.com/docker/docker/issues/4568))
+  [is](https://github.com/moby/moby-core/issues/2683)
+  [not](https://github.com/moby/moby-core/issues/3485)
+  [sufficient](https://github.com/moby/moby-core/issues/4568))
 
 Additionally, the Docker client needs the following software to be installed and
 available at runtime:

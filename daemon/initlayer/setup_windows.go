@@ -3,7 +3,7 @@
 package initlayer
 
 import (
-	"github.com/docker/docker/pkg/idtools"
+	"github.com/moby/moby-core/pkg/idtools"
 )
 
 // Setup populates a directory with mountpoints suitable

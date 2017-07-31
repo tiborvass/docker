@@ -10,11 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/docker/daemon/graphdriver"
-	"github.com/docker/docker/daemon/graphdriver/vfs"
-	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/idtools"
-	"github.com/docker/docker/pkg/stringid"
+	"github.com/moby/moby-core/daemon/graphdriver"
+	"github.com/moby/moby-core/daemon/graphdriver/vfs"
+	"github.com/moby/moby-core/pkg/archive"
+	"github.com/moby/moby-core/pkg/idtools"
+	"github.com/moby/moby-core/pkg/stringid"
 	"github.com/opencontainers/go-digest"
 )
 

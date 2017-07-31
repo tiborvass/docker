@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/docker/docker/builder"
+	"github.com/moby/moby-core/builder"
 	"github.com/pkg/errors"
 )
 

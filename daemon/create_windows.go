@@ -3,10 +3,10 @@ package daemon
 import (
 	"fmt"
 
-	containertypes "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/container"
-	"github.com/docker/docker/pkg/stringid"
-	"github.com/docker/docker/volume"
+	containertypes "github.com/moby/moby-core/api/types/container"
+	"github.com/moby/moby-core/container"
+	"github.com/moby/moby-core/pkg/stringid"
+	"github.com/moby/moby-core/volume"
 )
 
 // createContainerPlatformSpecificSettings performs platform specific container create functionality

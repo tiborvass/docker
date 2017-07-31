@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/docker/docker/api/types"
-	volumetypes "github.com/docker/docker/api/types/volume"
-	"github.com/docker/docker/integration-cli/request"
-	icmd "github.com/docker/docker/pkg/testutil/cmd"
+	"github.com/moby/moby-core/api/types"
+	volumetypes "github.com/moby/moby-core/api/types/volume"
+	"github.com/moby/moby-core/integration-cli/request"
+	icmd "github.com/moby/moby-core/pkg/testutil/cmd"
 )
 
 type testingT interface {

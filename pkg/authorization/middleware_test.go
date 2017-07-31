@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/docker/pkg/plugingetter"
+	"github.com/moby/moby-core/pkg/plugingetter"
 	"github.com/stretchr/testify/require"
 )
 

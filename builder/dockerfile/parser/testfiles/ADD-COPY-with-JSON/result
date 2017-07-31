@@ -1,6 +1,6 @@
 (from "ubuntu:14.04")
 (label "maintainer" "Seongyeol Lim <seongyeol37@gmail.com>")
-(copy "." "/go/src/github.com/docker/docker")
+(copy "." "/go/src/github.com/moby/moby-core")
 (add "." "/")
 (add "null" "/")
 (copy "nullfile" "/tmp")

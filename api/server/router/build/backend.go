@@ -1,8 +1,8 @@
 package build
 
 import (
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/backend"
+	"github.com/moby/moby-core/api/types"
+	"github.com/moby/moby-core/api/types/backend"
 	"golang.org/x/net/context"
 )
 

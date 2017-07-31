@@ -4,7 +4,7 @@ import "testing"
 
 var (
 	gitUrls = []string{
-		"git://github.com/docker/docker",
+		"git://github.com/moby/moby-core",
 		"git@github.com:docker/docker.git",
 		"git@bitbucket.org:atlassianlabs/atlassian-docker.git",
 		"https://github.com/docker/docker.git",
@@ -13,7 +13,7 @@ var (
 		"http://github.com/docker/docker.git#:dir",
 	}
 	incompleteGitUrls = []string{
-		"github.com/docker/docker",
+		"github.com/moby/moby-core",
 	}
 	invalidGitUrls = []string{
 		"http://github.com/docker/docker.git:#branch",

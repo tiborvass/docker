@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	mounttypes "github.com/docker/docker/api/types/mount"
-	"github.com/docker/docker/container"
-	volumestore "github.com/docker/docker/volume/store"
+	mounttypes "github.com/moby/moby-core/api/types/mount"
+	"github.com/moby/moby-core/container"
+	volumestore "github.com/moby/moby-core/volume/store"
 )
 
 func (daemon *Daemon) prepareMountPoints(container *container.Container) error {

@@ -3,7 +3,7 @@ package daemon
 import (
 	"fmt"
 
-	"github.com/docker/docker/api/types/container"
+	"github.com/moby/moby-core/api/types/container"
 )
 
 // ContainerUpdate updates configuration of the container
