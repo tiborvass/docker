@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/volume"
+	"github.com/sirupsen/logrus"
 )
 
 var (

@@ -7,12 +7,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/digestset"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // Store is an interface for creating and accessing images

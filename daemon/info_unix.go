@@ -7,11 +7,11 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // FillPlatformInfo fills the platform related info.

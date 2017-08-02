@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/container"
@@ -14,6 +13,7 @@ import (
 	"github.com/docker/libnetwork"
 	swarmapi "github.com/docker/swarmkit/api"
 	gogotypes "github.com/gogo/protobuf/types"
+	"github.com/sirupsen/logrus"
 )
 
 var (

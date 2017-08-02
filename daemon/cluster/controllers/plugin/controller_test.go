@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
 	enginetypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm/runtime"
 	"github.com/tiborvass/docker/pkg/pubsub"
 	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/plugin/v2"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

@@ -18,8 +18,8 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )
 

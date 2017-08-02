@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/links"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -21,6 +20,7 @@ import (
 	"github.com/docker/libnetwork"
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
 

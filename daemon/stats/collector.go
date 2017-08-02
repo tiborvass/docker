@@ -5,10 +5,10 @@ package stats
 import (
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/pubsub"
+	"github.com/sirupsen/logrus"
 )
 
 // Collect registers the container with the collector and adds it to

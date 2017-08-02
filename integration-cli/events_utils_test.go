@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	eventstestutils "github.com/tiborvass/docker/daemon/events/testutils"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/go-check/check"
+	"github.com/sirupsen/logrus"
 )
 
 // eventMatcher is a function that tries to match an event input.

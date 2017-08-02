@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/errors"
 	containerpkg "github.com/tiborvass/docker/container"
+	"github.com/sirupsen/logrus"
 )
 
 // ContainerStop looks for the given container and terminates it,

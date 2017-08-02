@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	apierrors "github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/network"
@@ -21,6 +20,7 @@ import (
 	"github.com/docker/libnetwork/ipamapi"
 	networktypes "github.com/docker/libnetwork/types"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/distribution/xfer"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
@@ -16,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

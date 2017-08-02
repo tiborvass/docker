@@ -11,7 +11,6 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"golang.org/x/net/context"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog/multireader"
@@ -19,6 +18,7 @@ import (
 	"github.com/tiborvass/docker/pkg/jsonlog"
 	"github.com/tiborvass/docker/pkg/tailfile"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 const maxJSONDecodeRetry = 20000

@@ -155,10 +155,10 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/sirupsen/logrus"
 )
 
 func (s *journald) Close() error {

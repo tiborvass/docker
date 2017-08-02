@@ -8,10 +8,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/docker/libnetwork/resolvconf/dns"
 	"github.com/docker/libnetwork/types"
+	"github.com/sirupsen/logrus"
 )
 
 var (

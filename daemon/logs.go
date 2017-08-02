@@ -7,13 +7,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/sirupsen/logrus"
 )
 
 // ContainerLogs copies the container's log channel to the channel provided in

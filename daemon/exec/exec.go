@@ -4,10 +4,10 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container/stream"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/sirupsen/logrus"
 )
 
 // Config holds the configurations for execs. The Daemon keeps

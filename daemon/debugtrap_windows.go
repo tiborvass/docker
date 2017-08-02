@@ -6,9 +6,9 @@ import (
 	"unsafe"
 
 	winio "github.com/Microsoft/go-winio"
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )
 

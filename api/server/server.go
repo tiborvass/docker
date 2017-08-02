@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/errors"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/server/middleware"
@@ -15,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/server/router/debug"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

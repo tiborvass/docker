@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/restartmanager"
+	"github.com/sirupsen/logrus"
 )
 
 func (daemon *Daemon) setStateCounter(c *container.Container) {

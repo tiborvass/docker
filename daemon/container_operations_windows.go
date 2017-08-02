@@ -5,11 +5,11 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/libnetwork"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 func (daemon *Daemon) setupLinkedContainers(container *container.Container) ([]string, error) {

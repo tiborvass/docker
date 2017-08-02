@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/plugins/logdriver"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // pluginAdapter takes a plugin and implements the Logger interface for logger

@@ -12,7 +12,6 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/daemon/graphdriver/overlayutils"
 	"github.com/tiborvass/docker/pkg/archive"
@@ -22,6 +21,7 @@ import (
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/opencontainers/selinux/go-selinux/label"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
 

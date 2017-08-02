@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/remotecontext"
 	dockerimage "github.com/tiborvass/docker/image"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

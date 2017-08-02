@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/registry"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 )
 

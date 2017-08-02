@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	containerpkg "github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/signal"
+	"github.com/sirupsen/logrus"
 )
 
 type errNoSuchProcess struct {

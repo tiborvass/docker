@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
@@ -26,6 +25,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/moby/buildkit/session"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"golang.org/x/sync/syncmap"
 )

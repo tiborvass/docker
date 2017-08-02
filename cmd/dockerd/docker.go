@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 

@@ -18,7 +18,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	containerd "github.com/containerd/containerd/api/grpc/types"
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
@@ -31,6 +30,7 @@ import (
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/opts"
+	"github.com/sirupsen/logrus"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"
 	"github.com/tiborvass/docker/daemon/initlayer"
