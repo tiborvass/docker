@@ -5,7 +5,6 @@ package container
 import (
 	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
@@ -13,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/pkg/chrootarchive"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/selinux/go-selinux/label"
@@ -130,7 +128,7 @@ func (container *Container) NetworkMounts() []Mount {
 
 // CopyImagePathContent copies files in destination to the volume.
 func (container *Container) CopyImagePathContent(v volume.Volume, destination string) error {
-	rootfs, err := symlink.FollowSymlinkInScope(filepath.Join(container.BaseFS, destination), container.BaseFS)
+	rootfs, err := container.GetResourcePath(destination)
 	if err != nil {
 		return err
 	}
@@ -451,11 +449,6 @@ func (container *Container) TmpfsMounts() ([]Mount, error) {
 		}
 	}
 	return mounts, nil
-}
-
-// cleanResourcePath cleans a resource path and prepares to combine with mnt path
-func cleanResourcePath(path string) string {
-	return filepath.Join(string(os.PathSeparator), path)
 }
 
 // EnableServiceDiscoveryOnDefaultNetwork Enable service discovery on default network

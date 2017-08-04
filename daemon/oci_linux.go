@@ -19,7 +19,6 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/tiborvass/docker/pkg/symlink"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
 	"github.com/opencontainers/runc/libcontainer/cgroups"
@@ -187,7 +186,7 @@ func setUser(s *specs.Spec, c *container.Container) error {
 }
 
 func readUserFile(c *container.Container, p string) (io.ReadCloser, error) {
-	fp, err := symlink.FollowSymlinkInScope(filepath.Join(c.BaseFS, p), c.BaseFS)
+	fp, err := c.GetResourcePath(p)
 	if err != nil {
 		return nil, err
 	}
@@ -632,7 +631,7 @@ func (daemon *Daemon) populateCommonSpec(s *specs.Spec, c *container.Container) 
 		return err
 	}
 	s.Root = &specs.Root{
-		Path:     c.BaseFS,
+		Path:     c.BaseFS.Path(),
 		Readonly: c.HostConfig.ReadonlyRootfs,
 	}
 	if err := c.SetupWorkingDirectory(daemon.idMappings.RootPair()); err != nil {
