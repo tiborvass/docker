@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Microsoft/opengcs/client"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/libcontainerd"
-	"github.com/jhowardmsft/opengcs/gogcs/client"
 	"golang.org/x/sys/windows/registry"
 )
 
