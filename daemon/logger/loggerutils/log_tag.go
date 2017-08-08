@@ -4,7 +4,7 @@ import (
 	"bytes"
 
 	"github.com/tiborvass/docker/daemon/logger"
-	"github.com/tiborvass/docker/pkg/templates"
+	"github.com/tiborvass/docker/daemon/logger/templates"
 )
 
 // DefaultTemplate defines the defaults template logger should use.
