@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/docker/distribution/reference"
+	"github.com/tiborvass/docker/api/errdefs"
 	enginetypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm/runtime"
 	"github.com/tiborvass/docker/plugin"
@@ -198,8 +199,7 @@ func (p *Controller) Wait(ctx context.Context) error {
 }
 
 func isNotFound(err error) bool {
-	_, ok := errors.Cause(err).(plugin.ErrNotFound)
-	return ok
+	return errdefs.IsNotFound(err)
 }
 
 // Shutdown is the shutdown phase from swarmkit

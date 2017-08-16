@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	derr "github.com/tiborvass/docker/api/errors"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/container"
@@ -923,7 +922,7 @@ func (daemon *Daemon) getNetworkedContainer(containerID, connectedContainerID st
 	}
 	if !nc.IsRunning() {
 		err := fmt.Errorf("cannot join network of a non running container: %s", connectedContainerID)
-		return nil, derr.NewRequestConflictError(err)
+		return nil, stateConflictError{err}
 	}
 	if nc.IsRestarting() {
 		return nil, errContainerIsRestarting(connectedContainerID)
