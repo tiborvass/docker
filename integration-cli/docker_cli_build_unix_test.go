@@ -12,15 +12,15 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
-
 	"syscall"
+	"time"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
+	units "github.com/docker/go-units"
 	"github.com/go-check/check"
 )
 
