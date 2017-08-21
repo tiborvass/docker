@@ -21,6 +21,7 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/devicemapper"
+	"github.com/tiborvass/docker/pkg/dmesg"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/loopback"
 	"github.com/tiborvass/docker/pkg/mount"
@@ -1199,7 +1200,7 @@ func (devices *DeviceSet) growFS(info *devInfo) error {
 	options = joinMountOptions(options, devices.mountOptions)
 
 	if err := mount.Mount(info.DevName(), fsMountPoint, devices.BaseDeviceFilesystem, options); err != nil {
-		return fmt.Errorf("Error mounting '%s' on '%s': %s", info.DevName(), fsMountPoint, err)
+		return fmt.Errorf("Error mounting '%s' on '%s': %s\n%v", info.DevName(), fsMountPoint, err, string(dmesg.Dmesg(256)))
 	}
 
 	defer unix.Unmount(fsMountPoint, unix.MNT_DETACH)
@@ -2390,7 +2391,7 @@ func (devices *DeviceSet) MountDevice(hash, path, mountLabel string) error {
 	options = joinMountOptions(options, label.FormatMountLabel("", mountLabel))
 
 	if err := mount.Mount(info.DevName(), path, fstype, options); err != nil {
-		return fmt.Errorf("devmapper: Error mounting '%s' on '%s': %s", info.DevName(), path, err)
+		return fmt.Errorf("devmapper: Error mounting '%s' on '%s': %s\n%v", info.DevName(), path, err, string(dmesg.Dmesg(256)))
 	}
 
 	if fstype == "xfs" && devices.xfsNospaceRetries != "" {
