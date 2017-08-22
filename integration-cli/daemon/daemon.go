@@ -14,18 +14,20 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/testutil"
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/docker/go-connections/sockets"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/go-check/check"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/net/context"
 )
 
 type testingT interface {
@@ -570,20 +572,13 @@ func (d *Daemon) WaitRun(contID string) error {
 	return WaitInspectWithArgs(d.dockerBinary, contID, "{{.State.Running}}", "true", 10*time.Second, args...)
 }
 
-// GetBaseDeviceSize returns the base device size of the daemon
-func (d *Daemon) GetBaseDeviceSize(c *check.C) int64 {
-	infoCmdOutput, _, err := testutil.RunCommandPipelineWithOutput(
-		exec.Command(d.dockerBinary, "-H", d.Sock(), "info"),
-		exec.Command("grep", "Base Device Size"),
-	)
-	c.Assert(err, checker.IsNil)
-	basesizeSlice := strings.Split(infoCmdOutput, ":")
-	basesize := strings.Trim(basesizeSlice[1], " ")
-	basesize = strings.Trim(basesize, "\n")[:len(basesize)-3]
-	basesizeFloat, err := strconv.ParseFloat(strings.Trim(basesize, " "), 64)
-	c.Assert(err, checker.IsNil)
-	basesizeBytes := int64(basesizeFloat) * (1024 * 1024 * 1024)
-	return basesizeBytes
+// Info returns the info struct for this daemon
+func (d *Daemon) Info(t require.TestingT) types.Info {
+	apiclient, err := request.NewClientForHost(d.Sock())
+	require.NoError(t, err)
+	info, err := apiclient.Info(context.Background())
+	require.NoError(t, err)
+	return info
 }
 
 // Cmd executes a docker CLI command against this daemon.
