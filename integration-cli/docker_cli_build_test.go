@@ -25,10 +25,9 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakestorage"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/stringutils"
-	"github.com/tiborvass/docker/pkg/testutil"
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 )
 
 func (s *DockerSuite) TestBuildJSONEmptyRun(c *check.C) {
