@@ -18,9 +18,9 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/fixtures/plugin"
 	"github.com/tiborvass/docker/integration-cli/request"
-	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/go-check/check"
+	"github.com/gotestyourself/gotestyourself/icmd"
 )
 
 var notaryBinary = "notary"
