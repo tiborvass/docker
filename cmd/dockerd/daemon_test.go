@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/daemon/config"
-	"github.com/tiborvass/docker/pkg/testutil"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/gotestyourself/gotestyourself/fs"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"

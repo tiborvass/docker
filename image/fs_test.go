@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tiborvass/docker/pkg/testutil"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/assert"
 )
