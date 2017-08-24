@@ -6,20 +6,22 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
 
+	"github.com/tiborvass/docker/api/types"
 	eventtypes "github.com/tiborvass/docker/api/types/events"
+	"github.com/tiborvass/docker/client"
 	eventstestutils "github.com/tiborvass/docker/daemon/events/testutils"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/tiborvass/docker/integration-cli/request"
+
 	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"golang.org/x/net/context"
 )
 
 func (s *DockerSuite) TestEventsTimestampFormats(c *check.C) {
@@ -498,9 +500,15 @@ func (s *DockerSuite) TestEventsResize(c *check.C) {
 	cID := strings.TrimSpace(out)
 	c.Assert(waitRun(cID), checker.IsNil)
 
-	endpoint := "/containers/" + cID + "/resize?h=80&w=24"
-	status, _, err := request.SockRequest("POST", endpoint, nil, daemonHost())
-	c.Assert(status, checker.Equals, http.StatusOK)
+	cli, err := client.NewEnvClient()
+	c.Assert(err, checker.IsNil)
+	defer cli.Close()
+
+	options := types.ResizeOptions{
+		Height: 80,
+		Width:  24,
+	}
+	err = cli.ContainerResize(context.Background(), cID, options)
 	c.Assert(err, checker.IsNil)
 
 	dockerCmd(c, "stop", cID)
