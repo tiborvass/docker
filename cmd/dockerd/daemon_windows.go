@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/tiborvass/docker/libcontainerd"
-	"github.com/tiborvass/docker/pkg/system"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )
@@ -55,8 +54,8 @@ func (cli *DaemonCli) setupConfigReloadTrap() {
 		sa := windows.SecurityAttributes{
 			Length: 0,
 		}
-		ev := "Global\\docker-daemon-config-" + fmt.Sprint(os.Getpid())
-		if h, _ := system.CreateEvent(&sa, false, false, ev); h != 0 {
+		ev, _ := windows.UTF16PtrFromString("Global\\docker-daemon-config-" + fmt.Sprint(os.Getpid()))
+		if h, _ := windows.CreateEvent(&sa, 0, 0, ev); h != 0 {
 			logrus.Debugf("Config reload - waiting signal at %s", ev)
 			for {
 				windows.WaitForSingleObject(h, windows.INFINITE)
