@@ -16,8 +16,8 @@ import (
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/integration-cli/fixtures/plugin"
 	"github.com/tiborvass/docker/integration-cli/request"
-	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/go-check/check"
+	"github.com/gotestyourself/gotestyourself/icmd"
 	"golang.org/x/net/context"
 )
 

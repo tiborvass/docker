@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/integration-cli/fixtures/load"
-	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
+	"github.com/gotestyourself/gotestyourself/icmd"
 )
 
 type protectedElements struct {

@@ -14,9 +14,9 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 	"github.com/tiborvass/docker/pkg/stringid"
-	icmd "github.com/tiborvass/docker/pkg/testutil/cmd"
 	"github.com/docker/go-connections/nat"
 	"github.com/go-check/check"
+	"github.com/gotestyourself/gotestyourself/icmd"
 )
 
 // Make sure we can create a simple container with some args
