@@ -11,9 +11,11 @@ import (
 
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakestorage"
+	"github.com/stretchr/testify/require"
 )
 
 type testingT interface {
+	require.TestingT
 	logT
 	Fatal(args ...interface{})
 	Fatalf(string, ...interface{})
