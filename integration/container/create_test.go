@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/integration/util/request"
-	"github.com/tiborvass/docker/pkg/testutil"
+	"github.com/tiborvass/docker/internal/testutil"
 )
 
 func TestCreateFailsWhenIdentifierDoesNotExist(t *testing.T) {

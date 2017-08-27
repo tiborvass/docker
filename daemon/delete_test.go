@@ -9,7 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
-	"github.com/tiborvass/docker/pkg/testutil"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/stretchr/testify/require"
 )
 

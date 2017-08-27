@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/builder"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

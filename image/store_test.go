@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/layer"
-	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/assert"
 )

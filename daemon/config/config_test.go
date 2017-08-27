@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/daemon/discovery"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/opts"
-	"github.com/tiborvass/docker/pkg/testutil"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
