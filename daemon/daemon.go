@@ -29,7 +29,6 @@ import (
 	"github.com/tiborvass/docker/daemon/events"
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/logger"
-	"github.com/tiborvass/docker/opts"
 	"github.com/sirupsen/logrus"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"
@@ -1053,7 +1052,7 @@ func (daemon *Daemon) setupInitLayer(initPath string) error {
 }
 
 func (daemon *Daemon) setGenericResources(conf *config.Config) error {
-	genericResources, err := opts.ParseGenericResources(conf.NodeGenericResources)
+	genericResources, err := config.ParseGenericResources(conf.NodeGenericResources)
 	if err != nil {
 		return err
 	}
