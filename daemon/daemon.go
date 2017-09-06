@@ -19,7 +19,6 @@ import (
 	"time"
 
 	containerd "github.com/containerd/containerd/api/grpc/types"
-	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/swarm"
@@ -713,7 +712,7 @@ func NewDaemon(config *config.Config, registryService registry.Service, containe
 		return nil, err
 	}
 
-	trustKey, err := api.LoadOrCreateTrustKey(config.TrustKeyPath)
+	trustKey, err := loadOrCreateTrustKey(config.TrustKeyPath)
 	if err != nil {
 		return nil, err
 	}

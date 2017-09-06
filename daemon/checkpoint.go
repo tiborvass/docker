@@ -7,13 +7,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/daemon/names"
 )
 
 var (
-	validCheckpointNameChars   = api.RestrictedNameChars
-	validCheckpointNamePattern = api.RestrictedNamePattern
+	validCheckpointNameChars   = names.RestrictedNameChars
+	validCheckpointNamePattern = names.RestrictedNamePattern
 )
 
 // getCheckpointDir verifies checkpoint directory for create,remove, list options and checks if checkpoint already exists
