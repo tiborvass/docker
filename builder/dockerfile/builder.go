@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/moby/buildkit/session"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -102,15 +103,16 @@ func (bm *BuildManager) Build(ctx context.Context, config backend.BuildConfig) (
 	}
 
 	os := runtime.GOOS
+	optionsPlatform := system.ParsePlatform(config.Options.Platform)
 	if dockerfile.OS != "" {
-		if config.Options.Platform.OS != "" && config.Options.Platform.OS != dockerfile.OS {
+		if optionsPlatform.OS != "" && optionsPlatform.OS != dockerfile.OS {
 			return nil, fmt.Errorf("invalid platform")
 		}
 		os = dockerfile.OS
-	} else if config.Options.Platform.OS != "" {
-		os = config.Options.Platform.OS
+	} else if optionsPlatform.OS != "" {
+		os = optionsPlatform.OS
 	}
-	config.Options.Platform.OS = os
+	config.Options.Platform = os
 	dockerfile.OS = os
 
 	builderOptions := builderOptions{

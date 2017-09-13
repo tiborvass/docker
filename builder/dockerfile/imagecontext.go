@@ -5,6 +5,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/remotecontext"
 	dockerimage "github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
@@ -30,11 +31,12 @@ func newImageSources(ctx context.Context, options builderOptions) *imageSources 
 				pullOption = backend.PullOptionPreferLocal
 			}
 		}
+		optionsPlatform := system.ParsePlatform(options.Options.Platform)
 		return options.Backend.GetImageAndReleasableLayer(ctx, idOrRef, backend.GetImageAndLayerOptions{
 			PullOption: pullOption,
 			AuthConfig: options.Options.AuthConfigs,
 			Output:     options.ProgressWriter.Output,
-			OS:         options.Options.Platform.OS,
+			OS:         optionsPlatform.OS,
 		})
 	}
 
