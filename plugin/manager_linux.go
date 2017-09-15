@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/daemon/initlayer"
 	"github.com/tiborvass/docker/libcontainerd"
+	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/plugins"
@@ -57,7 +58,8 @@ func (pm *Manager) enable(p *v2.Plugin, c *controller, force bool) error {
 		}
 	}
 
-	if err := initlayer.Setup(filepath.Join(pm.config.Root, p.PluginObj.ID, rootFSFileName), idtools.IDPair{0, 0}); err != nil {
+	rootFS := containerfs.NewLocalContainerFS(filepath.Join(pm.config.Root, p.PluginObj.ID, rootFSFileName))
+	if err := initlayer.Setup(rootFS, idtools.IDPair{0, 0}); err != nil {
 		return errors.WithStack(err)
 	}
 

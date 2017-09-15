@@ -24,6 +24,7 @@ import (
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/opts"
+	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
@@ -988,7 +989,7 @@ func removeDefaultBridgeInterface() {
 	}
 }
 
-func (daemon *Daemon) getLayerInit() func(string) error {
+func (daemon *Daemon) getLayerInit() func(containerfs.ContainerFS) error {
 	return daemon.setupInitLayer
 }
 

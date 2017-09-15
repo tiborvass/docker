@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
@@ -97,7 +98,7 @@ func setupDaemonRoot(config *config.Config, rootDir string, rootIDs idtools.IDPa
 	return nil
 }
 
-func (daemon *Daemon) getLayerInit() func(string) error {
+func (daemon *Daemon) getLayerInit() func(containerfs.ContainerFS) error {
 	return nil
 }
 

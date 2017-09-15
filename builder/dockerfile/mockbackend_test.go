@@ -10,6 +10,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	containerpkg "github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/layer"
+	"github.com/tiborvass/docker/pkg/containerfs"
 	"golang.org/x/net/context"
 )
 
@@ -117,8 +118,8 @@ func (l *mockLayer) Release() error {
 	return nil
 }
 
-func (l *mockLayer) Mount() (string, error) {
-	return "mountPath", nil
+func (l *mockLayer) Mount() (containerfs.ContainerFS, error) {
+	return containerfs.NewLocalContainerFS("mountPath"), nil
 }
 
 func (l *mockLayer) Commit(string) (builder.ReleaseableLayer, error) {
