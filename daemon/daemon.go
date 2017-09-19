@@ -48,6 +48,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/plugin"
+	pluginexec "github.com/tiborvass/docker/plugin/executor/containerd"
 	refstore "github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
@@ -646,12 +647,16 @@ func NewDaemon(config *config.Config, registryService registry.Service, containe
 	}
 	registerMetricsPluginCallback(d.PluginStore, metricsSockPath)
 
+	createPluginExec := func(m *plugin.Manager) (plugin.Executor, error) {
+		return pluginexec.New(containerdRemote, m)
+	}
+
 	// Plugin system initialization should happen before restore. Do not change order.
 	d.pluginManager, err = plugin.NewManager(plugin.ManagerConfig{
 		Root:               filepath.Join(config.Root, "plugins"),
 		ExecRoot:           getPluginExecRoot(config.Root),
 		Store:              d.PluginStore,
-		Executor:           containerdRemote,
+		CreateExecutor:     createPluginExec,
 		RegistryService:    registryService,
 		LiveRestoreEnabled: config.LiveRestoreEnabled,
 		LogPluginEvent:     d.LogPluginEvent, // todo: make private
