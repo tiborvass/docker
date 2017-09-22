@@ -6,7 +6,6 @@ import (
 
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/daemon/discovery"
-	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/sirupsen/logrus"
 )
 
@@ -303,9 +302,6 @@ func (daemon *Daemon) reloadLiveRestore(conf *config.Config, attributes map[stri
 	// update corresponding configuration
 	if conf.IsValueSet("live-restore") {
 		daemon.configStore.LiveRestoreEnabled = conf.LiveRestoreEnabled
-		if err := daemon.containerdRemote.UpdateOptions(libcontainerd.WithLiveRestore(conf.LiveRestoreEnabled)); err != nil {
-			return err
-		}
 	}
 
 	// prepare reload event attributes with updatable configurations
