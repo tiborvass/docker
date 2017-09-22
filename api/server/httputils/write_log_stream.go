@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/pkg/jsonlog"
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 )
 
@@ -49,11 +49,7 @@ func WriteLogStream(_ context.Context, w io.Writer, msgs <-chan *backend.LogMess
 			logLine = append(logLine, msg.Line...)
 		}
 		if config.Timestamps {
-			// TODO(dperny) the format is defined in
-			// daemon/logger/logger.go as logger.TimeFormat. importing
-			// logger is verboten (not part of backend) so idk if just
-			// importing the same thing from jsonlog is good enough
-			logLine = append([]byte(msg.Timestamp.Format(jsonlog.RFC3339NanoFixed)+" "), logLine...)
+			logLine = append([]byte(msg.Timestamp.Format(jsonmessage.RFC3339NanoFixed)+" "), logLine...)
 		}
 		if msg.Source == "stdout" && config.ShowStdout {
 			outStream.Write(logLine)
