@@ -5,6 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
+	dclient "github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/fixtures/load"
 	"github.com/stretchr/testify/require"
 )
@@ -172,6 +173,10 @@ func ProtectPlugins(t testingT, testEnv *Execution) {
 func getExistingPlugins(t require.TestingT, testEnv *Execution) []string {
 	client := testEnv.APIClient()
 	pluginList, err := client.PluginList(context.Background(), filters.Args{})
+	// Docker EE does not allow cluster-wide plugin management.
+	if dclient.IsErrNotImplemented(err) {
+		return []string{}
+	}
 	require.NoError(t, err, "failed to list plugins")
 
 	plugins := []string{}
