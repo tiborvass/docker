@@ -13,9 +13,9 @@ import (
 
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/tiborvass/docker/daemon/logger/jsonfilelog/jsonlog"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog/multireader"
 	"github.com/tiborvass/docker/pkg/filenotify"
-	"github.com/tiborvass/docker/pkg/jsonlog"
 	"github.com/tiborvass/docker/pkg/tailfile"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

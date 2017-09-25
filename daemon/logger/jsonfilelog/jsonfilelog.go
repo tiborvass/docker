@@ -12,8 +12,8 @@ import (
 	"sync"
 
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/tiborvass/docker/daemon/logger/jsonfilelog/jsonlog"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
-	"github.com/tiborvass/docker/pkg/jsonlog"
 	units "github.com/docker/go-units"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

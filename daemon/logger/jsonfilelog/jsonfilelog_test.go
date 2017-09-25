@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/daemon/logger"
-	"github.com/tiborvass/docker/pkg/jsonlog"
+	"github.com/tiborvass/docker/daemon/logger/jsonfilelog/jsonlog"
 	"github.com/gotestyourself/gotestyourself/fs"
 	"github.com/stretchr/testify/require"
 )
