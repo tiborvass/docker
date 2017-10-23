@@ -8,6 +8,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
+	"github.com/tiborvass/docker/integration-cli/fixtures/load"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
@@ -127,4 +128,16 @@ func (e *Execution) Print() {
 // APIClient returns an APIClient connected to the daemon under test
 func (e *Execution) APIClient() client.APIClient {
 	return e.client
+}
+
+// EnsureFrozenImagesLinux loads frozen test images into the daemon
+// if they aren't already loaded
+func EnsureFrozenImagesLinux(testEnv *Execution) error {
+	if testEnv.OSType == "linux" {
+		err := load.FrozenImagesLinux(testEnv.APIClient(), frozenImages...)
+		if err != nil {
+			return errors.Wrap(err, "error loading frozen images")
+		}
+	}
+	return nil
 }
