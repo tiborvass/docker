@@ -23,8 +23,8 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakegit"
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakestorage"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
 	"github.com/gotestyourself/gotestyourself/icmd"
 	digest "github.com/opencontainers/go-digest"
@@ -3185,7 +3185,7 @@ func (s *DockerSuite) TestBuildOnBuildOutput(c *check.C) {
 
 // FIXME(vdemeester) should be a unit test
 func (s *DockerSuite) TestBuildInvalidTag(c *check.C) {
-	name := "abcd:" + stringutils.GenerateRandomAlphaOnlyString(200)
+	name := "abcd:" + testutil.GenerateRandomAlphaOnlyString(200)
 	buildImage(name, build.WithDockerfile("FROM "+minimalBaseImage()+"\nMAINTAINER quux\n")).Assert(c, icmd.Expected{
 		ExitCode: 125,
 		Err:      "invalid reference format",

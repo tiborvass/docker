@@ -6,8 +6,8 @@ import (
 
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/go-check/check"
 )
 
@@ -34,7 +34,7 @@ func (s *DockerSuite) TestTagInvalidUnprefixedRepo(c *check.C) {
 
 // ensure we don't allow the use of invalid tags; these tag operations should fail
 func (s *DockerSuite) TestTagInvalidPrefixedRepo(c *check.C) {
-	longTag := stringutils.GenerateRandomAlphaOnlyString(121)
+	longTag := testutil.GenerateRandomAlphaOnlyString(121)
 
 	invalidTags := []string{"repo:fo$z$", "repo:Foo@3cc", "repo:Foo$3", "repo:Foo*3", "repo:Fo^3", "repo:Foo!3", "repo:%goodbye", "repo:#hashtagit", "repo:F)xcz(", "repo:-foo", "repo:..", longTag}
 
