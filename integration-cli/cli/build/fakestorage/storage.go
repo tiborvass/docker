@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/internal/test/environment"
-	"github.com/tiborvass/docker/pkg/stringutils"
+	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -124,8 +124,8 @@ func (f *remoteFileServer) Close() error {
 
 func newRemoteFileServer(t testingT, ctx *fakecontext.Fake) *remoteFileServer {
 	var (
-		image     = fmt.Sprintf("fileserver-img-%s", strings.ToLower(stringutils.GenerateRandomAlphaOnlyString(10)))
-		container = fmt.Sprintf("fileserver-cnt-%s", strings.ToLower(stringutils.GenerateRandomAlphaOnlyString(10)))
+		image     = fmt.Sprintf("fileserver-img-%s", strings.ToLower(testutil.GenerateRandomAlphaOnlyString(10)))
+		container = fmt.Sprintf("fileserver-cnt-%s", strings.ToLower(testutil.GenerateRandomAlphaOnlyString(10)))
 	)
 
 	ensureHTTPServerImage(t)
