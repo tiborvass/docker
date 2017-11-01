@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
@@ -76,6 +77,7 @@ func fullSwarmServiceSpec(name string, replicas uint64) swarm.ServiceSpec {
 					Nameservers: []string{"8.8.8.8"},
 					Search:      []string{"somedomain"},
 				},
+				Isolation: container.IsolationDefault,
 			},
 			RestartPolicy: &swarm.RestartPolicy{
 				Delay:       &restartDelay,
