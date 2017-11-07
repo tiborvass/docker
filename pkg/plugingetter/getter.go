@@ -1,6 +1,8 @@
 package plugingetter
 
-import "github.com/tiborvass/docker/pkg/plugins"
+import (
+	"github.com/tiborvass/docker/pkg/plugins"
+)
 
 const (
 	// Lookup doesn't update RefCount
