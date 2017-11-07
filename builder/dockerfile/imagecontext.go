@@ -1,6 +1,8 @@
 package dockerfile
 
 import (
+	"runtime"
+
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/remotecontext"
@@ -73,7 +75,13 @@ func (m *imageSources) Unmount() (retErr error) {
 func (m *imageSources) Add(im *imageMount) {
 	switch im.image {
 	case nil:
-		im.image = &dockerimage.Image{}
+		// set the OS for scratch images
+		os := runtime.GOOS
+		// Windows does not support scratch except for LCOW
+		if runtime.GOOS == "windows" {
+			os = "linux"
+		}
+		im.image = &dockerimage.Image{V1Image: dockerimage.V1Image{OS: os}}
 	default:
 		m.byImageID[im.image.ImageID()] = im
 	}
