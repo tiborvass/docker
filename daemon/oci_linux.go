@@ -18,7 +18,6 @@ import (
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/tiborvass/docker/pkg/stringutils"
 	"github.com/tiborvass/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
 	"github.com/opencontainers/runc/libcontainer/cgroups"
@@ -522,6 +521,17 @@ var (
 	}
 )
 
+// inSlice tests whether a string is contained in a slice of strings or not.
+// Comparison is case sensitive
+func inSlice(slice []string, s string) bool {
+	for _, ss := range slice {
+		if s == ss {
+			return true
+		}
+	}
+	return false
+}
+
 func setMounts(daemon *Daemon, s *specs.Spec, c *container.Container, mounts []container.Mount) error {
 	userMounts := make(map[string]struct{})
 	for _, m := range mounts {
@@ -632,7 +642,7 @@ func setMounts(daemon *Daemon, s *specs.Spec, c *container.Container, mounts []c
 				continue
 			}
 			if _, ok := userMounts[m.Destination]; !ok {
-				if !stringutils.InSlice(m.Options, "ro") {
+				if !inSlice(m.Options, "ro") {
 					s.Mounts[i].Options = append(s.Mounts[i].Options, "ro")
 				}
 			}
