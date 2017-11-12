@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/daemon/discovery"
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/opts"
+	"github.com/gotestyourself/gotestyourself/fs"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
@@ -458,4 +459,30 @@ func TestReloadBadDefaultConfig(t *testing.T) {
 	err = Reload(configFile, flags, func(c *Config) {})
 	assert.Error(t, err)
 	testutil.ErrorContains(t, err, "unable to configure the Docker daemon with file")
+}
+
+func TestReloadWithConflictingLabels(t *testing.T) {
+	tempFile := fs.NewFile(t, "config", fs.WithContent(`{"labels":["foo=bar","foo=baz"]}`))
+	defer tempFile.Remove()
+	configFile := tempFile.Path()
+
+	var lbls []string
+	flags := pflag.NewFlagSet("test", pflag.ContinueOnError)
+	flags.String("config-file", configFile, "")
+	flags.StringSlice("labels", lbls, "")
+	err := Reload(configFile, flags, func(c *Config) {})
+	testutil.ErrorContains(t, err, "conflict labels for foo=baz and foo=bar")
+}
+
+func TestReloadWithDuplicateLabels(t *testing.T) {
+	tempFile := fs.NewFile(t, "config", fs.WithContent(`{"labels":["foo=the-same","foo=the-same"]}`))
+	defer tempFile.Remove()
+	configFile := tempFile.Path()
+
+	var lbls []string
+	flags := pflag.NewFlagSet("test", pflag.ContinueOnError)
+	flags.String("config-file", configFile, "")
+	flags.StringSlice("labels", lbls, "")
+	err := Reload(configFile, flags, func(c *Config) {})
+	assert.NoError(t, err)
 }
