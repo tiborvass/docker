@@ -6,6 +6,7 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/layer"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/pkg/errors"
 )
 
@@ -16,7 +17,9 @@ func (daemon *Daemon) LookupImage(name string) (*types.ImageInspect, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "no such image: %s", name)
 	}
-
+	if !system.IsOSSupported(img.OperatingSystem()) {
+		return nil, system.ErrNotSupportedOperatingSystem
+	}
 	refs := daemon.referenceStore.References(img.ID().Digest())
 	repoTags := []string{}
 	repoDigests := []string{}

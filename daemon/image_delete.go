@@ -11,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/pkg/errors"
 )
 
@@ -66,9 +67,12 @@ func (daemon *Daemon) ImageDelete(imageRef string, force, prune bool) ([]types.I
 	start := time.Now()
 	records := []types.ImageDeleteResponseItem{}
 
-	imgID, _, err := daemon.GetImageIDAndOS(imageRef)
+	imgID, operatingSystem, err := daemon.GetImageIDAndOS(imageRef)
 	if err != nil {
 		return nil, err
+	}
+	if !system.IsOSSupported(operatingSystem) {
+		return nil, errors.Errorf("unable to delete image: %q", system.ErrNotSupportedOperatingSystem)
 	}
 
 	repoRefs := daemon.referenceStore.References(imgID.Digest())

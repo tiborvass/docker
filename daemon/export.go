@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/tiborvass/docker/pkg/system"
 )
 
 // ContainerExport writes the contents of the container to the given
@@ -47,6 +48,9 @@ func (daemon *Daemon) ContainerExport(name string, out io.Writer) error {
 }
 
 func (daemon *Daemon) containerExport(container *container.Container) (arch io.ReadCloser, err error) {
+	if !system.IsOSSupported(container.OS) {
+		return nil, fmt.Errorf("cannot export %s: %s ", container.ID, system.ErrNotSupportedOperatingSystem)
+	}
 	rwlayer, err := daemon.layerStores[container.OS].GetRWLayer(container.ID)
 	if err != nil {
 		return nil, err
