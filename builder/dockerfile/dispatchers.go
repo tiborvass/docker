@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api"
+	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
@@ -510,7 +511,7 @@ func dispatchStopSignal(d dispatchRequest, c *instructions.StopSignalCommand) er
 
 	_, err := signal.ParseSignal(c.Signal)
 	if err != nil {
-		return validationError{err}
+		return errdefs.InvalidParameter(err)
 	}
 	d.state.runConfig.StopSignal = c.Signal
 	return d.builder.commit(d.state, fmt.Sprintf("STOPSIGNAL %v", c.Signal))
