@@ -153,25 +153,47 @@ func (daemon *Daemon) SystemInfo() (*types.Info, error) {
 }
 
 // SystemVersion returns version information about the daemon.
-func (daemon *Daemon) SystemVersion() types.Version {
-	v := types.Version{
-		Version:       dockerversion.Version,
-		GitCommit:     dockerversion.GitCommit,
-		MinAPIVersion: api.MinVersion,
-		GoVersion:     runtime.Version(),
-		Os:            runtime.GOOS,
-		Arch:          runtime.GOARCH,
-		BuildTime:     dockerversion.BuildTime,
-		Experimental:  daemon.configStore.Experimental,
-	}
-
+func (daemon *Daemon) SystemVersion(APIVersion string) types.Version {
 	kernelVersion := "<unknown>"
 	if kv, err := kernel.GetKernelVersion(); err != nil {
 		logrus.Warnf("Could not get kernel version: %v", err)
 	} else {
 		kernelVersion = kv.String()
 	}
-	v.KernelVersion = kernelVersion
+
+	v := types.Version{
+		Components: []types.ComponentVersion{
+			{
+				Name:    "Engine",
+				Version: dockerversion.Version,
+				Details: map[string]string{
+					"GitCommit":     dockerversion.GitCommit,
+					"ApiVersion":    APIVersion,
+					"MinAPIVersion": api.MinVersion,
+					"GoVersion":     runtime.Version(),
+					"Os":            runtime.GOOS,
+					"Arch":          runtime.GOARCH,
+					"BuildTime":     dockerversion.BuildTime,
+					"KernelVersion": kernelVersion,
+					"Experimental":  fmt.Sprintf("%t", daemon.configStore.Experimental),
+				},
+			},
+		},
+
+		// Populate deprecated fields for older clients
+		Version:       dockerversion.Version,
+		GitCommit:     dockerversion.GitCommit,
+		APIVersion:    APIVersion,
+		MinAPIVersion: api.MinVersion,
+		GoVersion:     runtime.Version(),
+		Os:            runtime.GOOS,
+		Arch:          runtime.GOARCH,
+		BuildTime:     dockerversion.BuildTime,
+		KernelVersion: kernelVersion,
+		Experimental:  daemon.configStore.Experimental,
+	}
+
+	v.Platform.Name = dockerversion.PlatformName
 
 	return v
 }

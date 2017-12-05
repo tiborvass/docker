@@ -13,7 +13,7 @@ import (
 // system specific functionality.
 type Backend interface {
 	SystemInfo() (*types.Info, error)
-	SystemVersion() types.Version
+	SystemVersion(APIVersion string) types.Version
 	SystemDiskUsage(ctx context.Context) (*types.DiskUsage, error)
 	SubscribeToEvents(since, until time.Time, ef filters.Args) ([]events.Message, chan interface{})
 	UnsubscribeFromEvents(chan interface{})
