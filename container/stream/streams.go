@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tiborvass/docker/libcontainerd"
+	"github.com/containerd/containerd/cio"
 	"github.com/tiborvass/docker/pkg/broadcaster"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/pools"
@@ -114,7 +114,7 @@ func (c *Config) CloseStreams() error {
 }
 
 // CopyToPipe connects streamconfig with a libcontainerd.IOPipe
-func (c *Config) CopyToPipe(iop *libcontainerd.IOPipe) {
+func (c *Config) CopyToPipe(iop *cio.DirectIO) {
 	copyFunc := func(w io.Writer, r io.ReadCloser) {
 		c.Add(1)
 		go func() {

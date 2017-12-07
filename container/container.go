@@ -27,7 +27,6 @@ import (
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
-	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -1004,7 +1003,7 @@ func (container *Container) CloseStreams() error {
 }
 
 // InitializeStdio is called by libcontainerd to connect the stdio.
-func (container *Container) InitializeStdio(iop *libcontainerd.IOPipe) (cio.IO, error) {
+func (container *Container) InitializeStdio(iop *cio.DirectIO) (cio.IO, error) {
 	if err := container.startLogging(); err != nil {
 		container.Reset(false)
 		return nil, err

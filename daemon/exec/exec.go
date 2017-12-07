@@ -6,7 +6,6 @@ import (
 
 	"github.com/containerd/containerd/cio"
 	"github.com/tiborvass/docker/container/stream"
-	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/sirupsen/logrus"
 )
@@ -63,7 +62,7 @@ func (i *rio) Wait() {
 }
 
 // InitializeStdio is called by libcontainerd to connect the stdio.
-func (c *Config) InitializeStdio(iop *libcontainerd.IOPipe) (cio.IO, error) {
+func (c *Config) InitializeStdio(iop *cio.DirectIO) (cio.IO, error) {
 	c.StreamConfig.CopyToPipe(iop)
 
 	if c.StreamConfig.Stdin() == nil && !c.Tty && runtime.GOOS == "windows" {
