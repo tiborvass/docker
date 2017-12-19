@@ -19,6 +19,7 @@ import (
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/tiborvass/docker/pkg/ioutils"
+	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/pubsub"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/plugin/v2"
@@ -155,6 +156,10 @@ func (pm *Manager) HandleExitEvent(id string) error {
 
 	if restart {
 		pm.enable(p, c, true)
+	} else {
+		if err := mount.RecursiveUnmount(filepath.Join(pm.config.Root, id)); err != nil {
+			return errors.Wrap(err, "error cleaning up plugin mounts")
+		}
 	}
 	return nil
 }
