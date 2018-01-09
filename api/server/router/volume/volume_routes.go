@@ -2,11 +2,14 @@ package volume
 
 import (
 	"encoding/json"
+	"errors"
+	"io"
 	"net/http"
 
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types/filters"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
+	"github.com/tiborvass/docker/errdefs"
 	"golang.org/x/net/context"
 )
 
@@ -45,6 +48,9 @@ func (v *volumeRouter) postVolumesCreate(ctx context.Context, w http.ResponseWri
 
 	var req volumetypes.VolumesCreateBody
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		if err == io.EOF {
+			return errdefs.InvalidParameter(errors.New("got EOF while reading request body"))
+		}
 		return err
 	}
 
