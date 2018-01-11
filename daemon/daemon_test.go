@@ -7,9 +7,9 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	_ "github.com/tiborvass/docker/pkg/discovery/memory"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/truncindex"

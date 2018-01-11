@@ -31,7 +31,7 @@ import (
 	"github.com/containerd/containerd/images"
 	"github.com/containerd/containerd/linux/runctypes"
 	"github.com/containerd/typeurl"
-	"github.com/tiborvass/docker/api/errdefs"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/opencontainers/image-spec/specs-go/v1"
 	specs "github.com/opencontainers/runtime-spec/specs-go"

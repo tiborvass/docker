@@ -12,8 +12,8 @@ import (
 	"github.com/docker/distribution/registry/api/v2"
 	"github.com/docker/distribution/registry/client"
 	"github.com/docker/distribution/registry/client/auth"
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/distribution/xfer"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/sirupsen/logrus"
 )
 

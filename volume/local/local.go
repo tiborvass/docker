@@ -13,8 +13,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/daemon/names"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/volume"

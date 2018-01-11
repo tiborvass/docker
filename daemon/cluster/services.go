@@ -11,12 +11,12 @@ import (
 	"time"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/errdefs"
 	apitypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
+	"github.com/tiborvass/docker/errdefs"
 	runconfigopts "github.com/tiborvass/docker/runconfig/opts"
 	swarmapi "github.com/docker/swarmkit/api"
 	gogotypes "github.com/gogo/protobuf/types"

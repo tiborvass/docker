@@ -5,10 +5,10 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

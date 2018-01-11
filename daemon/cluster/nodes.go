@@ -1,10 +1,10 @@
 package cluster
 
 import (
-	"github.com/tiborvass/docker/api/errdefs"
 	apitypes "github.com/tiborvass/docker/api/types"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
+	"github.com/tiborvass/docker/errdefs"
 	swarmapi "github.com/docker/swarmkit/api"
 	"golang.org/x/net/context"
 )

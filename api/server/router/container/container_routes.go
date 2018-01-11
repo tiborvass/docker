@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
@@ -16,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/versions"
 	containerpkg "github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/pkg/errors"

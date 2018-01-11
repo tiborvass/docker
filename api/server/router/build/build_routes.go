@@ -13,12 +13,12 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"

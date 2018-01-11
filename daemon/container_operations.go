@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"

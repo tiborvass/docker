@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
 	"github.com/pkg/errors"

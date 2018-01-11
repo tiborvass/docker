@@ -19,9 +19,9 @@ import (
 
 	"github.com/docker/distribution/reference"
 	"github.com/docker/distribution/registry/api/errcode"
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/stringid"

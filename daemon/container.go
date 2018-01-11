@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/signal"

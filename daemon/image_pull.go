@@ -7,10 +7,10 @@ import (
 
 	dist "github.com/docker/distribution"
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/distribution"
 	progressutils "github.com/tiborvass/docker/distribution/utils"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/registry"
 	"github.com/opencontainers/go-digest"

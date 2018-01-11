@@ -9,11 +9,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/idtools"

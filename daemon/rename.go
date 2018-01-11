@@ -3,8 +3,8 @@ package daemon
 import (
 	"strings"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	dockercontainer "github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/docker/libnetwork"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

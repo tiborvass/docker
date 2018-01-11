@@ -3,7 +3,7 @@ package libcontainerd
 import (
 	"errors"
 
-	"github.com/tiborvass/docker/api/errdefs"
+	"github.com/tiborvass/docker/errdefs"
 )
 
 func newNotFoundError(err string) error { return errdefs.NotFound(errors.New(err)) }

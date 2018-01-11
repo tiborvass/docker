@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/pkg/errors"

@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/errdefs"
 	enginetypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm/runtime"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/plugin/v2"
 	"github.com/docker/swarmkit/api"

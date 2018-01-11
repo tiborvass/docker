@@ -7,13 +7,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/sirupsen/logrus"
 )
 

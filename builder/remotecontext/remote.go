@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/tiborvass/docker/api/errdefs"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/pkg/errors"
 )

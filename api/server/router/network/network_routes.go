@@ -8,12 +8,12 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/docker/libnetwork"
 	netconst "github.com/docker/libnetwork/datastore"
 	"github.com/docker/libnetwork/networkdb"

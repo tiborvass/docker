@@ -8,12 +8,12 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/container/stream"
 	"github.com/tiborvass/docker/daemon/exec"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/term"

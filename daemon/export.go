@@ -5,8 +5,8 @@ import (
 	"io"
 	"runtime"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
 )

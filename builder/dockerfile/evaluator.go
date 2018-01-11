@@ -24,10 +24,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig/opts"
 	"github.com/pkg/errors"

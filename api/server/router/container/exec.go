@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"

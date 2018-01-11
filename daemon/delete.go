@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/volume"

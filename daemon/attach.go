@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/container/stream"
 	"github.com/tiborvass/docker/daemon/logger"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/pkg/errors"

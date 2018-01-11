@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

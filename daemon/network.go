@@ -8,10 +8,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/network"
 	clustertypes "github.com/tiborvass/docker/daemon/cluster/provider"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/libnetwork"

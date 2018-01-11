@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	apitypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/signal"
 	swarmapi "github.com/docker/swarmkit/api"

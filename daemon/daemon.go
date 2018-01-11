@@ -18,7 +18,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/swarm"
@@ -29,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/daemon/exec"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/sirupsen/logrus"
 	// register graph drivers
 	_ "github.com/tiborvass/docker/daemon/graphdriver/register"

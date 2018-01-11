@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/docker/distribution/reference"
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder/dockerfile"
 	"github.com/tiborvass/docker/builder/remotecontext"
 	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/archive"

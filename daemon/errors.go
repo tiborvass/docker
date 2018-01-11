@@ -5,7 +5,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/tiborvass/docker/api/errdefs"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )

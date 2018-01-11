@@ -3,7 +3,7 @@ package session
 import (
 	"net/http"
 
-	"github.com/tiborvass/docker/api/errdefs"
+	"github.com/tiborvass/docker/errdefs"
 	"golang.org/x/net/context"
 )
 

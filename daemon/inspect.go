@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	networktypes "github.com/tiborvass/docker/api/types/network"
@@ -12,6 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types/versions/v1p20"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/errdefs"
 	volumestore "github.com/tiborvass/docker/volume/store"
 	"github.com/docker/go-connections/nat"
 )

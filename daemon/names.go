@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/names"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/pkg/errors"

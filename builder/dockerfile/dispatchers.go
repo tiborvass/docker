@@ -15,12 +15,12 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/api"
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/signal"

@@ -4,7 +4,7 @@ import (
 	"net/url"
 
 	"github.com/docker/distribution/registry/api/errcode"
-	"github.com/tiborvass/docker/api/errdefs"
+	"github.com/tiborvass/docker/errdefs"
 )
 
 type notFoundError string

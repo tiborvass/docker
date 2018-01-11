@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/container"
@@ -18,6 +17,7 @@ import (
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/builder/fscache"
 	"github.com/tiborvass/docker/builder/remotecontext"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/stringid"
