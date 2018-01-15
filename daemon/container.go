@@ -13,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/signal"
@@ -54,7 +55,7 @@ func (daemon *Daemon) GetContainer(prefixOrName string) (*container.Container, e
 		if indexError == truncindex.ErrNotExist {
 			return nil, containerNotFound(prefixOrName)
 		}
-		return nil, systemError{indexError}
+		return nil, errdefs.System(indexError)
 	}
 	return daemon.containers.Get(containerID), nil
 }
@@ -139,7 +140,7 @@ func (daemon *Daemon) newContainer(name string, operatingSystem string, config *
 		if config.Hostname == "" {
 			config.Hostname, err = os.Hostname()
 			if err != nil {
-				return nil, systemError{err}
+				return nil, errdefs.System(err)
 			}
 		}
 	} else {

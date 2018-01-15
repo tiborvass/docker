@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/ioutils"
 )
@@ -24,12 +25,12 @@ func (daemon *Daemon) ContainerExport(name string, out io.Writer) error {
 
 	if container.IsDead() {
 		err := fmt.Errorf("You cannot export container %s which is Dead", container.ID)
-		return stateConflictError{err}
+		return errdefs.Conflict(err)
 	}
 
 	if container.IsRemovalInProgress() {
 		err := fmt.Errorf("You cannot export container %s which is being removed", container.ID)
-		return stateConflictError{err}
+		return errdefs.Conflict(err)
 	}
 
 	data, err := daemon.containerExport(container)

@@ -7,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/tiborvass/docker/api/errdefs"
 	containerpkg "github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/pkg/errors"

@@ -13,6 +13,7 @@ import (
 
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/links"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -91,7 +92,7 @@ func (daemon *Daemon) getPidContainer(container *container.Container) (*containe
 
 func containerIsRunning(c *container.Container) error {
 	if !c.IsRunning() {
-		return stateConflictError{errors.Errorf("container %s is not running", c.ID)}
+		return errdefs.Conflict(errors.Errorf("container %s is not running", c.ID))
 	}
 	return nil
 }

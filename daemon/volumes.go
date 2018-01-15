@@ -12,6 +12,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
 	"github.com/pkg/errors"
@@ -175,7 +176,7 @@ func (daemon *Daemon) registerMountPoints(container *container.Container, hostCo
 	for _, cfg := range hostConfig.Mounts {
 		mp, err := parser.ParseMountSpec(cfg)
 		if err != nil {
-			return validationError{err}
+			return errdefs.InvalidParameter(err)
 		}
 
 		if binds[mp.Destination] {

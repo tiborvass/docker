@@ -6,6 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/names"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/namesgenerator"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/pkg/errors"
@@ -56,7 +57,7 @@ func (daemon *Daemon) generateIDAndName(name string) (string, string, error) {
 
 func (daemon *Daemon) reserveName(id, name string) (string, error) {
 	if !validContainerNamePattern.MatchString(strings.TrimPrefix(name, "/")) {
-		return "", validationError{errors.Errorf("Invalid container name (%s), only %s are allowed", name, validContainerNameChars)}
+		return "", errdefs.InvalidParameter(errors.Errorf("Invalid container name (%s), only %s are allowed", name, validContainerNameChars))
 	}
 	if name[0] != '/' {
 		name = "/" + name

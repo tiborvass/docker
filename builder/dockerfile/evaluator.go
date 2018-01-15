@@ -27,6 +27,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig/opts"
 	"github.com/pkg/errors"
@@ -37,7 +38,7 @@ func dispatch(d dispatchRequest, cmd instructions.Command) (err error) {
 		optionsOS := system.ParsePlatform(d.builder.options.Platform).OS
 		err := c.CheckPlatform(optionsOS)
 		if err != nil {
-			return validationError{err}
+			return errdefs.InvalidParameter(err)
 		}
 	}
 	runConfigEnv := d.state.runConfig.Env
@@ -48,7 +49,7 @@ func dispatch(d dispatchRequest, cmd instructions.Command) (err error) {
 			return d.shlex.ProcessWord(word, envs)
 		})
 		if err != nil {
-			return validationError{err}
+			return errdefs.InvalidParameter(err)
 		}
 	}
 

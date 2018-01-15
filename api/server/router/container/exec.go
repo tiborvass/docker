@@ -10,6 +10,7 @@ import (
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
@@ -137,11 +138,11 @@ func (s *containerRouter) postContainerExecResize(ctx context.Context, w http.Re
 	}
 	height, err := strconv.Atoi(r.Form.Get("h"))
 	if err != nil {
-		return validationError{err}
+		return errdefs.InvalidParameter(err)
 	}
 	width, err := strconv.Atoi(r.Form.Get("w"))
 	if err != nil {
-		return validationError{err}
+		return errdefs.InvalidParameter(err)
 	}
 
 	return s.backend.ContainerExecResize(vars["name"], height, width)

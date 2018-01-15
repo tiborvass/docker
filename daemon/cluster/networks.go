@@ -7,6 +7,7 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/runconfig"
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/pkg/errors"
@@ -298,7 +299,7 @@ func (c *Cluster) populateNetworkID(ctx context.Context, client swarmapi.Control
 				// and use its id for the request.
 				apiNetwork, err = getNetwork(ctx, client, ln.Name())
 				if err != nil {
-					return errors.Wrap(notFoundError{err}, "could not find the corresponding predefined swarm network")
+					return errors.Wrap(errdefs.NotFound(err), "could not find the corresponding predefined swarm network")
 				}
 				goto setid
 			}

@@ -4,6 +4,7 @@ import (
 	apitypes "github.com/tiborvass/docker/api/types"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
+	"github.com/tiborvass/docker/errdefs"
 	swarmapi "github.com/docker/swarmkit/api"
 	"golang.org/x/net/context"
 )
@@ -64,7 +65,7 @@ func (c *Cluster) UpdateNode(input string, version uint64, spec types.NodeSpec) 
 	return c.lockedManagerAction(func(ctx context.Context, state nodeState) error {
 		nodeSpec, err := convert.NodeSpecToGRPC(spec)
 		if err != nil {
-			return convertError{err}
+			return errdefs.InvalidParameter(err)
 		}
 
 		ctx, cancel := c.getRequestContext()

@@ -14,6 +14,7 @@ import (
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/network"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
@@ -922,7 +923,7 @@ func (daemon *Daemon) getNetworkedContainer(containerID, connectedContainerID st
 	}
 	if !nc.IsRunning() {
 		err := fmt.Errorf("cannot join network of a non running container: %s", connectedContainerID)
-		return nil, stateConflictError{err}
+		return nil, errdefs.Conflict(err)
 	}
 	if nc.IsRestarting() {
 		return nil, errContainerIsRestarting(connectedContainerID)
