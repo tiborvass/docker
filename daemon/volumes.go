@@ -10,6 +10,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/mount"
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/volume"
@@ -145,6 +146,13 @@ func (daemon *Daemon) registerMountPoints(container *container.Container, hostCo
 		if err != nil {
 			return err
 		}
+		needsSlavePropagation, err := daemon.validateBindDaemonRoot(bind.Spec)
+		if err != nil {
+			return err
+		}
+		if needsSlavePropagation {
+			bind.Propagation = mount.PropagationRSlave
+		}
 
 		// #10618
 		_, tmpfsExists := hostConfig.Tmpfs[bind.Destination]
@@ -176,6 +184,13 @@ func (daemon *Daemon) registerMountPoints(container *container.Container, hostCo
 		mp, err := parser.ParseMountSpec(cfg)
 		if err != nil {
 			return validationError{err}
+		}
+		needsSlavePropagation, err := daemon.validateBindDaemonRoot(mp.Spec)
+		if err != nil {
+			return err
+		}
+		if needsSlavePropagation {
+			mp.Propagation = mount.PropagationRSlave
 		}
 
 		if binds[mp.Destination] {
