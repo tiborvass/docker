@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
+	"github.com/tiborvass/docker/builder/dockerfile/shell"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
@@ -141,7 +142,7 @@ func TestFromWithArg(t *testing.T) {
 	cmd := &instructions.Stage{
 		BaseName: "alpine:${THETAG}",
 	}
-	err := processMetaArg(metaArg, NewShellLex('\\'), args)
+	err := processMetaArg(metaArg, shell.NewLex('\\'), args)
 
 	sb := newDispatchRequest(b, '\\', nil, args, newStagesBuildResults())
 	require.NoError(t, err)
