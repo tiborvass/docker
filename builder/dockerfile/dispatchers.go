@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
+	"github.com/tiborvass/docker/builder/dockerfile/shell"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -47,7 +48,7 @@ func dispatchEnv(d dispatchRequest, c *instructions.EnvCommand) error {
 		for i, envVar := range runConfig.Env {
 			envParts := strings.SplitN(envVar, "=", 2)
 			compareFrom := envParts[0]
-			if equalEnvKeys(compareFrom, name) {
+			if shell.EqualEnvKeys(compareFrom, name) {
 				runConfig.Env[i] = newVar
 				gotOne = true
 				break
@@ -197,7 +198,7 @@ func dispatchTriggeredOnBuild(d dispatchRequest, triggers []string) error {
 	return nil
 }
 
-func (d *dispatchRequest) getExpandedImageName(shlex *ShellLex, name string) (string, error) {
+func (d *dispatchRequest) getExpandedImageName(shlex *shell.Lex, name string) (string, error) {
 	substitutionArgs := []string{}
 	for key, value := range d.state.buildArgs.GetAllMeta() {
 		substitutionArgs = append(substitutionArgs, key+"="+value)
@@ -242,7 +243,7 @@ func (d *dispatchRequest) getImageOrStage(name string) (builder.Image, error) {
 	}
 	return imageMount.Image(), nil
 }
-func (d *dispatchRequest) getFromImage(shlex *ShellLex, name string) (builder.Image, error) {
+func (d *dispatchRequest) getFromImage(shlex *shell.Lex, name string) (builder.Image, error) {
 	name, err := d.getExpandedImageName(shlex, name)
 	if err != nil {
 		return nil, err

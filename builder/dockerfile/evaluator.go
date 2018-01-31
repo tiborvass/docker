@@ -28,6 +28,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
+	"github.com/tiborvass/docker/builder/dockerfile/shell"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig/opts"
@@ -187,7 +188,7 @@ func commitStage(state *dispatchState, stages *stagesBuildResults) error {
 
 type dispatchRequest struct {
 	state   *dispatchState
-	shlex   *ShellLex
+	shlex   *shell.Lex
 	builder *Builder
 	source  builder.Source
 	stages  *stagesBuildResults
@@ -196,7 +197,7 @@ type dispatchRequest struct {
 func newDispatchRequest(builder *Builder, escapeToken rune, source builder.Source, buildArgs *buildArgs, stages *stagesBuildResults) dispatchRequest {
 	return dispatchRequest{
 		state:   newDispatchState(buildArgs),
-		shlex:   NewShellLex(escapeToken),
+		shlex:   shell.NewLex(escapeToken),
 		builder: builder,
 		source:  source,
 		stages:  stages,
