@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
-	"github.com/tiborvass/docker/integration-cli/request"
+	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/util/swarm"
 	"github.com/gotestyourself/gotestyourself/skip"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +18,7 @@ func TestSecretInspect(t *testing.T) {
 	defer setupTest(t)()
 	d := swarm.NewSwarm(t, testEnv)
 	defer d.Stop(t)
-	client, err := request.NewClientForHost(d.Sock())
+	client, err := client.NewClientWithOpts(client.WithHost((d.Sock())))
 	require.NoError(t, err)
 
 	ctx := context.Background()
