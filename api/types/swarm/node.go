@@ -1,4 +1,4 @@
-package swarm
+package swarm // import "github.com/tiborvass/docker/api/types/swarm"
 
 // Node represents a node.
 type Node struct {

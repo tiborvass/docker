@@ -1,4 +1,4 @@
-package registry
+package registry // import "github.com/tiborvass/docker/integration-cli/registry"
 
 import "os/exec"
 

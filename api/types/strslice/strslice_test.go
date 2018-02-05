@@ -1,4 +1,4 @@
-package strslice
+package strslice // import "github.com/tiborvass/docker/api/types/strslice"
 
 import (
 	"encoding/json"

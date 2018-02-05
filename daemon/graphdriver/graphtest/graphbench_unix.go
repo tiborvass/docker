@@ -1,6 +1,6 @@
 // +build linux freebsd
 
-package graphtest
+package graphtest // import "github.com/tiborvass/docker/daemon/graphdriver/graphtest"
 
 import (
 	"io"

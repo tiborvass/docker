@@ -1,4 +1,4 @@
-package environment
+package environment // import "github.com/tiborvass/docker/integration-cli/environment"
 
 import (
 	"os"

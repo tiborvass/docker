@@ -1,4 +1,4 @@
-package types
+package types // import "github.com/tiborvass/docker/api/types"
 
 import (
 	"bufio"

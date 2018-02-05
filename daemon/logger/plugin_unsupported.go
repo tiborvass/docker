@@ -1,6 +1,6 @@
 // +build !linux,!freebsd
 
-package logger
+package logger // import "github.com/tiborvass/docker/daemon/logger"
 
 import (
 	"errors"

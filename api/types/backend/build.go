@@ -1,4 +1,4 @@
-package backend
+package backend // import "github.com/tiborvass/docker/api/types/backend"
 
 import (
 	"io"

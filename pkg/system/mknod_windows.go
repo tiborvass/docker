@@ -1,4 +1,4 @@
-package system
+package system // import "github.com/tiborvass/docker/pkg/system"
 
 // Mknod is not implemented on Windows.
 func Mknod(path string, mode uint32, dev int) error {

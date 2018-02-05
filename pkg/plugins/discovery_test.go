@@ -1,4 +1,4 @@
-package plugins
+package plugins // import "github.com/tiborvass/docker/pkg/plugins"
 
 import (
 	"io/ioutil"

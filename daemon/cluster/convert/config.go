@@ -1,4 +1,4 @@
-package convert
+package convert // import "github.com/tiborvass/docker/daemon/cluster/convert"
 
 import (
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"

@@ -1,6 +1,6 @@
 // +build linux freebsd
 
-package directory
+package directory // import "github.com/tiborvass/docker/pkg/directory"
 
 import (
 	"os"

@@ -1,4 +1,4 @@
-package network
+package network // import "github.com/tiborvass/docker/api/types/network"
 
 // Address represents an IP address
 type Address struct {

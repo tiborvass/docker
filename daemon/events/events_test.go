@@ -1,4 +1,4 @@
-package events
+package events // import "github.com/tiborvass/docker/daemon/events"
 
 import (
 	"fmt"

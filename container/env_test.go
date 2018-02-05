@@ -1,4 +1,4 @@
-package container
+package container // import "github.com/tiborvass/docker/container"
 
 import "testing"
 

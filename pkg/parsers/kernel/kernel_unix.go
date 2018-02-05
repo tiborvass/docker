@@ -2,7 +2,7 @@
 
 // Package kernel provides helper function to get, parse and compare kernel
 // versions for different platforms.
-package kernel
+package kernel // import "github.com/tiborvass/docker/pkg/parsers/kernel"
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package layer
+package layer // import "github.com/tiborvass/docker/layer"
 
 import "github.com/docker/distribution"
 

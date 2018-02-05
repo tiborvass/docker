@@ -1,6 +1,6 @@
 // +build !linux
 
-package plugin
+package plugin // import "github.com/tiborvass/docker/plugin"
 
 import (
 	"errors"

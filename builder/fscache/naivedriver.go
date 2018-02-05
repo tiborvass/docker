@@ -1,4 +1,4 @@
-package fscache
+package fscache // import "github.com/tiborvass/docker/builder/fscache"
 
 import (
 	"os"

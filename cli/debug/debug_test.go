@@ -1,4 +1,4 @@
-package debug
+package debug // import "github.com/tiborvass/docker/cli/debug"
 
 import (
 	"os"

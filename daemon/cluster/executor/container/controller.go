@@ -1,4 +1,4 @@
-package container
+package container // import "github.com/tiborvass/docker/daemon/cluster/executor/container"
 
 import (
 	"fmt"

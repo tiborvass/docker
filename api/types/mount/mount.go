@@ -1,4 +1,4 @@
-package mount
+package mount // import "github.com/tiborvass/docker/api/types/mount"
 
 import (
 	"os"

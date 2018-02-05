@@ -1,4 +1,4 @@
-package parsers
+package parsers // import "github.com/tiborvass/docker/pkg/parsers"
 
 import (
 	"reflect"

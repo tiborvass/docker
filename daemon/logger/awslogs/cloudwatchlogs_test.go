@@ -1,4 +1,4 @@
-package awslogs
+package awslogs // import "github.com/tiborvass/docker/daemon/logger/awslogs"
 
 import (
 	"errors"

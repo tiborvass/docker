@@ -1,6 +1,6 @@
 // +build !windows
 
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	"os"

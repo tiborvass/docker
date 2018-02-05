@@ -1,4 +1,4 @@
-package discovery
+package discovery // import "github.com/tiborvass/docker/pkg/discovery"
 
 import (
 	"testing"

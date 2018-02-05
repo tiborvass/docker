@@ -1,6 +1,6 @@
 // +build linux freebsd
 
-package initlayer
+package initlayer // import "github.com/tiborvass/docker/daemon/initlayer"
 
 import (
 	"os"

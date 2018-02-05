@@ -1,4 +1,4 @@
-package devmapper
+package devmapper // import "github.com/tiborvass/docker/daemon/graphdriver/devmapper"
 
 // Definition of struct dm_task and sub structures (from lvm2)
 //

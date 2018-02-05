@@ -1,4 +1,4 @@
-package containerd
+package containerd // import "github.com/tiborvass/docker/plugin/executor/containerd"
 
 import (
 	"context"

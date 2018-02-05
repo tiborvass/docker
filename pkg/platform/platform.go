@@ -1,4 +1,4 @@
-package platform
+package platform // import "github.com/tiborvass/docker/pkg/platform"
 
 import (
 	"runtime"

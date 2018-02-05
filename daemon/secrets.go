@@ -1,4 +1,4 @@
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"

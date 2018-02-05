@@ -11,7 +11,7 @@ created.
 Lock references are automatically cleaned up on `Unlock` if nothing else is
 waiting for the lock.
 */
-package locker
+package locker // import "github.com/tiborvass/docker/pkg/locker"
 
 import (
 	"errors"

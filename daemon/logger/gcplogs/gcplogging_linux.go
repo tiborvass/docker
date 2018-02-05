@@ -1,4 +1,4 @@
-package gcplogs
+package gcplogs // import "github.com/tiborvass/docker/daemon/logger/gcplogs"
 
 import (
 	"os"

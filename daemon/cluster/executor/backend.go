@@ -1,4 +1,4 @@
-package executor
+package executor // import "github.com/tiborvass/docker/daemon/cluster/executor"
 
 import (
 	"io"

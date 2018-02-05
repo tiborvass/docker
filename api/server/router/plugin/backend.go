@@ -1,4 +1,4 @@
-package plugin
+package plugin // import "github.com/tiborvass/docker/api/server/router/plugin"
 
 import (
 	"io"

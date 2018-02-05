@@ -1,4 +1,4 @@
-package loggerutils
+package loggerutils // import "github.com/tiborvass/docker/daemon/logger/loggerutils"
 
 import (
 	"bytes"

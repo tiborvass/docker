@@ -1,4 +1,4 @@
-package mount
+package mount // import "github.com/tiborvass/docker/pkg/mount"
 
 // MakeShared ensures a mounted filesystem has the SHARED mount option enabled.
 // See the supported options in flags.go for further reference.

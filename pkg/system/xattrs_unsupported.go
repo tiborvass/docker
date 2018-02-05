@@ -1,6 +1,6 @@
 // +build !linux
 
-package system
+package system // import "github.com/tiborvass/docker/pkg/system"
 
 // Lgetxattr is not supported on platforms other than linux.
 func Lgetxattr(path string, attr string) ([]byte, error) {

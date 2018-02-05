@@ -2,7 +2,7 @@
 
 // TODO Windows: Some of these tests may be salvageable and portable to Windows.
 
-package archive
+package archive // import "github.com/tiborvass/docker/pkg/archive"
 
 import (
 	"bytes"

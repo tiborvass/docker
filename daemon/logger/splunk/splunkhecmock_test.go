@@ -1,4 +1,4 @@
-package splunk
+package splunk // import "github.com/tiborvass/docker/daemon/logger/splunk"
 
 import (
 	"compress/gzip"

@@ -1,4 +1,4 @@
-package runconfig
+package runconfig // import "github.com/tiborvass/docker/runconfig"
 
 import (
 	"encoding/json"

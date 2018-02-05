@@ -1,4 +1,4 @@
-package tarsum
+package tarsum // import "github.com/tiborvass/docker/pkg/tarsum"
 
 import (
 	"testing"

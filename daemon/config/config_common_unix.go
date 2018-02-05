@@ -1,6 +1,6 @@
 // +build linux freebsd
 
-package config
+package config // import "github.com/tiborvass/docker/daemon/config"
 
 import (
 	"net"

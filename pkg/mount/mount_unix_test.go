@@ -1,6 +1,6 @@
 // +build !windows
 
-package mount
+package mount // import "github.com/tiborvass/docker/pkg/mount"
 
 import (
 	"os"

@@ -1,4 +1,4 @@
-package kernel
+package kernel // import "github.com/tiborvass/docker/pkg/parsers/kernel"
 
 import (
 	"fmt"

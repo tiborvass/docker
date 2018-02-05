@@ -1,6 +1,6 @@
 // +build !windows
 
-package network
+package network // import "github.com/tiborvass/docker/api/server/router/network"
 
 import (
 	"strings"

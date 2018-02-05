@@ -1,6 +1,6 @@
 // +build !linux,!freebsd freebsd,!cgo
 
-package mount
+package mount // import "github.com/tiborvass/docker/pkg/mount"
 
 // These flags are unsupported.
 const (

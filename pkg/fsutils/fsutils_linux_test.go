@@ -1,6 +1,6 @@
 // +build linux
 
-package fsutils
+package fsutils // import "github.com/tiborvass/docker/pkg/fsutils"
 
 import (
 	"io/ioutil"

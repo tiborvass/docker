@@ -1,4 +1,4 @@
-package tarexport
+package tarexport // import "github.com/tiborvass/docker/image/tarexport"
 
 import (
 	"github.com/docker/distribution"

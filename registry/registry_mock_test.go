@@ -1,4 +1,4 @@
-package registry
+package registry // import "github.com/tiborvass/docker/registry"
 
 import (
 	"encoding/json"

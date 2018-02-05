@@ -1,4 +1,4 @@
-package truncindex
+package truncindex // import "github.com/tiborvass/docker/pkg/truncindex"
 
 import (
 	"math/rand"

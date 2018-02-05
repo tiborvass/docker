@@ -1,6 +1,6 @@
 // +build !windows
 
-package volume
+package volume // import "github.com/tiborvass/docker/volume"
 
 var (
 	testDestinationPath = "/foo"

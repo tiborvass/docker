@@ -1,4 +1,4 @@
-package names
+package names // import "github.com/tiborvass/docker/daemon/names"
 
 import "regexp"
 

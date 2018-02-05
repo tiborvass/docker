@@ -1,4 +1,4 @@
-package store
+package store // import "github.com/tiborvass/docker/volume/store"
 
 import (
 	"encoding/json"

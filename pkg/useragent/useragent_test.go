@@ -1,4 +1,4 @@
-package useragent
+package useragent // import "github.com/tiborvass/docker/pkg/useragent"
 
 import "testing"
 

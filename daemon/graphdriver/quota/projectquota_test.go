@@ -1,6 +1,6 @@
 // +build linux
 
-package quota
+package quota // import "github.com/tiborvass/docker/daemon/graphdriver/quota"
 
 import (
 	"io"

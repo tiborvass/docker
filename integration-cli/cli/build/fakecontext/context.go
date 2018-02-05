@@ -1,4 +1,4 @@
-package fakecontext
+package fakecontext // import "github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 
 import (
 	"bytes"

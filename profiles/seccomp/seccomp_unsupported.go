@@ -1,6 +1,6 @@
 // +build linux,!seccomp
 
-package seccomp
+package seccomp // import "github.com/tiborvass/docker/profiles/seccomp"
 
 import (
 	"github.com/tiborvass/docker/api/types"

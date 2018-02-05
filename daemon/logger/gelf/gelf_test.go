@@ -1,6 +1,6 @@
 // +build linux
 
-package gelf
+package gelf // import "github.com/tiborvass/docker/daemon/logger/gelf"
 
 import (
 	"net"

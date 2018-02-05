@@ -1,4 +1,4 @@
-package environment
+package environment // import "github.com/tiborvass/docker/internal/test/environment"
 
 import (
 	"fmt"

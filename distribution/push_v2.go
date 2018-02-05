@@ -1,4 +1,4 @@
-package distribution
+package distribution // import "github.com/tiborvass/docker/distribution"
 
 import (
 	"errors"

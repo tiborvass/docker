@@ -1,4 +1,4 @@
-package testutil
+package testutil // import "github.com/tiborvass/docker/internal/testutil"
 
 import (
 	"testing"

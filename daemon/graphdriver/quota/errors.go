@@ -1,4 +1,4 @@
-package quota
+package quota // import "github.com/tiborvass/docker/daemon/graphdriver/quota"
 
 import "github.com/tiborvass/docker/errdefs"
 

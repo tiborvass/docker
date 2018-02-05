@@ -1,4 +1,4 @@
-package broadcaster
+package broadcaster // import "github.com/tiborvass/docker/pkg/broadcaster"
 
 import (
 	"io"

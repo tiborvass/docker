@@ -1,6 +1,6 @@
 // +build !linux
 
-package idtools
+package idtools // import "github.com/tiborvass/docker/pkg/idtools"
 
 import "fmt"
 

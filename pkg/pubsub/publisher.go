@@ -1,4 +1,4 @@
-package pubsub
+package pubsub // import "github.com/tiborvass/docker/pkg/pubsub"
 
 import (
 	"sync"

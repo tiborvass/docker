@@ -1,4 +1,4 @@
-package stdcopy
+package stdcopy // import "github.com/tiborvass/docker/pkg/stdcopy"
 
 import (
 	"bytes"

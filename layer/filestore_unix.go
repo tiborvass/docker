@@ -1,6 +1,6 @@
 // +build !windows
 
-package layer
+package layer // import "github.com/tiborvass/docker/layer"
 
 import "runtime"
 

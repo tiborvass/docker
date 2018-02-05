@@ -1,4 +1,4 @@
-package errdefs
+package errdefs // import "github.com/tiborvass/docker/errdefs"
 
 type causer interface {
 	Cause() error

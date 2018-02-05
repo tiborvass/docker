@@ -1,6 +1,6 @@
 // +build !linux,!freebsd
 
-package zfs
+package zfs // import "github.com/tiborvass/docker/daemon/graphdriver/zfs"
 
 func checkRootdirFs(rootdir string) error {
 	return nil

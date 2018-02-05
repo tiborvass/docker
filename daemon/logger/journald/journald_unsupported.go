@@ -1,6 +1,6 @@
 // +build !linux
 
-package journald
+package journald // import "github.com/tiborvass/docker/daemon/logger/journald"
 
 type journald struct {
 }

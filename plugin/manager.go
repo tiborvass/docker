@@ -1,4 +1,4 @@
-package plugin
+package plugin // import "github.com/tiborvass/docker/plugin"
 
 import (
 	"encoding/json"
