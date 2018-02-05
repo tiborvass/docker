@@ -43,6 +43,7 @@ import (
 	"github.com/tiborvass/docker/migrate/v1"
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
+	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
@@ -120,7 +121,8 @@ type Daemon struct {
 	hosts            map[string]bool // hosts stores the addresses the daemon is listening on
 	startupDone      chan struct{}
 
-	attachmentStore network.AttachmentStore
+	attachmentStore       network.AttachmentStore
+	attachableNetworkLock *locker.Locker
 }
 
 // StoreHosts stores the addresses the daemon is listening on
@@ -564,6 +566,7 @@ func (daemon *Daemon) DaemonLeavesCluster() {
 func (daemon *Daemon) setClusterProvider(clusterProvider cluster.Provider) {
 	daemon.clusterProvider = clusterProvider
 	daemon.netController.SetClusterProvider(clusterProvider)
+	daemon.attachableNetworkLock = locker.New()
 }
 
 // IsSwarmCompatible verifies if the current daemon
