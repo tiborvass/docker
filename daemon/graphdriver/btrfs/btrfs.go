@@ -29,7 +29,6 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver"
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-units"
@@ -163,7 +162,7 @@ func (d *Driver) Cleanup() error {
 		return err
 	}
 
-	return mount.RecursiveUnmount(d.home)
+	return nil
 }
 
 func free(p *C.char) {
