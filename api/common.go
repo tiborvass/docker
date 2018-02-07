@@ -1,4 +1,4 @@
-package api
+package api // import "github.com/tiborvass/docker/api"
 
 // Common constants for daemon and client.
 const (

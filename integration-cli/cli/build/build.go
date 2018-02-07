@@ -1,4 +1,4 @@
-package build
+package build // import "github.com/tiborvass/docker/integration-cli/cli/build"
 
 import (
 	"io"

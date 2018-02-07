@@ -1,4 +1,4 @@
-package checkpoint
+package checkpoint // import "github.com/tiborvass/docker/api/server/router/checkpoint"
 
 import (
 	"encoding/json"

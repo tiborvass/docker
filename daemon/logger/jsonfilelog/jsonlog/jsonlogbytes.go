@@ -1,4 +1,4 @@
-package jsonlog
+package jsonlog // import "github.com/tiborvass/docker/daemon/logger/jsonfilelog/jsonlog"
 
 import (
 	"bytes"

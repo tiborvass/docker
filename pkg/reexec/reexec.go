@@ -1,4 +1,4 @@
-package reexec
+package reexec // import "github.com/tiborvass/docker/pkg/reexec"
 
 import (
 	"fmt"

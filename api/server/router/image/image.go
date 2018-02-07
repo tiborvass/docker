@@ -1,4 +1,4 @@
-package image
+package image // import "github.com/tiborvass/docker/api/server/router/image"
 
 import (
 	"github.com/tiborvass/docker/api/server/httputils"

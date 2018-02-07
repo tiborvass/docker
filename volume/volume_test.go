@@ -1,4 +1,4 @@
-package volume
+package volume // import "github.com/tiborvass/docker/volume"
 
 import (
 	"io/ioutil"

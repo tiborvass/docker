@@ -1,6 +1,6 @@
 // +build linux
 
-package copy
+package copy // import "github.com/tiborvass/docker/daemon/graphdriver/copy"
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package stringid
+package stringid // import "github.com/tiborvass/docker/pkg/stringid"
 
 import (
 	"strings"

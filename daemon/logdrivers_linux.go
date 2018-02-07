@@ -1,4 +1,4 @@
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	// Importing packages here only to make sure their init gets called and

@@ -1,6 +1,6 @@
 // Package platform provides helper function to get the runtime architecture
 // for different platforms.
-package platform
+package platform // import "github.com/tiborvass/docker/pkg/platform"
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package file
+package file // import "github.com/tiborvass/docker/pkg/discovery/file"
 
 import (
 	"fmt"

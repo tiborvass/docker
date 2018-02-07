@@ -1,4 +1,4 @@
-package system
+package system // import "github.com/tiborvass/docker/pkg/system"
 
 // Umask is not supported on the windows platform.
 func Umask(newmask int) (oldmask int, err error) {

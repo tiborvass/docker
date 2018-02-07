@@ -1,4 +1,4 @@
-package testutils
+package testutils // import "github.com/tiborvass/docker/volume/testutils"
 
 import (
 	"encoding/json"

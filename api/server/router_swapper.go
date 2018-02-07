@@ -1,4 +1,4 @@
-package server
+package server // import "github.com/tiborvass/docker/api/server"
 
 import (
 	"net/http"

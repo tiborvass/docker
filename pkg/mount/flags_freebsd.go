@@ -1,6 +1,6 @@
 // +build freebsd,cgo
 
-package mount
+package mount // import "github.com/tiborvass/docker/pkg/mount"
 
 /*
 #include <sys/mount.h>

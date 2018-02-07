@@ -1,4 +1,4 @@
-package image
+package image // import "github.com/tiborvass/docker/image"
 
 import (
 	"runtime"

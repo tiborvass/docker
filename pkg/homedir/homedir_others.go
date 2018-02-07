@@ -1,6 +1,6 @@
 // +build !linux
 
-package homedir
+package homedir // import "github.com/tiborvass/docker/pkg/homedir"
 
 import (
 	"errors"

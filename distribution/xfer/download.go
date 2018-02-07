@@ -1,4 +1,4 @@
-package xfer
+package xfer // import "github.com/tiborvass/docker/distribution/xfer"
 
 import (
 	"errors"

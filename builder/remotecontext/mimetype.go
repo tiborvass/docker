@@ -1,4 +1,4 @@
-package remotecontext
+package remotecontext // import "github.com/tiborvass/docker/builder/remotecontext"
 
 import (
 	"mime"

@@ -1,4 +1,4 @@
-package dockerfile
+package dockerfile // import "github.com/tiborvass/docker/builder/dockerfile"
 
 import (
 	"fmt"

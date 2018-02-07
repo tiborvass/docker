@@ -1,6 +1,6 @@
 // +build linux,cgo
 
-package devicemapper
+package devicemapper // import "github.com/tiborvass/docker/pkg/devicemapper"
 
 import (
 	"unsafe"

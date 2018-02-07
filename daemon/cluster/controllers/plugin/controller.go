@@ -1,4 +1,4 @@
-package plugin
+package plugin // import "github.com/tiborvass/docker/daemon/cluster/controllers/plugin"
 
 import (
 	"io"

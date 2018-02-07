@@ -1,4 +1,4 @@
-package volumedrivers
+package volumedrivers // import "github.com/tiborvass/docker/volume/drivers"
 
 import (
 	"fmt"

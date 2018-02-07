@@ -1,4 +1,4 @@
-package mount
+package mount // import "github.com/tiborvass/docker/pkg/mount"
 
 import (
 	"bufio"

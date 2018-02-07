@@ -1,4 +1,4 @@
-package requirement
+package requirement // import "github.com/tiborvass/docker/integration/util/requirement"
 
 import (
 	"net/http"

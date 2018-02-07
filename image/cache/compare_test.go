@@ -1,4 +1,4 @@
-package cache
+package cache // import "github.com/tiborvass/docker/image/cache"
 
 import (
 	"testing"

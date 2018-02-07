@@ -1,4 +1,4 @@
-package jsonmessage
+package jsonmessage // import "github.com/tiborvass/docker/pkg/jsonmessage"
 
 import (
 	"bytes"

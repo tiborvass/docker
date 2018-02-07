@@ -1,4 +1,4 @@
-package templates
+package templates // import "github.com/tiborvass/docker/daemon/logger/templates"
 
 import (
 	"bytes"

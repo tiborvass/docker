@@ -1,4 +1,4 @@
-package network
+package network // import "github.com/tiborvass/docker/daemon/network"
 
 import (
 	"net"

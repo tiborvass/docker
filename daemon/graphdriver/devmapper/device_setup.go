@@ -1,4 +1,4 @@
-package devmapper
+package devmapper // import "github.com/tiborvass/docker/daemon/graphdriver/devmapper"
 
 import (
 	"bufio"

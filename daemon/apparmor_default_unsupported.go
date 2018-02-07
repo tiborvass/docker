@@ -1,6 +1,6 @@
 // +build !linux
 
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 func ensureDefaultAppArmorProfile() error {
 	return nil

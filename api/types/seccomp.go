@@ -1,4 +1,4 @@
-package types
+package types // import "github.com/tiborvass/docker/api/types"
 
 // Seccomp represents the config for a seccomp profile for syscall restriction.
 type Seccomp struct {

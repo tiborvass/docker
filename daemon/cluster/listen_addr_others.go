@@ -1,6 +1,6 @@
 // +build !linux
 
-package cluster
+package cluster // import "github.com/tiborvass/docker/daemon/cluster"
 
 import "net"
 

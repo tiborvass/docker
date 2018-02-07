@@ -1,4 +1,4 @@
-package cli
+package cli // import "github.com/tiborvass/docker/cli"
 
 import (
 	"fmt"

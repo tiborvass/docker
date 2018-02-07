@@ -1,6 +1,6 @@
 // +build linux,seccomp
 
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	"fmt"

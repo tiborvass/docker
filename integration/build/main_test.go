@@ -1,4 +1,4 @@
-package build
+package build // import "github.com/tiborvass/docker/integration/build"
 
 import (
 	"fmt"

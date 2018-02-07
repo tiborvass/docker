@@ -1,4 +1,4 @@
-package pidfile
+package pidfile // import "github.com/tiborvass/docker/pkg/pidfile"
 
 import (
 	"io/ioutil"

@@ -1,4 +1,4 @@
-package stream
+package stream // import "github.com/tiborvass/docker/container/stream"
 
 import (
 	"io"

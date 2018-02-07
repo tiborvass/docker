@@ -1,4 +1,4 @@
-package httputils
+package httputils // import "github.com/tiborvass/docker/api/server/httputils"
 
 import (
 	"fmt"

@@ -1,6 +1,6 @@
 // +build darwin linux
 
-package signal
+package signal // import "github.com/tiborvass/docker/pkg/signal"
 
 import (
 	"os"

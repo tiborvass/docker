@@ -2,7 +2,7 @@
 
 // Licensed under the Apache License, Version 2.0; See LICENSE.APACHE
 
-package symlink
+package symlink // import "github.com/tiborvass/docker/pkg/symlink"
 
 import (
 	"fmt"

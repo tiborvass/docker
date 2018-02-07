@@ -1,4 +1,4 @@
-package service
+package service // import "github.com/tiborvass/docker/integration/service"
 
 import (
 	"testing"

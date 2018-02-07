@@ -1,6 +1,6 @@
 // +build windows
 
-package lcow
+package lcow // import "github.com/tiborvass/docker/daemon/graphdriver/lcow"
 
 import (
 	"bytes"

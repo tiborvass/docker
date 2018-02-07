@@ -1,6 +1,6 @@
 // Package types is used for API stability in the types and response to the
 // consumers of the API stats endpoint.
-package types
+package types // import "github.com/tiborvass/docker/api/types"
 
 import "time"
 

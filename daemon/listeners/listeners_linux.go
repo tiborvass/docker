@@ -1,4 +1,4 @@
-package listeners
+package listeners // import "github.com/tiborvass/docker/daemon/listeners"
 
 import (
 	"crypto/tls"

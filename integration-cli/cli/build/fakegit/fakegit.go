@@ -1,4 +1,4 @@
-package fakegit
+package fakegit // import "github.com/tiborvass/docker/integration-cli/cli/build/fakegit"
 
 import (
 	"fmt"

@@ -1,6 +1,6 @@
 // +build !windows
 
-package container
+package container // import "github.com/tiborvass/docker/container"
 
 // Mount contains information for a mount operation.
 type Mount struct {

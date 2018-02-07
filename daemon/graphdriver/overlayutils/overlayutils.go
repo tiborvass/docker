@@ -1,6 +1,6 @@
 // +build linux
 
-package overlayutils
+package overlayutils // import "github.com/tiborvass/docker/daemon/graphdriver/overlayutils"
 
 import (
 	"fmt"

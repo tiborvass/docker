@@ -1,4 +1,4 @@
-package devicemapper
+package devicemapper // import "github.com/tiborvass/docker/pkg/devicemapper"
 
 // definitions from lvm2 lib/log/log.h
 const (

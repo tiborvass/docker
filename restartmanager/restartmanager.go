@@ -1,4 +1,4 @@
-package restartmanager
+package restartmanager // import "github.com/tiborvass/docker/restartmanager"
 
 import (
 	"errors"

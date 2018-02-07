@@ -1,6 +1,6 @@
 // +build linux
 
-package apparmor
+package apparmor // import "github.com/tiborvass/docker/profiles/apparmor"
 
 // baseTemplate defines the default apparmor profile for containers.
 const baseTemplate = `

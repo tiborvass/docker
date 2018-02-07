@@ -1,4 +1,4 @@
-package logdriver
+package logdriver // import "github.com/tiborvass/docker/api/types/plugins/logdriver"
 
 import (
 	"encoding/binary"

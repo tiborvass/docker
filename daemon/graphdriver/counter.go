@@ -1,4 +1,4 @@
-package graphdriver
+package graphdriver // import "github.com/tiborvass/docker/daemon/graphdriver"
 
 import "sync"
 

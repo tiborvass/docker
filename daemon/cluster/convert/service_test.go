@@ -1,4 +1,4 @@
-package convert
+package convert // import "github.com/tiborvass/docker/daemon/cluster/convert"
 
 import (
 	"testing"

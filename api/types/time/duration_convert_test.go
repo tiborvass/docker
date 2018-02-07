@@ -1,4 +1,4 @@
-package time
+package time // import "github.com/tiborvass/docker/api/types/time"
 
 import (
 	"testing"

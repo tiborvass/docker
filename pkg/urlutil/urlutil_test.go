@@ -1,4 +1,4 @@
-package urlutil
+package urlutil // import "github.com/tiborvass/docker/pkg/urlutil"
 
 import "testing"
 

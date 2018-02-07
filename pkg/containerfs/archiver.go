@@ -1,4 +1,4 @@
-package containerfs
+package containerfs // import "github.com/tiborvass/docker/pkg/containerfs"
 
 import (
 	"archive/tar"

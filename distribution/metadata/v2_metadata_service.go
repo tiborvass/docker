@@ -1,4 +1,4 @@
-package metadata
+package metadata // import "github.com/tiborvass/docker/distribution/metadata"
 
 import (
 	"crypto/hmac"

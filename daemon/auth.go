@@ -1,4 +1,4 @@
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	"golang.org/x/net/context"

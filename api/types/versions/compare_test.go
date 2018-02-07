@@ -1,4 +1,4 @@
-package versions
+package versions // import "github.com/tiborvass/docker/api/types/versions"
 
 import (
 	"testing"

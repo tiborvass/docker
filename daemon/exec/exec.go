@@ -1,4 +1,4 @@
-package exec
+package exec // import "github.com/tiborvass/docker/daemon/exec"
 
 import (
 	"runtime"

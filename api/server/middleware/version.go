@@ -1,4 +1,4 @@
-package middleware
+package middleware // import "github.com/tiborvass/docker/api/server/middleware"
 
 import (
 	"fmt"

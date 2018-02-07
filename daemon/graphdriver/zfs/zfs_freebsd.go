@@ -1,4 +1,4 @@
-package zfs
+package zfs // import "github.com/tiborvass/docker/daemon/graphdriver/zfs"
 
 import (
 	"fmt"

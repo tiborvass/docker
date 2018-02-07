@@ -1,4 +1,4 @@
-package oci
+package oci // import "github.com/tiborvass/docker/oci"
 
 import (
 	"os"

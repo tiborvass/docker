@@ -1,4 +1,4 @@
-package testutils
+package testutils // import "github.com/tiborvass/docker/daemon/events/testutils"
 
 import (
 	"fmt"

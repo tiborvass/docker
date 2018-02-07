@@ -1,4 +1,4 @@
-package layer
+package layer // import "github.com/tiborvass/docker/layer"
 
 import (
 	"io/ioutil"

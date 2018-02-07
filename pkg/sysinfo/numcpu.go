@@ -1,6 +1,6 @@
 // +build !linux,!windows
 
-package sysinfo
+package sysinfo // import "github.com/tiborvass/docker/pkg/sysinfo"
 
 import (
 	"runtime"

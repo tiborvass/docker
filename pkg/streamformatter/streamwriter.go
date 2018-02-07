@@ -1,4 +1,4 @@
-package streamformatter
+package streamformatter // import "github.com/tiborvass/docker/pkg/streamformatter"
 
 import (
 	"encoding/json"

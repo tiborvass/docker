@@ -1,6 +1,6 @@
 // +build linux freebsd darwin openbsd
 
-package layer
+package layer // import "github.com/tiborvass/docker/layer"
 
 import "github.com/tiborvass/docker/pkg/stringid"
 

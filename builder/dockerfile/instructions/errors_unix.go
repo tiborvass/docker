@@ -1,6 +1,6 @@
 // +build !windows
 
-package instructions
+package instructions // import "github.com/tiborvass/docker/builder/dockerfile/instructions"
 
 import "fmt"
 

@@ -1,4 +1,4 @@
-package tailfile
+package tailfile // import "github.com/tiborvass/docker/pkg/tailfile"
 
 import (
 	"io/ioutil"

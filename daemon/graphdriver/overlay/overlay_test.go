@@ -1,6 +1,6 @@
 // +build linux
 
-package overlay
+package overlay // import "github.com/tiborvass/docker/daemon/graphdriver/overlay"
 
 import (
 	"testing"

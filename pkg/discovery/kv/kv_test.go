@@ -1,4 +1,4 @@
-package kv
+package kv // import "github.com/tiborvass/docker/pkg/discovery/kv"
 
 import (
 	"errors"

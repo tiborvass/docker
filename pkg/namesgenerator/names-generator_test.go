@@ -1,4 +1,4 @@
-package namesgenerator
+package namesgenerator // import "github.com/tiborvass/docker/pkg/namesgenerator"
 
 import (
 	"strings"

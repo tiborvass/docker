@@ -1,4 +1,4 @@
-package libcontainerd
+package libcontainerd // import "github.com/tiborvass/docker/libcontainerd"
 
 import (
 	"fmt"

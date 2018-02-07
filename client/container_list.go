@@ -1,4 +1,4 @@
-package client
+package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"encoding/json"

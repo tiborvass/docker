@@ -1,4 +1,4 @@
-package transport
+package transport // import "github.com/tiborvass/docker/pkg/plugins/transport"
 
 import (
 	"io"

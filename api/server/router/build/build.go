@@ -1,4 +1,4 @@
-package build
+package build // import "github.com/tiborvass/docker/api/server/router/build"
 
 import "github.com/tiborvass/docker/api/server/router"
 

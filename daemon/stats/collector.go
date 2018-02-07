@@ -1,4 +1,4 @@
-package stats
+package stats // import "github.com/tiborvass/docker/daemon/stats"
 
 import (
 	"time"

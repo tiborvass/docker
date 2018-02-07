@@ -1,4 +1,4 @@
-package v2
+package v2 // import "github.com/tiborvass/docker/plugin/v2"
 
 import (
 	"errors"

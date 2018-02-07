@@ -1,6 +1,6 @@
 // +build linux
 
-package aufs
+package aufs // import "github.com/tiborvass/docker/daemon/graphdriver/aufs"
 
 import (
 	"crypto/sha256"

@@ -1,4 +1,4 @@
-package git
+package git // import "github.com/tiborvass/docker/builder/remotecontext/git"
 
 import (
 	"fmt"

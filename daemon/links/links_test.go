@@ -1,4 +1,4 @@
-package links
+package links // import "github.com/tiborvass/docker/daemon/links"
 
 import (
 	"fmt"

@@ -1,6 +1,6 @@
 //+build linux
 
-package term
+package term // import "github.com/tiborvass/docker/pkg/term"
 
 import (
 	"io/ioutil"

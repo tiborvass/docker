@@ -1,4 +1,4 @@
-package syslog
+package syslog // import "github.com/tiborvass/docker/daemon/logger/syslog"
 
 import (
 	"reflect"

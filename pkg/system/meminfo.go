@@ -1,4 +1,4 @@
-package system
+package system // import "github.com/tiborvass/docker/pkg/system"
 
 // MemInfo contains memory statistics of the host system.
 type MemInfo struct {

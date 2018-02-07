@@ -1,4 +1,4 @@
-package vfs
+package vfs // import "github.com/tiborvass/docker/daemon/graphdriver/vfs"
 
 import "github.com/tiborvass/docker/daemon/graphdriver/copy"
 

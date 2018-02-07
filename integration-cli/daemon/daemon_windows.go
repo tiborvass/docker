@@ -1,4 +1,4 @@
-package daemon
+package daemon // import "github.com/tiborvass/docker/integration-cli/daemon"
 
 import (
 	"fmt"

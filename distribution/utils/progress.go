@@ -1,4 +1,4 @@
-package utils
+package utils // import "github.com/tiborvass/docker/distribution/utils"
 
 import (
 	"io"

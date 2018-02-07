@@ -1,5 +1,5 @@
 // +build linux freebsd
 
-package daemon
+package daemon // import "github.com/tiborvass/docker/daemon"
 
 const bindMountType = "bind"
