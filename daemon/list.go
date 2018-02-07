@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/container"
+	"github.com/tiborvass/docker/daemon/images"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/volume"
@@ -592,7 +593,7 @@ func (daemon *Daemon) refreshImage(s *container.Snapshot, ctx *listContext) (*ty
 	image := s.Image // keep the original ref if still valid (hasn't changed)
 	if image != s.ImageID {
 		id, _, err := daemon.imageService.GetImageIDAndOS(image)
-		if _, isDNE := err.(errImageDoesNotExist); err != nil && !isDNE {
+		if _, isDNE := err.(images.ErrImageDoesNotExist); err != nil && !isDNE {
 			return nil, err
 		}
 		if err != nil || id.String() != s.ImageID {

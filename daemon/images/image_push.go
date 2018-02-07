@@ -1,4 +1,4 @@
-package daemon // import "github.com/tiborvass/docker/daemon"
+package images // import "github.com/tiborvass/docker/daemon/images"
 
 import (
 	"io"
@@ -13,7 +13,7 @@ import (
 )
 
 // PushImage initiates a push operation on the repository named localName.
-func (i *imageService) PushImage(ctx context.Context, image, tag string, metaHeaders map[string][]string, authConfig *types.AuthConfig, outStream io.Writer) error {
+func (i *ImageService) PushImage(ctx context.Context, image, tag string, metaHeaders map[string][]string, authConfig *types.AuthConfig, outStream io.Writer) error {
 	ref, err := reference.ParseNormalizedNamed(image)
 	if err != nil {
 		return err
