@@ -13,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
 	"github.com/tiborvass/docker/builder/dockerfile/shell"
+	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
@@ -445,7 +446,7 @@ func TestRunWithBuildArgs(t *testing.T) {
 		assert.Equal(t, strslice.StrSlice{""}, config.Config.Entrypoint)
 		return container.ContainerCreateCreatedBody{ID: "12345"}, nil
 	}
-	mockBackend.commitFunc = func(cID string, cfg *backend.ContainerCommitConfig) (string, error) {
+	mockBackend.commitFunc = func(cfg backend.CommitConfig) (image.ID, error) {
 		// Check the runConfig.Cmd sent to commit()
 		assert.Equal(t, origCmd, cfg.Config.Cmd)
 		assert.Equal(t, cachedCmd, cfg.ContainerConfig.Cmd)
