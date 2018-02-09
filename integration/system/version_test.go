@@ -3,7 +3,7 @@ package system // import "github.com/tiborvass/docker/integration/system"
 import (
 	"testing"
 
-	"github.com/tiborvass/docker/integration/util/request"
+	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/context"

@@ -10,7 +10,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
-	"github.com/tiborvass/docker/integration/util/request"
+	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/gotestyourself/gotestyourself/poll"
 	"github.com/gotestyourself/gotestyourself/skip"
 	"github.com/stretchr/testify/assert"

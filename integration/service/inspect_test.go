@@ -9,7 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration/util/swarm"
+	"github.com/tiborvass/docker/integration/internal/swarm"
 	"github.com/gotestyourself/gotestyourself/poll"
 	"github.com/gotestyourself/gotestyourself/skip"
 	"github.com/stretchr/testify/assert"

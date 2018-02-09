@@ -1,4 +1,4 @@
-package request // import "github.com/tiborvass/docker/integration/util/request"
+package request // import "github.com/tiborvass/docker/integration/internal/request"
 
 import (
 	"net"

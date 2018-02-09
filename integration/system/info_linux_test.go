@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	req "github.com/tiborvass/docker/integration-cli/request"
-	"github.com/tiborvass/docker/integration/util/request"
+	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/context"
