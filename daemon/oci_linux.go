@@ -16,6 +16,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	daemonconfig "github.com/tiborvass/docker/daemon/config"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/oci/caps"
 	"github.com/tiborvass/docker/pkg/idtools"
