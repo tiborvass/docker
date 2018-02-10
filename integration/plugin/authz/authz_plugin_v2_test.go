@@ -16,7 +16,7 @@ import (
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration/util/requirement"
+	"github.com/tiborvass/docker/integration/internal/requirement"
 	"github.com/gotestyourself/gotestyourself/skip"
 	"github.com/stretchr/testify/require"
 )

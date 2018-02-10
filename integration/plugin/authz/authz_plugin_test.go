@@ -23,7 +23,7 @@ import (
 	eventtypes "github.com/tiborvass/docker/api/types/events"
 	networktypes "github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration/util/request"
+	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/tiborvass/docker/internal/test/environment"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/gotestyourself/gotestyourself/skip"

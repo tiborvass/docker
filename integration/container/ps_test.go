@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
-	"github.com/tiborvass/docker/integration/util/request"
+	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

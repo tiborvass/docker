@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration/util/swarm"
+	"github.com/tiborvass/docker/integration/internal/swarm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
