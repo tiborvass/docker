@@ -6,9 +6,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/container"
-	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/strslice"
+	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/stretchr/testify/require"
 )
@@ -18,22 +17,12 @@ func TestExec(t *testing.T) {
 	ctx := context.Background()
 	client := request.NewAPIClient(t)
 
-	container, err := client.ContainerCreate(ctx,
-		&container.Config{
-			Image:      "busybox",
-			Tty:        true,
-			WorkingDir: "/root",
-			Cmd:        strslice.StrSlice([]string{"top"}),
-		},
-		&container.HostConfig{},
-		&network.NetworkingConfig{},
-		"foo",
-	)
-	require.NoError(t, err)
-	err = client.ContainerStart(ctx, container.ID, types.ContainerStartOptions{})
-	require.NoError(t, err)
+	cID := container.Run(t, ctx, client, func(c *container.TestContainerConfig) {
+		c.Config.Tty = true
+		c.Config.WorkingDir = "/root"
+	})
 
-	id, err := client.ContainerExecCreate(ctx, container.ID,
+	id, err := client.ContainerExecCreate(ctx, cID,
 		types.ExecConfig{
 			WorkingDir:   "/tmp",
 			Env:          strslice.StrSlice([]string{"FOO=BAR"}),
