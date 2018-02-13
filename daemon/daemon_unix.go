@@ -23,6 +23,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
+	"github.com/tiborvass/docker/daemon/initlayer"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/containerfs"
@@ -1000,8 +1001,10 @@ func removeDefaultBridgeInterface() {
 	}
 }
 
-func (daemon *Daemon) getLayerInit() func(containerfs.ContainerFS) error {
-	return daemon.setupInitLayer
+func setupInitLayer(idMappings *idtools.IDMappings) func(containerfs.ContainerFS) error {
+	return func(initPath containerfs.ContainerFS) error {
+		return initlayer.Setup(initPath, idMappings.RootPair())
+	}
 }
 
 // Parse the remapped root (user namespace) option, which can be one of:
