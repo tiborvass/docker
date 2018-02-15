@@ -4,7 +4,6 @@ import (
 	"io"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/image"
 	"github.com/tiborvass/docker/api/types/registry"
@@ -14,14 +13,9 @@ import (
 // Backend is all the methods that need to be implemented
 // to provide image specific functionality.
 type Backend interface {
-	containerBackend
 	imageBackend
 	importExportBackend
 	registryBackend
-}
-
-type containerBackend interface {
-	CreateImageFromContainer(name string, config *backend.CreateImageConfig) (imageID string, err error)
 }
 
 type imageBackend interface {
