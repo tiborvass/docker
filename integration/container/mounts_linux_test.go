@@ -13,7 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/integration/util/request"
+	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/gotestyourself/gotestyourself/fs"
