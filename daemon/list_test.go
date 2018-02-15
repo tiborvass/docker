@@ -1,11 +1,11 @@
 package daemon
 
-import(
+import (
 	"testing"
 
-	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/container"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 )
