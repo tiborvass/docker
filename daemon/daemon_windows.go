@@ -11,7 +11,6 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
-	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -54,7 +53,7 @@ func parseSecurityOpt(container *container.Container, config *containertypes.Hos
 	return nil
 }
 
-func (daemon *Daemon) getLayerInit() func(containerfs.ContainerFS) error {
+func setupInitLayer(idMappings *idtools.IDMappings) func(containerfs.ContainerFS) error {
 	return nil
 }
 
@@ -627,17 +626,6 @@ func (daemon *Daemon) setDefaultIsolation() error {
 
 	logrus.Infof("Windows default isolation mode: %s", daemon.defaultIsolation)
 	return nil
-}
-
-func rootFSToAPIType(rootfs *image.RootFS) types.RootFS {
-	var layers []string
-	for _, l := range rootfs.DiffIDs {
-		layers = append(layers, l.String())
-	}
-	return types.RootFS{
-		Type:   rootfs.Type,
-		Layers: layers,
-	}
 }
 
 func setupDaemonProcess(config *config.Config) error {

@@ -23,7 +23,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
-	"github.com/tiborvass/docker/image"
+	"github.com/tiborvass/docker/daemon/initlayer"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
@@ -1000,8 +1000,10 @@ func removeDefaultBridgeInterface() {
 	}
 }
 
-func (daemon *Daemon) getLayerInit() func(containerfs.ContainerFS) error {
-	return daemon.setupInitLayer
+func setupInitLayer(idMappings *idtools.IDMappings) func(containerfs.ContainerFS) error {
+	return func(initPath containerfs.ContainerFS) error {
+		return initlayer.Setup(initPath, idMappings.RootPair())
+	}
 }
 
 // Parse the remapped root (user namespace) option, which can be one of:
@@ -1355,17 +1357,6 @@ func (daemon *Daemon) stats(c *container.Container) (*types.StatsJSON, error) {
 // daemon to run in. This is only applicable on Windows
 func (daemon *Daemon) setDefaultIsolation() error {
 	return nil
-}
-
-func rootFSToAPIType(rootfs *image.RootFS) types.RootFS {
-	var layers []string
-	for _, l := range rootfs.DiffIDs {
-		layers = append(layers, l.String())
-	}
-	return types.RootFS{
-		Type:   rootfs.Type,
-		Layers: layers,
-	}
 }
 
 // setupDaemonProcess sets various settings for the daemon's process
