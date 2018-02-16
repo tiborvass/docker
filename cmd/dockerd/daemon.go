@@ -34,7 +34,6 @@ import (
 	"github.com/tiborvass/docker/daemon/cluster"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/daemon/listeners"
-	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/libcontainerd"
 	dopts "github.com/tiborvass/docker/opts"
@@ -104,12 +103,6 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
 
 	if err := setDefaultUmask(); err != nil {
 		return fmt.Errorf("Failed to set umask: %v", err)
-	}
-
-	if len(cli.LogConfig.Config) > 0 {
-		if err := logger.ValidateLogOpts(cli.LogConfig.Type, cli.LogConfig.Config); err != nil {
-			return fmt.Errorf("Failed to set log opts: %v", err)
-		}
 	}
 
 	// Create the daemon root before we create ANY other files (PID, or migrate keys)
