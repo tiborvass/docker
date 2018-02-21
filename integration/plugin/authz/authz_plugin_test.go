@@ -22,7 +22,6 @@ import (
 	eventtypes "github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/tiborvass/docker/internal/test/environment"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/gotestyourself/gotestyourself/skip"
@@ -126,7 +125,7 @@ func TestAuthZPluginTLS(t *testing.T) {
 	ctrl.reqRes.Allow = true
 	ctrl.resRes.Allow = true
 
-	client, err := request.NewTLSAPIClient(t, testDaemonHTTPSAddr, cacertPath, clientCertPath, clientKeyPath)
+	client, err := newTLSAPIClient(testDaemonHTTPSAddr, cacertPath, clientCertPath, clientKeyPath)
 	require.Nil(t, err)
 
 	_, err = client.ServerVersion(context.Background())
@@ -134,6 +133,17 @@ func TestAuthZPluginTLS(t *testing.T) {
 
 	require.Equal(t, "client", ctrl.reqUser)
 	require.Equal(t, "client", ctrl.resUser)
+}
+
+func newTLSAPIClient(host, cacertPath, certPath, keyPath string) (client.APIClient, error) {
+	dialer := &net.Dialer{
+		KeepAlive: 30 * time.Second,
+		Timeout:   30 * time.Second,
+	}
+	return client.NewClientWithOpts(
+		client.WithTLSClientConfig(cacertPath, certPath, keyPath),
+		client.WithDialer(dialer),
+		client.WithHost(host))
 }
 
 func TestAuthZPluginDenyRequest(t *testing.T) {
