@@ -10,7 +10,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/volume"
 	volumestore "github.com/tiborvass/docker/volume/store"
@@ -121,12 +120,11 @@ func (daemon *Daemon) cleanupContainer(container *container.Container, forceRemo
 	// When container creation fails and `RWLayer` has not been created yet, we
 	// do not call `ReleaseRWLayer`
 	if container.RWLayer != nil {
-		metadata, err := daemon.layerStores[container.OS].ReleaseRWLayer(container.RWLayer)
-		layer.LogReleaseMetadata(metadata)
-		if err != nil && err != layer.ErrMountDoesNotExist && !os.IsNotExist(errors.Cause(err)) {
-			e := errors.Wrapf(err, "driver %q failed to remove root filesystem for %s", daemon.GraphDriverName(container.OS), container.ID)
-			container.SetRemovalError(e)
-			return e
+		err := daemon.imageService.ReleaseLayer(container.RWLayer, container.OS)
+		if err != nil {
+			err = errors.Wrapf(err, "container %s", container.ID)
+			container.SetRemovalError(err)
+			return err
 		}
 		container.RWLayer = nil
 	}
