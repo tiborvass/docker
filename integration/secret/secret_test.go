@@ -1,4 +1,4 @@
-package secret
+package secret // import "github.com/tiborvass/docker/integration/secret"
 
 import (
 	"bytes"
