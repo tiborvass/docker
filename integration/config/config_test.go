@@ -1,4 +1,4 @@
-package config
+package config // import "github.com/tiborvass/docker/integration/config"
 
 import (
 	"bytes"
