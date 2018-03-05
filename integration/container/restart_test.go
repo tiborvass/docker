@@ -9,9 +9,11 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/integration-cli/daemon"
+	"github.com/gotestyourself/gotestyourself/skip"
 )
 
 func TestDaemonRestartKillContainers(t *testing.T) {
+	skip.If(t, testEnv.IsRemoteDaemon(), "cannot start daemon on remote test run")
 	type testCase struct {
 		desc       string
 		config     *container.Config
