@@ -9,9 +9,9 @@ import (
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/gotestyourself/gotestyourself/assert"
+	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/gotestyourself/gotestyourself/poll"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestDiff(t *testing.T) {
@@ -38,6 +38,6 @@ func TestDiff(t *testing.T) {
 	}
 
 	items, err := client.ContainerDiff(ctx, cID)
-	require.NoError(t, err)
-	assert.Equal(t, expected, items)
+	assert.NilError(t, err)
+	assert.Check(t, is.DeepEqual(expected, items))
 }

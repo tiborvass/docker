@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/local"
 	"github.com/tiborvass/docker/volume/store"
-	"github.com/stretchr/testify/require"
+	"github.com/gotestyourself/gotestyourself/assert"
 )
 
 type fakeContainerGetter struct {
@@ -290,12 +290,12 @@ func TestMigratePre17Volumes(t *testing.T) {
 	containerRoot := filepath.Join(rootDir, "containers")
 	cid := "1234"
 	err = os.MkdirAll(filepath.Join(containerRoot, cid), 0755)
-	require.NoError(t, err)
+	assert.NilError(t, err)
 
 	vid := "5678"
 	vfsPath := filepath.Join(rootDir, "vfs", "dir", vid)
 	err = os.MkdirAll(vfsPath, 0755)
-	require.NoError(t, err)
+	assert.NilError(t, err)
 
 	config := []byte(`
 		{
