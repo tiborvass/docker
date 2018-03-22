@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	networktypes "github.com/tiborvass/docker/api/types/network"
@@ -16,10 +14,10 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/opencontainers/selinux/go-selinux/label"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -253,24 +251,6 @@ func (daemon *Daemon) generateSecurityOpt(hostConfig *containertypes.HostConfig)
 		return toHostConfigSelinuxLabels(pidLabel), nil
 	}
 	return nil, nil
-}
-
-// VolumeCreate creates a volume with the specified name, driver, and opts
-// This is called directly from the Engine API
-func (daemon *Daemon) VolumeCreate(name, driverName string, opts, labels map[string]string) (*types.Volume, error) {
-	if name == "" {
-		name = stringid.GenerateNonCryptoID()
-	}
-
-	v, err := daemon.volumes.Create(name, driverName, opts, labels)
-	if err != nil {
-		return nil, err
-	}
-
-	daemon.LogVolumeEvent(v.Name(), "create", map[string]string{"driver": v.DriverName()})
-	apiV := volumeToAPIType(v)
-	apiV.Mountpoint = v.Path()
-	return apiV, nil
 }
 
 func (daemon *Daemon) mergeAndVerifyConfig(config *containertypes.Config, img *image.Image) error {
