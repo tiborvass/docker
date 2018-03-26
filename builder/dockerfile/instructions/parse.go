@@ -12,6 +12,7 @@ import (
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder/dockerfile/command"
 	"github.com/tiborvass/docker/builder/dockerfile/parser"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/pkg/errors"
 )
 
@@ -271,16 +272,17 @@ func parseFrom(req parseRequest) (*Stage, error) {
 		return nil, err
 	}
 
+	flPlatform := req.flags.AddString("platform", "")
 	if err := req.flags.Parse(); err != nil {
 		return nil, err
 	}
 	code := strings.TrimSpace(req.original)
-
 	return &Stage{
 		BaseName:   req.args[0],
 		Name:       stageName,
 		SourceCode: code,
 		Commands:   []Command{},
+		Platform:   *system.ParsePlatform(flPlatform.Value),
 	}, nil
 
 }
