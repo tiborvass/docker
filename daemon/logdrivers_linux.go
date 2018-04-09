@@ -11,6 +11,7 @@ import (
 	_ "github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	_ "github.com/tiborvass/docker/daemon/logger/local"
 	_ "github.com/tiborvass/docker/daemon/logger/logentries"
+	_ "github.com/tiborvass/docker/daemon/logger/loggerutils/cache"
 	_ "github.com/tiborvass/docker/daemon/logger/splunk"
 	_ "github.com/tiborvass/docker/daemon/logger/syslog"
 )
