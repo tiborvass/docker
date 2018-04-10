@@ -8,7 +8,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
-	"github.com/tiborvass/docker/integration-cli/daemon"
+	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/gotestyourself/gotestyourself/skip"
 )
 
@@ -55,7 +55,7 @@ func TestDaemonRestartKillContainers(t *testing.T) {
 
 					t.Parallel()
 
-					d := daemon.New(t, "", "dockerd", daemon.Config{})
+					d := daemon.New(t)
 					client, err := d.NewClient()
 					if err != nil {
 						t.Fatal(err)
