@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/integration/internal/container"
+	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/gotestyourself/gotestyourself/assert"
 	"github.com/gotestyourself/gotestyourself/skip"
 	"golang.org/x/sys/unix"
@@ -30,7 +30,7 @@ func TestContainerStartOnDaemonRestart(t *testing.T) {
 	skip.If(t, testEnv.IsRemoteDaemon(), "cannot start daemon on remote test run")
 	t.Parallel()
 
-	d := daemon.New(t, "", "dockerd", daemon.Config{})
+	d := daemon.New(t)
 	d.StartWithBusybox(t, "--iptables=false")
 	defer d.Stop(t)
 

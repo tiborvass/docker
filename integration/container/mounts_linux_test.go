@@ -12,8 +12,8 @@ import (
 	"github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/integration/internal/request"
+	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/gotestyourself/gotestyourself/assert"
@@ -25,7 +25,7 @@ import (
 func TestContainerShmNoLeak(t *testing.T) {
 	skip.If(t, testEnv.IsRemoteDaemon(), "cannot start daemon on remote test run")
 	t.Parallel()
-	d := daemon.New(t, "docker", "dockerd", daemon.Config{})
+	d := daemon.New(t)
 	client, err := d.NewClient()
 	if err != nil {
 		t.Fatal(err)
