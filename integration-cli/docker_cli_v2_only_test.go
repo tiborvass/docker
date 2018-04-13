@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/tiborvass/docker/integration-cli/registry"
+	"github.com/tiborvass/docker/internal/test/registry"
 	"github.com/go-check/check"
 )
 
