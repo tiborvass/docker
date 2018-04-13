@@ -18,6 +18,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
+	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/volume"
 	"github.com/go-check/check"
@@ -51,9 +52,7 @@ type DockerExternalVolumeSuite struct {
 
 func (s *DockerExternalVolumeSuite) SetUpTest(c *check.C) {
 	testRequires(c, SameHostDaemon)
-	s.d = daemon.New(c, dockerBinary, dockerdBinary, daemon.Config{
-		Experimental: testEnv.DaemonInfo.ExperimentalBuild,
-	})
+	s.d = daemon.New(c, dockerBinary, dockerdBinary, testdaemon.WithEnvironment(testEnv.Execution))
 	s.ec = &eventCounter{}
 }
 

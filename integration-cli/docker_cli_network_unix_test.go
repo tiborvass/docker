@@ -18,6 +18,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/daemon"
+	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/libnetwork/driverapi"
@@ -49,9 +50,7 @@ type DockerNetworkSuite struct {
 }
 
 func (s *DockerNetworkSuite) SetUpTest(c *check.C) {
-	s.d = daemon.New(c, dockerBinary, dockerdBinary, daemon.Config{
-		Experimental: testEnv.DaemonInfo.ExperimentalBuild,
-	})
+	s.d = daemon.New(c, dockerBinary, dockerdBinary, testdaemon.WithEnvironment(testEnv.Execution))
 }
 
 func (s *DockerNetworkSuite) TearDownTest(c *check.C) {
