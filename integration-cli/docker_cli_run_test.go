@@ -25,7 +25,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
+	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"

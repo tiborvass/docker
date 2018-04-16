@@ -1,4 +1,4 @@
-package fakegit // import "github.com/tiborvass/docker/integration-cli/cli/build/fakegit"
+package fakegit // import "github.com/tiborvass/docker/internal/test/fakegit"
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakestorage"
+	"github.com/tiborvass/docker/internal/test/fakecontext"
+	"github.com/tiborvass/docker/internal/test/fakestorage"
 	"github.com/gotestyourself/gotestyourself/assert"
 )
 

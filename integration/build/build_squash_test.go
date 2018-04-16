@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/daemon"
+	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
