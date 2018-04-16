@@ -11,7 +11,7 @@ import (
 	"sync"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/tiborvass/docker/integration-cli/fixtures/load"
+	"github.com/tiborvass/docker/internal/test/fixtures/load"
 	"github.com/go-check/check"
 )
 

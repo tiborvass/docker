@@ -1,4 +1,4 @@
-package load // import "github.com/tiborvass/docker/integration-cli/fixtures/load"
+package load // import "github.com/tiborvass/docker/internal/test/fixtures/load"
 
 import (
 	"bufio"
