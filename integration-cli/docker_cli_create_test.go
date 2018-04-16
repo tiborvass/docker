@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
+	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/docker/go-connections/nat"
 	"github.com/go-check/check"
