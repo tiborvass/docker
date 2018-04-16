@@ -8,9 +8,9 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/network"
 	dclient "github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/integration/internal/container"
 	n "github.com/tiborvass/docker/integration/network"
+	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/gotestyourself/gotestyourself/assert"
 	"github.com/gotestyourself/gotestyourself/skip"
 	"golang.org/x/net/context"
@@ -22,9 +22,7 @@ func TestDockerNetworkIpvlanPersistance(t *testing.T) {
 	skip.If(t, testEnv.IsRemoteDaemon())
 	skip.If(t, !ipvlanKernelSupport(), "Kernel doesn't support ipvlan")
 
-	d := daemon.New(t, "", "dockerd", daemon.Config{
-		Experimental: true,
-	})
+	d := daemon.New(t, daemon.WithExperimental)
 	d.StartWithBusybox(t)
 	defer d.Stop(t)
 
@@ -88,9 +86,7 @@ func TestDockerNetworkIpvlan(t *testing.T) {
 			test: testIpvlanAddressing,
 		},
 	} {
-		d := daemon.New(t, "", "dockerd", daemon.Config{
-			Experimental: true,
-		})
+		d := daemon.New(t, daemon.WithExperimental)
 		d.StartWithBusybox(t)
 
 		client, err := d.NewClient()
