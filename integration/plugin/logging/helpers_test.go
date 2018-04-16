@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/integration-cli/fixtures/plugin"
+	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/pkg/errors"
 )
