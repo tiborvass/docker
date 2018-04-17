@@ -8,7 +8,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration-cli/fixtures/load"
+	"github.com/tiborvass/docker/internal/test/fixtures/load"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
