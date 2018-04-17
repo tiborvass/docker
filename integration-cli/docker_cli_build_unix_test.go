@@ -18,7 +18,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
+	"github.com/tiborvass/docker/internal/test/fakecontext"
 	units "github.com/docker/go-units"
 	"github.com/go-check/check"
 	"github.com/gotestyourself/gotestyourself/icmd"

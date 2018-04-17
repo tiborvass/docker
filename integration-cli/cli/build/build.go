@@ -4,7 +4,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/tiborvass/docker/integration-cli/cli/build/fakecontext"
+	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/gotestyourself/gotestyourself/icmd"
 )
 
