@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/integration/internal/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/gotestyourself/gotestyourself/assert"

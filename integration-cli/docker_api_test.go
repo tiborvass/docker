@@ -10,7 +10,7 @@ import (
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/tiborvass/docker/integration-cli/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/go-check/check"
 )
 

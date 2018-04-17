@@ -24,7 +24,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/tiborvass/docker/integration-cli/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -1254,13 +1254,13 @@ func (s *DockerSuite) TestContainerAPIChunkedEncoding(c *check.C) {
 		"OpenStdin": true,
 	}
 
-	resp, _, err := request.Post("/containers/create", request.JSONBody(config), func(req *http.Request) error {
+	resp, _, err := request.Post("/containers/create", request.JSONBody(config), request.With(func(req *http.Request) error {
 		// This is a cheat to make the http request do chunked encoding
 		// Otherwise (just setting the Content-Encoding to chunked) net/http will overwrite
 		// https://golang.org/src/pkg/net/http/request.go?s=11980:12172
 		req.ContentLength = -1
 		return nil
-	})
+	}))
 	c.Assert(err, checker.IsNil, check.Commentf("error creating container with chunked encoding"))
 	defer resp.Body.Close()
 	c.Assert(resp.StatusCode, checker.Equals, http.StatusCreated)
