@@ -7,7 +7,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/tiborvass/docker/volume"
+	volumemounts "github.com/tiborvass/docker/volume/mounts"
 )
 
 // createContainerOSSpecificSettings performs host-OS specific container create functionality
@@ -26,7 +26,7 @@ func (daemon *Daemon) createContainerOSSpecificSettings(container *container.Con
 		}
 		hostConfig.Isolation = "hyperv"
 	}
-	parser := volume.NewParser(container.OS)
+	parser := volumemounts.NewParser(container.OS)
 	for spec := range config.Volumes {
 
 		mp, err := parser.ParseMountRaw(spec, hostConfig.VolumeDriver)

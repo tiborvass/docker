@@ -20,7 +20,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/runconfig"
-	"github.com/tiborvass/docker/volume"
+	volumemounts "github.com/tiborvass/docker/volume/mounts"
 	"github.com/docker/go-connections/nat"
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/pkg/errors"
@@ -296,7 +296,7 @@ func (daemon *Daemon) verifyContainerSettings(platform string, hostConfig *conta
 	}
 
 	// Validate mounts; check if host directories still exist
-	parser := volume.NewParser(platform)
+	parser := volumemounts.NewParser(platform)
 	for _, cfg := range hostConfig.Mounts {
 		if err := parser.ValidateMountConfig(&cfg); err != nil {
 			return nil, err

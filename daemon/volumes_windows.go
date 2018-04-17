@@ -6,7 +6,7 @@ import (
 	"github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/volume"
+	volumemounts "github.com/tiborvass/docker/volume/mounts"
 )
 
 // setupMounts configures the mount points for a container by appending each
@@ -20,7 +20,7 @@ import (
 
 func (daemon *Daemon) setupMounts(c *container.Container) ([]container.Mount, error) {
 	var mnts []container.Mount
-	for _, mount := range c.MountPoints { // type is volume.MountPoint
+	for _, mount := range c.MountPoints { // type is volumemounts.MountPoint
 		if err := daemon.lazyInitializeVolume(c.ID, mount); err != nil {
 			return nil, err
 		}
@@ -42,7 +42,7 @@ func (daemon *Daemon) setupMounts(c *container.Container) ([]container.Mount, er
 
 // setBindModeIfNull is platform specific processing which is a no-op on
 // Windows.
-func setBindModeIfNull(bind *volume.MountPoint) {
+func setBindModeIfNull(bind *volumemounts.MountPoint) {
 	return
 }
 
