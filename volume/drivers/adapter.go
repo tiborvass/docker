@@ -1,4 +1,4 @@
-package volumedrivers // import "github.com/tiborvass/docker/volume/drivers"
+package drivers // import "github.com/tiborvass/docker/volume/drivers"
 
 import (
 	"errors"
