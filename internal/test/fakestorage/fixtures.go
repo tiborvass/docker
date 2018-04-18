@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/internal/test"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/gotestyourself/gotestyourself/assert"
 )
@@ -17,6 +18,9 @@ import (
 var ensureHTTPServerOnce sync.Once
 
 func ensureHTTPServerImage(t testingT) {
+	if ht, ok := t.(test.HelperT); ok {
+		ht.Helper()
+	}
 	var doIt bool
 	ensureHTTPServerOnce.Do(func() {
 		doIt = true

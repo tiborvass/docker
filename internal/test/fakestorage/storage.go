@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/client"
+	"github.com/tiborvass/docker/internal/test"
 	"github.com/tiborvass/docker/internal/test/environment"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/internal/test/request"
@@ -56,6 +57,9 @@ func SetTestEnvironment(env *environment.Execution) {
 
 // New returns a static file server that will be use as build context.
 func New(t testingT, dir string, modifiers ...func(*fakecontext.Fake) error) Fake {
+	if ht, ok := t.(test.HelperT); ok {
+		ht.Helper()
+	}
 	if testEnv == nil {
 		t.Fatal("fakstorage package requires SetTestEnvironment() to be called before use.")
 	}
