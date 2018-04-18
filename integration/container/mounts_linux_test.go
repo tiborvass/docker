@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/integration/internal/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"

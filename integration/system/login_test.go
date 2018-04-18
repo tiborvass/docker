@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/integration/internal/request"
 	"github.com/tiborvass/docker/integration/internal/requirement"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/gotestyourself/gotestyourself/skip"

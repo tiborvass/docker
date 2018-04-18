@@ -1,4 +1,4 @@
-package request // import "github.com/tiborvass/docker/integration-cli/request"
+package request
 
 import (
 	"net"

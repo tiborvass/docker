@@ -13,10 +13,10 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/tiborvass/docker/integration-cli/request"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/internal/test/fakegit"
 	"github.com/tiborvass/docker/internal/test/fakestorage"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/go-check/check"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"

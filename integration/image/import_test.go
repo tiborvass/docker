@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/integration/internal/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/internal/testutil"
 )
 

@@ -12,7 +12,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/tiborvass/docker/integration-cli/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/go-check/check"
 )
 

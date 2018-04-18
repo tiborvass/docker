@@ -9,7 +9,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/integration/internal/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/gotestyourself/gotestyourself/poll"
 )
 

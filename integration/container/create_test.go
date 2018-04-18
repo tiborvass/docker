@@ -7,7 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
-	"github.com/tiborvass/docker/integration/internal/request"
+	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/gotestyourself/gotestyourself/skip"
 )
