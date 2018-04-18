@@ -13,11 +13,14 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/api/types/swarm/runtime"
 	"github.com/tiborvass/docker/integration-cli/checker"
+	"github.com/tiborvass/docker/integration-cli/cli"
+	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
 	"github.com/tiborvass/docker/internal/test/registry"
 	"github.com/go-check/check"
+	"github.com/gotestyourself/gotestyourself/icmd"
 	"golang.org/x/net/context"
 	"golang.org/x/sys/unix"
 )
@@ -209,12 +212,12 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesUpdateStartFirst(c *check.C) {
 	image2 := "testhealth:latest"
 
 	// service started from this image won't pass health check
-	_, _, err := d.BuildImageWithOut(image2,
-		`FROM busybox
+	result := cli.BuildCmd(c, image2, cli.Daemon(d),
+		build.WithDockerfile(`FROM busybox
 		HEALTHCHECK --interval=1s --timeout=30s --retries=1024 \
-		  CMD cat /status`,
-		true)
-	c.Check(err, check.IsNil)
+		  CMD cat /status`),
+	)
+	result.Assert(c, icmd.Success)
 
 	// create service
 	instances := 5
