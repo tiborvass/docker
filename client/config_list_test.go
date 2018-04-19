@@ -2,6 +2,7 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
-	"golang.org/x/net/context"
 )
 
 func TestConfigListUnsupported(t *testing.T) {

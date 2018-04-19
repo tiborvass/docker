@@ -1,6 +1,7 @@
 package images // import "github.com/tiborvass/docker/daemon/images"
 
 import (
+	"context"
 	"io"
 	"runtime"
 	"strings"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/registry"
 	"github.com/opencontainers/go-digest"
-	"golang.org/x/net/context"
 )
 
 // PullImage initiates a pull operation. image is the repository name to pull, and

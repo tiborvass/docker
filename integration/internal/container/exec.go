@@ -2,11 +2,11 @@ package container
 
 import (
 	"bytes"
+	"context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"golang.org/x/net/context"
 )
 
 // ExecResult represents a result returned from Exec()

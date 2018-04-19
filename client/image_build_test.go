@@ -2,14 +2,13 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strings"
 	"testing"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"

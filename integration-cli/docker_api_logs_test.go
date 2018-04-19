@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -17,7 +18,6 @@ import (
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/go-check/check"
-	"golang.org/x/net/context"
 )
 
 func (s *DockerSuite) TestLogsAPIWithStdout(c *check.C) {

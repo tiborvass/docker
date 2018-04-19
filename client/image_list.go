@@ -1,13 +1,13 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/versions"
-	"golang.org/x/net/context"
 )
 
 // ImageList returns a list of images in the docker host.

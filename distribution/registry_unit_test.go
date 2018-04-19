@@ -1,6 +1,7 @@
 package distribution // import "github.com/tiborvass/docker/distribution"
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -13,7 +14,6 @@ import (
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/registry"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 const secretRegistryToken = "mysecrettoken"

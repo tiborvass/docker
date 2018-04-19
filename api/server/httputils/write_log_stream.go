@@ -1,12 +1,11 @@
 package httputils // import "github.com/tiborvass/docker/api/server/httputils"
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/url"
 	"sort"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"

@@ -1,13 +1,13 @@
 package image // import "github.com/tiborvass/docker/api/server/router/image"
 
 import (
+	"context"
 	"io"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/image"
 	"github.com/tiborvass/docker/api/types/registry"
-	"golang.org/x/net/context"
 )
 
 // Backend is all the methods that need to be implemented

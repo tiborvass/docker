@@ -1,7 +1,7 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
-	"golang.org/x/net/context"
+	"context"
 )
 
 // PluginSet modifies settings for an existing plugin

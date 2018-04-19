@@ -1,13 +1,13 @@
 package middleware // import "github.com/tiborvass/docker/api/server/middleware"
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"runtime"
 
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types/versions"
-	"golang.org/x/net/context"
 )
 
 // VersionMiddleware is a middleware that

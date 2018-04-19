@@ -1,12 +1,13 @@
 package cluster // import "github.com/tiborvass/docker/daemon/cluster"
 
 import (
+	"context"
+
 	apitypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
 	swarmapi "github.com/docker/swarmkit/api"
-	"golang.org/x/net/context"
 )
 
 // GetTasks returns a list of tasks matching the filter options.

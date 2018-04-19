@@ -1,13 +1,13 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"io"
 	"net/url"
 
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 // PluginUpgrade upgrades a plugin

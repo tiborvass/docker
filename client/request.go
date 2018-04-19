@@ -2,6 +2,7 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,7 +16,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 	"golang.org/x/net/context/ctxhttp"
 )
 

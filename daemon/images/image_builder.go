@@ -1,6 +1,7 @@
 package images // import "github.com/tiborvass/docker/daemon/images"
 
 import (
+	"context"
 	"io"
 
 	"github.com/docker/distribution/reference"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/registry"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 type roLayer struct {

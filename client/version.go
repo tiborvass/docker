@@ -1,10 +1,10 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // ServerVersion returns information of the docker client and server host.

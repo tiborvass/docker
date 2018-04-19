@@ -2,6 +2,7 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 func TestPluginDisableError(t *testing.T) {

@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
+	"context"
+
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/server/middleware"
-
-	"golang.org/x/net/context"
 )
 
 func TestMiddlewares(t *testing.T) {

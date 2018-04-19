@@ -1,10 +1,10 @@
 package session // import "github.com/tiborvass/docker/api/server/router/session"
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/tiborvass/docker/errdefs"
-	"golang.org/x/net/context"
 )
 
 func (sr *sessionRouter) startSession(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {

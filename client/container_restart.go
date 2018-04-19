@@ -1,11 +1,11 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"net/url"
 	"time"
 
 	timetypes "github.com/tiborvass/docker/api/types/time"
-	"golang.org/x/net/context"
 )
 
 // ContainerRestart stops and starts a container again.

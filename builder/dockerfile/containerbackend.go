@@ -1,6 +1,7 @@
 package dockerfile // import "github.com/tiborvass/docker/builder/dockerfile"
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 type containerManager struct {

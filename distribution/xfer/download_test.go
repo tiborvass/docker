@@ -2,6 +2,7 @@ package xfer // import "github.com/tiborvass/docker/distribution/xfer"
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -16,7 +17,6 @@ import (
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/opencontainers/go-digest"
-	"golang.org/x/net/context"
 )
 
 const maxDownloadConcurrency = 3

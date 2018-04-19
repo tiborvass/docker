@@ -1,6 +1,7 @@
 package dockerfile // import "github.com/tiborvass/docker/builder/dockerfile"
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"runtime"
@@ -13,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/containerfs"
-	"golang.org/x/net/context"
 )
 
 // MockBackend implements the builder.Backend interface for unit testing

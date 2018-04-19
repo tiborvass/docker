@@ -1,10 +1,9 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions/v1p20"

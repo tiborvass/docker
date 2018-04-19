@@ -1,11 +1,11 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"net/url"
 	"strconv"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // ContainerResize changes the size of the tty for a container.

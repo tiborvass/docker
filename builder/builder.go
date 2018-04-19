@@ -5,6 +5,7 @@
 package builder // import "github.com/tiborvass/docker/builder"
 
 import (
+	"context"
 	"io"
 
 	"github.com/tiborvass/docker/api/types"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/containerfs"
-	"golang.org/x/net/context"
 )
 
 const (

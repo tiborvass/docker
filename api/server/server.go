@@ -1,6 +1,7 @@
 package server // import "github.com/tiborvass/docker/api/server"
 
 import (
+	"context"
 	"crypto/tls"
 	"net"
 	"net/http"
@@ -13,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 // versionMatcher defines a variable matcher to be parsed by the router

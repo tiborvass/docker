@@ -1,12 +1,12 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
-	"golang.org/x/net/context"
 )
 
 // NetworksPrune requests the daemon to delete unused networks

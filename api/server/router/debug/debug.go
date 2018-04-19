@@ -1,13 +1,13 @@
 package debug // import "github.com/tiborvass/docker/api/server/router/debug"
 
 import (
+	"context"
 	"expvar"
 	"net/http"
 	"net/http/pprof"
 
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/server/router"
-	"golang.org/x/net/context"
 )
 
 // NewRouter creates a new debug router

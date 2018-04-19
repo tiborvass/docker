@@ -1,11 +1,11 @@
 package xfer // import "github.com/tiborvass/docker/distribution/xfer"
 
 import (
+	"context"
 	"runtime"
 	"sync"
 
 	"github.com/tiborvass/docker/pkg/progress"
-	"golang.org/x/net/context"
 )
 
 // DoNotRetry is an error wrapper indicating that the error cannot be resolved

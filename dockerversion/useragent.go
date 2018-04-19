@@ -1,12 +1,12 @@
 package dockerversion // import "github.com/tiborvass/docker/dockerversion"
 
 import (
+	"context"
 	"fmt"
 	"runtime"
 
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
 	"github.com/tiborvass/docker/pkg/useragent"
-	"golang.org/x/net/context"
 )
 
 // UAStringKey is used as key type for user-agent string in net/context struct

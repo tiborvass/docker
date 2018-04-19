@@ -1,6 +1,7 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -8,8 +9,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"

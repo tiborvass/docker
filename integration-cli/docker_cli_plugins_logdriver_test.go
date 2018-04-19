@@ -1,12 +1,12 @@
 package main
 
 import (
+	"context"
 	"strings"
 
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/go-check/check"
-	"golang.org/x/net/context"
 )
 
 func (s *DockerSuite) TestPluginLogDriver(c *check.C) {

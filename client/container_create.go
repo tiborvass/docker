@@ -1,6 +1,7 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 	"strings"
@@ -8,7 +9,6 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/versions"
-	"golang.org/x/net/context"
 )
 
 type configWrapper struct {

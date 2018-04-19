@@ -1,11 +1,11 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // CheckpointList returns the checkpoints of the given container in the docker host

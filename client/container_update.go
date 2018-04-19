@@ -1,10 +1,10 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/tiborvass/docker/api/types/container"
-	"golang.org/x/net/context"
 )
 
 // ContainerUpdate updates resources of a container

@@ -1,6 +1,7 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 // PluginInstall installs a plugin

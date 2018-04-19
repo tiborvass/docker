@@ -1,10 +1,11 @@
 package swarm // import "github.com/tiborvass/docker/api/server/router/swarm"
 
 import (
+	"context"
+
 	basictypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
 	types "github.com/tiborvass/docker/api/types/swarm"
-	"golang.org/x/net/context"
 )
 
 // Backend abstracts a swarm manager.

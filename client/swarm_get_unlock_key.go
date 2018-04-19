@@ -1,10 +1,10 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // SwarmGetUnlockKey retrieves the swarm's unlock key.

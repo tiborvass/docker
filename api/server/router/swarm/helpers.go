@@ -1,6 +1,7 @@
 package swarm // import "github.com/tiborvass/docker/api/server/router/swarm"
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 	"github.com/tiborvass/docker/api/server/httputils"
 	basictypes "github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
-	"golang.org/x/net/context"
 )
 
 // swarmLogs takes an http response, request, and selector, and writes the logs

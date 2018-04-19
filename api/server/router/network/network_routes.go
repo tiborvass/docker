@@ -1,12 +1,11 @@
 package network // import "github.com/tiborvass/docker/api/server/router/network"
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"

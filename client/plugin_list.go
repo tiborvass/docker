@@ -1,12 +1,12 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
-	"golang.org/x/net/context"
 )
 
 // PluginList returns the installed plugins

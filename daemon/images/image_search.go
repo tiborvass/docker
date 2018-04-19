@@ -1,9 +1,8 @@
 package images // import "github.com/tiborvass/docker/daemon/images"
 
 import (
+	"context"
 	"strconv"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"

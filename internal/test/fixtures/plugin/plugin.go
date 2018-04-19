@@ -1,6 +1,7 @@
 package plugin // import "github.com/tiborvass/docker/internal/test/fixtures/plugin"
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/plugin"
 	"github.com/tiborvass/docker/registry"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 // CreateOpt is is passed used to change the default plugin config before

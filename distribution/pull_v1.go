@@ -1,6 +1,7 @@
 package distribution // import "github.com/tiborvass/docker/distribution"
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -25,7 +26,6 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/registry"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 type v1Puller struct {

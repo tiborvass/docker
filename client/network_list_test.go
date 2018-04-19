@@ -2,6 +2,7 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
-	"golang.org/x/net/context"
 )
 
 func TestNetworkListError(t *testing.T) {

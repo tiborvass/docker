@@ -1,12 +1,12 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types/filters"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
-	"golang.org/x/net/context"
 )
 
 // VolumeList returns the volumes configured in the docker host.

@@ -1,10 +1,10 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // CheckpointDelete deletes the checkpoint with the given name from the given container

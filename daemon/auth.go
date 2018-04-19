@@ -1,7 +1,7 @@
 package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/dockerversion"
