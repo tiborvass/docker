@@ -11,11 +11,13 @@ import (
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
 	"gotest.tools/poll"
+	"gotest.tools/skip"
 )
 
 // TestHealthCheckWorkdir verifies that health-checks inherit the containers'
 // working-dir.
 func TestHealthCheckWorkdir(t *testing.T) {
+	skip.If(t, testEnv.OSType == "windows", "FIXME")
 	defer setupTest(t)()
 	ctx := context.Background()
 	client := request.NewAPIClient(t)
