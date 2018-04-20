@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/tiborvass/docker/volume"
+	volumemounts "github.com/tiborvass/docker/volume/mounts"
 )
 
 func TestParseVolumesFrom(t *testing.T) {
@@ -21,7 +21,7 @@ func TestParseVolumesFrom(t *testing.T) {
 		{"foobar:baz", "", "", true},
 	}
 
-	parser := volume.NewParser(runtime.GOOS)
+	parser := volumemounts.NewParser(runtime.GOOS)
 
 	for _, c := range cases {
 		id, mode, err := parser.ParseVolumesFrom(c.spec)

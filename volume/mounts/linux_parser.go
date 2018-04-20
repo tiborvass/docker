@@ -1,4 +1,4 @@
-package volume // import "github.com/tiborvass/docker/volume"
+package mounts // import "github.com/tiborvass/docker/volume/mounts"
 
 import (
 	"errors"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
+	"github.com/tiborvass/docker/volume"
 )
 
 type linuxParser struct {
@@ -405,7 +406,7 @@ func (p *linuxParser) ValidateVolumeName(name string) error {
 }
 
 func (p *linuxParser) IsBackwardCompatible(m *MountPoint) bool {
-	return len(m.Source) > 0 || m.Driver == DefaultDriverName
+	return len(m.Source) > 0 || m.Driver == volume.DefaultDriverName
 }
 
 func (p *linuxParser) ValidateTmpfsMountDestination(dest string) error {
