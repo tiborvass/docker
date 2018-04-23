@@ -1,6 +1,7 @@
 package dockerfile // import "github.com/tiborvass/docker/builder/dockerfile"
 
 import (
+	"os"
 	"testing"
 
 	"github.com/tiborvass/docker/builder/dockerfile/instructions"
@@ -8,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/reexec"
+	"github.com/gotestyourself/gotestyourself/skip"
 )
 
 type dispatchTestCase struct {
@@ -94,6 +96,7 @@ func initDispatchTestCases() []dispatchTestCase {
 }
 
 func TestDispatch(t *testing.T) {
+	skip.IfCondition(t, os.Getuid() != 0, "skipping test that requires root")
 	testCases := initDispatchTestCases()
 
 	for _, testCase := range testCases {

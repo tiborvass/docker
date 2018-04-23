@@ -9,6 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/gotestyourself/gotestyourself/assert"
+	"github.com/gotestyourself/gotestyourself/skip"
 	"golang.org/x/sys/unix"
 )
 
@@ -22,6 +23,7 @@ import (
 // └── d3     # 0700
 //     └── f1 # whiteout, 0644
 func setupOverlayTestDir(t *testing.T, src string) {
+	skip.If(t, os.Getuid() != 0, "skipping test that requires root")
 	// Create opaque directory containing single file and permission 0700
 	err := os.Mkdir(filepath.Join(src, "d1"), 0700)
 	assert.NilError(t, err)
