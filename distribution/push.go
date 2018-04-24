@@ -3,6 +3,7 @@ package distribution // import "github.com/tiborvass/docker/distribution"
 import (
 	"bufio"
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/registry"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 // Pusher is an interface that abstracts pushing for different API versions.

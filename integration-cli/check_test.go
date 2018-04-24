@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http/httptest"
@@ -24,7 +25,6 @@ import (
 	"github.com/tiborvass/docker/internal/test/registry"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/go-check/check"
-	"golang.org/x/net/context"
 )
 
 const (

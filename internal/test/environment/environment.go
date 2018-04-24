@@ -1,6 +1,7 @@
 package environment // import "github.com/tiborvass/docker/internal/test/environment"
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,7 +11,6 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/internal/test/fixtures/load"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 // Execution contains information about the current test execution and daemon

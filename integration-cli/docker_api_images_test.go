@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/go-check/check"
-	"golang.org/x/net/context"
 )
 
 func (s *DockerSuite) TestAPIImagesFilter(c *check.C) {

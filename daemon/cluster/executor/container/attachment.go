@@ -1,10 +1,11 @@
 package container // import "github.com/tiborvass/docker/daemon/cluster/executor/container"
 
 import (
+	"context"
+
 	executorpkg "github.com/tiborvass/docker/daemon/cluster/executor"
 	"github.com/docker/swarmkit/agent/exec"
 	"github.com/docker/swarmkit/api"
-	"golang.org/x/net/context"
 )
 
 // networkAttacherController implements agent.Controller against docker's API.

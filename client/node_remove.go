@@ -3,9 +3,9 @@ package client // import "github.com/tiborvass/docker/client"
 import (
 	"net/url"
 
-	"github.com/tiborvass/docker/api/types"
+	"context"
 
-	"golang.org/x/net/context"
+	"github.com/tiborvass/docker/api/types"
 )
 
 // NodeRemove removes a Node.

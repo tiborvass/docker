@@ -1,11 +1,12 @@
 package cluster // import "github.com/tiborvass/docker/daemon/cluster"
 
 import (
+	"context"
+
 	apitypes "github.com/tiborvass/docker/api/types"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
 	swarmapi "github.com/docker/swarmkit/api"
-	"golang.org/x/net/context"
 )
 
 // GetSecret returns a secret from a managed swarm cluster

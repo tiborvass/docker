@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tiborvass/docker/api/types/container"
+	"context"
 
-	"golang.org/x/net/context"
+	"github.com/tiborvass/docker/api/types/container"
 )
 
 func TestContainerWaitError(t *testing.T) {

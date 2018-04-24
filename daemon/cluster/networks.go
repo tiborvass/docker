@@ -1,6 +1,7 @@
 package cluster // import "github.com/tiborvass/docker/daemon/cluster"
 
 import (
+	"context"
 	"fmt"
 
 	apitypes "github.com/tiborvass/docker/api/types"
@@ -12,7 +13,6 @@ import (
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 // GetNetworks returns all current cluster managed networks.

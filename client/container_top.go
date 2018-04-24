@@ -1,12 +1,12 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 	"strings"
 
 	"github.com/tiborvass/docker/api/types/container"
-	"golang.org/x/net/context"
 )
 
 // ContainerTop shows process information from within a container.

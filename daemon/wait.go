@@ -1,8 +1,9 @@
 package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
+	"context"
+
 	"github.com/tiborvass/docker/container"
-	"golang.org/x/net/context"
 )
 
 // ContainerWait waits until the given container is in a certain state

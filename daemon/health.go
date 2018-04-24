@@ -2,13 +2,12 @@ package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	containertypes "github.com/tiborvass/docker/api/types/container"

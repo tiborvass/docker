@@ -1,13 +1,13 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 	"strconv"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
-	"golang.org/x/net/context"
 )
 
 // ContainerList returns the list of containers in the docker host.

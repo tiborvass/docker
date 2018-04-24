@@ -3,13 +3,12 @@ package load // import "github.com/tiborvass/docker/internal/test/fixtures/load"
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
-
-	"context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"

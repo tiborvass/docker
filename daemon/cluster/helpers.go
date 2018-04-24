@@ -1,12 +1,12 @@
 package cluster // import "github.com/tiborvass/docker/daemon/cluster"
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/tiborvass/docker/errdefs"
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 func getSwarm(ctx context.Context, c swarmapi.ControlClient) (*swarmapi.Cluster, error) {

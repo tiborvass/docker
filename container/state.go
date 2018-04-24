@@ -1,12 +1,11 @@
 package container // import "github.com/tiborvass/docker/container"
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sync"
 	"time"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/docker/go-units"

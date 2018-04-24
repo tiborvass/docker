@@ -1,9 +1,10 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
+
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/network"
-	"golang.org/x/net/context"
 )
 
 // NetworkConnect connects a container to an existent network in the docker host.

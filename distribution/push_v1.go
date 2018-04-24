@@ -1,6 +1,7 @@
 package distribution // import "github.com/tiborvass/docker/distribution"
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -18,7 +19,6 @@ import (
 	"github.com/tiborvass/docker/registry"
 	"github.com/opencontainers/go-digest"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 type v1Pusher struct {

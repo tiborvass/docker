@@ -1,12 +1,12 @@
 package system // import "github.com/tiborvass/docker/integration/system"
 
 import (
+	"context"
 	"testing"
 
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
-	"golang.org/x/net/context"
 )
 
 func TestVersion(t *testing.T) {

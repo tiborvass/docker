@@ -2,11 +2,11 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // ImageInspectWithRaw returns the image information and its raw representation.

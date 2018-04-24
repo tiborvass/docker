@@ -1,6 +1,7 @@
 package build // import "github.com/tiborvass/docker/api/server/backend/build"
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/docker/distribution/reference"
@@ -11,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 )
 
 // ImageComponent provides an interface for working with images

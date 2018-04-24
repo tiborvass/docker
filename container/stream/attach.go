@@ -1,10 +1,9 @@
 package stream // import "github.com/tiborvass/docker/container/stream"
 
 import (
+	"context"
 	"io"
 	"sync"
-
-	"golang.org/x/net/context"
 
 	"github.com/tiborvass/docker/pkg/pools"
 	"github.com/tiborvass/docker/pkg/term"

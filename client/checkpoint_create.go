@@ -1,8 +1,9 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
+
 	"github.com/tiborvass/docker/api/types"
-	"golang.org/x/net/context"
 )
 
 // CheckpointCreate creates a checkpoint from the given container with the given name

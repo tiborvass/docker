@@ -1,6 +1,7 @@
 package environment // import "github.com/tiborvass/docker/internal/test/environment"
 
 import (
+	"context"
 	"regexp"
 	"strings"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/internal/test"
 	"github.com/gotestyourself/gotestyourself/assert"
-	"golang.org/x/net/context"
 )
 
 type testingT interface {

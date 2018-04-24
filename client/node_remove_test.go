@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tiborvass/docker/api/types"
+	"context"
 
-	"golang.org/x/net/context"
+	"github.com/tiborvass/docker/api/types"
 )
 
 func TestNodeRemoveError(t *testing.T) {

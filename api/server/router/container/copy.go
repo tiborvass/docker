@@ -3,6 +3,7 @@ package container // import "github.com/tiborvass/docker/api/server/router/conta
 import (
 	"compress/flate"
 	"compress/gzip"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -12,7 +13,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
 	gddohttputil "github.com/golang/gddo/httputil"
-	"golang.org/x/net/context"
 )
 
 type pathError struct{}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -16,7 +17,6 @@ import (
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
 	"github.com/go-check/check"
-	"golang.org/x/net/context"
 )
 
 var (

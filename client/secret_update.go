@@ -1,11 +1,11 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"net/url"
 	"strconv"
 
 	"github.com/tiborvass/docker/api/types/swarm"
-	"golang.org/x/net/context"
 )
 
 // SecretUpdate attempts to update a Secret

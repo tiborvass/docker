@@ -1,6 +1,7 @@
 package container // import "github.com/tiborvass/docker/api/server/router/container"
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 func (s *containerRouter) getExecByID(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {

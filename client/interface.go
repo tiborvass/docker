@@ -1,6 +1,7 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
+	"context"
 	"io"
 	"net"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/api/types/swarm"
 	volumetypes "github.com/tiborvass/docker/api/types/volume"
-	"golang.org/x/net/context"
 )
 
 // CommonAPIClient is the common methods between stable and experimental versions of APIClient.

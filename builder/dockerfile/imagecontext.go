@@ -1,6 +1,7 @@
 package dockerfile // import "github.com/tiborvass/docker/builder/dockerfile"
 
 import (
+	"context"
 	"runtime"
 
 	"github.com/tiborvass/docker/api/types/backend"
@@ -8,7 +9,6 @@ import (
 	dockerimage "github.com/tiborvass/docker/image"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
 )
 
 type getAndMountFunc func(string, bool, string) (builder.Image, builder.ROLayer, error)
