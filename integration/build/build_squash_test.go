@@ -10,20 +10,17 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"github.com/gotestyourself/gotestyourself/skip"
 )
 
 func TestBuildSquashParent(t *testing.T) {
-	d := daemon.New(t, daemon.WithExperimental)
-	d.StartWithBusybox(t)
-	defer d.Stop(t)
+	skip.If(t, !testEnv.DaemonInfo.ExperimentalBuild)
 
-	client, err := d.NewClient()
-	assert.NilError(t, err)
+	client := testEnv.APIClient()
 
 	dockerfile := `
 		FROM busybox
