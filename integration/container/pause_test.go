@@ -9,6 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/api/types/filters"
+	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/internal/testutil"
@@ -66,6 +67,7 @@ func TestPauseFailsOnWindowsServerContainers(t *testing.T) {
 
 func TestPauseStopPausedContainer(t *testing.T) {
 	skip.If(t, testEnv.DaemonInfo.OSType != "linux")
+	skip.If(t, versions.LessThan(testEnv.DaemonAPIVersion(), "1.31"), "broken in earlier versions")
 
 	defer setupTest(t)()
 	client := request.NewAPIClient(t)
