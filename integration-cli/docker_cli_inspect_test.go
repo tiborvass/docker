@@ -10,6 +10,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/versions"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/go-check/check"
 	"github.com/gotestyourself/gotestyourself/icmd"
@@ -463,5 +464,9 @@ func (s *DockerSuite) TestInspectInvalidReference(c *check.C) {
 	// This test should work on both Windows and Linux
 	out, _, err := dockerCmdWithError("inspect", "FooBar")
 	c.Assert(err, checker.NotNil)
-	c.Assert(out, checker.Contains, "no such image: FooBar")
+	if versions.LessThan(testEnv.DaemonAPIVersion(), "1.32") {
+		c.Assert(out, checker.Contains, "Error: No such object: FooBar")
+	} else {
+		c.Assert(out, checker.Contains, "no such image: FooBar")
+	}
 }

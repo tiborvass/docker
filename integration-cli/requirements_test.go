@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/swarm"
+	"github.com/docker/docker/api/types/versions"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/integration-cli/requirement"
 	"github.com/docker/docker/internal/test/registry"
@@ -38,6 +40,12 @@ func DaemonIsWindowsAtLeastBuild(buildNumber int) func() bool {
 
 func DaemonIsLinux() bool {
 	return testEnv.OSType == "linux"
+}
+
+func MinimumAPIVersion(version string) func() bool {
+	return func() bool {
+		return versions.GreaterThanOrEqualTo(testEnv.DaemonAPIVersion(), version)
+	}
 }
 
 func OnlyDefaultNetworks() bool {
@@ -191,6 +199,10 @@ func RegistryHosting() bool {
 	// registry binary is in PATH.
 	_, err := exec.LookPath(registry.V2binary)
 	return err == nil
+}
+
+func SwarmInactive() bool {
+	return testEnv.DaemonInfo.Swarm.LocalNodeState == swarm.LocalNodeStateInactive
 }
 
 // testRequires checks if the environment satisfies the requirements

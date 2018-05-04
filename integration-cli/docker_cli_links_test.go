@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/docker/docker/api/types/versions"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/runconfig"
 	"github.com/go-check/check"
@@ -28,7 +29,11 @@ func (s *DockerSuite) TestLinksInvalidContainerTarget(c *check.C) {
 	// an invalid container target should produce an error
 	c.Assert(err, checker.NotNil, check.Commentf("out: %s", out))
 	// an invalid container target should produce an error
-	c.Assert(out, checker.Contains, "could not get container")
+	if versions.LessThan(testEnv.DaemonAPIVersion(), "1.32") {
+		c.Assert(out, checker.Contains, "Could not get container")
+	} else {
+		c.Assert(out, checker.Contains, "could not get container")
+	}
 }
 
 func (s *DockerSuite) TestLinksPingLinkedContainers(c *check.C) {

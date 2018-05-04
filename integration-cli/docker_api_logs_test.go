@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/versions"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/internal/test/request"
@@ -149,6 +150,9 @@ func (s *DockerSuite) TestLogsAPIUntilFutureFollow(c *check.C) {
 }
 
 func (s *DockerSuite) TestLogsAPIUntil(c *check.C) {
+	if versions.LessThan(testEnv.DaemonAPIVersion(), "1.34") {
+		c.Skip(fmt.Sprintf("new feature added in version 1.34, got current version %s", testEnv.DaemonAPIVersion()))
+	}
 	name := "logsuntil"
 	dockerCmd(c, "run", "--name", name, "busybox", "/bin/sh", "-c", "for i in $(seq 1 3); do echo log$i; sleep 1; done")
 

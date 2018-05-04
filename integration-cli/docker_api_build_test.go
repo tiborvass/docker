@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/versions"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/internal/test/fakecontext"
 	"github.com/docker/docker/internal/test/fakegit"
@@ -406,6 +407,10 @@ func (s *DockerSuite) TestBuildAddRemoteNoDecompress(c *check.C) {
 }
 
 func (s *DockerSuite) TestBuildChownOnCopy(c *check.C) {
+	if versions.LessThan(testEnv.DaemonAPIVersion(), "1.31") {
+		// new feature added in 1.31 - https://github.com/moby/moby/pull/34263
+		c.Skip(fmt.Sprintf("new feature added in 1.31, got current version %s", testEnv.DaemonAPIVersion()))
+	}
 	testRequires(c, DaemonIsLinux)
 	dockerfile := `FROM busybox
 		RUN echo 'test1:x:1001:1001::/bin:/bin/false' >> /etc/passwd
