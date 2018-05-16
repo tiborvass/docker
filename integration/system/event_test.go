@@ -13,15 +13,18 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/strslice"
+	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
 	req "github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"github.com/gotestyourself/gotestyourself/skip"
 )
 
-func TestEvents(t *testing.T) {
+func TestEventsExecDie(t *testing.T) {
+	skip.If(t, versions.LessThan(testEnv.DaemonAPIVersion(), "1.36"), "broken in earlier versions")
 	defer setupTest(t)()
 	ctx := context.Background()
 	client := request.NewAPIClient(t)
