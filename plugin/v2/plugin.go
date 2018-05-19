@@ -10,7 +10,7 @@ import (
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/opencontainers/go-digest"
-	specs "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
 // Plugin represents an individual plugin.

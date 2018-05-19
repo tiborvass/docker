@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/opts"
-	units "github.com/docker/go-units"
+	"github.com/docker/go-units"
 	"github.com/spf13/pflag"
 )
 

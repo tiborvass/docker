@@ -2,7 +2,6 @@ package environment // import "github.com/tiborvass/docker/integration-cli/envir
 
 import (
 	"os"
-
 	"os/exec"
 
 	"github.com/tiborvass/docker/internal/test/environment"

@@ -24,7 +24,7 @@ import (
 	"github.com/tiborvass/docker/plugin/v2"
 	"github.com/tiborvass/docker/registry"
 	"github.com/opencontainers/go-digest"
-	specs "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

@@ -2,7 +2,6 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"fmt"
-
 	"net/http"
 
 	"github.com/tiborvass/docker/api/types/versions"

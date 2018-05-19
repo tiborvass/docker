@@ -10,7 +10,7 @@ import (
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/system"
-	units "github.com/docker/go-units"
+	"github.com/docker/go-units"
 	"github.com/opencontainers/selinux/go-selinux/label"
 )
 
