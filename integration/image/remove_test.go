@@ -7,7 +7,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 )
@@ -56,5 +55,5 @@ func TestRemoveImageOrphaning(t *testing.T) {
 
 	// check if the second image has been deleted
 	_, _, err = client.ImageInspectWithRaw(ctx, commitResp2.ID)
-	testutil.ErrorContains(t, err, "No such image:")
+	assert.Check(t, is.ErrorContains(err, "No such image:"))
 }

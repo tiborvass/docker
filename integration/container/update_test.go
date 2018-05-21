@@ -8,7 +8,6 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/gotestyourself/gotestyourself/poll"
@@ -61,5 +60,5 @@ func TestUpdateRestartWithAutoRemove(t *testing.T) {
 			Name: "always",
 		},
 	})
-	testutil.ErrorContains(t, err, "Restart policy cannot be updated because AutoRemove is enabled for the container")
+	assert.Check(t, is.ErrorContains(err, "Restart policy cannot be updated because AutoRemove is enabled for the container"))
 }

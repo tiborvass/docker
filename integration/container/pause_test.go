@@ -12,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/gotestyourself/gotestyourself/poll"
@@ -62,7 +61,7 @@ func TestPauseFailsOnWindowsServerContainers(t *testing.T) {
 	poll.WaitOn(t, container.IsInState(ctx, client, cID, "running"), poll.WithDelay(100*time.Millisecond))
 
 	err := client.ContainerPause(ctx, cID)
-	testutil.ErrorContains(t, err, "cannot pause Windows Server Containers")
+	assert.Check(t, is.ErrorContains(err, "cannot pause Windows Server Containers"))
 }
 
 func TestPauseStopPausedContainer(t *testing.T) {

@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/builder"
-	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/gotestyourself/gotestyourself/fs"
@@ -232,7 +231,7 @@ func TestGetWithStatusError(t *testing.T) {
 			assert.NilError(t, err)
 			assert.Check(t, is.Contains(string(body), testcase.expectedBody))
 		} else {
-			testutil.ErrorContains(t, err, testcase.expectedErr)
+			assert.Check(t, is.ErrorContains(err, testcase.expectedErr))
 		}
 	}
 }
