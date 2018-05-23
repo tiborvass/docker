@@ -926,6 +926,7 @@ func NewDaemon(config *config.Config, registryService registry.Service, containe
 	return d, nil
 }
 
+// DistributionServices returns services controlling daemon storage
 func (daemon *Daemon) DistributionServices() images.DistributionServices {
 	return daemon.imageService.DistributionServices()
 }
