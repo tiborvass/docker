@@ -5,9 +5,11 @@ import (
 	"fmt"
 
 	apitypes "github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
+	internalnetwork "github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/runconfig"
 	swarmapi "github.com/docker/swarmkit/api"
@@ -16,16 +18,32 @@ import (
 )
 
 // GetNetworks returns all current cluster managed networks.
-func (c *Cluster) GetNetworks() ([]apitypes.NetworkResource, error) {
-	list, err := c.getNetworks(nil)
+func (c *Cluster) GetNetworks(filter filters.Args) ([]apitypes.NetworkResource, error) {
+	var f *swarmapi.ListNetworksRequest_Filters
+
+	if filter.Len() > 0 {
+		f = &swarmapi.ListNetworksRequest_Filters{}
+
+		if filter.Contains("name") {
+			f.Names = filter.Get("name")
+			f.NamePrefixes = filter.Get("name")
+		}
+
+		if filter.Contains("id") {
+			f.IDPrefixes = filter.Get("id")
+		}
+	}
+
+	list, err := c.getNetworks(f)
 	if err != nil {
 		return nil, err
 	}
-	removePredefinedNetworks(&list)
-	return list, nil
+	filterPredefinedNetworks(&list)
+
+	return internalnetwork.FilterNetworks(list, filter)
 }
 
-func removePredefinedNetworks(networks *[]apitypes.NetworkResource) {
+func filterPredefinedNetworks(networks *[]apitypes.NetworkResource) {
 	if networks == nil {
 		return
 	}
