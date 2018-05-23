@@ -1,9 +1,8 @@
 package client // import "github.com/tiborvass/docker/client"
 
 import (
-	"net/url"
-
 	"context"
+	"net/url"
 
 	"github.com/tiborvass/docker/api/types"
 )

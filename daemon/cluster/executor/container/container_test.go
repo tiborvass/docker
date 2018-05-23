@@ -3,7 +3,7 @@ package container // import "github.com/tiborvass/docker/daemon/cluster/executor
 import (
 	"testing"
 
-	container "github.com/tiborvass/docker/api/types/container"
+	"github.com/tiborvass/docker/api/types/container"
 	swarmapi "github.com/docker/swarmkit/api"
 	"github.com/gotestyourself/gotestyourself/assert"
 )

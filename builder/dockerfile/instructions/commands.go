@@ -2,7 +2,6 @@ package instructions // import "github.com/tiborvass/docker/builder/dockerfile/i
 
 import (
 	"errors"
-
 	"strings"
 
 	"github.com/tiborvass/docker/api/types/container"

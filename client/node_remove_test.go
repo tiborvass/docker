@@ -2,13 +2,12 @@ package client // import "github.com/tiborvass/docker/client"
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
-
-	"context"
 
 	"github.com/tiborvass/docker/api/types"
 )
