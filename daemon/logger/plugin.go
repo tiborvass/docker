@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/tiborvass/docker/api/types/plugins/logdriver"
+	"github.com/tiborvass/docker/errdefs"
 	getter "github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -46,9 +47,12 @@ func getPlugin(name string, mode int) (Creator, error) {
 }
 
 func makePluginClient(p getter.CompatPlugin) (logPlugin, error) {
+	if pc, ok := p.(getter.PluginWithV1Client); ok {
+		return &logPluginProxy{pc.Client()}, nil
+	}
 	pa, ok := p.(getter.PluginAddr)
 	if !ok {
-		return &logPluginProxy{p.Client()}, nil
+		return nil, errdefs.System(errors.Errorf("got unknown plugin type %T", p))
 	}
 
 	if pa.Protocol() != plugins.ProtocolSchemeHTTPV1 {
