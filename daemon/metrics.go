@@ -3,6 +3,7 @@ package daemon // import "github.com/tiborvass/docker/daemon"
 import (
 	"sync"
 
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/docker/go-metrics"
@@ -142,11 +143,16 @@ type metricsPlugin interface {
 	StopMetrics() error
 }
 
-func makePluginAdapter(p plugingetter.CompatPlugin) (metricsPlugin, error) {
+func makePluginAdapter(p plugingetter.CompatPlugin) (metricsPlugin, error) { // nolint: interfacer
+	if pc, ok := p.(plugingetter.PluginWithV1Client); ok {
+		return &metricsPluginAdapter{pc.Client(), p.Name()}, nil
+	}
+
 	pa, ok := p.(plugingetter.PluginAddr)
 	if !ok {
-		return &metricsPluginAdapter{p.Client(), p.Name()}, nil
+		return nil, errdefs.System(errors.Errorf("got unknown plugin type %T", p))
 	}
+
 	if pa.Protocol() != plugins.ProtocolSchemeHTTPV1 {
 		return nil, errors.Errorf("plugin protocol not supported: %s", pa.Protocol())
 	}
