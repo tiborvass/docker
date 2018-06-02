@@ -1,4 +1,4 @@
-package shell // import "github.com/tiborvass/docker/builder/dockerfile/shell"
+package shell
 
 import "strings"
 

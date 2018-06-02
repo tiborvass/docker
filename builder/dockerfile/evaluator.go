@@ -27,11 +27,11 @@ import (
 
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/builder"
-	"github.com/tiborvass/docker/builder/dockerfile/instructions"
-	"github.com/tiborvass/docker/builder/dockerfile/shell"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/runconfig/opts"
+	"github.com/moby/buildkit/frontend/dockerfile/instructions"
+	"github.com/moby/buildkit/frontend/dockerfile/shell"
 	"github.com/pkg/errors"
 )
 

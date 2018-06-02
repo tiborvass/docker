@@ -4,13 +4,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/tiborvass/docker/builder/dockerfile/instructions"
 	"github.com/tiborvass/docker/builder/remotecontext"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/gotestyourself/gotestyourself/skip"
+	"github.com/moby/buildkit/frontend/dockerfile/instructions"
 )
 
 type dispatchTestCase struct {

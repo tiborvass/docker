@@ -11,13 +11,13 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/tiborvass/docker/builder"
-	"github.com/tiborvass/docker/builder/dockerfile/instructions"
-	"github.com/tiborvass/docker/builder/dockerfile/shell"
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/go-connections/nat"
 	"github.com/gotestyourself/gotestyourself/assert"
 	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"github.com/moby/buildkit/frontend/dockerfile/instructions"
+	"github.com/moby/buildkit/frontend/dockerfile/shell"
 )
 
 func newBuilderWithMockBackend() *Builder {

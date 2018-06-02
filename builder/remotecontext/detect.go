@@ -10,10 +10,10 @@ import (
 	"github.com/containerd/continuity/driver"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/builder"
-	"github.com/tiborvass/docker/builder/dockerfile/parser"
 	"github.com/tiborvass/docker/builder/dockerignore"
 	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/urlutil"
+	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

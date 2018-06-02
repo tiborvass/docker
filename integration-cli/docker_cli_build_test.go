@@ -16,7 +16,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/tiborvass/docker/builder/dockerfile/command"
+	"github.com/moby/buildkit/frontend/dockerfile/command"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"

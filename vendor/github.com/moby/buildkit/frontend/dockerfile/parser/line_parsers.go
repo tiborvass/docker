@@ -1,4 +1,4 @@
-package parser // import "github.com/tiborvass/docker/builder/dockerfile/parser"
+package parser
 
 // line parsers are dispatch calls that parse a single unit of text into a
 // Node object which contains the whole statement. Dockerfiles have varied
