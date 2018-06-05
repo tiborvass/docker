@@ -1,4 +1,4 @@
-package store // import "github.com/tiborvass/docker/volume/store"
+package service // import "github.com/tiborvass/docker/volume/service"
 
 import "strings"
 

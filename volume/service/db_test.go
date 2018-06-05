@@ -1,4 +1,4 @@
-package store
+package service // import "github.com/tiborvass/docker/volume/service"
 
 import (
 	"io/ioutil"

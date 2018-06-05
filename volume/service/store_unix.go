@@ -1,6 +1,6 @@
-// +build linux freebsd
+// +build linux freebsd darwin
 
-package store // import "github.com/tiborvass/docker/volume/store"
+package service // import "github.com/tiborvass/docker/volume/service"
 
 // normalizeVolumeName is a platform specific function to normalize the name
 // of a volume. This is a no-op on Unix-like platforms
