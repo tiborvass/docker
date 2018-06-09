@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/containerd/containerd/cio"
-	"github.com/containerd/containerd/linux/runctypes"
+	"github.com/containerd/containerd/runtime/linux/runctypes"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/libcontainerd"
 	"github.com/opencontainers/runtime-spec/specs-go"

@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/containerd/containerd/linux/runctypes"
+	"github.com/containerd/containerd/runtime/linux/runctypes"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/pkg/errors"
