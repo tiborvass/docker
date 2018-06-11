@@ -9,15 +9,15 @@ import (
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 // Regression test for #35370
 // Makes sure that when following we don't get an EOF error when there are no logs
 func TestLogsFollowTailEmpty(t *testing.T) {
 	// FIXME(vdemeester) fails on a e2e run on linux...
-	skip.IfCondition(t, testEnv.IsRemoteDaemon())
+	skip.If(t, testEnv.IsRemoteDaemon())
 	defer setupTest(t)()
 	client := request.NewAPIClient(t)
 	ctx := context.Background()

@@ -13,9 +13,9 @@ import (
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/plugin/v2"
-	"github.com/gotestyourself/gotestyourself/skip"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
+	"gotest.tools/skip"
 )
 
 func TestManagerWithPluginMounts(t *testing.T) {

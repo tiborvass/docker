@@ -6,9 +6,9 @@ import (
 
 	cliconfig "github.com/tiborvass/docker/cli/config"
 	"github.com/tiborvass/docker/daemon/config"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/spf13/pflag"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 func TestCommonOptionsInstallFlags(t *testing.T) {

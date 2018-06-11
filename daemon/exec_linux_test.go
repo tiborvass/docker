@@ -8,9 +8,9 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
-	"github.com/gotestyourself/gotestyourself/assert"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
 	"github.com/opencontainers/runtime-spec/specs-go"
+	"gotest.tools/assert"
 )
 
 func TestExecSetPlatformOpt(t *testing.T) {

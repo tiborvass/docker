@@ -7,14 +7,14 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/requirement"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
+	"gotest.tools/skip"
 )
 
 // Test case for GitHub 22244
 func TestLoginFailsWithBadCredentials(t *testing.T) {
-	skip.IfCondition(t, !requirement.HasHubConnectivity(t))
+	skip.If(t, !requirement.HasHubConnectivity(t))
 
 	client := request.NewAPIClient(t)
 
