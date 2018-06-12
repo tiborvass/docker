@@ -3,9 +3,11 @@ package images // import "github.com/tiborvass/docker/daemon/images"
 import (
 	"context"
 	"os"
+	"runtime"
 
 	"github.com/tiborvass/docker/container"
 	daemonevents "github.com/tiborvass/docker/daemon/events"
+	"github.com/tiborvass/docker/distribution"
 	"github.com/tiborvass/docker/distribution/metadata"
 	"github.com/tiborvass/docker/distribution/xfer"
 	"github.com/tiborvass/docker/image"
@@ -72,6 +74,26 @@ type ImageService struct {
 	registryService           registry.Service
 	trustKey                  libtrust.PrivateKey
 	uploadManager             *xfer.LayerUploadManager
+}
+
+// DistributionServices provides daemon image storage services
+type DistributionServices struct {
+	DownloadManager   distribution.RootFSDownloadManager
+	V2MetadataService metadata.V2MetadataService
+	LayerStore        layer.Store // TODO: lcow
+	ImageStore        image.Store
+	ReferenceStore    dockerreference.Store
+}
+
+// DistributionServices return services controlling daemon image storage
+func (i *ImageService) DistributionServices() DistributionServices {
+	return DistributionServices{
+		DownloadManager:   i.downloadManager,
+		V2MetadataService: metadata.NewV2MetadataService(i.distributionMetadataStore),
+		LayerStore:        i.layerStores[runtime.GOOS],
+		ImageStore:        i.imageStore,
+		ReferenceStore:    i.referenceStore,
+	}
 }
 
 // CountImages returns the number of images stored by ImageService
