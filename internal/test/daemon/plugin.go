@@ -5,7 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
-	"github.com/gotestyourself/gotestyourself/poll"
+	"gotest.tools/poll"
 )
 
 // PluginIsRunning provides a poller to check if the specified plugin is running

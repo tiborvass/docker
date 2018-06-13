@@ -13,8 +13,8 @@ import (
 	_ "github.com/tiborvass/docker/pkg/discovery/memory"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/libnetwork"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 func TestDaemonReloadLabels(t *testing.T) {

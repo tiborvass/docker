@@ -16,9 +16,9 @@ import (
 	"github.com/tiborvass/docker/daemon/graphdriver/quota"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/docker/go-units"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"golang.org/x/sys/unix"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 var (

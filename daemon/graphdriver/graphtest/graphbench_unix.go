@@ -9,7 +9,7 @@ import (
 
 	contdriver "github.com/containerd/continuity/driver"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/gotestyourself/gotestyourself/assert"
+	"gotest.tools/assert"
 )
 
 // DriverBenchExists benchmarks calls to exist

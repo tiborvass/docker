@@ -6,8 +6,8 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 // Regression test for #35553

@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
 	"golang.org/x/sys/unix"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 // setupOverlayTestDir creates files in a directory with overlay whiteouts

@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 func max(x, y int) int {

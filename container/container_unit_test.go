@@ -11,7 +11,7 @@ import (
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	"github.com/tiborvass/docker/pkg/signal"
-	"github.com/gotestyourself/gotestyourself/assert"
+	"gotest.tools/assert"
 )
 
 func TestContainerStopSignal(t *testing.T) {

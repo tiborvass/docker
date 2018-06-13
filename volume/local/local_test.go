@@ -11,7 +11,7 @@ import (
 
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/skip"
 )
 
 func TestGetAddress(t *testing.T) {

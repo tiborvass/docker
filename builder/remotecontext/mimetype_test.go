@@ -3,8 +3,8 @@ package remotecontext // import "github.com/tiborvass/docker/builder/remoteconte
 import (
 	"testing"
 
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 func TestDetectContentType(t *testing.T) {

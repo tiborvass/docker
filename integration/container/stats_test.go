@@ -10,10 +10,10 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
-	"github.com/gotestyourself/gotestyourself/poll"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
+	"gotest.tools/poll"
+	"gotest.tools/skip"
 )
 
 func TestStats(t *testing.T) {

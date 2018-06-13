@@ -12,8 +12,8 @@ import (
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/service/opts"
 	"github.com/tiborvass/docker/volume/testutils"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 func TestServiceCreate(t *testing.T) {

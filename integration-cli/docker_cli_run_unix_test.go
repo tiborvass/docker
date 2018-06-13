@@ -26,8 +26,8 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/go-check/check"
-	"github.com/gotestyourself/gotestyourself/icmd"
 	"github.com/kr/pty"
+	"gotest.tools/icmd"
 )
 
 // #6509

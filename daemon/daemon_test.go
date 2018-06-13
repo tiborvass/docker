@@ -16,9 +16,9 @@ import (
 	volumesservice "github.com/tiborvass/docker/volume/service"
 	"github.com/docker/go-connections/nat"
 	"github.com/docker/libnetwork"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
 	"github.com/pkg/errors"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 //

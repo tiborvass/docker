@@ -14,9 +14,9 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/swarm"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
+	"gotest.tools/skip"
 )
 
 func TestConfigList(t *testing.T) {

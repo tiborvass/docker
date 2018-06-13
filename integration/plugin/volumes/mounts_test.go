@@ -9,8 +9,8 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 // TestPluginWithDevMounts tests very specific regression caused by mounts ordering

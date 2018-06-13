@@ -1,6 +1,6 @@
 /*Package icmd executes binaries and provides convenient assertions for testing the results.
  */
-package icmd
+package icmd // import "gotest.tools/icmd"
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/assert/cmp"
+	"gotest.tools/assert"
+	"gotest.tools/assert/cmp"
 )
 
 type helperT interface {
@@ -228,6 +228,7 @@ func StartCmd(cmd Cmd) *Result {
 	return result
 }
 
+// TODO: support exec.CommandContext
 func buildCmd(cmd Cmd) *Result {
 	var execCmd *exec.Cmd
 	switch len(cmd.Command) {

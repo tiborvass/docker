@@ -17,8 +17,8 @@ import (
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/go-check/check"
-	"github.com/gotestyourself/gotestyourself/icmd"
 	"golang.org/x/sys/unix"
+	"gotest.tools/icmd"
 )
 
 func setPortConfig(portConfig []swarm.PortConfig) testdaemon.ServiceConstructor {

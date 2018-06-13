@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/daemon/logger"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/env"
+	"gotest.tools/assert"
+	"gotest.tools/env"
 )
 
 // Validate options

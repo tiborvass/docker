@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/go-check/check"
-	"github.com/gotestyourself/gotestyourself/assert"
+	"gotest.tools/assert"
 )
 
 // CheckServiceTasksInState returns the number of tasks with a matching state,

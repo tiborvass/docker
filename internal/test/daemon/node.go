@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/internal/test"
-	"github.com/gotestyourself/gotestyourself/assert"
+	"gotest.tools/assert"
 )
 
 // NodeConstructor defines a swarm node constructor

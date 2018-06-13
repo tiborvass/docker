@@ -11,9 +11,9 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
 	"golang.org/x/sys/unix"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 // This is a regression test for #36145

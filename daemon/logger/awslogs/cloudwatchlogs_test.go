@@ -21,8 +21,8 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
 	"github.com/tiborvass/docker/dockerversion"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 const (

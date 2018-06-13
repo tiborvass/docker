@@ -9,8 +9,8 @@ import (
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 // TestTmpfsDevShmNoDupMount checks that a user-specified /dev/shm tmpfs

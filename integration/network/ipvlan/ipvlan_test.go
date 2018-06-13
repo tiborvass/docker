@@ -12,8 +12,8 @@ import (
 	"github.com/tiborvass/docker/integration/internal/container"
 	n "github.com/tiborvass/docker/integration/network"
 	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	"gotest.tools/skip"
 )
 
 func TestDockerNetworkIpvlanPersistance(t *testing.T) {

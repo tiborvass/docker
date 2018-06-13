@@ -9,7 +9,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/docker/go-connections/nat"
-	"github.com/gotestyourself/gotestyourself/assert"
+	"gotest.tools/assert"
 )
 
 // TestContainerWarningHostAndPublishPorts that a warning is returned when setting network mode to host and specifying published ports.

@@ -9,8 +9,8 @@ import (
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/gotestyourself/gotestyourself/assert"
-	"github.com/gotestyourself/gotestyourself/poll"
+	"gotest.tools/assert"
+	"gotest.tools/poll"
 )
 
 func TestDiff(t *testing.T) {

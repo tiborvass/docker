@@ -22,9 +22,9 @@ import (
 	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/plugins"
-	"github.com/gotestyourself/gotestyourself/assert"
-	is "github.com/gotestyourself/gotestyourself/assert/cmp"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
+	"gotest.tools/skip"
 )
 
 type graphEventsCounter struct {

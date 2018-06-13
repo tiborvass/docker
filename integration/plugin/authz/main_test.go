@@ -16,7 +16,7 @@ import (
 	"github.com/tiborvass/docker/internal/test/environment"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/tiborvass/docker/pkg/plugins"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/skip"
 )
 
 var (

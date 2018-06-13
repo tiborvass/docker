@@ -8,7 +8,7 @@ import (
 
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/exec"
-	"github.com/gotestyourself/gotestyourself/assert"
+	"gotest.tools/assert"
 )
 
 // This test simply verify that when a wrong ID used, a specific error should be returned for exec resize.
