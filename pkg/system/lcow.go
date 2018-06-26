@@ -2,6 +2,7 @@ package system // import "github.com/tiborvass/docker/pkg/system"
 
 import (
 	"runtime"
+	"strings"
 )
 
 // IsOSSupported determines if an operating system is supported by the host
