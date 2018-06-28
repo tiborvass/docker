@@ -5,6 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	specs "github.com/opencontainers/image-spec/specs-go/v1"
 )
 
 // PullOption defines different modes for accessing images
@@ -40,5 +41,5 @@ type GetImageAndLayerOptions struct {
 	PullOption PullOption
 	AuthConfig map[string]types.AuthConfig
 	Output     io.Writer
-	OS         string
+	Platform   *specs.Platform
 }
