@@ -14,7 +14,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/containerd/containerd/platforms"
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/backend"
@@ -24,8 +23,7 @@ import (
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/pkg/streamformatter"
-	"github.com/tiborvass/docker/pkg/system"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -72,17 +70,7 @@ func newImageBuildOptions(ctx context.Context, r *http.Request) (*types.ImageBui
 	options.Target = r.FormValue("target")
 	options.RemoteContext = r.FormValue("remote")
 	if versions.GreaterThanOrEqualTo(version, "1.32") {
-		apiPlatform := r.FormValue("platform")
-		if apiPlatform != "" {
-			sp, err := platforms.Parse(apiPlatform)
-			if err != nil {
-				return nil, err
-			}
-			if err := system.ValidatePlatform(sp); err != nil {
-				return nil, err
-			}
-			options.Platform = &sp
-		}
+		options.Platform = r.FormValue("platform")
 	}
 
 	if r.Form.Get("shmsize") != "" {

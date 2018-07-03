@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/daemon/images"
 	"github.com/tiborvass/docker/pkg/streamformatter"
+	"github.com/tiborvass/docker/pkg/system"
 	controlapi "github.com/moby/buildkit/api/services/control"
 	"github.com/moby/buildkit/control"
 	"github.com/moby/buildkit/identity"
@@ -208,8 +209,17 @@ func (b *Builder) Build(ctx context.Context, opt backend.BuildConfig) (*builder.
 		frontendAttrs["no-cache"] = ""
 	}
 
-	if opt.Options.Platform != nil {
-		frontendAttrs["platform"] = platforms.Format(*opt.Options.Platform)
+	if opt.Options.Platform != "" {
+		// same as in newBuilder in builder/dockerfile.builder.go
+		// TODO: remove once opt.Options.Platform is of type specs.Platform
+		sp, err := platforms.Parse(opt.Options.Platform)
+		if err != nil {
+			return nil, err
+		}
+		if err := system.ValidatePlatform(sp); err != nil {
+			return nil, err
+		}
+		frontendAttrs["platform"] = opt.Options.Platform
 	}
 
 	exporterAttrs := map[string]string{}
