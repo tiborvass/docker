@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -12,7 +13,6 @@ import (
 	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
 	"gotest.tools/assert"
 )
 
