@@ -21,6 +21,8 @@ import (
 
 func TestBuildSquashParent(t *testing.T) {
 	skip.If(t, testEnv.DaemonInfo.OSType == "windows")
+	skip.If(t, !testEnv.DaemonInfo.ExperimentalBuild)
+	skip.If(t, buildutil.BuildKitEnabled, "TODO BuildKit + --squash ?")
 
 	var client dclient.APIClient
 	if !testEnv.DaemonInfo.ExperimentalBuild {

@@ -23,6 +23,8 @@ import (
 
 func TestBuildWithRemoveAndForceRemove(t *testing.T) {
 	skip.If(t, testEnv.DaemonInfo.OSType == "windows", "FIXME")
+	skip.If(t, buildutil.BuildKitEnabled(), "buildkit does not leak into container store")
+
 	defer setupTest(t)()
 
 	cases := []struct {
@@ -336,7 +338,7 @@ RUN cat somefile`
 	defer source.Close()
 
 	apiclient := testEnv.APIClient()
-	resp, err := buildutil.Build(apiclient,
+	res, err := buildutil.Build(apiclient,
 		buildutil.BuildInput{Context: source.AsTarReader(t)},
 		types.ImageBuildOptions{
 			Remove:      true,
@@ -345,9 +347,7 @@ RUN cat somefile`
 
 	assert.NilError(t, err)
 
-	assert.Check(t, is.Contains(string(resp.Output), "Successfully built"))
-
-	image, _, err := apiclient.ImageInspectWithRaw(context.Background(), resp.ID)
+	image, _, err := apiclient.ImageInspectWithRaw(context.Background(), res.ID)
 	assert.NilError(t, err)
 	assert.Check(t, is.Contains(image.Config.Env, "bar=baz"))
 }
@@ -391,7 +391,7 @@ COPY bar /`
 	err = w.Close()
 	assert.NilError(t, err)
 
-	resp, err := buildutil.Build(apiclient,
+	res, err := buildutil.Build(apiclient,
 		buildutil.BuildInput{Context: buf},
 		types.ImageBuildOptions{
 			Remove:      true,
@@ -399,7 +399,7 @@ COPY bar /`
 		})
 
 	assert.NilError(t, err)
-	assert.Assert(t, !strings.Contains(string(resp.Output), "Using cache"))
+	assert.Assert(t, !res.CacheHit("bar"))
 }
 
 // docker/for-linux#135
@@ -427,16 +427,13 @@ RUN [ ! -f foo ]
 	defer source.Close()
 
 	apiclient := testEnv.APIClient()
-	resp, err := buildutil.Build(apiclient,
+	_, err := buildutil.Build(apiclient,
 		buildutil.BuildInput{Context: source.AsTarReader(t)},
 		types.ImageBuildOptions{
 			Remove:      true,
 			ForceRemove: true,
 		})
-
 	assert.NilError(t, err)
-
-	assert.Check(t, is.Contains(string(resp.Output), "Successfully built"))
 }
 
 // #37581
