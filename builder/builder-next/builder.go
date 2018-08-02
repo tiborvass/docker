@@ -15,6 +15,7 @@ import (
 	"github.com/tiborvass/docker/daemon/images"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/docker/libnetwork"
 	controlapi "github.com/moby/buildkit/api/services/control"
 	"github.com/moby/buildkit/control"
 	"github.com/moby/buildkit/identity"
@@ -27,9 +28,10 @@ import (
 
 // Opt is option struct required for creating the builder
 type Opt struct {
-	SessionManager *session.Manager
-	Root           string
-	Dist           images.DistributionServices
+	SessionManager    *session.Manager
+	Root              string
+	Dist              images.DistributionServices
+	NetworkController libnetwork.NetworkController
 }
 
 // Builder can build using BuildKit backend
