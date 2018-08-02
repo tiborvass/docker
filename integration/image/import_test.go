@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/internal/testutil"
-	"github.com/gotestyourself/gotestyourself/skip"
+	"gotest.tools/skip"
 )
 
 // Ensure we don't regress on CVE-2017-14992.
