@@ -11,11 +11,6 @@ import (
 	"github.com/opencontainers/runc/libcontainer/system"
 )
 
-/*
-#include <unistd.h>
-*/
-import "C"
-
 // platformNewStatsCollector performs platform specific initialisation of the
 // Collector structure.
 func platformNewStatsCollector(s *Collector) {
@@ -68,16 +63,4 @@ func (s *Collector) getSystemCPUUsage() (uint64, error) {
 		}
 	}
 	return 0, fmt.Errorf("invalid stat format. Error trying to parse the '/proc/stat' file")
-}
-
-func (s *Collector) getNumberOnlineCPUs() (uint32, error) {
-	i, err := C.sysconf(C._SC_NPROCESSORS_ONLN)
-	// According to POSIX - errno is undefined after successful
-	// sysconf, and can be non-zero in several cases, so look for
-	// error in returned value not in errno.
-	// (https://sourceware.org/bugzilla/show_bug.cgi?id=21536)
-	if i == -1 {
-		return 0, err
-	}
-	return uint32(i), nil
 }

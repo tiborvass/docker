@@ -59,7 +59,7 @@ case "$(go env GOOS)/$(go env GOARCH)" in
 		;;
 esac
 
-echo "Building: $DEST/$BINARY_FULLNAME"
+echo "Building: $DEST/$BINARY_FULLNAME CGO_ENABLED=${CGO_ENABLED}"
 go build \
 	-o "$DEST/$BINARY_FULLNAME" \
 	"${BUILDFLAGS[@]}" \

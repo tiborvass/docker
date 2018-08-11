@@ -109,7 +109,7 @@ func (s *Collector) Run() {
 			continue
 		}
 
-		onlineCPUs, err := s.getNumberOnlineCPUs()
+		onlineCPUs, err := getNumberOnlineCPUs()
 		if err != nil {
 			logrus.Errorf("collecting system online cpu count: %v", err)
 			continue

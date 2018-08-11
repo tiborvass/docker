@@ -150,7 +150,7 @@ ORIG_BUILDFLAGS=( -tags "autogen netgo osusergo static_build $DOCKER_BUILDTAGS" 
 
 # When $DOCKER_INCREMENTAL_BINARY is set in the environment, enable incremental
 # builds by installing dependent packages to the GOPATH.
-REBUILD_FLAG="-a"
+#REBUILD_FLAG="-a"
 if [ "$DOCKER_INCREMENTAL_BINARY" == "1" ] || [ "$DOCKER_INCREMENTAL_BINARY" == "true" ]; then
 	REBUILD_FLAG="-i"
 fi

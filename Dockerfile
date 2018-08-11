@@ -1,3 +1,5 @@
+# syntax = tiborvass/dockerfile:i386-20180811
+
 # This file describes the standard way to build Docker, using docker
 #
 # Usage:
