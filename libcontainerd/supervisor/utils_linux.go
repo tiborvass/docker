@@ -1,4 +1,4 @@
-package libcontainerd // import "github.com/tiborvass/docker/libcontainerd"
+package supervisor // import "github.com/tiborvass/docker/libcontainerd/supervisor"
 
 import "syscall"
 

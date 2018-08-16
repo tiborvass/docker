@@ -36,7 +36,7 @@ import (
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/daemon/listeners"
 	"github.com/tiborvass/docker/dockerversion"
-	"github.com/tiborvass/docker/libcontainerd"
+	"github.com/tiborvass/docker/libcontainerd/supervisor"
 	dopts "github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
@@ -45,7 +45,6 @@ import (
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/plugin"
-	"github.com/tiborvass/docker/registry"
 	"github.com/tiborvass/docker/runconfig"
 	"github.com/docker/go-connections/tlsconfig"
 	swarmapi "github.com/docker/swarmkit/api"
@@ -112,6 +111,10 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
 		return err
 	}
 
+	if err := system.MkdirAll(cli.Config.ExecRoot, 0700, ""); err != nil {
+		return err
+	}
+
 	if cli.Pidfile != "" {
 		pf, err := pidfile.New(cli.Pidfile)
 		if err != nil {
@@ -135,19 +138,27 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
 		return fmt.Errorf("Failed to load listeners: %v", err)
 	}
 
-	registryService, err := registry.NewService(cli.Config.ServiceOptions)
-	if err != nil {
-		return err
-	}
+	ctx, cancel := context.WithCancel(context.Background())
+	if cli.Config.ContainerdAddr == "" && runtime.GOOS != "windows" {
+		opts, err := cli.getContainerdDaemonOpts()
+		if err != nil {
+			cancel()
+			return fmt.Errorf("Failed to generate containerd options: %v", err)
+		}
 
-	rOpts, err := cli.getRemoteOptions()
-	if err != nil {
-		return fmt.Errorf("Failed to generate containerd options: %v", err)
+		r, err := supervisor.Start(ctx, filepath.Join(cli.Config.Root, "containerd"), filepath.Join(cli.Config.ExecRoot, "containerd"), opts...)
+		if err != nil {
+			cancel()
+			return fmt.Errorf("Failed to start containerd: %v", err)
+		}
+
+		cli.Config.ContainerdAddr = r.Address()
+
+		// Try to wait for containerd to shutdown
+		defer r.WaitTimeout(10 * time.Second)
 	}
-	containerdRemote, err := libcontainerd.New(filepath.Join(cli.Config.Root, "containerd"), filepath.Join(cli.Config.ExecRoot, "containerd"), rOpts...)
-	if err != nil {
-		return err
-	}
+	defer cancel()
+
 	signal.Trap(func() {
 		cli.stop()
 		<-stopc // wait for daemonCli.start() to return
@@ -162,7 +173,7 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
 		logrus.Fatalf("Error creating middlewares: %v", err)
 	}
 
-	d, err := daemon.NewDaemon(cli.Config, registryService, containerdRemote, pluginStore)
+	d, err := daemon.NewDaemon(ctx, cli.Config, pluginStore)
 	if err != nil {
 		return fmt.Errorf("Error starting daemon: %v", err)
 	}
@@ -207,10 +218,7 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
 
 	initRouter(routerOptions)
 
-	// process cluster change notifications
-	watchCtx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	go d.ProcessClusterNotifications(watchCtx, c.GetWatchStream())
+	go d.ProcessClusterNotifications(ctx, c.GetWatchStream())
 
 	cli.setupConfigReloadTrap()
 
@@ -227,8 +235,12 @@ func (cli *DaemonCli) start(opts *daemonOptions) (err error) {
 	// Wait for serve API to complete
 	errAPI := <-serveAPIWait
 	c.Cleanup()
+
 	shutdownDaemon(d)
-	containerdRemote.Cleanup()
+
+	// Stop notification processing and any background processes
+	cancel()
+
 	if errAPI != nil {
 		return fmt.Errorf("Shutting down due to ServeAPI error: %v", errAPI)
 	}
@@ -511,14 +523,22 @@ func (cli *DaemonCli) initMiddlewares(s *apiserver.Server, cfg *apiserver.Config
 	return nil
 }
 
-func (cli *DaemonCli) getRemoteOptions() ([]libcontainerd.RemoteOption, error) {
-	opts := []libcontainerd.RemoteOption{}
-
-	pOpts, err := cli.getPlatformRemoteOptions()
+func (cli *DaemonCli) getContainerdDaemonOpts() ([]supervisor.DaemonOpt, error) {
+	opts, err := cli.getPlatformContainerdDaemonOpts()
 	if err != nil {
 		return nil, err
 	}
-	opts = append(opts, pOpts...)
+
+	if cli.Config.Debug {
+		opts = append(opts, supervisor.WithLogLevel("debug"))
+	} else if cli.Config.LogLevel != "" {
+		opts = append(opts, supervisor.WithLogLevel(cli.Config.LogLevel))
+	}
+
+	if !cli.Config.CriContainerd {
+		opts = append(opts, supervisor.WithPlugin("cri", nil))
+	}
+
 	return opts, nil
 }
 
