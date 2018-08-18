@@ -21,7 +21,7 @@ integration_api_dirs=${TEST_INTEGRATION_DIR:-"$(
 
 run_test_integration() {
 	[[ "$TESTFLAGS" != *-check.f* ]] && run_test_integration_suites
-	run_test_integration_legacy_suites
+	#run_test_integration_legacy_suites
 }
 
 run_test_integration_suites() {
@@ -49,7 +49,7 @@ build_test_suite_binaries() {
 		echo "Skipping building test binaries; as DOCKER_INTEGRATION_TESTS_VERIFIED is set"
 		return
 	fi
-	build_test_suite_binary ./integration-cli "test.main"
+	#build_test_suite_binary ./integration-cli "test.main"
 	for dir in $integration_api_dirs; do
 		build_test_suite_binary "$dir" "test.main"
 	done
