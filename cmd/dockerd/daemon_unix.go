@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/containerd/containerd/runtime/linux"
+	"github.com/containerd/containerd/runtime/v1/linux"
 	"github.com/tiborvass/docker/cmd/dockerd/hack"
 	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/libcontainerd/supervisor"
