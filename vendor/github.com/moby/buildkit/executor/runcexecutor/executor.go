@@ -406,6 +406,8 @@ var subReaperError error
 
 func setSubReaper() error {
 	subReaperOnce.Do(func() {
+		_ = runcsystem.SetSubreaper
+		// Commenting out the following makes the test pass
 		subReaperError = runcsystem.SetSubreaper(1)
 	})
 	return subReaperError
