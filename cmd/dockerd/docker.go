@@ -89,6 +89,8 @@ func main() {
 		return
 	}
 
+	setsubreaper()
+
 	// Set terminal emulation based on platform as required.
 	_, stdout, stderr := term.StdStreams()
 
