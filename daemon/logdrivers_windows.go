@@ -6,6 +6,7 @@ import (
 	_ "github.com/tiborvass/docker/daemon/logger/awslogs"
 	_ "github.com/tiborvass/docker/daemon/logger/etwlogs"
 	_ "github.com/tiborvass/docker/daemon/logger/fluentd"
+	_ "github.com/tiborvass/docker/daemon/logger/gcplogs"
 	_ "github.com/tiborvass/docker/daemon/logger/gelf"
 	_ "github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	_ "github.com/tiborvass/docker/daemon/logger/logentries"
