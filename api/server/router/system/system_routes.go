@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/server/httputils"
+	"github.com/tiborvass/docker/api/server/router/build"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/api/types/filters"
@@ -26,7 +27,8 @@ func optionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request,
 }
 
 func (s *systemRouter) pingHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
-	if bv := s.builderVersion; bv != "" {
+	builderVersion := build.BuilderVersion(*s.features)
+	if bv := builderVersion; bv != "" {
 		w.Header().Set("Builder-Version", string(bv))
 	}
 	_, err := w.Write([]byte{'O', 'K'})
