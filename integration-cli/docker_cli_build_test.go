@@ -24,6 +24,7 @@ import (
 	"github.com/tiborvass/docker/internal/test/fakestorage"
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/archive"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/go-check/check"
 	"github.com/moby/buildkit/frontend/dockerfile/command"
 	"github.com/opencontainers/go-digest"
@@ -3598,6 +3599,11 @@ func (s *DockerSuite) TestBuildSymlinkBreakout(c *check.C) {
 	name := "testbuildsymlinkbreakout"
 	tmpdir, err := ioutil.TempDir("", name)
 	c.Assert(err, check.IsNil)
+
+	// See https://github.com/moby/moby/pull/37770 for reason for next line.
+	tmpdir, err = system.GetLongPathName(tmpdir)
+	c.Assert(err, check.IsNil)
+
 	defer os.RemoveAll(tmpdir)
 	ctx := filepath.Join(tmpdir, "context")
 	if err := os.MkdirAll(ctx, 0755); err != nil {
