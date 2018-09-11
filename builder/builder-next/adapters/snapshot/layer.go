@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/boltdb/bolt"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/pkg/errors"
+	bolt "go.etcd.io/bbolt"
 	"golang.org/x/sync/errgroup"
 )
 
