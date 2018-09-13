@@ -13,6 +13,7 @@ import (
 	"github.com/containerd/containerd/runtime/v1/linux"
 	"github.com/tiborvass/docker/cmd/dockerd/hack"
 	"github.com/tiborvass/docker/daemon"
+	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/libcontainerd/supervisor"
 	"github.com/docker/libnetwork/portallocator"
 	"golang.org/x/sys/unix"
@@ -106,4 +107,19 @@ func wrapListeners(proto string, ls []net.Listener) []net.Listener {
 		}
 	}
 	return ls
+}
+
+func newCgroupParent(config *config.Config) string {
+	cgroupParent := "docker"
+	useSystemd := daemon.UsingSystemd(config)
+	if useSystemd {
+		cgroupParent = "system.slice"
+	}
+	if config.CgroupParent != "" {
+		cgroupParent = config.CgroupParent
+	}
+	if useSystemd {
+		cgroupParent = cgroupParent + ":" + "docker" + ":"
+	}
+	return cgroupParent
 }
