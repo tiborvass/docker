@@ -3,10 +3,10 @@ package service // import "github.com/tiborvass/docker/volume/service"
 import (
 	"encoding/json"
 
-	"github.com/boltdb/bolt"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	bolt "go.etcd.io/bbolt"
 )
 
 var volumeBucketName = []byte("volumes")
