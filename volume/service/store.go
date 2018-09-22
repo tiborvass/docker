@@ -12,7 +12,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/boltdb/bolt"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/volume"
@@ -20,6 +19,7 @@ import (
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
 	"github.com/tiborvass/docker/volume/service/opts"
 	"github.com/sirupsen/logrus"
+	bolt "go.etcd.io/bbolt"
 )
 
 const (
