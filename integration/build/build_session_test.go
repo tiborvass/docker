@@ -9,6 +9,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	dclient "github.com/tiborvass/docker/client"
+	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/moby/buildkit/session"
@@ -20,7 +21,11 @@ import (
 )
 
 func TestBuildWithSession(t *testing.T) {
-	skip.If(t, !testEnv.DaemonInfo.ExperimentalBuild)
+	skip.If(t, testEnv.IsRemoteDaemon, "cannot run daemon when remote daemon")
+	skip.If(t, testEnv.DaemonInfo.OSType == "windows")
+	d := daemon.New(t, daemon.WithExperimental)
+	d.StartWithBusybox(t)
+	defer d.Stop(t)
 
 	client := testEnv.APIClient()
 
