@@ -12,7 +12,6 @@ import (
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/pkg/containerfs"
-	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/platform"
@@ -649,16 +648,6 @@ func setupDaemonProcess(config *config.Config) error {
 
 func (daemon *Daemon) setupSeccompProfile() error {
 	return nil
-}
-
-func getRealPath(path string) (string, error) {
-	if system.IsIoTCore() {
-		// Due to https://github.com/golang/go/issues/20506, path expansion
-		// does not work correctly on the default IoT Core configuration.
-		// TODO @darrenstahlmsft remove this once golang/go/20506 is fixed
-		return path, nil
-	}
-	return fileutils.ReadSymlinkedDirectory(path)
 }
 
 func (daemon *Daemon) loadRuntimes() error {
