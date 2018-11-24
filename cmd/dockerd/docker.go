@@ -8,6 +8,7 @@ import (
 	"github.com/tiborvass/docker/cli"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/dockerversion"
+	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/term"
 	"github.com/moby/buildkit/util/apicaps"
@@ -53,6 +54,12 @@ func main() {
 	if reexec.Init() {
 		return
 	}
+
+	// initial log formatting; this setting is updated after the daemon configuration is loaded.
+	logrus.SetFormatter(&logrus.TextFormatter{
+		TimestampFormat: jsonmessage.RFC3339NanoFixed,
+		FullTimestamp:   true,
+	})
 
 	// Set terminal emulation based on platform as required.
 	_, stdout, stderr := term.StdStreams()
