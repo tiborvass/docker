@@ -2,8 +2,8 @@ package daemon // import "github.com/tiborvass/docker/daemon"
 
 import (
 	"github.com/tiborvass/docker/container"
-	"github.com/tiborvass/docker/daemon/caps"
 	"github.com/tiborvass/docker/daemon/exec"
+	"github.com/tiborvass/docker/oci/caps"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
