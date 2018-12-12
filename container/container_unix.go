@@ -18,6 +18,7 @@ import (
 	"github.com/tiborvass/docker/volume"
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
 	"github.com/opencontainers/selinux/go-selinux/label"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
