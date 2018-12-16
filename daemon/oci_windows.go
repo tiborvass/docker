@@ -10,6 +10,7 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/oci"
+	"github.com/tiborvass/docker/oci/caps"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/opencontainers/runtime-spec/specs-go"
@@ -368,7 +369,11 @@ func (daemon *Daemon) createSpecLinuxFields(c *container.Container, s *specs.Spe
 	}
 	s.Root.Path = "rootfs"
 	s.Root.Readonly = c.HostConfig.ReadonlyRootfs
-	if err := oci.SetCapabilities(s, c.HostConfig.CapAdd, c.HostConfig.CapDrop, c.HostConfig.Privileged); err != nil {
+	capabilities, err := caps.TweakCapabilities(oci.DefaultCapabilities(), c.HostConfig.CapAdd, c.HostConfig.CapDrop, c.HostConfig.Capabilities, c.HostConfig.Privileged)
+	if err != nil {
+		return fmt.Errorf("linux spec capabilities: %v", err)
+	}
+	if err := oci.SetCapabilities(s, capabilities); err != nil {
 		return fmt.Errorf("linux spec capabilities: %v", err)
 	}
 	devPermissions, err := oci.AppendDevicePermissionsFromCgroupRules(nil, c.HostConfig.DeviceCgroupRules)
