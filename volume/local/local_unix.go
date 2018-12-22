@@ -14,9 +14,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/tiborvass/docker/pkg/mount"
+	"github.com/pkg/errors"
 )
 
 var (
