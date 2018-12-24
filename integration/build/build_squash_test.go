@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
+	dclient "github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
@@ -20,13 +21,18 @@ import (
 
 func TestBuildSquashParent(t *testing.T) {
 	skip.If(t, testEnv.DaemonInfo.OSType == "windows")
-	skip.If(t, !testEnv.DaemonInfo.ExperimentalBuild)
-	skip.If(t, testEnv.IsRemoteDaemon, "cannot run daemon when remote daemon")
-	d := daemon.New(t, daemon.WithExperimental)
-	d.StartWithBusybox(t)
-	defer d.Stop(t)
 
-	client := d.NewClientT(t)
+	var client dclient.APIClient
+	if !testEnv.DaemonInfo.ExperimentalBuild {
+		skip.If(t, testEnv.IsRemoteDaemon, "cannot run daemon when remote daemon")
+
+		d := daemon.New(t, daemon.WithExperimental)
+		d.StartWithBusybox(t)
+		defer d.Stop(t)
+		client = d.NewClientT(t)
+	} else {
+		client = testEnv.APIClient()
+	}
 
 	dockerfile := `
 		FROM busybox
