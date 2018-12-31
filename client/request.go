@@ -13,6 +13,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/tiborvass/docker/api/server/httputils"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/pkg/errors"
@@ -120,9 +121,10 @@ func (cli *Client) sendRequest(ctx context.Context, method, path string, query u
 	}
 	resp, err := cli.doRequest(ctx, req)
 	if err != nil {
-		return resp, err
+		return resp, httputils.FromStatusCode(err, resp.statusCode)
 	}
-	return resp, cli.checkResponseErr(resp)
+	err = cli.checkResponseErr(resp)
+	return resp, httputils.FromStatusCode(err, resp.statusCode)
 }
 
 func (cli *Client) doRequest(ctx context.Context, req *http.Request) (serverResponse, error) {
