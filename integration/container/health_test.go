@@ -9,7 +9,6 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/internal/test/request"
 	"gotest.tools/poll"
 	"gotest.tools/skip"
 )
@@ -20,7 +19,7 @@ func TestHealthCheckWorkdir(t *testing.T) {
 	skip.If(t, testEnv.OSType == "windows", "FIXME")
 	defer setupTest(t)()
 	ctx := context.Background()
-	client := request.NewAPIClient(t)
+	client := testEnv.APIClient()
 
 	cID := container.Run(t, ctx, client, container.WithTty(true), container.WithWorkingDir("/foo"), func(c *container.TestContainerConfig) {
 		c.Config.Healthcheck = &containertypes.HealthConfig{

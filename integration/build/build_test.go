@@ -15,7 +15,6 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
-	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
@@ -89,7 +88,7 @@ func TestBuildWithRemoveAndForceRemove(t *testing.T) {
 		},
 	}
 
-	client := request.NewAPIClient(t)
+	client := testEnv.APIClient()
 	ctx := context.Background()
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

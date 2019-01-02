@@ -6,7 +6,6 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/internal/test/request"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 	"gotest.tools/skip"
@@ -16,7 +15,7 @@ func TestRemoveImageOrphaning(t *testing.T) {
 	skip.If(t, testEnv.DaemonInfo.OSType == "windows", "FIXME")
 	defer setupTest(t)()
 	ctx := context.Background()
-	client := request.NewAPIClient(t)
+	client := testEnv.APIClient()
 
 	img := "test-container-orphaning"
 
