@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/internal/test/request"
 	"gotest.tools/assert"
 	"gotest.tools/poll"
 )
 
 func TestStopContainerWithRestartPolicyAlways(t *testing.T) {
 	defer setupTest(t)()
-	client := request.NewAPIClient(t)
+	client := testEnv.APIClient()
 	ctx := context.Background()
 
 	names := []string{"verifyRestart1-" + t.Name(), "verifyRestart2-" + t.Name()}
