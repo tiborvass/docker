@@ -7,7 +7,6 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"gotest.tools/assert"
 	"gotest.tools/skip"
@@ -19,7 +18,7 @@ func TestLogsFollowTailEmpty(t *testing.T) {
 	// FIXME(vdemeester) fails on a e2e run on linux...
 	skip.If(t, testEnv.IsRemoteDaemon())
 	defer setupTest(t)()
-	client := request.NewAPIClient(t)
+	client := testEnv.APIClient()
 	ctx := context.Background()
 
 	id := container.Run(t, ctx, client, container.WithCmd("sleep", "100000"))
