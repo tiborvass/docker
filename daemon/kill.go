@@ -9,7 +9,7 @@ import (
 
 	containerpkg "github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/tiborvass/docker/libcontainerd"
+	libcontainerdtypes "github.com/tiborvass/docker/libcontainerd/types"
 	"github.com/tiborvass/docker/pkg/signal"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -177,5 +177,5 @@ func (daemon *Daemon) killPossiblyDeadProcess(container *containerpkg.Container,
 }
 
 func (daemon *Daemon) kill(c *containerpkg.Container, sig int) error {
-	return daemon.containerd.SignalProcess(context.Background(), c.ID, libcontainerd.InitProcessName, sig)
+	return daemon.containerd.SignalProcess(context.Background(), c.ID, libcontainerdtypes.InitProcessName, sig)
 }

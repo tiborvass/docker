@@ -1,4 +1,4 @@
-package libcontainerd // import "github.com/tiborvass/docker/libcontainerd"
+package local // import "github.com/tiborvass/docker/libcontainerd/local"
 
 import (
 	"testing"
