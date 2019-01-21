@@ -24,9 +24,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cfssl/helpers"
-	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/client"
 	moby_daemon "github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
@@ -3007,8 +3005,7 @@ func (s *DockerDaemonSuite) TestFailedPluginRemove(c *check.C) {
 	testRequires(c, DaemonIsLinux, IsAmd64, SameHostDaemon)
 	d := daemon.New(c, dockerBinary, dockerdBinary)
 	d.Start(c)
-	cli, err := client.NewClient(d.Sock(), api.DefaultVersion, nil, nil)
-	c.Assert(err, checker.IsNil)
+	cli := d.NewClientT(c)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
