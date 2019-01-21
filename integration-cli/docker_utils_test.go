@@ -19,15 +19,9 @@ import (
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/go-check/check"
 	"gotest.tools/icmd"
 )
-
-// Deprecated
-func daemonHost() string {
-	return request.DaemonHost()
-}
 
 func deleteImages(images ...string) error {
 	args := []string{dockerBinary, "rmi", "-f"}
