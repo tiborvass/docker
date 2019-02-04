@@ -11,8 +11,12 @@ if [ -z "$VALIDATE_UPSTREAM" ]; then
 
 	VALIDATE_HEAD="$(git rev-parse --verify HEAD)"
 
-	git fetch -q "$VALIDATE_REPO" "refs/heads/$VALIDATE_BRANCH"
-	VALIDATE_UPSTREAM="$(git rev-parse --verify FETCH_HEAD)"
+	if [ -z "$CONTINUOUS_INTEGRATION" ]; then
+		git fetch -q "$VALIDATE_REPO" "refs/heads/$VALIDATE_BRANCH"
+		VALIDATE_UPSTREAM="$(git rev-parse --verify FETCH_HEAD)"
+	else
+		VALIDATE_UPSTREAM="$(git rev-parse --verify $VALIDATE_BRANCH)"
+	fi
 
 	VALIDATE_COMMIT_LOG="$VALIDATE_UPSTREAM..$VALIDATE_HEAD"
 	VALIDATE_COMMIT_DIFF="$VALIDATE_UPSTREAM...$VALIDATE_HEAD"
