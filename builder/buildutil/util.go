@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,7 +24,7 @@ import (
 	bkclient "github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/session/filesync"
 	"github.com/sirupsen/logrus"
-	"github.com/tonistiigi/fsutil"
+	fstypes "github.com/tonistiigi/fsutil/types"
 )
 
 // BuildKitEnabled returns whether BuildKit was enabled through the DOCKER_BUILDKIT environment variable.
@@ -157,7 +158,9 @@ func Build(c client.APIClient, input BuildInput, options types.ImageBuildOptions
 			options.RemoteContext = clientSessionRemote
 
 			go func() {
-				if err := sess.Run(ctx, c.DialSession); err != nil {
+				if err := sess.Run(ctx, func(ctx context.Context, proto string, meta map[string][]string) (net.Conn, error) {
+					return c.DialHijack(ctx, "/session", "h2c", meta)
+				}); err != nil {
 					logrus.Error(err)
 					cancel()
 				}
@@ -251,7 +254,7 @@ func Build(c client.APIClient, input BuildInput, options types.ImageBuildOptions
 	return br, nil
 }
 
-func resetUIDAndGID(s *fsutil.Stat) bool {
+func resetUIDAndGID(p string, s *fstypes.Stat) bool {
 	s.Uid = 0
 	s.Gid = 0
 	return true
