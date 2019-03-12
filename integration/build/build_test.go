@@ -356,6 +356,7 @@ RUN cat somefile`
 func TestBuildUncleanTarFilenames(t *testing.T) {
 	skip.If(t, versions.LessThan(testEnv.DaemonAPIVersion(), "1.37"), "broken in earlier versions")
 	skip.If(t, testEnv.DaemonInfo.OSType == "windows", "FIXME")
+	skip.If(t, buildutil.BuildKitEnabled)
 
 	defer setupTest(t)()
 
@@ -439,7 +440,6 @@ RUN [ ! -f foo ]
 // #37581
 func TestBuildWithHugeFile(t *testing.T) {
 	skip.If(t, testEnv.OSType == "windows")
-	ctx := context.TODO()
 	defer setupTest(t)()
 
 	dockerfile := `FROM busybox
@@ -454,24 +454,17 @@ RUN for g in $(seq 0 8); do dd if=/dev/urandom of=rnd bs=1K count=1 seek=$((1024
 	assert.NilError(t, err)
 
 	apiclient := testEnv.APIClient()
-	resp, err := apiclient.ImageBuild(ctx,
-		buf,
+	_, err = buildutil.Build(apiclient,
+		buildutil.BuildInput{Context: buf},
 		types.ImageBuildOptions{
 			Remove:      true,
 			ForceRemove: true,
 		})
-
-	out := bytes.NewBuffer(nil)
 	assert.NilError(t, err)
-	_, err = io.Copy(out, resp.Body)
-	resp.Body.Close()
-	assert.NilError(t, err)
-	assert.Check(t, is.Contains(out.String(), "Successfully built"))
 }
 
 func TestBuildWithEmptyDockerfile(t *testing.T) {
 	skip.If(t, versions.LessThan(testEnv.DaemonAPIVersion(), "1.40"), "broken in earlier versions")
-	ctx := context.TODO()
 	defer setupTest(t)()
 
 	tests := []struct {
@@ -513,12 +506,12 @@ func TestBuildWithEmptyDockerfile(t *testing.T) {
 			err := w.Close()
 			assert.NilError(t, err)
 
-			_, err = apiclient.ImageBuild(ctx,
-				buf,
+			_, err = buildutil.Build(apiclient,
+				buildutil.BuildInput{Context: buf},
 				types.ImageBuildOptions{
-					Remove:      true,
-					ForceRemove: true,
-				})
+				Remove:      true,
+				ForceRemove: true,
+			})
 
 			assert.Check(t, is.Contains(err.Error(), tc.expectedErr))
 		})
