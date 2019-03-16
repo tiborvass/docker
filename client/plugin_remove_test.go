@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/errdefs"
 )
 
 func TestPluginRemoveError(t *testing.T) {
@@ -20,6 +21,9 @@ func TestPluginRemoveError(t *testing.T) {
 	err := client.PluginRemove(context.Background(), "plugin_name", types.PluginRemoveOptions{})
 	if err == nil || err.Error() != "Error response from daemon: Server error" {
 		t.Fatalf("expected a Server Error, got %v", err)
+	}
+	if !errdefs.IsSystem(err) {
+		t.Fatalf("expected a Server Error, got %T", err)
 	}
 }
 

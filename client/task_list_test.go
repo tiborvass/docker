@@ -13,6 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/swarm"
+	"github.com/tiborvass/docker/errdefs"
 )
 
 func TestTaskListError(t *testing.T) {
@@ -23,6 +24,9 @@ func TestTaskListError(t *testing.T) {
 	_, err := client.TaskList(context.Background(), types.TaskListOptions{})
 	if err == nil || err.Error() != "Error response from daemon: Server error" {
 		t.Fatalf("expected a Server Error, got %v", err)
+	}
+	if !errdefs.IsSystem(err) {
+		t.Fatalf("expected a Server Error, got %T", err)
 	}
 }
 

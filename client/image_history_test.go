@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types/image"
+	"github.com/tiborvass/docker/errdefs"
 )
 
 func TestImageHistoryError(t *testing.T) {
@@ -20,6 +21,9 @@ func TestImageHistoryError(t *testing.T) {
 	_, err := client.ImageHistory(context.Background(), "nothing")
 	if err == nil || err.Error() != "Error response from daemon: Server error" {
 		t.Fatalf("expected a Server error, got %v", err)
+	}
+	if !errdefs.IsSystem(err) {
+		t.Fatalf("expected a Server Error, got %T", err)
 	}
 }
 

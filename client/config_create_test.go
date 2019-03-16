@@ -12,6 +12,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
+	"github.com/tiborvass/docker/errdefs"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )
@@ -33,6 +34,9 @@ func TestConfigCreateError(t *testing.T) {
 	_, err := client.ConfigCreate(context.Background(), swarm.ConfigSpec{})
 	if err == nil || err.Error() != "Error response from daemon: Server error" {
 		t.Fatalf("expected a Server Error, got %v", err)
+	}
+	if !errdefs.IsSystem(err) {
+		t.Fatalf("expected a Server Error, got %T", err)
 	}
 }
 
