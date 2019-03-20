@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"os"
 
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/libcontainerd/supervisor"
+	"github.com/tiborvass/docker/pkg/system"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )
@@ -84,4 +86,9 @@ func wrapListeners(proto string, ls []net.Listener) []net.Listener {
 
 func newCgroupParent(config *config.Config) string {
 	return ""
+}
+
+func (cli *DaemonCli) initContainerD(_ context.Context) error {
+	system.InitContainerdRuntime(cli.Config.Experimental, cli.Config.ContainerdAddr)
+	return nil
 }
