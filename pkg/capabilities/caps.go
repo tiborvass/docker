@@ -19,5 +19,6 @@ anyof:
 		}
 		return andList
 	}
-	return nil
+	// match anything
+	return []string{}
 }
