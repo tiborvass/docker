@@ -1,4 +1,4 @@
-package specconv
+package specconv // import "github.com/tiborvass/docker/rootless/specconv"
 
 import (
 	"io/ioutil"
