@@ -1,4 +1,4 @@
-package capabilities
+package capabilities // import "github.com/tiborvass/docker/pkg/capabilities"
 
 import (
 	"fmt"

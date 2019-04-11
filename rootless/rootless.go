@@ -1,4 +1,4 @@
-package rootless
+package rootless // import "github.com/tiborvass/docker/rootless"
 
 import (
 	"os"
