@@ -104,8 +104,7 @@ func newController(rt http.RoundTripper, opt Opt) (*control.Controller, error) {
 		ContentStore:    store,
 		DownloadManager: dist.DownloadManager,
 		MetadataStore:   dist.V2MetadataService,
-		ImageStore:      dist.ImageStore,
-		ReferenceStore:  dist.ReferenceStore,
+		ImagesStore:     opt.ContainerdClient.ImageService(),
 		ResolverOpt:     opt.ResolverOpt,
 	})
 	if err != nil {
@@ -123,9 +122,9 @@ func newController(rt http.RoundTripper, opt Opt) (*control.Controller, error) {
 	}
 
 	exp, err := containerimageexp.New(containerimageexp.Opt{
-		ImageStore:     dist.ImageStore,
-		ReferenceStore: dist.ReferenceStore,
-		Differ:         differ,
+		ImageStore:   opt.ContainerdClient.ImageService(),
+		ContentStore: opt.ContainerdClient.ContentStore(),
+		Differ:       differ,
 	})
 	if err != nil {
 		return nil, err

@@ -26,6 +26,7 @@ func (d *Daemon) DistributionServices() (DistributionServices, error) {
 		return DistributionServices{}, err
 	}
 	return DistributionServices{
-		LayerStore: ls,
+		LayerStore:      ls,
+		DownloadManager: d.imageService.DownloadManager,
 	}, nil
 }

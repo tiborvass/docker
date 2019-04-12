@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"runtime"
 	"time"
 
 	"github.com/docker/distribution"
@@ -14,7 +13,6 @@ import (
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/docker/pkg/ioutils"
 	"github.com/docker/docker/pkg/progress"
-	"github.com/docker/docker/pkg/system"
 	"github.com/sirupsen/logrus"
 )
 
@@ -106,14 +104,17 @@ func (ldm *LayerDownloadManager) Download(ctx context.Context, initialRootFS ima
 		downloadsByKey = make(map[string]*downloadTransfer)
 	)
 
-	// Assume that the operating system is the host OS if blank, and validate it
-	// to ensure we don't cause a panic by an invalid index into the layerstores.
+	// TODO(containerd): resolve layer backend
+	//
+	// ~Assume that the operating system is the host OS if blank, and validate it~
+	// ~to ensure we don't cause a panic by an invalid index into the layerstores.~
 	if os == "" {
-		os = runtime.GOOS
+		//os = runtime.GOOS
+		os = "overlay2"
 	}
-	if !system.IsOSSupported(os) {
-		return image.RootFS{}, nil, system.ErrNotSupportedOperatingSystem
-	}
+	//if !system.IsOSSupported(os) {
+	//	return image.RootFS{}, nil, system.ErrNotSupportedOperatingSystem
+	//}
 
 	rootFS := initialRootFS
 	for _, descriptor := range layers {

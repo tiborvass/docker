@@ -9,6 +9,7 @@ import (
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/container"
 	daemonevents "github.com/docker/docker/daemon/events"
+	"github.com/docker/docker/distribution/xfer"
 	"github.com/docker/docker/errdefs"
 	"github.com/docker/docker/layer"
 	"github.com/docker/docker/pkg/system"
@@ -74,6 +75,7 @@ func NewImageService(config ImageServiceConfig) *ImageService {
 		eventsService:   config.EventsService,
 		layerBackends:   config.LayerBackends,
 		layerStores:     layerStores,
+		DownloadManager: xfer.NewLayerDownloadManager(layerStores, config.MaxConcurrentDownloads),
 
 		registryService: config.RegistryService,
 	}
@@ -122,6 +124,9 @@ type ImageService struct {
 	// namespaced cache
 	cache  map[string]*cache
 	cacheL sync.RWMutex
+
+	// TODO(containerd): should i stay or should i go?
+	DownloadManager *xfer.LayerDownloadManager
 
 	// To be replaced by containerd client
 	registryService registry.Service

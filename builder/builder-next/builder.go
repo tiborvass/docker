@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/containerd/containerd"
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
@@ -67,6 +68,7 @@ var cacheFields = map[string]bool{
 type Opt struct {
 	SessionManager      *session.Manager
 	Root                string
+	ContainerdClient    *containerd.Client
 	Dist                daemon.DistributionServices
 	NetworkController   libnetwork.NetworkController
 	DefaultCgroupParent string

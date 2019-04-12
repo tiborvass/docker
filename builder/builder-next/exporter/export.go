@@ -1,18 +1,21 @@
 package containerimage
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/containerd/containerd/content"
+	"github.com/containerd/containerd/images"
 	distref "github.com/docker/distribution/reference"
-	"github.com/docker/docker/image"
 	"github.com/docker/docker/layer"
-	"github.com/docker/docker/reference"
 	"github.com/moby/buildkit/exporter"
 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
 	digest "github.com/opencontainers/go-digest"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -28,9 +31,9 @@ type Differ interface {
 
 // Opt defines a struct for creating new exporter
 type Opt struct {
-	ImageStore     image.Store
-	ReferenceStore reference.Store
-	Differ         Differ
+	ImageStore   images.Store
+	ContentStore content.Store
+	Differ       Differ
 }
 
 type imageExporter struct {
@@ -92,6 +95,8 @@ func (e *imageExporterInstance) Export(ctx context.Context, inp exporter.Source)
 	for _, v := range inp.Refs {
 		ref = v
 	}
+
+	created := time.Now().UTC()
 
 	var config []byte
 	switch len(inp.Refs) {
@@ -156,24 +161,44 @@ func (e *imageExporterInstance) Export(ctx context.Context, inp exporter.Source)
 	configDigest := digest.FromBytes(config)
 
 	configDone := oneOffProgress(ctx, fmt.Sprintf("writing image %s", configDigest))
-	id, err := e.opt.ImageStore.Create(config)
+
+	desc := ocispec.Descriptor{
+		MediaType: ocispec.MediaTypeImageConfig,
+		Digest:    configDigest,
+		Size:      int64(len(config)),
+	}
+
+	imgref := fmt.Sprintf("config-%s-%s", desc.Digest.Algorithm().String(), desc.Digest.Encoded())
+	if err := content.WriteBlob(ctx, e.opt.ContentStore, imgref, bytes.NewReader(config), desc); err != nil {
+		return nil, configDone(err)
+	}
+
+	img, err := e.opt.ImageStore.Create(ctx, images.Image{
+		Name:      desc.Digest.String(),
+		Target:    desc,
+		CreatedAt: created,
+		UpdatedAt: created,
+	})
 	if err != nil {
 		return nil, configDone(err)
 	}
 	configDone(nil)
 
-	if e.opt.ReferenceStore != nil {
-		for _, targetName := range e.targetNames {
-			tagDone := oneOffProgress(ctx, "naming to "+targetName.String())
+	// TODO(containerd): use labels for reference store?
+	/*
+		if e.opt.ReferenceStore != nil {
+			for _, targetName := range e.targetNames {
+				tagDone := oneOffProgress(ctx, "naming to "+targetName.String())
 
-			if err := e.opt.ReferenceStore.AddTag(targetName, digest.Digest(id), true); err != nil {
-				return nil, tagDone(err)
+				if err := e.opt.ReferenceStore.AddTag(targetName, digest.Digest(id), true); err != nil {
+					return nil, tagDone(err)
+				}
+				tagDone(nil)
 			}
-			tagDone(nil)
 		}
-	}
+	*/
 
 	return map[string]string{
-		"containerimage.digest": id.String(),
+		"containerimage.digest": img.Target.Digest.String(),
 	}, nil
 }

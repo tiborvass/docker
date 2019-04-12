@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -26,7 +25,6 @@ import (
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/layer"
 	pkgprogress "github.com/docker/docker/pkg/progress"
-	"github.com/docker/docker/reference"
 	"github.com/moby/buildkit/cache"
 	gw "github.com/moby/buildkit/frontend/gateway/client"
 	"github.com/moby/buildkit/session"
@@ -48,10 +46,9 @@ import (
 type SourceOpt struct {
 	ContentStore    content.Store
 	CacheAccessor   cache.Accessor
-	ReferenceStore  reference.Store
+	ImagesStore     images.Store
 	DownloadManager distribution.RootFSDownloadManager
 	MetadataStore   metadata.V2MetadataService
-	ImageStore      image.Store
 	ResolverOpt     resolver.ResolveOptionsFunc
 }
 
@@ -118,15 +115,11 @@ func (is *imageSource) resolveLocal(refStr string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	dgst, err := is.ReferenceStore.Get(ref)
+	img, err := is.ImagesStore.Get(context.TODO(), ref.String())
 	if err != nil {
 		return nil, err
 	}
-	img, err := is.ImageStore.Get(image.ID(dgst))
-	if err != nil {
-		return nil, err
-	}
-	return img.RawJSON(), nil
+	return content.ReadBlob(context.TODO(), is.ContentStore, img.Target)
 }
 
 func (is *imageSource) resolveRemote(ctx context.Context, ref string, platform *ocispec.Platform, sm *session.Manager) (digest.Digest, []byte, error) {
@@ -367,7 +360,8 @@ func (p *puller) Snapshot(ctx context.Context) (cache.ImmutableRef, error) {
 	}
 
 	if p.config != nil {
-		img, err := p.is.ImageStore.Get(image.ID(digest.FromBytes(p.config)))
+		cfg, err := content.ReadBlob(context.TODO(), p.is.ContentStore, p.desc)
+		img, err := image.NewFromJSON(cfg)
 		if err == nil {
 			if len(img.RootFS.DiffIDs) == 0 {
 				return nil, nil
@@ -537,6 +531,10 @@ func (p *puller) Snapshot(ctx context.Context) (cache.ImmutableRef, error) {
 	}
 
 	defer func() {
+		// the following allows panic to propagate instead of blocking on progressDone
+		if x := recover(); x != nil {
+			panic(x)
+		}
 		<-progressDone
 		for _, desc := range mfst.Layers {
 			p.is.ContentStore.Delete(context.TODO(), desc.Digest)
@@ -544,7 +542,8 @@ func (p *puller) Snapshot(ctx context.Context) (cache.ImmutableRef, error) {
 	}()
 
 	r := image.NewRootFS()
-	rootFS, release, err := p.is.DownloadManager.Download(ctx, *r, runtime.GOOS, layers, pkgprogress.ChanOutput(pchan))
+	os := ""
+	rootFS, release, err := p.is.DownloadManager.Download(ctx, *r, os, layers, pkgprogress.ChanOutput(pchan))
 	if err != nil {
 		return nil, err
 	}
@@ -619,7 +618,8 @@ func (ld *layerDescriptor) Close() {
 
 func (ld *layerDescriptor) Registered(diffID layer.DiffID) {
 	// Cache mapping from this layer's DiffID to the blobsum
-	ld.is.MetadataStore.Add(diffID, metadata.V2Metadata{Digest: ld.desc.Digest, SourceRepository: ld.ref.Locator})
+	// TODO(containerd): metadatastore = is a label on the content
+	//ld.is.MetadataStore.Add(diffID, metadata.V2Metadata{Digest: ld.desc.Digest, SourceRepository: ld.ref.Locator})
 }
 
 func showProgress(ctx context.Context, ongoing *jobs, cs content.Store, pw progress.Writer) {

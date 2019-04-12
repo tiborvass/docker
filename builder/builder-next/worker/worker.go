@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	nethttp "net/http"
-	"runtime"
 	"time"
 
 	"github.com/containerd/containerd/content"
@@ -284,7 +283,8 @@ func (w *Worker) FromRemote(ctx context.Context, remote *solver.Remote) (cache.I
 	}()
 
 	r := image.NewRootFS()
-	rootFS, release, err := w.DownloadManager.Download(ctx, *r, runtime.GOOS, layers, &discardProgress{})
+	os := ""
+	rootFS, release, err := w.DownloadManager.Download(ctx, *r, os, layers, &discardProgress{})
 	if err != nil {
 		return nil, err
 	}
