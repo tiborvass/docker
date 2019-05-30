@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/containerd/containerd/content"
+	"github.com/containerd/containerd/errdefs"
 	"github.com/containerd/containerd/images"
 	distref "github.com/docker/distribution/reference"
 	"github.com/docker/docker/layer"
@@ -179,7 +180,7 @@ func (e *imageExporterInstance) Export(ctx context.Context, inp exporter.Source)
 		CreatedAt: created,
 		UpdatedAt: created,
 	})
-	if err != nil {
+	if err != nil && errors.Cause(err) != errdefs.ErrAlreadyExists {
 		return nil, configDone(err)
 	}
 	configDone(nil)
