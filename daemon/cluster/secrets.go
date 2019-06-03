@@ -7,6 +7,7 @@ import (
 	types "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/daemon/cluster/convert"
 	swarmapi "github.com/docker/swarmkit/api"
+	"google.golang.org/grpc"
 )
 
 // GetSecret returns a secret from a managed swarm cluster
@@ -44,7 +45,9 @@ func (c *Cluster) GetSecrets(options apitypes.SecretListOptions) ([]types.Secret
 	defer cancel()
 
 	r, err := state.controlClient.ListSecrets(ctx,
-		&swarmapi.ListSecretsRequest{Filters: filters})
+		&swarmapi.ListSecretsRequest{Filters: filters},
+		grpc.MaxCallRecvMsgSize(defaultRecvSizeForListResponse),
+	)
 	if err != nil {
 		return nil, err
 	}
