@@ -17,6 +17,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/daemon/images"
+	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/streamformatter"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/docker/libnetwork"
@@ -73,6 +74,7 @@ type Opt struct {
 	ResolverOpt         resolver.ResolveOptionsFunc
 	BuilderConfig       config.BuilderConfig
 	Rootless            bool
+	IdentityMapping     *idtools.IdentityMapping
 }
 
 // Builder can build using BuildKit backend
