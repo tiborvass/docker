@@ -236,10 +236,8 @@ func (daemon *Daemon) containerArchivePath(container *container.Container, path 
 	if driver.Base(resolvedPath) == "." {
 		resolvedPath += string(driver.Separator()) + "."
 	}
-	sourceDir, sourceBase := driver.Dir(resolvedPath), driver.Base(resolvedPath)
-	opts := archive.TarResourceRebaseOpts(sourceBase, driver.Base(absPath))
 
-	data, err := archivePath(driver, sourceDir, opts, container.BaseFS.Path())
+	data, err := archivePath(driver, resolvedPath, nil, container.BaseFS.Path())
 	if err != nil {
 		return nil, nil, err
 	}
