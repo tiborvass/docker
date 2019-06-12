@@ -26,6 +26,9 @@ func fixVolumePathPrefix(srcPath string) string {
 // can't use filepath.Join(srcPath,include) because this will clean away
 // a trailing "." or "/" which may be important.
 func getWalkRoot(srcPath string, include string) string {
+	if srcPath == string(filepath.Separator) {
+		return srcPath + include
+	}
 	return srcPath + string(filepath.Separator) + include
 }
 
