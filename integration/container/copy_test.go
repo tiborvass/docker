@@ -107,6 +107,12 @@ func TestCopyFromContainerRoot(t *testing.T) {
 	cid := container.Create(ctx, t, apiClient, container.WithImage(imageID))
 
 	rdr, _, err := apiClient.CopyFromContainer(ctx, cid, "/")
+
+       b, _ := ioutil.ReadFile("/tmp/debug")
+       t.Log("debug", string(b))
+
+
+
 	assert.NilError(t, err)
 	defer rdr.Close()
 
@@ -142,6 +148,7 @@ func TestCopyFromContainerRoot(t *testing.T) {
 			break
 		}
 	}
+
 
 	assert.Check(t, found["/foo"], "/foo file not found in archive")
 	assert.Check(t, found["/bar/baz"], "/bar/baz file not found in archive")

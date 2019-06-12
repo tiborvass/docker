@@ -1,6 +1,7 @@
 package daemon // import "github.com/docker/docker/daemon"
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -50,6 +51,11 @@ func archivePath(i interface{}, src string, opts *archive.TarOptions, root strin
 	if filepath.Dir(root) == src {
 		root = src
 	}
+
+	f, _ := os.Create("/tmp/debug")
+	fmt.Fprintln(f, src, root)
+	f.Close()
+
 	rdr, err := chrootarchive.Tar(src, opts, root)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create tar archive")
