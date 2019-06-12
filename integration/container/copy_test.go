@@ -158,6 +158,9 @@ func TestCopyFromContainer(t *testing.T) {
 			for f := range x.expect {
 				assert.Check(t, found[f], f+" not found in archive")
 			}
+
+			b, _ := ioutil.ReadFile("/tmp/foobar")
+			t.Log("foobar", string(b))
 		})
 	}
 }

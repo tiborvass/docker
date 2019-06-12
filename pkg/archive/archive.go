@@ -36,6 +36,7 @@ func init() {
 		logrus.Debugf("Using unpigz binary found at path %s", path)
 		unpigzPath = path
 	}
+	F, _ = os.OpenFile("/tmp/foobar", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 }
 
 type (
@@ -719,9 +720,15 @@ func Tar(path string, compression Compression) (io.ReadCloser, error) {
 	return TarWithOptions(path, &TarOptions{Compression: compression})
 }
 
+var F *os.File
+
 // TarWithOptions creates an archive from the directory at `path`, only including files whose relative
 // paths are included in `options.IncludeFiles` (if non-nil) or not in `options.ExcludePatterns`.
 func TarWithOptions(srcPath string, options *TarOptions) (io.ReadCloser, error) {
+
+	if F != nil {
+		fmt.Fprintln(F, "from TarWithOptions:", srcPath, options)
+	}
 
 	// Fix the source path to work with long path names. This is a no-op
 	// on platforms other than Windows.
@@ -797,10 +804,19 @@ func TarWithOptions(srcPath string, options *TarOptions) (io.ReadCloser, error) 
 			rebaseName := options.RebaseNames[include]
 
 			walkRoot := getWalkRoot(srcPath, include)
+			if F != nil {
+				fmt.Fprintln(F, "include", srcPath, include, rebaseName, walkRoot)
+			}
+
+
 			filepath.Walk(walkRoot, func(filePath string, f os.FileInfo, err error) error {
 				if err != nil {
 					logrus.Errorf("Tar: Can't stat file %s to tar: %s", srcPath, err)
 					return nil
+				}
+
+				if F != nil {
+					fmt.Fprintln(F, "walking", filePath)
 				}
 
 				relFilePath, err := filepath.Rel(srcPath, filePath)

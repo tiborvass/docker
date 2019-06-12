@@ -1,6 +1,7 @@
 package daemon // import "github.com/docker/docker/daemon"
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -244,6 +245,10 @@ func (daemon *Daemon) containerArchivePath(container *container.Container, path 
 		sourceDir, sourceBase = driver.Split(resolvedPath)
 	}
 	opts := archive.TarResourceRebaseOpts(sourceBase, driver.Base(absPath))
+
+	f, _ := os.Create("/tmp/foobar")
+	fmt.Fprintf(f, "sourceDir = %v\nsourceBase = %v\n", sourceDir, sourceBase)
+	f.Close()
 
 	data, err := archivePath(driver, sourceDir, opts, container.BaseFS.Path())
 	if err != nil {
