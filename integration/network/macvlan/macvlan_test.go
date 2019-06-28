@@ -1,6 +1,6 @@
 // +build !windows
 
-package macvlan
+package macvlan // import "github.com/tiborvass/docker/integration/network/macvlan"
 
 import (
 	"context"
