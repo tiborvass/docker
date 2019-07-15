@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/tiborvass/docker/daemon/config"
-	"github.com/tiborvass/docker/pkg/fileutils"
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/docker/libnetwork/resolvconf"
 	"github.com/pkg/errors"
@@ -121,10 +120,6 @@ func getCleanPatterns(id string) (regexps []*regexp.Regexp) {
 		}
 	}
 	return
-}
-
-func getRealPath(path string) (string, error) {
-	return fileutils.ReadSymlinkedDirectory(path)
 }
 
 func shouldUnmountRoot(root string, info *mount.Info) bool {
