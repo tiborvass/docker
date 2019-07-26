@@ -16,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -27,10 +28,27 @@ import (
 	fstypes "github.com/tonistiigi/fsutil/types"
 )
 
+var (
+	once sync.Once
+	buildkitEnabled bool
+)
+
 // BuildKitEnabled returns whether BuildKit was enabled through the DOCKER_BUILDKIT environment variable.
 // TODO: Remove this and allow caller to set it.
 func BuildKitEnabled() bool {
-	return os.Getenv("DOCKER_BUILDKIT") == "1"
+	once.Do(func() {
+		v := os.Getenv("DOCKER_BUILDKIT")
+		if v == "1" || v == "true" {
+			buildkitEnabled = true
+			return
+		}
+		if v == "0" || v == "false" {
+			buildkitEnabled = false
+			return
+		}
+		panic("unexpected value for DOCKER_BUILDKIT")
+	})
+	return buildkitEnabled
 }
 
 // BuildResult encapsulates the result of a build.
@@ -252,6 +270,16 @@ func Build(c client.APIClient, input BuildInput, options types.ImageBuildOptions
 		}
 	}
 	return br, nil
+}
+
+func ExitCode(code int) int {
+	if code == 0 {
+		return 0
+	}
+	if BuildKitEnabled() {
+		return 1
+	}
+	return code
 }
 
 func resetUIDAndGID(p string, s *fstypes.Stat) bool {

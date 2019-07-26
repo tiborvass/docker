@@ -26,6 +26,7 @@ import (
 
 func (s *DockerSuite) TestBuildResourceConstraintsAreUsed(c *testing.T) {
 	testRequires(c, cpuCfsQuota)
+	testRequires(c, TODOBuildkit) // resource constraints not supported
 	name := "testbuildresourceconstraints"
 	buildLabel := "DockerSuite.TestBuildResourceConstraintsAreUsed"
 

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/docker/docker/testutil/fakecontext"
+	"github.com/docker/docker/builder/buildutil"
 	"gotest.tools/icmd"
 )
 
@@ -18,6 +19,14 @@ func WithStdinContext(closer io.ReadCloser) func(*icmd.Cmd) func() {
 			// FIXME(vdemeester) we should not ignore the error here…
 			closer.Close()
 		}
+	}
+}
+
+// WithTarget sets the build target
+func WithTarget(target string) func(*icmd.Cmd) func() {
+	return func(cmd *icmd.Cmd) func() {
+		cmd.Command = append(cmd.Command, "--target", target)
+		return nil
 	}
 }
 
@@ -67,6 +76,16 @@ func WithBuildContext(t testing.TB, contextOperators ...func(*fakecontext.Fake) 
 // WithFile adds the specified file (with content) in the build context
 func WithFile(name, content string) func(*fakecontext.Fake) error {
 	return fakecontext.WithFile(name, content)
+}
+
+func Expect(out string, exitcode int) icmd.Expected {
+	if buildutil.BuildKitEnabled() {
+		if exitcode != 0 {
+			exitcode = 1
+		}
+		return icmd.Expected{Err: out, ExitCode: exitcode}
+	}
+	return icmd.Expected{Out: out, ExitCode: exitcode}
 }
 
 func closeBuildContext(t testing.TB, ctx *fakecontext.Fake) func() {

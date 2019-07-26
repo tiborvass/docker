@@ -15,6 +15,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/api/types/versions"
+	"github.com/docker/docker/builder/buildutil"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/integration-cli/requirement"
 	"github.com/docker/docker/testutil/registry"
@@ -186,7 +187,7 @@ func SwarmInactive() bool {
 }
 
 func TODOBuildkit() bool {
-	return os.Getenv("DOCKER_BUILDKIT") == ""
+	return !buildutil.BuildKitEnabled()
 }
 
 // testRequires checks if the environment satisfies the requirements

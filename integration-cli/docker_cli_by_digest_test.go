@@ -180,6 +180,7 @@ func (s *DockerRegistrySuite) TestRemoveImageByDigest(c *testing.T) {
 }
 
 func (s *DockerRegistrySuite) TestBuildByDigest(c *testing.T) {
+	testRequires(c, TODOBuildkit) // incompatible test
 	digest, err := setupImage(c)
 	assert.NilError(c, err, "error setting up image")
 
