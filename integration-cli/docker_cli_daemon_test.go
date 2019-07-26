@@ -2372,6 +2372,7 @@ func (s *DockerDaemonSuite) TestDaemonMaxConcurrencyWithConfigFileReload(c *chec
 }
 
 func (s *DockerDaemonSuite) TestBuildOnDisabledBridgeNetworkDaemon(c *check.C) {
+	testRequires(c, TODOBuildkit) // --network defaults to bridge, but should default to none if daemon doesn't have bridge
 	s.d.StartWithBusybox(c, "-b=none", "--iptables=false")
 
 	result := cli.BuildCmd(c, "busyboxs", cli.Daemon(s.d),
