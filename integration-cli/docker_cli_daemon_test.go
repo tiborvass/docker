@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cfssl/helpers"
+	"github.com/creack/pty"
 	"github.com/tiborvass/docker/api/types"
 	moby_daemon "github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/integration-cli/checker"
@@ -37,7 +38,6 @@ import (
 	"github.com/docker/libnetwork/iptables"
 	"github.com/docker/libtrust"
 	"github.com/go-check/check"
-	"github.com/kr/pty"
 	"golang.org/x/sys/unix"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
