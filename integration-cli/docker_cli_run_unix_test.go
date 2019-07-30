@@ -17,6 +17,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/creack/pty"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
@@ -26,7 +27,6 @@ import (
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/go-check/check"
-	"github.com/kr/pty"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )
