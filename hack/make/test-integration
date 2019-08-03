@@ -9,7 +9,7 @@ fi
 
 source hack/make/.integration-test-helpers
 
-if [ ! -z "${TEST_SKIP_INTEGRATION}" ] && [ ! -z "${TEST_SKIP_INTEGRATION_CLI}" ]; then
+if [[ "${TEST_SKIP_INTEGRATION}" == "1" ]] && [[ "${TEST_SKIP_INTEGRATION_CLI}" == "1" ]]; then
 	echo integration and integration-cli skipped according to env vars
 	exit 0
 fi
