@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
@@ -28,11 +27,8 @@ func (s *DockerSuite) TestCreateArgs(c *testing.T) {
 	out, _ = dockerCmd(c, "inspect", cleanedContainerID)
 
 	var containers []struct {
-		ID      string
-		Created time.Time
-		Path    string
-		Args    []string
-		Image   string
+		Path string
+		Args []string
 	}
 
 	err := json.Unmarshal([]byte(out), &containers)
