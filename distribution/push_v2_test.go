@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/pkg/progress"
 	refstore "github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 )
 
 func TestGetRepositoryMountCandidates(t *testing.T) {

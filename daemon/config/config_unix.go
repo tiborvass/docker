@@ -7,7 +7,7 @@ import (
 
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/opts"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 )
 
 const (

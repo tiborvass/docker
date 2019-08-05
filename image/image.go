@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/layer"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 )
 
 // ID is the content-addressable ID of an image.

@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/stringid"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 )
 
 func init() {

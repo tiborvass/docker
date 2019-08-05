@@ -7,7 +7,7 @@ import (
 	"github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/api/types/strslice"
 	"github.com/docker/go-connections/nat"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 )
 
 // CgroupnsMode represents the cgroup namespace mode of the container

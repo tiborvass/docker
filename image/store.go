@@ -9,7 +9,7 @@ import (
 	"github.com/docker/distribution/digestset"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

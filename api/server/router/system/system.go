@@ -2,7 +2,7 @@ package system // import "github.com/tiborvass/docker/api/server/router/system"
 
 import (
 	"github.com/tiborvass/docker/api/server/router"
-	"github.com/tiborvass/docker/builder/builder-next"
+	buildkit "github.com/tiborvass/docker/builder/builder-next"
 	"github.com/tiborvass/docker/builder/fscache"
 )
 

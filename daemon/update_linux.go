@@ -5,7 +5,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types/container"
 	libcontainerdtypes "github.com/tiborvass/docker/libcontainerd/types"
-	"github.com/opencontainers/runtime-spec/specs-go"
+	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
 
 func toContainerdResources(resources container.Resources) *libcontainerdtypes.Resources {

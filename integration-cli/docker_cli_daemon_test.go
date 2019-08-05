@@ -34,7 +34,7 @@ import (
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/mount"
 	testdaemon "github.com/tiborvass/docker/testutil/daemon"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/docker/libnetwork/iptables"
 	"github.com/docker/libtrust"
 	"golang.org/x/sys/unix"

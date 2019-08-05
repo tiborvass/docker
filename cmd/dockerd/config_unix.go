@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/rootless"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )

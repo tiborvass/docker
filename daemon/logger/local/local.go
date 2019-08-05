@@ -12,7 +12,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
