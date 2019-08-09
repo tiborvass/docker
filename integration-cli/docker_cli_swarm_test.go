@@ -387,7 +387,7 @@ func (s *DockerSwarmSuite) TestSwarmContainerAttachByNetworkId(c *check.C) {
 	out, err = d.Cmd("network", "rm", "testnet")
 	assert.NilError(c, err, out)
 
-	checkNetwork := func(*check.C) (interface{}, check.CommentInterface) {
+	checkNetwork := func(assert.TestingT) (interface{}, string) {
 		out, err := d.Cmd("network", "ls")
 		assert.NilError(c, err)
 		return out, nil
@@ -551,7 +551,7 @@ func (s *DockerSwarmSuite) TestSwarmTaskListFilter(c *check.C) {
 
 	filter := "name=redis-cluster"
 
-	checkNumTasks := func(*check.C) (interface{}, check.CommentInterface) {
+	checkNumTasks := func(assert.TestingT) (interface{}, string) {
 		out, err := d.Cmd("service", "ps", "--filter", filter, name)
 		assert.NilError(c, err, out)
 		return len(strings.Split(out, "\n")) - 2, nil // includes header and nl in last line
@@ -998,8 +998,8 @@ func getNodeStatus(c *check.C, d *daemon.Daemon) swarm.LocalNodeState {
 	return info.LocalNodeState
 }
 
-func checkKeyIsEncrypted(d *daemon.Daemon) func(*check.C) (interface{}, check.CommentInterface) {
-	return func(c *check.C) (interface{}, check.CommentInterface) {
+func checkKeyIsEncrypted(d *daemon.Daemon) func(assert.TestingT) (interface{}, string) {
+	return func(c assert.TestingT) (interface{}, string) {
 		keyBytes, err := ioutil.ReadFile(filepath.Join(d.Folder, "root", "swarm", "certificates", "swarm-node.key"))
 		if err != nil {
 			return fmt.Errorf("error reading key: %v", err), nil
@@ -1233,7 +1233,7 @@ func (s *DockerSwarmSuite) TestSwarmJoinPromoteLocked(c *check.C) {
 	// (because we never want a manager TLS key to be on disk unencrypted if the cluster
 	// is set to autolock)
 	waitAndAssert(c, defaultReconciliationTimeout, d3.CheckControlAvailable, checker.False)
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *check.C) (interface{}, check.CommentInterface) {
+	waitAndAssert(c, defaultReconciliationTimeout, func(c assert.TestingT) (interface{}, string) {
 		certBytes, err := ioutil.ReadFile(filepath.Join(d3.Folder, "root", "swarm", "certificates", "swarm-node.crt"))
 		if err != nil {
 			return "", check.Commentf("error: %v", err)

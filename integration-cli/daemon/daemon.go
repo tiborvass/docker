@@ -88,11 +88,11 @@ func (d *Daemon) inspectFieldWithError(name, field string) (string, error) {
 
 // CheckActiveContainerCount returns the number of active containers
 // FIXME(vdemeester) should re-use ActivateContainers in some way
-func (d *Daemon) CheckActiveContainerCount(c *check.C) (interface{}, check.CommentInterface) {
+func (d *Daemon) CheckActiveContainerCount(c assert.TestingT) (interface{}, string) {
 	out, err := d.Cmd("ps", "-q")
 	assert.NilError(c, err)
 	if len(strings.TrimSpace(out)) == 0 {
-		return 0, nil
+		return 0, ""
 	}
 	return len(strings.Split(strings.TrimSpace(out), "\n")), check.Commentf("output: %q", string(out))
 }
