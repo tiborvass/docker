@@ -14,7 +14,6 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/cli/build"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
@@ -37,10 +36,8 @@ func (s *DockerSuite) TestVolumeCLICreate(c *testing.T) {
 }
 
 func (s *DockerSuite) TestVolumeCLIInspect(c *testing.T) {
-	c.Assert(
+	assert.Error(c,
 		exec.Command(dockerBinary, "volume", "inspect", "doesnotexist").Run(),
-		checker.Not(checker.IsNil),
-
 		"volume inspect should error on non-existent volume",
 	)
 
@@ -216,10 +213,8 @@ func (s *DockerSuite) TestVolumeCLIRm(c *testing.T) {
 	dockerCmd(c, "rm", "test2")
 
 	dockerCmd(c, "volume", "rm", volumeID)
-	c.Assert(
+	assert.Error(c,
 		exec.Command("volume", "rm", "doesnotexist").Run(),
-		checker.Not(checker.IsNil),
-
 		"volume rm should fail with non-existent volume",
 	)
 }
