@@ -108,7 +108,8 @@ func (s *DockerSuite) TestInspectTypeFlagWithImage(c *check.C) {
 	dockerCmd(c, "run", "--name=busybox", "-d", "busybox", "true")
 
 	out, _ := dockerCmd(c, "inspect", "--type=image", "busybox")
-	c.Assert(out, checker.Not(checker.Contains), "State") // not an image JSON
+	// not an image JSON
+	c.Assert(out, checker.Not(checker.Contains), "State")
 }
 
 func (s *DockerSuite) TestInspectTypeFlagWithInvalidValue(c *check.C) {
