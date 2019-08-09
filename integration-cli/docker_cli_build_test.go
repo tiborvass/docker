@@ -17,7 +17,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/cli"
 	"github.com/docker/docker/integration-cli/cli/build"
 	"github.com/docker/docker/internal/test/fakecontext"
@@ -29,6 +28,7 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/command"
 	"github.com/opencontainers/go-digest"
 	"gotest.tools/assert"
+	"gotest.tools/assert/cmp"
 	"gotest.tools/icmd"
 )
 
@@ -4373,7 +4373,7 @@ func (s *DockerSuite) TestBuildBuildTimeArgExpansion(c *testing.T) {
 	)
 
 	res := inspectField(c, imgName, "Config.WorkingDir")
-	c.Check(filepath.ToSlash(res), checker.Equals, filepath.ToSlash(wdVal))
+	assert.Equal(c, filepath.ToSlash(res), filepath.ToSlash(wdVal))
 
 	var resArr []string
 	inspectFieldAndUnmarshall(c, imgName, "Config.Env", &resArr)
