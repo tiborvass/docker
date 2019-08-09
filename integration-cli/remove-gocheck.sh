@@ -92,7 +92,9 @@ run() {
 
 	# redress multiline Assert calls
 	go run "$redress" '\bc\.Assert\(.*,$' "$file"
-	
+
+	# BenchmarkXXX ... check.C -> testing.B
+	sed -E -i'' 's,( Benchmark[^\(]+\([^ ]+ \*)check\.C\b,\1testing.B,g' "$file"
 	# check.C -> testing.T
 	sed -E -i'' 's,\bcheck\.C\b,testing.T,g' "$file"
 	# c -> t in definitions/declarations
