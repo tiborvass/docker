@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/docker/docker/client"
-	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/cli"
 	"github.com/docker/docker/integration-cli/cli/build"
 	"github.com/docker/docker/internal/test/fakecontext"
@@ -3953,11 +3952,11 @@ func (s *DockerSuite) TestRunAttachFailedNoLeak(c *testing.T) {
 	assert.Assert(c, err != nil, fmt.Sprintf("Command should have failed but succeeded with: %s\nContainer 'test' [%+v]: %s\nContainer 'fail' [%+v]: %s", out, err1, out1, err2, out2))
 	// check for windows error as well
 	// TODO Windows Post TP5. Fix the error message string
-	c.Assert(strings.Contains(string(out), "port is already allocated") ||
+	assert.Assert(c, strings.Contains(string(out), "port is already allocated") ||
 		strings.Contains(string(out), "were not connected because a duplicate name exists") ||
 		strings.Contains(string(out), "The specified port already exists") ||
 		strings.Contains(string(out), "HNS failed with error : Failed to create endpoint") ||
-		strings.Contains(string(out), "HNS failed with error : The object already exists"), checker.Equals, true,
+		strings.Contains(string(out), "HNS failed with error : The object already exists"),
 		fmt.Sprintf("Output: %s", out))
 	dockerCmd(c, "rm", "-f", "test")
 
