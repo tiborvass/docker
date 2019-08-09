@@ -10,6 +10,7 @@ import (
 
 	"github.com/docker/docker/runconfig"
 	"gotest.tools/assert"
+	"gotest.tools/assert/cmp"
 )
 
 func (s *DockerSuite) TestLinksPingUnlinkedContainers(c *testing.T) {

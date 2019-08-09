@@ -4164,8 +4164,7 @@ func (s *DockerSuite) TestRunCredentialSpecFailures(c *testing.T) {
 	for _, attempt := range attempts {
 		_, _, err := dockerCmdWithError("run", "--security-opt=credentialspec="+attempt.value, "busybox", "true")
 		assert.Assert(c, err != nil, fmt.Sprintf("%s expected non-nil err", attempt.value))
-		c.Check(err.Error(), checker.Contains, attempt.expectedError,
-			fmt.Sprintf("%s expected %s got %s", attempt.value, attempt.expectedError, err))
+		assert.Assert(c, strings.Contains(err.Error(), attempt.expectedError), fmt.Sprintf("%s expected %s got %s", attempt.value, attempt.expectedError, err))
 	}
 }
 
@@ -4181,8 +4180,8 @@ func (s *DockerSuite) TestRunCredentialSpecWellFormed(c *testing.T) {
 		// controller handy
 		out, _ := dockerCmd(c, "run", "--rm", "--security-opt=credentialspec="+value, minimalBaseImage(), "nltest", "/PARENTDOMAIN")
 
-		c.Check(out, checker.Contains, "hyperv.local.")
-		c.Check(out, checker.Contains, "The command completed successfully")
+		assert.Assert(c, strings.Contains(out, "hyperv.local."))
+		assert.Assert(c, strings.Contains(out, "The command completed successfully"))
 	}
 }
 
