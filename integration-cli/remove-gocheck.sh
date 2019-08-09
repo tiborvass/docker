@@ -96,11 +96,11 @@ run() {
 	# check.C -> testing.T
 	sed -E -i'' 's,\bcheck\.C\b,testing.T,g' "$file"
 	# c -> t in definitions/declarations
-	sed -E -i'' 's,\bc \*testing\.T\b,t *testing.T,g' "$file"
+	#sed -E -i'' 's,\bc \*testing\.T\b,t *testing.T,g' "$file"
 	# c -> t for all methods that are supported by testing.T
-	methods=$(go doc testing.T | grep '*T) ' | cut -d' ' -f4 | cut -d'(' -f1)
-	methodsRegex=$(echo $methods | tr ' ' '|')
-	sed -E -i'' "s,\bc\.($methodsRegex)\(,t.\1(,g" "$file"
+	#methods=$(go doc testing.T | grep '*T) ' | cut -d' ' -f4 | cut -d'(' -f1)
+	#methodsRegex=$(echo $methods | tr ' ' '|')
+	#sed -E -i'' "s,\bc\.($methodsRegex)\(,t.\1(,g" "$file"
 	
 	# normalize to checker
 	sed -E -i'' 's,\bcheck\.(Equals|DeepEquals|HasLen|IsNil|Matches|Not|NotNil)\b,checker.\1,g' "$file"
@@ -148,9 +148,9 @@ run() {
 	
 	
 	# c, -> t,
-	sed -E -i'' 's#\bc,#t,#g' "$file"
+	#sed -E -i'' 's#\bc,#t,#g' "$file"
 	# (c) -> (t),
-	sed -E -i'' 's#\(c\)#(t)#g' "$file"
+	#sed -E -i'' 's#\(c\)#(t)#g' "$file"
 
 	# redress check.Suite calls
 	go run "$redress" '[^/]\bcheck\.Suite\(.*\{$' "$file"
