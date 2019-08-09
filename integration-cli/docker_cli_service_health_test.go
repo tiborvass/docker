@@ -39,39 +39,36 @@ func (s *DockerSwarmSuite) TestServiceHealthRun(c *testing.T) {
 	id := strings.TrimSpace(out)
 
 	var tasks []swarm.Task
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f := func(c *testing.T) (interface{}, string) {
 		tasks = d.GetServiceTasks(c, id)
 		return tasks, ""
-	}, checker.HasLen, 1)
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.HasLen, 1)
 
 	task := tasks[0]
 
 	// wait for task to start
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	getTaskState := func(c *testing.T) (interface{}, string) {
 		task = d.GetTask(c, task.ID)
 		return task.Status.State, ""
-	}, checker.Equals, swarm.TaskStateRunning)
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, getTaskState, checker.Equals, swarm.TaskStateRunning)
 	containerID := task.Status.ContainerStatus.ContainerID
 
 	// wait for container to be healthy
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	getHealthStatus := func(c *testing.T) (interface{}, string) {
 		out, _ := d.Cmd("inspect", "--format={{.State.Health.Status}}", containerID)
 		return strings.TrimSpace(out), ""
-	}, checker.Equals, "healthy")
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, getHealthStatus, checker.Equals, "healthy")
 
 	// make it fail
 	d.Cmd("exec", containerID, "rm", "/status")
 	// wait for container to be unhealthy
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
-		out, _ := d.Cmd("inspect", "--format={{.State.Health.Status}}", containerID)
-		return strings.TrimSpace(out), ""
-	}, checker.Equals, "unhealthy")
+	waitAndAssert(c, defaultReconciliationTimeout, getHealthStatus, checker.Equals, "unhealthy")
 
 	// Task should be terminated
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
-		task = d.GetTask(c, task.ID)
-		return task.Status.State, ""
-	}, checker.Equals, swarm.TaskStateFailed)
+	waitAndAssert(c, defaultReconciliationTimeout, getTaskState, checker.Equals, swarm.TaskStateFailed)
 
 	if !strings.Contains(task.Status.Err, container.ErrContainerUnhealthy.Error()) {
 		c.Fatal("unhealthy task exits because of other error")
@@ -100,27 +97,30 @@ func (s *DockerSwarmSuite) TestServiceHealthStart(c *testing.T) {
 	id := strings.TrimSpace(out)
 
 	var tasks []swarm.Task
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f := func(c *testing.T) (interface{}, string) {
 		tasks = d.GetServiceTasks(c, id)
 		return tasks, ""
-	}, checker.HasLen, 1)
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.HasLen, 1)
 
 	task := tasks[0]
 
 	// wait for task to start
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f = func(c *testing.T) (interface{}, string) {
 		task = d.GetTask(c, task.ID)
 		return task.Status.State, ""
-	}, checker.Equals, swarm.TaskStateStarting)
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, swarm.TaskStateStarting)
 
 	containerID := task.Status.ContainerStatus.ContainerID
 
 	// wait for health check to work
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f = func(c *testing.T) (interface{}, string) {
 		out, _ := d.Cmd("inspect", "--format={{.State.Health.FailingStreak}}", containerID)
 		failingStreak, _ := strconv.Atoi(strings.TrimSpace(out))
 		return failingStreak, ""
-	}, checker.GreaterThan, 0)
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.GreaterThan, 0)
 
 	// task should be blocked at starting status
 	task = d.GetTask(c, task.ID)
@@ -130,8 +130,9 @@ func (s *DockerSwarmSuite) TestServiceHealthStart(c *testing.T) {
 	d.Cmd("exec", containerID, "touch", "/status")
 
 	// Task should be at running status
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f = func(c *testing.T) (interface{}, string) {
 		task = d.GetTask(c, task.ID)
 		return task.Status.State, ""
-	}, checker.Equals, swarm.TaskStateRunning)
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, swarm.TaskStateRunning)
 }

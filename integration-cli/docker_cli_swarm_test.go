@@ -1233,7 +1233,7 @@ func (s *DockerSwarmSuite) TestSwarmJoinPromoteLocked(c *testing.T) {
 	// (because we never want a manager TLS key to be on disk unencrypted if the cluster
 	// is set to autolock)
 	waitAndAssert(c, defaultReconciliationTimeout, d3.CheckControlAvailable, checker.False)
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f := func(c *testing.T) (interface{}, string) {
 		certBytes, err := ioutil.ReadFile(filepath.Join(d3.Folder, "root", "swarm", "certificates", "swarm-node.crt"))
 		if err != nil {
 			return "",
@@ -1245,7 +1245,8 @@ func (s *DockerSwarmSuite) TestSwarmJoinPromoteLocked(c *testing.T) {
 		}
 		return "",
 			"could not get organizational unit from certificate"
-	}, checker.Equals, "swarm-worker")
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, "swarm-worker")
 
 	// by now, it should *never* be locked on restart
 	d3.RestartNode(c)

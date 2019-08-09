@@ -222,7 +222,7 @@ func (s *DockerSwarmSuite) TestAPISwarmPromoteDemote(c *testing.T) {
 	// back to manager quickly might cause the node to pause for awhile
 	// while waiting for the role to change to worker, and the test can
 	// time out during this interval.
-	waitAndAssert(c, defaultReconciliationTimeout, func(c *testing.T) (interface{}, string) {
+	f := func(c *testing.T) (interface{}, string) {
 		certBytes, err := ioutil.ReadFile(filepath.Join(d2.Folder, "root", "swarm", "certificates", "swarm-node.crt"))
 		if err != nil {
 			return "",
@@ -234,7 +234,8 @@ func (s *DockerSwarmSuite) TestAPISwarmPromoteDemote(c *testing.T) {
 		}
 		return "",
 			"could not get organizational unit from certificate"
-	}, checker.Equals, "swarm-worker")
+	}
+	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, "swarm-worker")
 
 	// Demoting last node should fail
 	node := d1.GetNode(c, d1.NodeID())
@@ -408,11 +409,11 @@ func (s *DockerSwarmSuite) TestAPISwarmRaftQuorum(c *testing.T) {
 	defer cli.Close()
 
 	// d1 will eventually step down from leader because there is no longer an active quorum, wait for that to happen
-	waitAndAssert(c, defaultReconciliationTimeout*2, func(c *testing.T) (interface{}, string) {
+	f := func(c *testing.T) (interface{}, string) {
 		_, err := cli.ServiceCreate(context.Background(), service.Spec, types.ServiceCreateOptions{})
 		return err.Error(), ""
-	}, checker.Contains, "Make sure more than half of the managers are online.")
-
+	}
+	waitAndAssert(c, defaultReconciliationTimeout*2, f, checker.Contains, "Make sure more than half of the managers are online.")
 	d2.StartNode(c)
 
 	// make sure there is a leader

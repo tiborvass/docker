@@ -2075,10 +2075,11 @@ func (s *DockerDaemonSuite) TestDaemonRestartWithUnpausedRunningContainer(t *tes
 
 	// Give time to containerd to process the command if we don't
 	// the resume event might be received after we do the inspect
-	waitAndAssert(t, defaultReconciliationTimeout, func(*testing.T) (interface{}, string) {
+	f := func(*testing.T) (interface{}, string) {
 		result := icmd.RunCommand("kill", "-0", strings.TrimSpace(pid))
 		return result.ExitCode, ""
-	}, checker.Equals, 0)
+	}
+	waitAndAssert(t, defaultReconciliationTimeout, f, checker.Equals, 0)
 
 	// restart the daemon
 	s.d.Start(t, "--live-restore")
