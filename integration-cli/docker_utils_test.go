@@ -412,11 +412,11 @@ func getErrorMessage(c *testing.T, body []byte) string {
 	return strings.TrimSpace(resp.Message)
 }
 
-func waitAndAssert(t assert.TestingT, timeout time.Duration, f checkF, comparison assert.BoolOrComparison, args ...interface{}) {
+func waitAndAssert(t *testing.T, timeout time.Duration, f checkF, comparison assert.BoolOrComparison, args ...interface{}) {
 	t1 := time.Now()
 	defer func() {
 		t2 := time.Now()
-		t.(testingT).Logf("waited for %v (out of %v)", t2.Sub(t1), timeout)
+		t.Logf("waited for %v (out of %v)", t2.Sub(t1), timeout)
 	}()
 
 	after := time.After(timeout)
@@ -440,11 +440,11 @@ func waitAndAssert(t assert.TestingT, timeout time.Duration, f checkF, compariso
 	}
 }
 
-type checkF func(assert.TestingT) (interface{}, string)
+type checkF func(*testing.T) (interface{}, string)
 type reducer func(...interface{}) interface{}
 
 func reducedCheck(r reducer, funcs ...checkF) checkF {
-	return func(t assert.TestingT) (interface{}, string) {
+	return func(t *testing.T) (interface{}, string) {
 		var values []interface{}
 		var comments []string
 		for _, f := range funcs {

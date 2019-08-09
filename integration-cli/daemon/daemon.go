@@ -3,6 +3,7 @@ package daemon // import "github.com/docker/docker/integration-cli/daemon"
 import (
 	"fmt"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/docker/docker/internal/test/daemon"
@@ -87,7 +88,7 @@ func (d *Daemon) inspectFieldWithError(name, field string) (string, error) {
 
 // CheckActiveContainerCount returns the number of active containers
 // FIXME(vdemeester) should re-use ActivateContainers in some way
-func (d *Daemon) CheckActiveContainerCount(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckActiveContainerCount(c *testing.T) (interface{}, string) {
 	out, err := d.Cmd("ps", "-q")
 	assert.NilError(c, err)
 	if len(strings.TrimSpace(out)) == 0 {

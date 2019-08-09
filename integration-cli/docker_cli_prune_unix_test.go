@@ -24,7 +24,7 @@ func pruneNetworkAndVerify(c *testing.T, d *daemon.Daemon, kept, pruned []string
 	assert.NilError(c, err)
 
 	for _, s := range kept {
-		waitAndAssert(c, defaultReconciliationTimeout, func(assert.TestingT) (interface{}, string) {
+		waitAndAssert(c, defaultReconciliationTimeout, func(*testing.T) (interface{}, string) {
 			out, err := d.Cmd("network", "ls", "--format", "{{.Name}}")
 			assert.NilError(c, err)
 			return out, ""
@@ -32,7 +32,7 @@ func pruneNetworkAndVerify(c *testing.T, d *daemon.Daemon, kept, pruned []string
 	}
 
 	for _, s := range pruned {
-		waitAndAssert(c, defaultReconciliationTimeout, func(assert.TestingT) (interface{}, string) {
+		waitAndAssert(c, defaultReconciliationTimeout, func(*testing.T) (interface{}, string) {
 			out, err := d.Cmd("network", "ls", "--format", "{{.Name}}")
 			assert.NilError(c, err)
 			return out, ""

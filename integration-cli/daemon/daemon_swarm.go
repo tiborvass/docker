@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"testing"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
@@ -14,8 +15,8 @@ import (
 
 // CheckServiceTasksInState returns the number of tasks with a matching state,
 // and optional message substring.
-func (d *Daemon) CheckServiceTasksInState(service string, state swarm.TaskState, message string) func(assert.TestingT) (interface{}, string) {
-	return func(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckServiceTasksInState(service string, state swarm.TaskState, message string) func(*testing.T) (interface{}, string) {
+	return func(c *testing.T) (interface{}, string) {
 		tasks := d.GetServiceTasks(c, service)
 		var count int
 		for _, task := range tasks {
@@ -31,8 +32,8 @@ func (d *Daemon) CheckServiceTasksInState(service string, state swarm.TaskState,
 
 // CheckServiceTasksInStateWithError returns the number of tasks with a matching state,
 // and optional message substring.
-func (d *Daemon) CheckServiceTasksInStateWithError(service string, state swarm.TaskState, errorMessage string) func(assert.TestingT) (interface{}, string) {
-	return func(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckServiceTasksInStateWithError(service string, state swarm.TaskState, errorMessage string) func(*testing.T) (interface{}, string) {
+	return func(c *testing.T) (interface{}, string) {
 		tasks := d.GetServiceTasks(c, service)
 		var count int
 		for _, task := range tasks {
@@ -47,13 +48,13 @@ func (d *Daemon) CheckServiceTasksInStateWithError(service string, state swarm.T
 }
 
 // CheckServiceRunningTasks returns the number of running tasks for the specified service
-func (d *Daemon) CheckServiceRunningTasks(service string) func(assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckServiceRunningTasks(service string) func(*testing.T) (interface{}, string) {
 	return d.CheckServiceTasksInState(service, swarm.TaskStateRunning, "")
 }
 
 // CheckServiceUpdateState returns the current update state for the specified service
-func (d *Daemon) CheckServiceUpdateState(service string) func(assert.TestingT) (interface{}, string) {
-	return func(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckServiceUpdateState(service string) func(*testing.T) (interface{}, string) {
+	return func(c *testing.T) (interface{}, string) {
 		service := d.GetService(c, service)
 		if service.UpdateStatus == nil {
 			return "", ""
@@ -63,8 +64,8 @@ func (d *Daemon) CheckServiceUpdateState(service string) func(assert.TestingT) (
 }
 
 // CheckPluginRunning returns the runtime state of the plugin
-func (d *Daemon) CheckPluginRunning(plugin string) func(c assert.TestingT) (interface{}, string) {
-	return func(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckPluginRunning(plugin string) func(c *testing.T) (interface{}, string) {
+	return func(c *testing.T) (interface{}, string) {
 		apiclient := d.NewClientT(c)
 		resp, _, err := apiclient.PluginInspectWithRaw(context.Background(), plugin)
 		if client.IsErrNotFound(err) {
@@ -78,8 +79,8 @@ func (d *Daemon) CheckPluginRunning(plugin string) func(c assert.TestingT) (inte
 }
 
 // CheckPluginImage returns the runtime state of the plugin
-func (d *Daemon) CheckPluginImage(plugin string) func(c assert.TestingT) (interface{}, string) {
-	return func(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckPluginImage(plugin string) func(c *testing.T) (interface{}, string) {
+	return func(c *testing.T) (interface{}, string) {
 		apiclient := d.NewClientT(c)
 		resp, _, err := apiclient.PluginInspectWithRaw(context.Background(), plugin)
 		if client.IsErrNotFound(err) {
@@ -93,15 +94,15 @@ func (d *Daemon) CheckPluginImage(plugin string) func(c assert.TestingT) (interf
 }
 
 // CheckServiceTasks returns the number of tasks for the specified service
-func (d *Daemon) CheckServiceTasks(service string) func(assert.TestingT) (interface{}, string) {
-	return func(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckServiceTasks(service string) func(*testing.T) (interface{}, string) {
+	return func(c *testing.T) (interface{}, string) {
 		tasks := d.GetServiceTasks(c, service)
 		return len(tasks), ""
 	}
 }
 
 // CheckRunningTaskNetworks returns the number of times each network is referenced from a task.
-func (d *Daemon) CheckRunningTaskNetworks(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckRunningTaskNetworks(c *testing.T) (interface{}, string) {
 	cli := d.NewClientT(c)
 	defer cli.Close()
 
@@ -125,7 +126,7 @@ func (d *Daemon) CheckRunningTaskNetworks(c assert.TestingT) (interface{}, strin
 }
 
 // CheckRunningTaskImages returns the times each image is running as a task.
-func (d *Daemon) CheckRunningTaskImages(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckRunningTaskImages(c *testing.T) (interface{}, string) {
 	cli := d.NewClientT(c)
 	defer cli.Close()
 
@@ -149,7 +150,7 @@ func (d *Daemon) CheckRunningTaskImages(c assert.TestingT) (interface{}, string)
 }
 
 // CheckNodeReadyCount returns the number of ready node on the swarm
-func (d *Daemon) CheckNodeReadyCount(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckNodeReadyCount(c *testing.T) (interface{}, string) {
 	nodes := d.ListNodes(c)
 	var readyCount int
 	for _, node := range nodes {
@@ -161,20 +162,20 @@ func (d *Daemon) CheckNodeReadyCount(c assert.TestingT) (interface{}, string) {
 }
 
 // CheckLocalNodeState returns the current swarm node state
-func (d *Daemon) CheckLocalNodeState(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckLocalNodeState(c *testing.T) (interface{}, string) {
 	info := d.SwarmInfo(c)
 	return info.LocalNodeState, ""
 }
 
 // CheckControlAvailable returns the current swarm control available
-func (d *Daemon) CheckControlAvailable(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckControlAvailable(c *testing.T) (interface{}, string) {
 	info := d.SwarmInfo(c)
 	assert.Equal(c, info.LocalNodeState, swarm.LocalNodeStateActive)
 	return info.ControlAvailable, ""
 }
 
 // CheckLeader returns whether there is a leader on the swarm or not
-func (d *Daemon) CheckLeader(c assert.TestingT) (interface{}, string) {
+func (d *Daemon) CheckLeader(c *testing.T) (interface{}, string) {
 	cli := d.NewClientT(c)
 	defer cli.Close()
 
