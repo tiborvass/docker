@@ -110,41 +110,44 @@ run() {
 	sed -E -i'' 's#\bcheck.Commentf\(([^\)]+)\)#\n\1#g' "$file"
 	
 	# handle Not(IsNil)
-	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.IsNil\)#assert.Assert(t, \1 != nil#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.IsNil\)#assert.Assert(c, \1 != nil#g" "$file"
 	# handle Not(Equals)
-	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.Equals\), (.*)#assert.Assert(t, \1 != \2#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.Equals\), (.*)#assert.Assert(c, \1 != \2#g" "$file"
 	# handle Not(Contains)
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Not\(checker\.Contains\), (.*), *$#assert.Assert(t, !strings.Contains(\1, \2),#g' "$file"
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Not\(checker\.Contains\), (.*)#assert.Assert(t, !strings.Contains(\1, \2)#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Not\(checker\.Contains\), (.*), *$#assert.Assert(c, !strings.Contains(\1, \2),#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Not\(checker\.Contains\), (.*)#assert.Assert(c, !strings.Contains(\1, \2)#g' "$file"
+	# handle Not(Matches)
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.Matches\), (.*), *\$#assert.Assert(c, !${cmp}.Regexp(\"^\"+\2+\"\$\", \1)().Success(),#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.Matches\), (.*)\)#assert.Assert(c, !${cmp}.Regexp(\"^\"+\2+\"\$\", \1)().Success())#g" "$file"
 	
 	grep -E '\bchecker\.Not\(' "$file" && echo "ERROR: Found unhandled check.Not instances" && exit 1
 	
 	# Equals
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Equals, (.*), *$#assert.Equal(t, \1, \2,#g' "$file"
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Equals, (.*)#assert.Equal(t, \1, \2#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Equals, (.*), *$#assert.Equal(c, \1, \2,#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Equals, (.*)#assert.Equal(c, \1, \2#g' "$file"
 	# DeepEquals
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.DeepEquals, (.*), *$#assert.DeepEqual(t, \1, \2,#g' "$file"
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.DeepEquals, (.*)#assert.DeepEqual(t, \1, \2#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.DeepEquals, (.*), *$#assert.DeepEqual(c, \1, \2,#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.DeepEquals, (.*)#assert.DeepEqual(c, \1, \2#g' "$file"
 	# HasLen
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.HasLen, (.*), *$#assert.Equal(t, len(\1), \2,#g' "$file"
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.HasLen, (.*)#assert.Equal(t, len(\1), \2#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.HasLen, (.*), *$#assert.Equal(c, len(\1), \2,#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.HasLen, (.*)#assert.Equal(c, len(\1), \2#g' "$file"
 	# IsNil
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.IsNil#assert.Assert(t, \1 == nil#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.IsNil#assert.Assert(c, \1 == nil#g' "$file"
 	# NotNil
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.NotNil#assert.Assert(t, \1 != nil#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.NotNil#assert.Assert(c, \1 != nil#g' "$file"
 	# Matches
-	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Matches, \"(.*)\", *\$#assert.Assert(t, ${cmp}.Regexp(\"^\2\$\", \1),#g" "$file"
-	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Matches, \"(.*)\"#assert.Assert(t, ${cmp}.Regexp(\"^\2\$\", \1)#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Matches, (.*), *\$#assert.Assert(c, ${cmp}.Regexp(\"^\"+\2+\"\$\", \1),#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Matches, (.*)\)#assert.Assert(c, ${cmp}.Regexp(\"^\"+\2+\"\$\", \1))#g" "$file"
 	# Contains
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Contains, (.*), *$#assert.Assert(t, strings.Contains(\1, \2),#g' "$file"
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Contains, (.*)#assert.Assert(t, strings.Contains(\1, \2)#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Contains, (.*), *$#assert.Assert(c, strings.Contains(\1, \2),#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Contains, (.*)#assert.Assert(c, strings.Contains(\1, \2)#g' "$file"
 	# GreaterThan
-	sed -E -i'' "s#\bc\.Assert\((.*), checker\.GreaterThan, (.*), *\$#assert.Assert(t, \1 > \2,#g" "$file"
-	sed -E -i'' "s#\bc\.Assert\((.*), checker\.GreaterThan, (.*)#assert.Assert(t, \1 > \2#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.GreaterThan, (.*), *\$#assert.Assert(c, \1 > \2,#g" "$file"
+	sed -E -i'' "s#\bc\.Assert\((.*), checker\.GreaterThan, (.*)#assert.Assert(c, \1 > \2#g" "$file"
 	# False
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.False#assert.Assert(t, !\1#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.False#assert.Assert(c, !\1#g' "$file"
 	# True
-	sed -E -i'' 's#\bc\.Assert\((.*), checker\.True#assert.Assert(t, \1#g' "$file"
+	sed -E -i'' 's#\bc\.Assert\((.*), checker\.True#assert.Assert(c, \1#g' "$file"
 	
 	
 	# c, -> t,
