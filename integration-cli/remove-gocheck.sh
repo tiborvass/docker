@@ -108,6 +108,7 @@ run() {
 	# handle check.Commentf
 	sed -E -i'' 's#\bcheck.Commentf\(([^,]+),(.*)\)#\nfmt.Sprintf(\1,\2)#g' "$file"
 	sed -E -i'' 's#\bcheck.Commentf\(([^\)]+)\)#\n\1#g' "$file"
+	sed -E -i'' 's#\bcheck.Commentf\(("[^"]+")\)#\n\1#g' "$file"
 	
 	# handle Not(IsNil)
 	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.IsNil\)#assert.Assert(c, \1 != nil#g" "$file"
