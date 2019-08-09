@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/go-check/check"
 )
 
-func waitForHealthStatus(c *check.C, name string, prev string, expected string) {
+func waitForHealthStatus(c *testing.T, name string, prev string, expected string) {
 	prev = prev + "\n"
 	expected = expected + "\n"
 	for {
@@ -28,7 +28,7 @@ func waitForHealthStatus(c *check.C, name string, prev string, expected string) 
 	}
 }
 
-func getHealth(c *check.C, name string) *types.Health {
+func getHealth(c *testing.T, name string) *types.Health {
 	out, _ := dockerCmd(c, "inspect", "--format={{json .State.Health}}", name)
 	var health types.Health
 	err := json.Unmarshal([]byte(out), &health)
@@ -36,7 +36,7 @@ func getHealth(c *check.C, name string) *types.Health {
 	return &health
 }
 
-func (s *DockerSuite) TestHealth(c *check.C) {
+func (s *DockerSuite) TestHealth(c *testing.T) {
 	testRequires(c, DaemonIsLinux) // busybox doesn't work on Windows
 
 	existingContainers := ExistingContainerIDs(c)
@@ -113,7 +113,7 @@ func (s *DockerSuite) TestHealth(c *check.C) {
 
 	failsStr, _ := dockerCmd(c, "inspect", "--format={{.State.Health.FailingStreak}}", "fatal_healthcheck")
 	fails, err := strconv.Atoi(strings.TrimSpace(failsStr))
-	c.Check(err, check.IsNil)
+	c.Check(err, checker.IsNil)
 	c.Check(fails >= 3, checker.Equals, true)
 	dockerCmd(c, "rm", "-f", "fatal_healthcheck")
 
@@ -144,7 +144,7 @@ func (s *DockerSuite) TestHealth(c *check.C) {
 }
 
 // GitHub #33021
-func (s *DockerSuite) TestUnsetEnvVarHealthCheck(c *check.C) {
+func (s *DockerSuite) TestUnsetEnvVarHealthCheck(c *testing.T) {
 	testRequires(c, DaemonIsLinux) // busybox doesn't work on Windows
 
 	imageName := "testhealth"

@@ -8,11 +8,11 @@ import (
 	"io"
 	"os/exec"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/daemon"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )
@@ -22,7 +22,7 @@ type logMessage struct {
 	data []byte
 }
 
-func (s *DockerSwarmSuite) TestServiceLogs(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogs(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	// we have multiple services here for detecting the goroutine issue #28915
@@ -62,14 +62,16 @@ func countLogLines(d *daemon.Daemon, name string) func(assert.TestingT) (interfa
 		// an array containing emptystring. a valid log line will NEVER be
 		// emptystring because we ask for the timestamp.
 		if result.Stdout() == "" {
-			return 0, check.Commentf("Empty stdout")
+			return 0,
+				"Empty stdout"
 		}
 		lines := strings.Split(strings.TrimSpace(result.Stdout()), "\n")
-		return len(lines), check.Commentf("output, %q", string(result.Stdout()))
+		return len(lines),
+			fmt.Sprintf("output, %q", string(result.Stdout()))
 	}
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsCompleteness(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsCompleteness(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServiceLogsCompleteness"
@@ -96,7 +98,7 @@ func (s *DockerSwarmSuite) TestServiceLogsCompleteness(c *check.C) {
 	}
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsTail(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsTail(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServiceLogsTail"
@@ -120,7 +122,7 @@ func (s *DockerSwarmSuite) TestServiceLogsTail(c *check.C) {
 	}
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsSince(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsSince(c *testing.T) {
 	// See DockerSuite.TestLogsSince, which is where this comes from
 	d := s.AddDaemon(c, true, true)
 
@@ -155,7 +157,7 @@ func (s *DockerSwarmSuite) TestServiceLogsSince(c *check.C) {
 	}
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsFollow(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsFollow(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServiceLogsFollow"
@@ -201,7 +203,7 @@ func (s *DockerSwarmSuite) TestServiceLogsFollow(c *check.C) {
 	assert.NilError(c, cmd.Process.Kill())
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsTaskLogs(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsTaskLogs(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServicelogsTaskLogs"
@@ -254,7 +256,7 @@ func (s *DockerSwarmSuite) TestServiceLogsTaskLogs(c *check.C) {
 	}
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsTTY(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsTTY(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServiceLogsTTY"
@@ -292,7 +294,7 @@ func (s *DockerSwarmSuite) TestServiceLogsTTY(c *check.C) {
 	result.Assert(c, icmd.Expected{Out: "out\r\nerr\r\n"})
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsNoHangDeletedContainer(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsNoHangDeletedContainer(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServiceLogsNoHangDeletedContainer"
@@ -341,7 +343,7 @@ func (s *DockerSwarmSuite) TestServiceLogsNoHangDeletedContainer(c *check.C) {
 	result.Assert(c, icmd.Expected{})
 }
 
-func (s *DockerSwarmSuite) TestServiceLogsDetails(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceLogsDetails(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	name := "TestServiceLogsDetails"

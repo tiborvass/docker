@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/docker/docker/internal/test/daemon"
-	"github.com/go-check/check"
 	"github.com/pkg/errors"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
@@ -94,7 +93,8 @@ func (d *Daemon) CheckActiveContainerCount(c assert.TestingT) (interface{}, stri
 	if len(strings.TrimSpace(out)) == 0 {
 		return 0, ""
 	}
-	return len(strings.Split(strings.TrimSpace(out), "\n")), check.Commentf("output: %q", string(out))
+	return len(strings.Split(strings.TrimSpace(out), "\n")),
+		fmt.Sprintf("output: %q", string(out))
 }
 
 // WaitRun waits for a container to be running for 10s

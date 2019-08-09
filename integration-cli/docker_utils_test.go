@@ -12,13 +12,13 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/integration-cli/cli"
 	"github.com/docker/docker/integration-cli/daemon"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )
@@ -38,7 +38,7 @@ func dockerCmdWithError(args ...string) (string, int, error) {
 }
 
 // Deprecated: use cli.Docker or cli.DockerCmd
-func dockerCmd(c *check.C, args ...string) (string, int) {
+func dockerCmd(c *testing.T, args ...string) (string, int) {
 	result := cli.DockerCmd(c, args...)
 	return result.Combined(), result.ExitCode
 }
@@ -48,12 +48,12 @@ func dockerCmdWithResult(args ...string) *icmd.Result {
 	return cli.Docker(cli.Args(args...))
 }
 
-func findContainerIP(c *check.C, id string, network string) string {
+func findContainerIP(c *testing.T, id string, network string) string {
 	out, _ := dockerCmd(c, "inspect", fmt.Sprintf("--format='{{ .NetworkSettings.Networks.%s.IPAddress }}'", network), id)
 	return strings.Trim(out, " \r\n'")
 }
 
-func getContainerCount(c *check.C) int {
+func getContainerCount(c *testing.T) int {
 	const containers = "Containers:"
 
 	result := icmd.RunCommand(dockerBinary, "info")
@@ -73,11 +73,11 @@ func getContainerCount(c *check.C) int {
 	return 0
 }
 
-func inspectFieldAndUnmarshall(c *check.C, name, field string, output interface{}) {
+func inspectFieldAndUnmarshall(c *testing.T, name, field string, output interface{}) {
 	str := inspectFieldJSON(c, name, field)
 	err := json.Unmarshal([]byte(str), output)
 	if c != nil {
-		c.Assert(err, check.IsNil, check.Commentf("failed to unmarshal: %v", err))
+		assert.Assert(c, err == nil, fmt.Sprintf("failed to unmarshal: %v", err))
 	}
 }
 
@@ -97,7 +97,7 @@ func inspectFieldWithError(name, field string) (string, error) {
 }
 
 // Deprecated: use cli.Inspect
-func inspectField(c *check.C, name, field string) string {
+func inspectField(c *testing.T, name, field string) string {
 	out, err := inspectFilter(name, fmt.Sprintf(".%s", field))
 	if c != nil {
 		assert.NilError(c, err)
@@ -106,7 +106,7 @@ func inspectField(c *check.C, name, field string) string {
 }
 
 // Deprecated: use cli.Inspect
-func inspectFieldJSON(c *check.C, name, field string) string {
+func inspectFieldJSON(c *testing.T, name, field string) string {
 	out, err := inspectFilter(name, fmt.Sprintf("json .%s", field))
 	if c != nil {
 		assert.NilError(c, err)
@@ -115,7 +115,7 @@ func inspectFieldJSON(c *check.C, name, field string) string {
 }
 
 // Deprecated: use cli.Inspect
-func inspectFieldMap(c *check.C, name, path, field string) string {
+func inspectFieldMap(c *testing.T, name, path, field string) string {
 	out, err := inspectFilter(name, fmt.Sprintf("index .%s %q", path, field))
 	if c != nil {
 		assert.NilError(c, err)
@@ -167,7 +167,7 @@ func inspectMountPointJSON(j, destination string) (types.MountPoint, error) {
 }
 
 // Deprecated: use cli.Inspect
-func inspectImage(c *check.C, name, filter string) string {
+func inspectImage(c *testing.T, name, filter string) string {
 	args := []string{"inspect", "--type", "image"}
 	if filter != "" {
 		format := fmt.Sprintf("{{%s}}", filter)
@@ -179,14 +179,14 @@ func inspectImage(c *check.C, name, filter string) string {
 	return strings.TrimSpace(result.Combined())
 }
 
-func getIDByName(c *check.C, name string) string {
+func getIDByName(c *testing.T, name string) string {
 	id, err := inspectFieldWithError(name, "Id")
 	assert.NilError(c, err)
 	return id
 }
 
 // Deprecated: use cli.Build
-func buildImageSuccessfully(c *check.C, name string, cmdOperators ...cli.CmdOperator) {
+func buildImageSuccessfully(c *testing.T, name string, cmdOperators ...cli.CmdOperator) {
 	buildImage(name, cmdOperators...).Assert(c, icmd.Success)
 }
 
@@ -199,9 +199,9 @@ func buildImage(name string, cmdOperators ...cli.CmdOperator) *icmd.Result {
 // as well as any missing directories.
 // The file is truncated if it already exists.
 // Fail the test when error occurs.
-func writeFile(dst, content string, c *check.C) {
+func writeFile(dst, content string, c *testing.T) {
 	// Create subdirectories if necessary
-	c.Assert(os.MkdirAll(path.Dir(dst), 0700), check.IsNil)
+	assert.Assert(c, os.MkdirAll(path.Dir(dst), 0700) == nil)
 	f, err := os.OpenFile(dst, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0700)
 	assert.NilError(c, err)
 	defer f.Close()
@@ -212,7 +212,7 @@ func writeFile(dst, content string, c *check.C) {
 
 // Return the contents of file at path `src`.
 // Fail the test when error occurs.
-func readFile(src string, c *check.C) (content string) {
+func readFile(src string, c *testing.T) (content string) {
 	data, err := ioutil.ReadFile(src)
 	assert.NilError(c, err)
 
@@ -224,7 +224,7 @@ func containerStorageFile(containerID, basename string) string {
 }
 
 // docker commands that use this function must be run with the '-d' switch.
-func runCommandAndReadContainerFile(c *check.C, filename string, command string, args ...string) []byte {
+func runCommandAndReadContainerFile(c *testing.T, filename string, command string, args ...string) []byte {
 	result := icmd.RunCommand(command, args...)
 	result.Assert(c, icmd.Success)
 	contID := strings.TrimSpace(result.Combined())
@@ -234,7 +234,7 @@ func runCommandAndReadContainerFile(c *check.C, filename string, command string,
 	return readContainerFile(c, contID, filename)
 }
 
-func readContainerFile(c *check.C, containerID, filename string) []byte {
+func readContainerFile(c *testing.T, containerID, filename string) []byte {
 	f, err := os.Open(containerStorageFile(containerID, filename))
 	assert.NilError(c, err)
 	defer f.Close()
@@ -244,14 +244,14 @@ func readContainerFile(c *check.C, containerID, filename string) []byte {
 	return content
 }
 
-func readContainerFileWithExec(c *check.C, containerID, filename string) []byte {
+func readContainerFileWithExec(c *testing.T, containerID, filename string) []byte {
 	result := icmd.RunCommand(dockerBinary, "exec", containerID, "cat", filename)
 	result.Assert(c, icmd.Success)
 	return []byte(result.Combined())
 }
 
 // daemonTime provides the current time on the daemon host
-func daemonTime(c *check.C) time.Time {
+func daemonTime(c *testing.T) time.Time {
 	if testEnv.IsLocalDaemon() {
 		return time.Now()
 	}
@@ -263,13 +263,13 @@ func daemonTime(c *check.C) time.Time {
 	assert.NilError(c, err)
 
 	dt, err := time.Parse(time.RFC3339Nano, info.SystemTime)
-	c.Assert(err, check.IsNil, check.Commentf("invalid time format in GET /info response"))
+	assert.Assert(c, err == nil, "invalid time format in GET /info response")
 	return dt
 }
 
 // daemonUnixTime returns the current time on the daemon host with nanoseconds precision.
 // It return the time formatted how the client sends timestamps to the server.
-func daemonUnixTime(c *check.C) string {
+func daemonUnixTime(c *testing.T) string {
 	return parseEventTime(daemonTime(c))
 }
 
@@ -304,7 +304,7 @@ func appendBaseEnv(isTLS bool, env ...string) []string {
 	return env
 }
 
-func createTmpFile(c *check.C, content string) string {
+func createTmpFile(c *testing.T, content string) string {
 	f, err := ioutil.TempFile("", "testfile")
 	assert.NilError(c, err)
 
@@ -335,7 +335,7 @@ func waitInspectWithArgs(name, expr, expected string, timeout time.Duration, arg
 	return daemon.WaitInspectWithArgs(dockerBinary, name, expr, expected, timeout, arg...)
 }
 
-func getInspectBody(c *check.C, version, id string) []byte {
+func getInspectBody(c *testing.T, version, id string) []byte {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithVersion(version))
 	assert.NilError(c, err)
 	defer cli.Close()
@@ -346,13 +346,13 @@ func getInspectBody(c *check.C, version, id string) []byte {
 
 // Run a long running idle task in a background container using the
 // system-specific default image and command.
-func runSleepingContainer(c *check.C, extraArgs ...string) string {
+func runSleepingContainer(c *testing.T, extraArgs ...string) string {
 	return runSleepingContainerInImage(c, "busybox", extraArgs...)
 }
 
 // Run a long running idle task in a background container using the specified
 // image and the system-specific command.
-func runSleepingContainerInImage(c *check.C, image string, extraArgs ...string) string {
+func runSleepingContainerInImage(c *testing.T, image string, extraArgs ...string) string {
 	args := []string{"run", "-d"}
 	args = append(args, extraArgs...)
 	args = append(args, image)
@@ -406,9 +406,9 @@ func waitForGoroutines(expected int) error {
 }
 
 // getErrorMessage returns the error message from an error API response
-func getErrorMessage(c *check.C, body []byte) string {
+func getErrorMessage(c *testing.T, body []byte) string {
 	var resp types.ErrorResponse
-	c.Assert(json.Unmarshal(body, &resp), check.IsNil)
+	assert.Assert(c, json.Unmarshal(body, &resp) == nil)
 	return strings.TrimSpace(resp.Message)
 }
 

@@ -3,21 +3,23 @@
 package main
 
 import (
+	"fmt"
+	"testing"
 	"time"
 
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/daemon"
-	"github.com/go-check/check"
+	"gotest.tools/assert"
 )
 
-func (s *DockerSwarmSuite) TestAPISwarmListNodes(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmListNodes(c *testing.T) {
 	d1 := s.AddDaemon(c, true, true)
 	d2 := s.AddDaemon(c, true, false)
 	d3 := s.AddDaemon(c, true, false)
 
 	nodes := d1.ListNodes(c)
-	c.Assert(len(nodes), checker.Equals, 3, check.Commentf("nodes: %#v", nodes))
+	assert.Equal(c, len(nodes), 3, fmt.Sprintf("nodes: %#v", nodes))
 
 loop0:
 	for _, n := range nodes {
@@ -30,7 +32,7 @@ loop0:
 	}
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmNodeUpdate(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmNodeUpdate(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	nodes := d.ListNodes(c)
@@ -40,17 +42,17 @@ func (s *DockerSwarmSuite) TestAPISwarmNodeUpdate(c *check.C) {
 	})
 
 	n := d.GetNode(c, nodes[0].ID)
-	c.Assert(n.Spec.Availability, checker.Equals, swarm.NodeAvailabilityPause)
+	assert.Equal(c, n.Spec.Availability, swarm.NodeAvailabilityPause)
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmNodeRemove(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmNodeRemove(c *testing.T) {
 	testRequires(c, Network)
 	d1 := s.AddDaemon(c, true, true)
 	d2 := s.AddDaemon(c, true, false)
 	_ = s.AddDaemon(c, true, false)
 
 	nodes := d1.ListNodes(c)
-	c.Assert(len(nodes), checker.Equals, 3, check.Commentf("nodes: %#v", nodes))
+	assert.Equal(c, len(nodes), 3, fmt.Sprintf("nodes: %#v", nodes))
 
 	// Getting the info so we can take the NodeID
 	d2Info := d2.SwarmInfo(c)
@@ -59,7 +61,7 @@ func (s *DockerSwarmSuite) TestAPISwarmNodeRemove(c *check.C) {
 	d1.RemoveNode(c, d2Info.NodeID, true)
 
 	nodes = d1.ListNodes(c)
-	c.Assert(len(nodes), checker.Equals, 2, check.Commentf("nodes: %#v", nodes))
+	assert.Equal(c, len(nodes), 2, fmt.Sprintf("nodes: %#v", nodes))
 
 	// Restart the node that was removed
 	d2.RestartNode(c)
@@ -69,10 +71,10 @@ func (s *DockerSwarmSuite) TestAPISwarmNodeRemove(c *check.C) {
 
 	// Make sure the node didn't rejoin
 	nodes = d1.ListNodes(c)
-	c.Assert(len(nodes), checker.Equals, 2, check.Commentf("nodes: %#v", nodes))
+	assert.Equal(c, len(nodes), 2, fmt.Sprintf("nodes: %#v", nodes))
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmNodeDrainPause(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmNodeDrainPause(c *testing.T) {
 	d1 := s.AddDaemon(c, true, true)
 	d2 := s.AddDaemon(c, true, false)
 

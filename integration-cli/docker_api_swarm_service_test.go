@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -16,7 +17,6 @@ import (
 	"github.com/docker/docker/integration-cli/cli/build"
 	"github.com/docker/docker/integration-cli/daemon"
 	testdaemon "github.com/docker/docker/internal/test/daemon"
-	"github.com/go-check/check"
 	"golang.org/x/sys/unix"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
@@ -31,7 +31,7 @@ func setPortConfig(portConfig []swarm.PortConfig) testdaemon.ServiceConstructor 
 	}
 }
 
-func (s *DockerSwarmSuite) TestAPIServiceUpdatePort(c *check.C) {
+func (s *DockerSwarmSuite) TestAPIServiceUpdatePort(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	// Create a service with a port mapping of 8080:8081.
@@ -52,7 +52,7 @@ func (s *DockerSwarmSuite) TestAPIServiceUpdatePort(c *check.C) {
 	assert.Equal(c, updatedService.Spec.EndpointSpec.Ports[0].PublishedPort, uint32(8082))
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesEmptyList(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesEmptyList(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	services := d.ListServices(c)
@@ -60,7 +60,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesEmptyList(c *check.C) {
 	assert.Assert(c, len(services) == 0, "services: %#v", services)
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesCreate(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesCreate(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	instances := 2
@@ -93,7 +93,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesCreate(c *check.C) {
 	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, 0)
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesMultipleAgents(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesMultipleAgents(c *testing.T) {
 	d1 := s.AddDaemon(c, true, true)
 	d2 := s.AddDaemon(c, true, false)
 	d3 := s.AddDaemon(c, true, false)
@@ -121,7 +121,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesMultipleAgents(c *check.C) {
 
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesCreateGlobal(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesCreateGlobal(c *testing.T) {
 	d1 := s.AddDaemon(c, true, true)
 	d2 := s.AddDaemon(c, true, false)
 	d3 := s.AddDaemon(c, true, false)
@@ -139,7 +139,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesCreateGlobal(c *check.C) {
 	waitAndAssert(c, defaultReconciliationTimeout, d5.CheckActiveContainerCount, checker.Equals, 1)
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesUpdate(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesUpdate(c *testing.T) {
 	const nodeCount = 3
 	var daemons [nodeCount]*daemon.Daemon
 	for i := 0; i < nodeCount; i++ {
@@ -199,7 +199,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesUpdate(c *check.C) {
 		map[string]int{image1: instances})
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesUpdateStartFirst(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesUpdateStartFirst(c *testing.T) {
 	d := s.AddDaemon(c, true, true)
 
 	// service image at start
@@ -308,7 +308,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesUpdateStartFirst(c *check.C) {
 		map[string]int{image1: instances})
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesFailedUpdate(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesFailedUpdate(c *testing.T) {
 	const nodeCount = 3
 	var daemons [nodeCount]*daemon.Daemon
 	for i := 0; i < nodeCount; i++ {
@@ -348,7 +348,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesFailedUpdate(c *check.C) {
 		map[string]int{image1: instances})
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServiceConstraintRole(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServiceConstraintRole(c *testing.T) {
 	const nodeCount = 3
 	var daemons [nodeCount]*daemon.Daemon
 	for i := 0; i < nodeCount; i++ {
@@ -400,7 +400,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServiceConstraintRole(c *check.C) {
 	}
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServiceConstraintLabel(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServiceConstraintLabel(c *testing.T) {
 	const nodeCount = 3
 	var daemons [nodeCount]*daemon.Daemon
 	for i := 0; i < nodeCount; i++ {
@@ -495,7 +495,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServiceConstraintLabel(c *check.C) {
 	}
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicePlacementPrefs(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicePlacementPrefs(c *testing.T) {
 	const nodeCount = 3
 	var daemons [nodeCount]*daemon.Daemon
 	for i := 0; i < nodeCount; i++ {
@@ -537,7 +537,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicePlacementPrefs(c *check.C) {
 	assert.Assert(c, tasksOnNode[nodes[2].ID] == 1)
 }
 
-func (s *DockerSwarmSuite) TestAPISwarmServicesStateReporting(c *check.C) {
+func (s *DockerSwarmSuite) TestAPISwarmServicesStateReporting(c *testing.T) {
 	testRequires(c, testEnv.IsLocalDaemon)
 	testRequires(c, DaemonIsLinux)
 

@@ -9,7 +9,6 @@ import (
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/client"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 
@@ -69,10 +68,12 @@ func (d *Daemon) CheckPluginRunning(plugin string) func(c assert.TestingT) (inte
 		apiclient := d.NewClientT(c)
 		resp, _, err := apiclient.PluginInspectWithRaw(context.Background(), plugin)
 		if client.IsErrNotFound(err) {
-			return false, check.Commentf("%v", err)
+			return false,
+				fmt.Sprintf("%v", err)
 		}
 		assert.NilError(c, err)
-		return resp.Enabled, check.Commentf("%+v", resp)
+		return resp.Enabled,
+			fmt.Sprintf("%+v", resp)
 	}
 }
 
@@ -82,10 +83,12 @@ func (d *Daemon) CheckPluginImage(plugin string) func(c assert.TestingT) (interf
 		apiclient := d.NewClientT(c)
 		resp, _, err := apiclient.PluginInspectWithRaw(context.Background(), plugin)
 		if client.IsErrNotFound(err) {
-			return false, check.Commentf("%v", err)
+			return false,
+				fmt.Sprintf("%v", err)
 		}
 		assert.NilError(c, err)
-		return resp.PluginReference, check.Commentf("%+v", resp)
+		return resp.PluginReference,
+			fmt.Sprintf("%+v", resp)
 	}
 }
 
@@ -175,7 +178,8 @@ func (d *Daemon) CheckLeader(c assert.TestingT) (interface{}, string) {
 	cli := d.NewClientT(c)
 	defer cli.Close()
 
-	errList := check.Commentf("could not get node list")
+	errList :=
+		"could not get node list"
 
 	ls, err := cli.NodeList(context.Background(), types.NodeListOptions{})
 	if err != nil {
@@ -187,7 +191,8 @@ func (d *Daemon) CheckLeader(c assert.TestingT) (interface{}, string) {
 			return nil, ""
 		}
 	}
-	return fmt.Errorf("no leader"), check.Commentf("could not find leader")
+	return fmt.Errorf("no leader"),
+		"could not find leader"
 }
 
 // CmdRetryOutOfSequence tries the specified command against the current daemon

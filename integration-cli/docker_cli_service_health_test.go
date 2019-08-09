@@ -5,20 +5,20 @@ package main
 import (
 	"strconv"
 	"strings"
+	"testing"
 
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/daemon/cluster/executor/container"
 	"github.com/docker/docker/integration-cli/checker"
 	"github.com/docker/docker/integration-cli/cli"
 	"github.com/docker/docker/integration-cli/cli/build"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )
 
 // start a service, and then make its task unhealthy during running
 // finally, unhealthy task should be detected and killed
-func (s *DockerSwarmSuite) TestServiceHealthRun(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceHealthRun(c *testing.T) {
 	testRequires(c, DaemonIsLinux) // busybox doesn't work on Windows
 
 	d := s.AddDaemon(c, true, true)
@@ -80,7 +80,7 @@ func (s *DockerSwarmSuite) TestServiceHealthRun(c *check.C) {
 
 // start a service whose task is unhealthy at beginning
 // its tasks should be blocked in starting stage, until health check is passed
-func (s *DockerSwarmSuite) TestServiceHealthStart(c *check.C) {
+func (s *DockerSwarmSuite) TestServiceHealthStart(c *testing.T) {
 	testRequires(c, DaemonIsLinux) // busybox doesn't work on Windows
 
 	d := s.AddDaemon(c, true, true)
@@ -124,7 +124,7 @@ func (s *DockerSwarmSuite) TestServiceHealthStart(c *check.C) {
 
 	// task should be blocked at starting status
 	task = d.GetTask(c, task.ID)
-	c.Assert(task.Status.State, check.Equals, swarm.TaskStateStarting)
+	assert.Equal(c, task.Status.State, swarm.TaskStateStarting)
 
 	// make it healthy
 	d.Cmd("exec", containerID, "touch", "/status")
