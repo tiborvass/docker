@@ -1156,7 +1156,7 @@ func (s *DockerDaemonSuite) TestDaemonLoggingDriverShouldBeIgnoredForBuild(c *te
 		fmt.Sprintf("Failed to build image. output %s, exitCode %d, err %v", result.Combined(), result.ExitCode, result.Error)
 	assert.Assert(c, result.Error == nil, comment)
 	assert.Equal(c, result.ExitCode, 0, comment)
-	assert.Assert(c, strings.Contains(result.Combined(), "foo", comment))
+	assert.Assert(c, strings.Contains(result.Combined(), "foo"), comment)
 }
 
 func (s *DockerDaemonSuite) TestDaemonUnixSockCleanedUp(c *testing.T) {
