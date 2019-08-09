@@ -88,7 +88,7 @@ run() {
 	cmp=$(grep -m 1 '"gotest.tools/assert/cmp"' "$file" | awk '{print $1}')
 	if [ -z "$cmp" ]; then
 		cmp=cmp
-		sed -E -i'' 's#"github.com/go-check/check"#\0\n\t"gotest.tools/assert/cmp"#g' "$file"
+		sed -E -i'' '0,#"github.com/# s#"github.com.*/#\0\n\t"gotest.tools/assert/cmp"#' "$file"
 	fi
 
 	# normalize to Assert
