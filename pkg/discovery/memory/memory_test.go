@@ -3,16 +3,17 @@ package memory // import "github.com/tiborvass/docker/pkg/discovery/memory"
 import (
 	"testing"
 
+	"github.com/tiborvass/docker/internal/test/suite"
 	"github.com/tiborvass/docker/pkg/discovery"
 	"gotest.tools/assert"
 )
 
 // Hook up gocheck into the "go test" runner.
-func Test(t *testing.T) { /*check.TestingT(t)*/ }
+func Test(t *testing.T) {
+	suite.Run(t, &discoverySuite{})
+}
 
 type discoverySuite struct{}
-
-/*check.Suite(&discoverySuite{})*/
 
 func (s *discoverySuite) TestWatch(c *testing.T) {
 	d := &Discovery{}
