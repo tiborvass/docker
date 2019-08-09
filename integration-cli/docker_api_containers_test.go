@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -95,45 +94,6 @@ func (s *DockerSuite) TestContainerAPIGetJSONNoFieldsOmitted(c *testing.T) {
 			c.Fatalf("Field %s is missing and it shouldn't", f)
 		}
 	}
-}
-
-type containerPs struct {
-	Names []string
-	Ports []types.Port
-}
-
-// regression test for non-empty fields from #13901
-func (s *DockerSuite) TestContainerAPIPsOmitFields(c *testing.T) {
-	// Problematic for Windows porting due to networking not yet being passed back
-	testRequires(c, DaemonIsLinux)
-	name := "pstest"
-	port := 80
-	runSleepingContainer(c, "--name", name, "--expose", strconv.Itoa(port))
-
-	cli, err := client.NewClientWithOpts(client.FromEnv)
-	assert.NilError(c, err)
-	defer cli.Close()
-
-	options := types.ContainerListOptions{
-		All: true,
-	}
-	containers, err := cli.ContainerList(context.Background(), options)
-	assert.NilError(c, err)
-	var foundContainer containerPs
-	for _, c := range containers {
-		for _, testName := range c.Names {
-			if "/"+name == testName {
-				foundContainer.Names = c.Names
-				foundContainer.Ports = c.Ports
-				break
-			}
-		}
-	}
-
-	assert.Equal(c, len(foundContainer.Ports), 1)
-	assert.Equal(c, foundContainer.Ports[0].PrivatePort, uint16(port))
-	assert.Assert(c, foundContainer.Ports[0].PublicPort != nil)
-	assert.Assert(c, foundContainer.Ports[0].IP != nil)
 }
 
 func (s *DockerSuite) TestContainerAPIGetExport(c *testing.T) {
