@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http/httptest"
@@ -22,6 +23,7 @@ import (
 	"github.com/docker/docker/internal/test/fakestorage"
 	"github.com/docker/docker/internal/test/fixtures/plugin"
 	"github.com/docker/docker/internal/test/registry"
+	"github.com/docker/docker/internal/test/suite"
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/go-check/check"
 	"gotest.tools/assert"
@@ -58,6 +60,7 @@ func init() {
 }
 
 func TestMain(m *testing.M) {
+	flag.Parse()
 	dockerBinary = testEnv.DockerBinary()
 	err := ienv.EnsureFrozenImagesLinux(&testEnv.Execution)
 	if err != nil {
@@ -74,6 +77,7 @@ func Test(t *testing.T) {
 	fakestorage.SetTestEnvironment(&testEnv.Execution)
 	ienv.ProtectAll(t, &testEnv.Execution)
 	check.TestingT(t)
+	suite.Run(t, &DockerDaemonSuite{ds: new(DockerSuite)})
 }
 
 func init() {
