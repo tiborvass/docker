@@ -412,48 +412,49 @@ func getErrorMessage(c *check.C, body []byte) string {
 	return strings.TrimSpace(resp.Message)
 }
 
-func waitAndAssert(c *check.C, timeout time.Duration, f checkF, checker check.Checker, args ...interface{}) {
+func waitAndAssert(t assert.TestingT, timeout time.Duration, f checkF, comparison assert.BoolOrComparison, args ...interface{}) {
 	t1 := time.Now()
 	defer func() {
 		t2 := time.Now()
-		c.Logf("waited for %v (out of %v)", t2.Sub(t1), timeout)
+		t.(testingT).Logf("waited for %v (out of %v)", t2.Sub(t1), timeout)
 	}()
 
 	after := time.After(timeout)
 	for {
-		v, comment := f(c)
-		assert, _ := checker.Check(append([]interface{}{v}, args...), checker.Info().Params)
+		v, comment := f(t)
+		args = append([]interface{}{v}, args...)
+		shouldAssert := assert.Check(t, comparison, args...)
 		select {
 		case <-after:
-			assert = true
+			shouldAssert = true
 		default:
 		}
-		if assert {
-			if comment != nil {
+		if shouldAssert {
+			if len(comment) > 0 {
 				args = append(args, comment)
 			}
-			c.Assert(v, checker, args...)
+			assert.Assert(t, comparison, args...)
 			return
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
 }
 
-type checkF func(*check.C) (interface{}, check.CommentInterface)
+type checkF func(assert.TestingT) (interface{}, string)
 type reducer func(...interface{}) interface{}
 
 func reducedCheck(r reducer, funcs ...checkF) checkF {
-	return func(c *check.C) (interface{}, check.CommentInterface) {
+	return func(t assert.TestingT) (interface{}, string) {
 		var values []interface{}
 		var comments []string
 		for _, f := range funcs {
-			v, comment := f(c)
+			v, comment := f(t)
 			values = append(values, v)
-			if comment != nil {
-				comments = append(comments, comment.CheckCommentString())
+			if len(comment) > 0 {
+				comments = append(comments, comment)
 			}
 		}
-		return r(values...), check.Commentf("%v", strings.Join(comments, ", "))
+		return r(values...), fmt.Sprintf("%v", strings.Join(comments, ", "))
 	}
 }
 
