@@ -85,10 +85,10 @@ EOF
 run() {
 	shasum -a 256 "$file" > "$hash"
 
-	cmp=$(grep -m 1 '"gotest.tools/assert/cmp"' "$file" | awk '{print $1}')
+	cmp=$(grep -m 1 -F '"gotest.tools/assert/cmp"' "$file" | awk '{print $1}')
 	if [ -z "$cmp" ]; then
 		cmp=cmp
-		sed -E -i'' '0,#"github.com/# s#"github.com.*/#\0\n\t"gotest.tools/assert/cmp"#' "$file"
+		sed -E -i'' '0,/"github\.com/ s/("github\.com.*)/\1\n"gotest.tools\/assert\/cmp"/' "$file"
 	fi
 
 	# normalize to Assert
