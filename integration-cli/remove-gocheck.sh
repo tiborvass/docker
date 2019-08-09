@@ -120,7 +120,7 @@ run() {
 	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.Matches\), (.*), *\$#assert.Assert(c, !${cmp}.Regexp(\"^\"+\2+\"\$\", \1)().Success(),#g" "$file"
 	sed -E -i'' "s#\bc\.Assert\((.*), checker\.Not\(checker\.Matches\), (.*)\)#assert.Assert(c, !${cmp}.Regexp(\"^\"+\2+\"\$\", \1)().Success())#g" "$file"
 	
-	grep -E '\bchecker\.Not\(' "$file" && echo "ERROR: Found unhandled check.Not instances" && exit 1
+	grep -nE '\bchecker\.Not\(' "$file" && echo "ERROR: Found unhandled check.Not instances" && exit 1
 	
 	# Equals
 	sed -E -i'' 's#\bc\.Assert\((.*), checker\.Equals, (.*), *$#assert.Equal(c, \1, \2,#g' "$file"
