@@ -552,7 +552,6 @@ func (s *DockerNetworkSuite) TestDockerNetworkConnectDisconnect(c *testing.T) {
 	// inspect the network to make sure container is connected
 	nr = getNetworkResource(c, nr.ID)
 	assert.Equal(c, len(nr.Containers), 1)
-	assert.Assert(c, nr.Containers[containerID] != nil)
 
 	// check if container IP matches network inspect
 	ip, _, err := net.ParseCIDR(nr.Containers[containerID].IPv4Address)
@@ -696,8 +695,6 @@ func (s *DockerNetworkSuite) TestDockerNetworkInspectDefault(c *testing.T) {
 	assert.Equal(c, nr.EnableIPv6, false)
 	assert.Equal(c, nr.IPAM.Driver, "default")
 	assert.Equal(c, len(nr.IPAM.Config), 1)
-	assert.Assert(c, nr.IPAM.Config[0].Subnet != nil)
-	assert.Assert(c, nr.IPAM.Config[0].Gateway != nil)
 }
 
 func (s *DockerNetworkSuite) TestDockerNetworkInspectCustomUnspecified(c *testing.T) {
@@ -712,8 +709,6 @@ func (s *DockerNetworkSuite) TestDockerNetworkInspectCustomUnspecified(c *testin
 	assert.Equal(c, nr.EnableIPv6, false)
 	assert.Equal(c, nr.IPAM.Driver, "default")
 	assert.Equal(c, len(nr.IPAM.Config), 1)
-	assert.Assert(c, nr.IPAM.Config[0].Subnet != nil)
-	assert.Assert(c, nr.IPAM.Config[0].Gateway != nil)
 
 	dockerCmd(c, "network", "rm", "test01")
 	assertNwNotAvailable(c, "test01")
