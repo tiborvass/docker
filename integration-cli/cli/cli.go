@@ -24,6 +24,10 @@ func SetTestEnvironment(env *environment.Execution) {
 // CmdOperator defines functions that can modify a command
 type CmdOperator func(*icmd.Cmd) func()
 
+type TestingT interface {
+	testingT
+}
+
 type testingT interface {
 	assert.TestingT
 	Fatal(args ...interface{})
