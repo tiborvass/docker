@@ -230,7 +230,7 @@ func (s *DockerSwarmSuite) TestAPISwarmPromoteDemote(c *testing.T) {
 		}
 		certs, err := helpers.ParseCertificatesPEM(certBytes)
 		if err == nil && len(certs) > 0 && len(certs[0].Subject.OrganizationalUnit) > 0 {
-			return certs[0].Subject.OrganizationalUnit[0], nil
+			return certs[0].Subject.OrganizationalUnit[0], ""
 		}
 		return "",
 			"could not get organizational unit from certificate"
@@ -410,7 +410,7 @@ func (s *DockerSwarmSuite) TestAPISwarmRaftQuorum(c *testing.T) {
 	// d1 will eventually step down from leader because there is no longer an active quorum, wait for that to happen
 	waitAndAssert(c, defaultReconciliationTimeout*2, func(c assert.TestingT) (interface{}, string) {
 		_, err := cli.ServiceCreate(context.Background(), service.Spec, types.ServiceCreateOptions{})
-		return err.Error(), nil
+		return err.Error(), ""
 	}, checker.Contains, "Make sure more than half of the managers are online.")
 
 	d2.StartNode(c)
@@ -762,7 +762,7 @@ func checkClusterHealth(c *testing.T, cl []*daemon.Daemon, managerCount, workerC
 		for _, n := range d.ListNodes(c) {
 			waitReady := func(c assert.TestingT) (interface{}, string) {
 				if n.Status.State == swarm.NodeStateReady {
-					return true, nil
+					return true, ""
 				}
 				nn := d.GetNode(c, n.ID)
 				n = *nn
@@ -773,7 +773,7 @@ func checkClusterHealth(c *testing.T, cl []*daemon.Daemon, managerCount, workerC
 
 			waitActive := func(c assert.TestingT) (interface{}, string) {
 				if n.Spec.Availability == swarm.NodeAvailabilityActive {
-					return true, nil
+					return true, ""
 				}
 				nn := d.GetNode(c, n.ID)
 				n = *nn

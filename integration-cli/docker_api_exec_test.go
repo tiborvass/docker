@@ -220,7 +220,7 @@ func (s *DockerSuite) TestExecStateCleanup(c *testing.T) {
 	checkReadDir := func(c assert.TestingT) (interface{}, string) {
 		fi, err := ioutil.ReadDir(stateDir)
 		assert.NilError(c, err)
-		return len(fi), nil
+		return len(fi), ""
 	}
 
 	fi, err := ioutil.ReadDir(stateDir)
