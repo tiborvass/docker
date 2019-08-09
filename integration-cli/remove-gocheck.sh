@@ -82,13 +82,17 @@ func run(pattern string, file string) error {
 }
 EOF
 
-cmp=$(grep -m 1 '"gotest.tools/assert/cmp"' "$file" | awk '{print $1}')
-if [ -z "$cmp" ]; then
-	cmp=cmp
-fi
-
 run() {
 	shasum -a 256 "$file" > "$hash"
+
+	cmp=$(grep -m 1 '"gotest.tools/assert/cmp"' "$file" | awk '{print $1}')
+	if [ -z "$cmp" ]; then
+		cmp=cmp
+		sed -E -i'' 's#"github.com/go-check/check"#\0\n\t"gotest.tools/assert/cmp"#g' "$file"
+	fi
+
+	# normalize to Assert
+	sed -E -i'' 's#\bc\.Check\(#c.Assert(#g' "$file"
 
 	# redress multiline Assert calls
 	go run "$redress" '\bc\.Assert\(.*,$' "$file"
@@ -106,7 +110,7 @@ run() {
 	
 	# normalize to checker
 	sed -E -i'' 's,\bcheck\.(Equals|DeepEquals|HasLen|IsNil|Matches|Not|NotNil)\b,checker.\1,g' "$file"
-	
+
 	# handle check.Commentf
 	sed -E -i'' 's#\bcheck.Commentf\(([^,]+),(.*)\)#\nfmt.Sprintf(\1,\2)#g' "$file"
 	sed -E -i'' 's#\bcheck.Commentf\(([^\)]+)\)#\n\1#g' "$file"
