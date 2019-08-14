@@ -412,7 +412,7 @@ func getErrorMessage(c *testing.T, body []byte) string {
 	return strings.TrimSpace(resp.Message)
 }
 
-func waitAndAssert(t *testing.T, timeout time.Duration, f checkF, comparison assert.BoolOrComparison, args ...interface{}) {
+func waitAndAssert(t *testing.T, timeout time.Duration, f interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
 	t1 := time.Now()
 	defer func() {
 		t2 := time.Now()
@@ -421,7 +421,7 @@ func waitAndAssert(t *testing.T, timeout time.Duration, f checkF, comparison ass
 
 	after := time.After(timeout)
 	for {
-		v, comment := f(t)
+		v, comment := f.(checkF)(t)
 		args = append([]interface{}{v}, args...)
 		shouldAssert := assert.Check(t, comparison, args...)
 		select {
@@ -443,12 +443,12 @@ func waitAndAssert(t *testing.T, timeout time.Duration, f checkF, comparison ass
 type checkF func(*testing.T) (interface{}, string)
 type reducer func(...interface{}) interface{}
 
-func reducedCheck(r reducer, funcs ...checkF) checkF {
+func reducedCheck(r reducer, funcs ...interface{}) checkF {
 	return func(t *testing.T) (interface{}, string) {
 		var values []interface{}
 		var comments []string
 		for _, f := range funcs {
-			v, comment := f(t)
+			v, comment := f.(checkF)(t)
 			values = append(values, v)
 			if len(comment) > 0 {
 				comments = append(comments, comment)
