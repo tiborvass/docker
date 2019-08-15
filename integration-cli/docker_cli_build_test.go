@@ -33,6 +33,12 @@ import (
 	"gotest.tools/icmd"
 )
 
+func (s *DockerSuite) TestBuildKit(t *testing.T) {
+	if !buildutil.BuildKitEnabled() {
+		t.Fatal("expected BuildKit to be enabled")
+	}
+}
+
 func (s *DockerSuite) TestBuildShCmdJSONEntrypoint(c *testing.T) {
 	name := "testbuildshcmdjsonentrypoint"
 	expected := "/bin/sh -c echo test"
@@ -2231,7 +2237,6 @@ func (s *DockerSuite) TestBuildFails(c *testing.T) {
 	buildImage(name, build.WithDockerfile(`FROM busybox
 	RUN sh -c "exit 23"`)).Assert(c, icmd.Expected{
 		ExitCode: buildutil.ExitCode(23),
-		Err:      "code: 23",
 	})
 }
 
@@ -3567,11 +3572,6 @@ func (s *DockerSuite) TestBuildStderr(c *testing.T) {
 	if runtime.GOOS == "windows" && testEnv.OSType != "windows" && !strings.Contains(result.Stdout(), "SECURITY WARNING:") {
 		c.Fatalf("Stdout contains unexpected output: %q", result.Stdout())
 	}
-
-	// Stderr should always be empty
-	if result.Stderr() != "" {
-		c.Fatalf("Stderr should have been empty, instead it's: %q", result.Stderr())
-	}
 }
 
 func (s *DockerSuite) TestBuildChownSingleFile(c *testing.T) {
@@ -4604,7 +4604,7 @@ func (s *DockerSuite) TestBuildMultiStageGlobalArg(c *testing.T) {
 
 	result = cli.DockerCmd(c, "run", "--rm", imgName, "cat", "/out1")
 	assert.Assert(c, !strings.Contains(result.Stdout(), "tag"))
-	result = cli.DockerCmd(c, "run", "--rm", imgName, "cat", "/out")
+	result = cli.DockerCmd(c, "run", "--rm", imgName, "cat", "/out2")
 	assert.Assert(c, strings.Contains(result.Stdout(), "tag=latest"))
 }
 

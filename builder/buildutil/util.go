@@ -42,7 +42,7 @@ func BuildKitEnabled() bool {
 			buildkitEnabled = true
 			return
 		}
-		if v == "0" || v == "false" {
+		if v == "0" || v == "false" || v == "" {
 			buildkitEnabled = false
 			return
 		}
