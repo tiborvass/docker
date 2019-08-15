@@ -11,7 +11,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func NewCombinedCacheManager(cms []CacheManager, main CacheManager) CacheManager {
+func newCombinedCacheManager(cms []CacheManager, main CacheManager) CacheManager {
 	return &combinedCacheManager{cms: cms, main: main}
 }
 
@@ -80,7 +80,7 @@ func (cm *combinedCacheManager) Load(ctx context.Context, rec *CacheRecord) (res
 			res.Result.Release(context.TODO())
 		}
 	}()
-	if rec.cacheManager != cm.main && cm.main != nil {
+	if rec.cacheManager != cm.main {
 		for _, res := range results {
 			if _, err := cm.main.Save(res.CacheKey, res.Result, res.CacheResult.CreatedAt); err != nil {
 				return nil, err
@@ -91,9 +91,6 @@ func (cm *combinedCacheManager) Load(ctx context.Context, rec *CacheRecord) (res
 }
 
 func (cm *combinedCacheManager) Save(key *CacheKey, s Result, createdAt time.Time) (*ExportableCacheKey, error) {
-	if cm.main == nil {
-		return nil, nil
-	}
 	return cm.main.Save(key, s, createdAt)
 }
 

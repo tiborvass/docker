@@ -141,7 +141,7 @@ func (s *state) combinedCacheManager() CacheManager {
 		return s.mainCache
 	}
 
-	return NewCombinedCacheManager(cms, s.mainCache)
+	return newCombinedCacheManager(cms, s.mainCache)
 }
 
 func (s *state) Release() {

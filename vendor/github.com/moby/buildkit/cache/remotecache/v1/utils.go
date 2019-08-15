@@ -78,14 +78,10 @@ func sortConfig(cc *CacheConfig) {
 				if ri.Inputs[i][j].Selector != rj.Inputs[i][j].Selector {
 					return ri.Inputs[i][j].Selector < rj.Inputs[i][j].Selector
 				}
-				inputDigesti := cc.Records[ri.Inputs[i][j].LinkIndex].Digest
-				inputDigestj := cc.Records[rj.Inputs[i][j].LinkIndex].Digest
-				if inputDigesti != inputDigestj {
-					return inputDigesti < inputDigestj
-				}
+				return cc.Records[ri.Inputs[i][j].LinkIndex].Digest < cc.Records[rj.Inputs[i][j].LinkIndex].Digest
 			}
 		}
-		return false
+		return ri.Digest < rj.Digest
 	})
 	for i, l := range sortedRecords {
 		l.newIndex = i

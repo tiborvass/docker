@@ -111,7 +111,7 @@ func (ci *contentCacheImporter) importInlineCache(ctx context.Context, dt []byte
 	}
 
 	var mu sync.Mutex
-	var cMap = map[digest.Digest]*v1.CacheChains{}
+	cc := v1.NewCacheChains()
 
 	eg, ctx := errgroup.WithContext(ctx)
 	for dgst, dt := range m {
@@ -183,12 +183,11 @@ func (ci *contentCacheImporter) importInlineCache(ctx context.Context, dt []byte
 				if err != nil {
 					return errors.WithStack(err)
 				}
-				cc := v1.NewCacheChains()
+
+				mu.Lock()
 				if err := v1.ParseConfig(config, layers, cc); err != nil {
 					return err
 				}
-				mu.Lock()
-				cMap[dgst] = cc
 				mu.Unlock()
 				return nil
 			})
@@ -199,17 +198,11 @@ func (ci *contentCacheImporter) importInlineCache(ctx context.Context, dt []byte
 		return nil, err
 	}
 
-	cms := make([]solver.CacheManager, 0, len(cMap))
-
-	for _, cc := range cMap {
-		keysStorage, resultStorage, err := v1.NewCacheKeyStorage(cc, w)
-		if err != nil {
-			return nil, err
-		}
-		cms = append(cms, solver.NewCacheManager(id, keysStorage, resultStorage))
+	keysStorage, resultStorage, err := v1.NewCacheKeyStorage(cc, w)
+	if err != nil {
+		return nil, err
 	}
-
-	return solver.NewCombinedCacheManager(cms, nil), nil
+	return solver.NewCacheManager(id, keysStorage, resultStorage), nil
 }
 
 func (ci *contentCacheImporter) allDistributionManifests(ctx context.Context, dt []byte, m map[digest.Digest][]byte) error {

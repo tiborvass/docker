@@ -31,12 +31,6 @@ func (ce *exporter) Finalize(ctx context.Context) (map[string]string, error) {
 	return nil, nil
 }
 
-func (ce *exporter) reset() {
-	cc := v1.NewCacheChains()
-	ce.CacheExporterTarget = cc
-	ce.chains = cc
-}
-
 func (ce *exporter) ExportForLayers(layers []digest.Digest) ([]byte, error) {
 	config, descs, err := ce.chains.Marshal()
 	if err != nil {
@@ -88,7 +82,6 @@ func (ce *exporter) ExportForLayers(layers []digest.Digest) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	ce.reset()
 
 	return dt, nil
 }
