@@ -33,6 +33,12 @@ import (
 	"gotest.tools/icmd"
 )
 
+func (s *DockerSuite) TestBuildKit(c *check.C) {
+	if !buildutil.BuildKitEnabled() {
+		c.Fatal("expected BuildKit to be enabled")
+	}
+}
+
 func (s *DockerSuite) TestBuildShCmdJSONEntrypoint(c *check.C) {
 	name := "testbuildshcmdjsonentrypoint"
 	expected := "/bin/sh -c echo test"
