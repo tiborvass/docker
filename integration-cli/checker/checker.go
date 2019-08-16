@@ -10,12 +10,16 @@ import (
 
 type Compare func(x interface{}) assert.BoolOrComparison
 
-func False(x interface{}) assert.BoolOrComparison {
-	return !x.(bool)
+func False() Compare {
+	return func(x interface{}) assert.BoolOrComparison {
+		return !x.(bool)
+	}
 }
 
-func True(x interface{}) assert.BoolOrComparison {
-	return x
+func True() Compare {
+	return func(x interface{}) assert.BoolOrComparison {
+		return x
+	}
 }
 
 func Equals(y interface{}) Compare {
