@@ -1,0 +1,29 @@
+// +build ignore
+
+package main
+
+import (
+	"testing"
+	"time"
+
+	"github.com/docker/docker/integration-cli/checker"
+	"gotest.tools/assert"
+	"gotest.tools/poll"
+)
+
+var _ = checker.Equals
+
+type waitAndAssertFunc func(t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{})
+
+func _EG_leftovers(comparison assert.BoolOrComparison, args ...interface{})
+
+func waitAndAssert(t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{})
+
+func before(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
+	waitAndAssert(t, timeout, ff, comparison, args...)
+}
+
+func after(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
+	_EG_leftovers(comparison, args...)
+	poll.WaitOn(t, ff.(poll.Check), poll.WithTimeout(timeout))
+}
