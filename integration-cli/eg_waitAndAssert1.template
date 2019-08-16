@@ -11,20 +11,30 @@ import (
 	"gotest.tools/poll"
 )
 
-var _ = checker.Equals
+func pollCheck(t *testing.T, f interface{}, compare func(x interface{}) assert.BoolOrComparison) poll.Check
 
-type waitAndAssertFunc func(t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{})
+type _EG_compareFunc func(...interface{}) checker.Compare
 
-func _EG_leftovers(comparison assert.BoolOrComparison, args ...interface{})
+type waitAndAssertFunc func(t *testing.T, timeout time.Duration, ff, comparison interface{}, args ...interface{})
 
-type _EG_convert func(assert.BoolOrComparison, ...interface{}) poll.Check
+func before(
+	waitAndAssert waitAndAssertFunc,
+	t *testing.T,
+	timeout time.Duration,
+	f interface{},
+	comparison interface{},
+	args ...interface{}) {
 
-func waitAndAssert(t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{})
-
-func before(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
-	waitAndAssert(t, timeout, ff, comparison, args...)
+	waitAndAssert(t, timeout, f, comparison, args...)
 }
 
-func after(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
-	poll.WaitOn(t, ff.(_EG_convert)(comparison, args...), poll.WithTimeout(timeout))
+func after(
+	waitAndAssert waitAndAssertFunc,
+	t *testing.T,
+	timeout time.Duration,
+	f interface{},
+	comparison interface{},
+	args ...interface{}) {
+
+	poll.WaitOn(t, pollCheck(t, f, comparison.(_EG_compareFunc)(args...)), poll.WithTimeout(timeout))
 }
