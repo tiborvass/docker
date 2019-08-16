@@ -4,15 +4,8 @@ package checker // import "github.com/docker/docker/integration-cli/checker"
 import (
 	"fmt"
 
-	"github.com/vdemeester/shakers"
 	"gotest.tools/assert"
 	"gotest.tools/assert/cmp"
-)
-
-// As a commodity, we bring all check.Checker variables into the current namespace to avoid having
-// to think about check.X versus checker.X.
-var (
-	GreaterThan = shakers.GreaterThan
 )
 
 type Compare func(x interface{}) assert.BoolOrComparison
@@ -65,6 +58,12 @@ func HasLen(y int) Compare {
 
 func IsNil(x interface{}) assert.BoolOrComparison {
 	return cmp.Nil(x)
+}
+
+func GreaterThan(y int) Compare {
+	return func(x interface{}) assert.BoolOrComparison {
+		return x.(int) > y
+	}
 }
 
 var NotNil Compare = Not(IsNil)
