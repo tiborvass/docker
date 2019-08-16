@@ -33,7 +33,7 @@ func pruneNetworkAndVerify(c *testing.T, d *daemon.Daemon, kept, pruned []string
 	}
 
 	for _, s := range pruned {
-		waitAndAssert(c, defaultReconciliationTimeout, f, checker.Not(checker.Contains), s)
+		waitAndAssert(c, defaultReconciliationTimeout, f, checker.Not(checker.Contains(s)))
 	}
 }
 
