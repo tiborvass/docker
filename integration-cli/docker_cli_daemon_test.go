@@ -40,6 +40,7 @@ import (
 	"golang.org/x/sys/unix"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
+	"gotest.tools/poll"
 )
 
 const containerdSocket = "/var/run/docker/containerd/containerd.sock"
@@ -2079,7 +2080,7 @@ func (s *DockerDaemonSuite) TestDaemonRestartWithUnpausedRunningContainer(t *tes
 		result := icmd.RunCommand("kill", "-0", strings.TrimSpace(pid))
 		return result.ExitCode, ""
 	}
-	waitAndAssert(t, defaultReconciliationTimeout, f, checker.Equals, 0)
+	poll.WaitOn(t, pollCheck(t, f, checker.Equals(0)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// restart the daemon
 	s.d.Start(t, "--live-restore")

@@ -30,6 +30,7 @@ import (
 	"github.com/pkg/errors"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
+	"gotest.tools/poll"
 )
 
 var defaultReconciliationTimeout = 30 * time.Second
@@ -208,13 +209,13 @@ func (s *DockerSwarmSuite) TestAPISwarmPromoteDemote(c *testing.T) {
 		n.Spec.Role = swarm.NodeRoleManager
 	})
 
-	waitAndAssert(c, defaultReconciliationTimeout, d2.CheckControlAvailable, checker.True)
+	poll.WaitOn(c, pollCheck(c, d2.CheckControlAvailable, checker.True()), poll.WithTimeout(defaultReconciliationTimeout))
 
 	d1.UpdateNode(c, d2.NodeID(), func(n *swarm.Node) {
 		n.Spec.Role = swarm.NodeRoleWorker
 	})
 
-	waitAndAssert(c, defaultReconciliationTimeout, d2.CheckControlAvailable, checker.False)
+	poll.WaitOn(c, pollCheck(c, d2.CheckControlAvailable, checker.False()), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// Wait for the role to change to worker in the cert. This is partially
 	// done because it's something worth testing in its own right, and
@@ -235,7 +236,7 @@ func (s *DockerSwarmSuite) TestAPISwarmPromoteDemote(c *testing.T) {
 		return "",
 			"could not get organizational unit from certificate"
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, "swarm-worker")
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals("swarm-worker")), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// Demoting last node should fail
 	node := d1.GetNode(c, d1.NodeID())
@@ -265,7 +266,7 @@ func (s *DockerSwarmSuite) TestAPISwarmPromoteDemote(c *testing.T) {
 		n.Spec.Role = swarm.NodeRoleManager
 	})
 
-	waitAndAssert(c, defaultReconciliationTimeout, d2.CheckControlAvailable, checker.True)
+	poll.WaitOn(c, pollCheck(c, d2.CheckControlAvailable, checker.True()), poll.WithTimeout(defaultReconciliationTimeout))
 }
 
 func (s *DockerSwarmSuite) TestAPISwarmLeaderProxy(c *testing.T) {
@@ -354,7 +355,7 @@ func (s *DockerSwarmSuite) TestAPISwarmLeaderElection(c *testing.T) {
 
 	// wait for an election to occur
 	c.Logf("Waiting for election to occur...")
-	waitAndAssert(c, defaultReconciliationTimeout, checkLeader(d2, d3), checker.True)
+	poll.WaitOn(c, pollCheck(c, checkLeader(d2, d3), checker.True()), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// assert that we have a new leader
 	assert.Assert(c, leader != nil)
@@ -367,7 +368,7 @@ func (s *DockerSwarmSuite) TestAPISwarmLeaderElection(c *testing.T) {
 
 	// wait for possible election
 	c.Logf("Waiting for possible election...")
-	waitAndAssert(c, defaultReconciliationTimeout, checkLeader(d1, d2, d3), checker.True)
+	poll.WaitOn(c, pollCheck(c, checkLeader(d1, d2, d3), checker.True()), poll.WithTimeout(defaultReconciliationTimeout))
 	// pick out the leader and the followers again
 
 	// verify that we still only have 1 leader and 2 followers
@@ -394,7 +395,7 @@ func (s *DockerSwarmSuite) TestAPISwarmRaftQuorum(c *testing.T) {
 	d2.Stop(c)
 
 	// make sure there is a leader
-	waitAndAssert(c, defaultReconciliationTimeout, d1.CheckLeader, checker.IsNil)
+	poll.WaitOn(c, pollCheck(c, d1.CheckLeader, checker.IsNil()), poll.WithTimeout(defaultReconciliationTimeout))
 
 	d1.CreateService(c, simpleTestService, func(s *swarm.Service) {
 		s.Spec.Name = "top1"
@@ -413,11 +414,11 @@ func (s *DockerSwarmSuite) TestAPISwarmRaftQuorum(c *testing.T) {
 		_, err := cli.ServiceCreate(context.Background(), service.Spec, types.ServiceCreateOptions{})
 		return err.Error(), ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout*2, f, checker.Contains, "Make sure more than half of the managers are online.")
+	poll.WaitOn(c, pollCheck(c, f, checker.Contains("Make sure more than half of the managers are online.")), poll.WithTimeout(defaultReconciliationTimeout*2))
 	d2.StartNode(c)
 
 	// make sure there is a leader
-	waitAndAssert(c, defaultReconciliationTimeout, d1.CheckLeader, checker.IsNil)
+	poll.WaitOn(c, pollCheck(c, d1.CheckLeader, checker.IsNil()), poll.WithTimeout(defaultReconciliationTimeout))
 
 	d1.CreateService(c, simpleTestService, func(s *swarm.Service) {
 		s.Spec.Name = "top3"
@@ -434,12 +435,12 @@ func (s *DockerSwarmSuite) TestAPISwarmLeaveRemovesContainer(c *testing.T) {
 	assert.NilError(c, err, id)
 	id = strings.TrimSpace(id)
 
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, instances+1)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(instances+1)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	assert.ErrorContains(c, d.SwarmLeave(c, false), "")
 	assert.NilError(c, d.SwarmLeave(c, true))
 
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, 1)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(1)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	id2, err := d.Cmd("ps", "-q")
 	assert.NilError(c, err, id2)
@@ -468,7 +469,7 @@ func (s *DockerSwarmSuite) TestAPISwarmLeaveOnPendingJoin(c *testing.T) {
 
 	assert.NilError(c, d2.SwarmLeave(c, true))
 
-	waitAndAssert(c, defaultReconciliationTimeout, d2.CheckActiveContainerCount, checker.Equals, 1)
+	poll.WaitOn(c, pollCheck(c, d2.CheckActiveContainerCount, checker.Equals(1)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	id2, err := d2.Cmd("ps", "-q")
 	assert.NilError(c, err, id2)
@@ -486,7 +487,7 @@ func (s *DockerSwarmSuite) TestAPISwarmRestoreOnPendingJoin(c *testing.T) {
 	})
 	assert.ErrorContains(c, err, "Timeout was reached")
 
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckLocalNodeState, checker.Equals, swarm.LocalNodeStatePending)
+	poll.WaitOn(c, pollCheck(c, d.CheckLocalNodeState, checker.Equals(swarm.LocalNodeStatePending)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	d.RestartNode(c)
 
@@ -527,11 +528,11 @@ func (s *DockerSwarmSuite) TestAPISwarmScaleNoRollingUpdate(c *testing.T) {
 	instances := 2
 	id := d.CreateService(c, simpleTestService, setInstances(instances))
 
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 	containers := d.ActiveContainers(c)
 	instances = 4
 	d.UpdateService(c, d.GetService(c, id), setInstances(instances))
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 	containers2 := d.ActiveContainers(c)
 
 loop0:
@@ -569,14 +570,14 @@ func (s *DockerSwarmSuite) TestAPISwarmForceNewCluster(c *testing.T) {
 
 	instances := 2
 	id := d1.CreateService(c, simpleTestService, setInstances(instances))
-	waitAndAssert(c, defaultReconciliationTimeout, reducedCheck(sumAsIntegers, d1.CheckActiveContainerCount, d2.CheckActiveContainerCount), checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, reducedCheck(sumAsIntegers, d1.CheckActiveContainerCount, d2.CheckActiveContainerCount), checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// drain d2, all containers should move to d1
 	d1.UpdateNode(c, d2.NodeID(), func(n *swarm.Node) {
 		n.Spec.Availability = swarm.NodeAvailabilityDrain
 	})
-	waitAndAssert(c, defaultReconciliationTimeout, d1.CheckActiveContainerCount, checker.Equals, instances)
-	waitAndAssert(c, defaultReconciliationTimeout, d2.CheckActiveContainerCount, checker.Equals, 0)
+	poll.WaitOn(c, pollCheck(c, d1.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
+	poll.WaitOn(c, pollCheck(c, d2.CheckActiveContainerCount, checker.Equals(0)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	d2.Stop(c)
 
@@ -585,7 +586,7 @@ func (s *DockerSwarmSuite) TestAPISwarmForceNewCluster(c *testing.T) {
 		Spec:            swarm.Spec{},
 	})
 
-	waitAndAssert(c, defaultReconciliationTimeout, d1.CheckActiveContainerCount, checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, d1.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	d3 := s.AddDaemon(c, true, true)
 	info := d3.SwarmInfo(c)
@@ -595,7 +596,7 @@ func (s *DockerSwarmSuite) TestAPISwarmForceNewCluster(c *testing.T) {
 	instances = 4
 	d3.UpdateService(c, d3.GetService(c, id), setInstances(instances))
 
-	waitAndAssert(c, defaultReconciliationTimeout, reducedCheck(sumAsIntegers, d1.CheckActiveContainerCount, d3.CheckActiveContainerCount), checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, reducedCheck(sumAsIntegers, d1.CheckActiveContainerCount, d3.CheckActiveContainerCount), checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 }
 
 func simpleTestService(s *swarm.Service) {
@@ -750,7 +751,7 @@ func checkClusterHealth(c *testing.T, cl []*daemon.Daemon, managerCount, workerC
 			return err,
 				"cluster not ready in time"
 		}
-		waitAndAssert(c, defaultReconciliationTimeout, checkInfo, checker.IsNil)
+		poll.WaitOn(c, pollCheck(c, checkInfo, checker.IsNil()), poll.WithTimeout(defaultReconciliationTimeout))
 		if !info.ControlAvailable {
 			totalWCount++
 			continue
@@ -770,7 +771,7 @@ func checkClusterHealth(c *testing.T, cl []*daemon.Daemon, managerCount, workerC
 				return n.Status.State == swarm.NodeStateReady,
 					fmt.Sprintf("state of node %s, reported by %s", n.ID, d.NodeID())
 			}
-			waitAndAssert(c, defaultReconciliationTimeout, waitReady, checker.True)
+			poll.WaitOn(c, pollCheck(c, waitReady, checker.True()), poll.WithTimeout(defaultReconciliationTimeout))
 
 			waitActive := func(c *testing.T) (interface{}, string) {
 				if n.Spec.Availability == swarm.NodeAvailabilityActive {
@@ -781,7 +782,7 @@ func checkClusterHealth(c *testing.T, cl []*daemon.Daemon, managerCount, workerC
 				return n.Spec.Availability == swarm.NodeAvailabilityActive,
 					fmt.Sprintf("availability of node %s, reported by %s", n.ID, d.NodeID())
 			}
-			waitAndAssert(c, defaultReconciliationTimeout, waitActive, checker.True)
+			poll.WaitOn(c, pollCheck(c, waitActive, checker.True()), poll.WithTimeout(defaultReconciliationTimeout))
 
 			if n.Spec.Role == swarm.NodeRoleManager {
 				assert.Assert(c, n.ManagerStatus != nil, "manager status of node %s (manager), reported by %s", n.ID, d.NodeID())
@@ -872,7 +873,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesUpdateWithName(c *testing.T) {
 
 	instances := 2
 	id := d.CreateService(c, simpleTestService, setInstances(instances))
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	service := d.GetService(c, id)
 	instances = 5
@@ -882,7 +883,7 @@ func (s *DockerSwarmSuite) TestAPISwarmServicesUpdateWithName(c *testing.T) {
 	defer cli.Close()
 	_, err := cli.ServiceUpdate(context.Background(), service.Spec.Name, service.Version, service.Spec, types.ServiceUpdateOptions{})
 	assert.NilError(c, err)
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 }
 
 // Unlocking an unlocked swarm results in an error
@@ -957,7 +958,7 @@ func (s *DockerSwarmSuite) TestAPISwarmHealthcheckNone(c *testing.T) {
 		}
 	})
 
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, instances)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(instances)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	containers := d.ActiveContainers(c)
 

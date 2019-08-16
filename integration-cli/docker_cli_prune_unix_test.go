@@ -17,6 +17,7 @@ import (
 	"github.com/docker/docker/integration-cli/daemon"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
+	"gotest.tools/poll"
 )
 
 func pruneNetworkAndVerify(c *testing.T, d *daemon.Daemon, kept, pruned []string) {
@@ -29,11 +30,11 @@ func pruneNetworkAndVerify(c *testing.T, d *daemon.Daemon, kept, pruned []string
 		return out, ""
 	}
 	for _, s := range kept {
-		waitAndAssert(c, defaultReconciliationTimeout, f, checker.Contains, s)
+		poll.WaitOn(c, pollCheck(c, f, checker.Contains(s)), poll.WithTimeout(defaultReconciliationTimeout))
 	}
 
 	for _, s := range pruned {
-		waitAndAssert(c, defaultReconciliationTimeout, f, checker.Not(checker.Contains(s)))
+		poll.WaitOn(c, pollCheck(c, f, checker.Not(checker.Contains(s))()), poll.WithTimeout(defaultReconciliationTimeout))
 	}
 }
 
@@ -61,7 +62,7 @@ func (s *DockerSwarmSuite) TestPruneNetwork(c *testing.T) {
 		"busybox", "top")
 	assert.NilError(c, err)
 	assert.Assert(c, strings.TrimSpace(out) != "")
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, replicas+1)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(replicas+1)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// prune and verify
 	pruneNetworkAndVerify(c, d, []string{"n1", "n3"}, []string{"n2", "n4"})
@@ -71,7 +72,7 @@ func (s *DockerSwarmSuite) TestPruneNetwork(c *testing.T) {
 	assert.NilError(c, err)
 	_, err = d.Cmd("service", "rm", serviceName)
 	assert.NilError(c, err)
-	waitAndAssert(c, defaultReconciliationTimeout, d.CheckActiveContainerCount, checker.Equals, 0)
+	poll.WaitOn(c, pollCheck(c, d.CheckActiveContainerCount, checker.Equals(0)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	pruneNetworkAndVerify(c, d, []string{}, []string{"n1", "n3"})
 }

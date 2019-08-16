@@ -14,6 +14,7 @@ import (
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/integration-cli/checker"
 	"gotest.tools/assert"
+	"gotest.tools/poll"
 )
 
 func (s *DockerSwarmSuite) TestServiceCreateMountVolume(c *testing.T) {
@@ -27,7 +28,7 @@ func (s *DockerSwarmSuite) TestServiceCreateMountVolume(c *testing.T) {
 		tasks = d.GetServiceTasks(c, id)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -36,7 +37,7 @@ func (s *DockerSwarmSuite) TestServiceCreateMountVolume(c *testing.T) {
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// check container mount config
 	out, err = s.nodeCmd(c, task.NodeID, "inspect", "--format", "{{json .HostConfig.Mounts}}", task.Status.ContainerStatus.ContainerID)
@@ -143,7 +144,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithSecretSourceTargetPaths(c *testi
 		tasks = d.GetServiceTasks(c, serviceName)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -152,7 +153,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithSecretSourceTargetPaths(c *testi
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	for testName, testTarget := range testPaths {
 		path := testTarget
@@ -195,7 +196,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithSecretReferencedTwice(c *testing
 		tasks = d.GetServiceTasks(c, serviceName)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -204,7 +205,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithSecretReferencedTwice(c *testing
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	for _, target := range []string{"target1", "target2"} {
 		assert.NilError(c, err, out)
@@ -294,7 +295,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithConfigSourceTargetPaths(c *testi
 		tasks = d.GetServiceTasks(c, serviceName)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -303,7 +304,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithConfigSourceTargetPaths(c *testi
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	for testName, testTarget := range testPaths {
 		path := testTarget
@@ -346,7 +347,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithConfigReferencedTwice(c *testing
 		tasks = d.GetServiceTasks(c, serviceName)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -355,7 +356,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithConfigReferencedTwice(c *testing
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	for _, target := range []string{"target1", "target2"} {
 		assert.NilError(c, err, out)
@@ -380,7 +381,7 @@ func (s *DockerSwarmSuite) TestServiceCreateMountTmpfs(c *testing.T) {
 		tasks = d.GetServiceTasks(c, id)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -389,7 +390,7 @@ func (s *DockerSwarmSuite) TestServiceCreateMountTmpfs(c *testing.T) {
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// check container mount config
 	out, err = s.nodeCmd(c, task.NodeID, "inspect", "--format", "{{json .HostConfig.Mounts}}", task.Status.ContainerStatus.ContainerID)
@@ -438,7 +439,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithNetworkAlias(c *testing.T) {
 		tasks = d.GetServiceTasks(c, id)
 		return len(tasks) > 0, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	task := tasks[0]
 	f = func(c *testing.T) (interface{}, string) {
@@ -447,7 +448,7 @@ func (s *DockerSwarmSuite) TestServiceCreateWithNetworkAlias(c *testing.T) {
 		}
 		return task.NodeID != "" && task.Status.ContainerStatus != nil, ""
 	}
-	waitAndAssert(c, defaultReconciliationTimeout, f, checker.Equals, true)
+	poll.WaitOn(c, pollCheck(c, f, checker.Equals(true)), poll.WithTimeout(defaultReconciliationTimeout))
 
 	// check container alias config
 	out, err = s.nodeCmd(c, task.NodeID, "inspect", "--format", "{{json .NetworkSettings.Networks.test_swarm_br.Aliases}}", task.Status.ContainerStatus.ContainerID)
