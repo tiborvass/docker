@@ -72,4 +72,6 @@ func GreaterThan(y int) Compare {
 	}
 }
 
-var NotNil Compare = Not(IsNil)
+func NotNil() Compare {
+	return Not(IsNil())
+}
