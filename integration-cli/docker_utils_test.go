@@ -413,7 +413,7 @@ func getErrorMessage(c *testing.T, body []byte) string {
 	return strings.TrimSpace(resp.Message)
 }
 
-func waitAndAssert(t *testing.T, timeout time.Duration, f interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
+func waitAndAssert(t *testing.T, timeout time.Duration, f interface{}, comparison interface{}, args ...interface{}) {
 	t1 := time.Now()
 	defer func() {
 		t2 := time.Now()
