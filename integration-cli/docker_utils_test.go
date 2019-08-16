@@ -21,6 +21,7 @@ import (
 	"github.com/docker/docker/integration-cli/daemon"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
+	"gotest.tools/poll"
 )
 
 func deleteImages(images ...string) error {
@@ -442,6 +443,17 @@ func waitAndAssert(t *testing.T, timeout time.Duration, f interface{}, compariso
 
 type checkF func(*testing.T) (interface{}, string)
 type reducer func(...interface{}) interface{}
+
+func pollCheck(t *testing.T, f interface{}, compare func(x interface{}) assert.BoolOrComparison) poll.Check {
+	return func(poll.LogT) poll.Result {
+		ff := f.(checkF)
+		v, comment := ff(t)
+		if assert.Check(t, compare(v)) {
+			return poll.Success()
+		}
+		return poll.Continue(comment)
+	}
+}
 
 func reducedCheck(r reducer, funcs ...interface{}) checkF {
 	return func(t *testing.T) (interface{}, string) {
