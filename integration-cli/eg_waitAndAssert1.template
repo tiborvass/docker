@@ -17,6 +17,8 @@ type waitAndAssertFunc func(t *testing.T, timeout time.Duration, ff interface{},
 
 func _EG_leftovers(comparison assert.BoolOrComparison, args ...interface{})
 
+type _EG_convert func(assert.BoolOrComparison, ...interface{}) poll.Check
+
 func waitAndAssert(t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{})
 
 func before(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
@@ -24,6 +26,5 @@ func before(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration
 }
 
 func after(waitAndAssert waitAndAssertFunc, t *testing.T, timeout time.Duration, ff interface{}, comparison assert.BoolOrComparison, args ...interface{}) {
-	_EG_leftovers(comparison, args...)
-	poll.WaitOn(t, ff.(poll.Check), poll.WithTimeout(timeout))
+	poll.WaitOn(t, ff.(_EG_convert)(comparison, args...), poll.WithTimeout(timeout))
 }
