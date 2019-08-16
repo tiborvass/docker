@@ -60,8 +60,10 @@ func HasLen(y int) Compare {
 	}
 }
 
-func IsNil(x interface{}) assert.BoolOrComparison {
-	return cmp.Nil(x)
+func IsNil() Compare {
+	return func(x interface{}) assert.BoolOrComparison {
+		return cmp.Nil(x)
+	}
 }
 
 func GreaterThan(y int) Compare {
