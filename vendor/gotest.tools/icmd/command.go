@@ -96,6 +96,8 @@ func (r *Result) match(exp Expected) error {
 	if !matchOutput(exp.Out, r.Stdout()) {
 		add("Expected stdout to contain %q", exp.Out)
 	}
+	fmt.Printf("toto: %s\n", r.Stderr())
+	fmt.Printf("yolo: %s\n", exp.Err)
 	if !matchOutput(exp.Err, r.Stderr()) {
 		add("Expected stderr to contain %q", exp.Err)
 	}

@@ -406,6 +406,7 @@ func (s *DockerDaemonSuite) TestDaemonEvents(c *testing.T) {
 	daemonID := ""
 	daemonName := ""
 	for _, line := range strings.Split(out, "\n") {
+		line = strings.TrimLeft(line, " ")
 		if strings.HasPrefix(line, "ID: ") {
 			daemonID = strings.TrimPrefix(line, "ID: ")
 		} else if strings.HasPrefix(line, "Name: ") {
@@ -474,6 +475,7 @@ func (s *DockerDaemonSuite) TestDaemonEventsWithFilters(c *testing.T) {
 	daemonID := ""
 	daemonName := ""
 	for _, line := range strings.Split(out, "\n") {
+		line = strings.TrimLeft(line, " ")
 		if strings.HasPrefix(line, "ID: ") {
 			daemonID = strings.TrimPrefix(line, "ID: ")
 		} else if strings.HasPrefix(line, "Name: ") {

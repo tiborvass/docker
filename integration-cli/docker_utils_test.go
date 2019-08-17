@@ -446,7 +446,10 @@ type reducer func(...interface{}) interface{}
 
 func pollCheck(t *testing.T, f interface{}, compare func(x interface{}) assert.BoolOrComparison) poll.Check {
 	return func(poll.LogT) poll.Result {
-		ff := f.(checkF)
+		ff, ok := f.(func(*testing.T) (interface{}, string))
+		if !ok {
+			panic(fmt.Sprintf("%T\n%v\n", f, f))
+		}
 		v, comment := ff(t)
 		if assert.Check(t, compare(v)) {
 			return poll.Success()
