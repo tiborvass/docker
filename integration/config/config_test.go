@@ -14,6 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/integration/internal/swarm"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/testutil/daemon"
@@ -151,8 +152,9 @@ func TestConfigsCreateAndDelete(t *testing.T) {
 	err = c.ConfigRemove(ctx, configID)
 	assert.NilError(t, err)
 
-	insp, _, err = c.ConfigInspectWithRaw(ctx, configID)
-	assert.Check(t, is.ErrorContains(err, "No such config"))
+	_, _, err = c.ConfigInspectWithRaw(ctx, configID)
+	assert.Check(t, errdefs.IsNotFound(err))
+	assert.Check(t, is.ErrorContains(err, configID))
 }
 
 func TestConfigsUpdate(t *testing.T) {
@@ -203,6 +205,7 @@ func TestConfigsUpdate(t *testing.T) {
 	// this test will produce an error in func UpdateConfig
 	insp.Spec.Data = []byte("TESTINGDATA2")
 	err = c.ConfigUpdate(ctx, configID, insp.Version, insp.Spec)
+	assert.Check(t, errdefs.IsInvalidParameter(err))
 	assert.Check(t, is.ErrorContains(err, "only updates to Labels are allowed"))
 }
 
