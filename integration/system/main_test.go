@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/tiborvass/docker/internal/test/environment"
+	"github.com/tiborvass/docker/testutil/environment"
 )
 
 var testEnv *environment.Execution

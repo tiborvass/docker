@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/tiborvass/docker/internal/test/environment"
 	"github.com/tiborvass/docker/pkg/reexec"
+	"github.com/tiborvass/docker/testutil/environment"
 )
 
 var (

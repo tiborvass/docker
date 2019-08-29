@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/network"
 	"github.com/tiborvass/docker/integration/internal/swarm"
-	"github.com/tiborvass/docker/internal/test/daemon"
+	"github.com/tiborvass/docker/testutil/daemon"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 	"gotest.tools/poll"

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tiborvass/docker/internal/test/daemon"
+	"github.com/tiborvass/docker/testutil/daemon"
 	"github.com/pkg/errors"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"

@@ -9,7 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/integration/internal/container"
-	req "github.com/tiborvass/docker/internal/test/request"
+	req "github.com/tiborvass/docker/testutil/request"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 	"gotest.tools/poll"

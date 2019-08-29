@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tiborvass/docker/internal/testutil"
+	"github.com/tiborvass/docker/testutil"
 	"github.com/pkg/errors"
 	"gotest.tools/icmd"
 )

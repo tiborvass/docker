@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	req "github.com/tiborvass/docker/internal/test/request"
+	req "github.com/tiborvass/docker/testutil/request"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

@@ -9,9 +9,9 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/requirement"
-	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
+	"github.com/tiborvass/docker/testutil/daemon"
+	"github.com/tiborvass/docker/testutil/fakecontext"
 	"gotest.tools/assert"
 	"gotest.tools/skip"
 )

@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/tiborvass/docker/internal/test/environment"
+	"github.com/tiborvass/docker/testutil/environment"
 )
 
 var (

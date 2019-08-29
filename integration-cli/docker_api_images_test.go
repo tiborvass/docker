@@ -14,8 +14,8 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
+	"github.com/tiborvass/docker/testutil/request"
 	"gotest.tools/assert"
 )
 

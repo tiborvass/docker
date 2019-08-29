@@ -12,10 +12,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/tiborvass/docker/internal/test/environment"
 	"github.com/tiborvass/docker/pkg/authorization"
 	"github.com/tiborvass/docker/pkg/plugins"
+	"github.com/tiborvass/docker/testutil/daemon"
+	"github.com/tiborvass/docker/testutil/environment"
 	"gotest.tools/skip"
 )
 

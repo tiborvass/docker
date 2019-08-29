@@ -14,10 +14,10 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/internal/test/fakecontext"
-	"github.com/tiborvass/docker/internal/test/fakegit"
-	"github.com/tiborvass/docker/internal/test/fakestorage"
-	"github.com/tiborvass/docker/internal/test/request"
+	"github.com/tiborvass/docker/testutil/fakecontext"
+	"github.com/tiborvass/docker/testutil/fakegit"
+	"github.com/tiborvass/docker/testutil/fakestorage"
+	"github.com/tiborvass/docker/testutil/request"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

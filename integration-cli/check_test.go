@@ -19,13 +19,13 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/integration-cli/environment"
-	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
-	ienv "github.com/tiborvass/docker/internal/test/environment"
-	"github.com/tiborvass/docker/internal/test/fakestorage"
-	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
-	"github.com/tiborvass/docker/internal/test/registry"
 	"github.com/tiborvass/docker/internal/test/suite"
 	"github.com/tiborvass/docker/pkg/reexec"
+	testdaemon "github.com/tiborvass/docker/testutil/daemon"
+	ienv "github.com/tiborvass/docker/testutil/environment"
+	"github.com/tiborvass/docker/testutil/fakestorage"
+	"github.com/tiborvass/docker/testutil/fixtures/plugin"
+	"github.com/tiborvass/docker/testutil/registry"
 	"gotest.tools/assert"
 )
 
