@@ -20,6 +20,7 @@ import (
 	"github.com/tiborvass/docker/oci/caps"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/mount"
+	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/rootless/specconv"
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
@@ -66,13 +67,14 @@ func WithLibnetwork(daemon *Daemon, c *container.Container) coci.SpecOpts {
 		for _, ns := range s.Linux.Namespaces {
 			if ns.Type == "network" && ns.Path == "" && !c.Config.NetworkDisabled {
 				target := filepath.Join("/proc", strconv.Itoa(os.Getpid()), "exe")
+				shortNetCtlrID := stringid.TruncateID(daemon.netController.ID())
 				s.Hooks.Prestart = append(s.Hooks.Prestart, specs.Hook{
 					Path: target,
 					Args: []string{
 						"libnetwork-setkey",
 						"-exec-root=" + daemon.configStore.GetExecRoot(),
 						c.ID,
-						daemon.netController.ID(),
+						shortNetCtlrID,
 					},
 				})
 			}
