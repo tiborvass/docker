@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/mount"

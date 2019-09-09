@@ -4,10 +4,10 @@ package main
 
 import (
 	"net/http"
+	"testing"
 
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

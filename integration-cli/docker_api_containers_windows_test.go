@@ -8,12 +8,12 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"strings"
+	"testing"
 
 	winio "github.com/Microsoft/go-winio"
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/mount"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

@@ -4,9 +4,9 @@ package main
 
 import (
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/go-check/check"
 	"golang.org/x/sys/unix"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"

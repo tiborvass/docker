@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

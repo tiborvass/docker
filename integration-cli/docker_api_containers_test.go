@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/tiborvass/docker/api/types"

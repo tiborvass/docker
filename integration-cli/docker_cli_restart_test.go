@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/tiborvass/docker/integration-cli/checker"

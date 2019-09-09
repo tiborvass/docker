@@ -13,9 +13,9 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"testing"
 	"time"
 
-	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/internal/test/fakecontext"

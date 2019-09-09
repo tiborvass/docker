@@ -7,11 +7,11 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/internal/test/request"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

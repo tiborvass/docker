@@ -10,13 +10,13 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 
