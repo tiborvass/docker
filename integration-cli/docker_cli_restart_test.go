@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

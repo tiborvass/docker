@@ -10,7 +10,6 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

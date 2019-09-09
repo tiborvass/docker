@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/integration-cli/cli"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

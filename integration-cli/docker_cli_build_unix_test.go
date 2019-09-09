@@ -20,7 +20,6 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/docker/go-units"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )

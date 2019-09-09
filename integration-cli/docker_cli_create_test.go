@@ -14,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/internal/test/fakecontext"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/docker/go-connections/nat"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

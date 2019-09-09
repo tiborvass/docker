@@ -25,7 +25,6 @@ import (
 	"github.com/tiborvass/docker/internal/testutil"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/go-check/check"
 	"github.com/moby/buildkit/frontend/dockerfile/command"
 	"github.com/opencontainers/go-digest"
 	"gotest.tools/assert"
