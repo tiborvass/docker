@@ -19,7 +19,6 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )

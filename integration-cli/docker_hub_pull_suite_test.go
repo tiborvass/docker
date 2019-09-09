@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -8,7 +9,6 @@ import (
 
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

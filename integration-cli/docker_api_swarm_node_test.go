@@ -3,13 +3,13 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

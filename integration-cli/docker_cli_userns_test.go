@@ -15,7 +15,6 @@ import (
 
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

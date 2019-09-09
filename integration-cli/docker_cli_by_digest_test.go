@@ -14,7 +14,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/go-check/check"
 	"github.com/opencontainers/go-digest"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"

@@ -11,7 +11,6 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
 )

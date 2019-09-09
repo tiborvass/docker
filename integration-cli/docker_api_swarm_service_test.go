@@ -17,7 +17,6 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/go-check/check"
 	"golang.org/x/sys/unix"
 	"gotest.tools/assert"
 	"gotest.tools/icmd"
