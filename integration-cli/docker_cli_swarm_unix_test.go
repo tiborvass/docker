@@ -5,11 +5,11 @@ package main
 import (
 	"encoding/json"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

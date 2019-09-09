@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/internal/testutil"
-	"github.com/go-check/check"
 	"github.com/pkg/errors"
 	"gotest.tools/icmd"
 )

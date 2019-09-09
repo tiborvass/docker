@@ -3,8 +3,10 @@
 package main
 
 import (
+	"testing"
+
 	"github.com/tiborvass/docker/integration-cli/checker"
-	"github.com/go-check/check"
+	"gotest.tools/assert"
 )
 
 func (s *DockerSuite) TestInfoSecurityOptions(c *testing.T) {

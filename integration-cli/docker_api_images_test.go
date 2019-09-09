@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
@@ -15,7 +16,6 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/internal/test/request"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 

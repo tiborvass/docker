@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"testing"
 
-	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/go-check/check"
 	"gotest.tools/assert"

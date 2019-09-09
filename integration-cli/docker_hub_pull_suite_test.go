@@ -4,18 +4,19 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"testing"
 
-	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/go-check/check"
+	"gotest.tools/assert"
 )
 
 func init() {
 	// FIXME. Temporarily turning this off for Windows as GH16039 was breaking
 	// Windows to Linux CI @icecrime
 	if runtime.GOOS != "windows" {
-	/*check.Suite(newDockerHubPullSuite())*/
+		/*check.Suite(newDockerHubPullSuite())*/
 	}
 }
 

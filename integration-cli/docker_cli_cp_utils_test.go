@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"testing"
 
 	"github.com/tiborvass/docker/pkg/archive"
-	"github.com/go-check/check"
 	"gotest.tools/assert"
 )
 
