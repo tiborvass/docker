@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/tiborvass/docker/internal/test/registry"
+	"github.com/tiborvass/docker/testutil/registry"
 	"gotest.tools/assert"
 )
 

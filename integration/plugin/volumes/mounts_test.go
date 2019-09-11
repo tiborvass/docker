@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
+	"github.com/tiborvass/docker/testutil/daemon"
+	"github.com/tiborvass/docker/testutil/fixtures/plugin"
 	"gotest.tools/assert"
 	"gotest.tools/skip"
 )

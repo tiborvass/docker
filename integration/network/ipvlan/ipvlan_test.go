@@ -15,7 +15,7 @@ import (
 	"github.com/tiborvass/docker/integration/internal/container"
 	net "github.com/tiborvass/docker/integration/internal/network"
 	n "github.com/tiborvass/docker/integration/network"
-	"github.com/tiborvass/docker/internal/test/daemon"
+	"github.com/tiborvass/docker/testutil/daemon"
 	"gotest.tools/assert"
 	"gotest.tools/skip"
 )

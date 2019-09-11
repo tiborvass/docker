@@ -16,7 +16,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/internal/test/request"
+	"github.com/tiborvass/docker/testutil/request"
 	"gotest.tools/assert"
 )
 

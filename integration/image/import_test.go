@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/internal/test/daemon"
-	"github.com/tiborvass/docker/internal/testutil"
+	"github.com/tiborvass/docker/testutil"
+	"github.com/tiborvass/docker/testutil/daemon"
 	"gotest.tools/assert"
 	"gotest.tools/skip"
 )

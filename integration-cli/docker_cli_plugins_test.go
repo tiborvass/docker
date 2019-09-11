@@ -15,7 +15,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
+	"github.com/tiborvass/docker/testutil/fixtures/plugin"
 	"gotest.tools/assert"
 )
 

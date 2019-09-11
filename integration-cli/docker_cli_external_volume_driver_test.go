@@ -16,8 +16,8 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	testdaemon "github.com/tiborvass/docker/internal/test/daemon"
 	"github.com/tiborvass/docker/pkg/stringid"
+	testdaemon "github.com/tiborvass/docker/testutil/daemon"
 	"github.com/tiborvass/docker/volume"
 	"gotest.tools/assert"
 )

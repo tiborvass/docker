@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/internal/test/fixtures/plugin"
 	"github.com/tiborvass/docker/pkg/locker"
+	"github.com/tiborvass/docker/testutil/fixtures/plugin"
 	"github.com/pkg/errors"
 )
 
