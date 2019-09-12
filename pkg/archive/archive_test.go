@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -1338,5 +1339,23 @@ func TestPigz(t *testing.T) {
 	} else {
 		t.Log("Tested whether Pigz is not used, as it not installed")
 		assert.Equal(t, reflect.TypeOf(contextReaderCloserWrapper.Reader), reflect.TypeOf(&gzip.Reader{}))
+	}
+}
+
+func TestCmdStreamDeadlock(t *testing.T) {
+	cmd := exec.CommandContext(context.Background(), "sh", "-c", "cat >/dev/null & sleep 10")
+	rc, err := cmdStream(cmd, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	done := make(chan struct{})
+	go func() {
+		rc.Close()
+		close(done)
+	}()
+	select {
+	case <-time.After(2 * time.Second):
+		t.Fatal("deadlock")
+	case <-done:
 	}
 }
