@@ -213,8 +213,7 @@ func TestExtensionXz(t *testing.T) {
 }
 
 func TestCmdStreamLargeStderr(t *testing.T) {
-	cmd := exec.Command("sh", "-c", "dd if=/dev/zero bs=1k count=1000 of=/dev/stderr; echo hello")
-	out, err := cmdStream(cmd, nil)
+	out, err := cmdStream(context.Background(), []string{"sh", "-c", "dd if=/dev/zero bs=1k count=1000 of=/dev/stderr; echo hello"}, nil)
 	if err != nil {
 		t.Fatalf("Failed to start command: %s", err)
 	}
@@ -238,12 +237,15 @@ func TestCmdStreamBad(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("Failing on Windows CI machines")
 	}
-	badCmd := exec.Command("sh", "-c", "echo hello; echo >&2 error couldn\\'t reverse the phase pulser; exit 1")
-	out, err := cmdStream(badCmd, nil)
+	out, err := cmdStream(context.Background(), []string{"sh", "-c", "echo hello; echo >&2 error couldn\\'t reverse the phase pulser; exit 1"}, nil)
 	if err != nil {
 		t.Fatalf("Failed to start command: %s", err)
 	}
-	if output, err := ioutil.ReadAll(out); err == nil {
+	output, err := ioutil.ReadAll(out)
+	if err != nil {
+		t.Fatalf("Failed to read command output: %s", err)
+	}
+	if err := out.Close(); err == nil {
 		t.Fatalf("Command should have failed")
 	} else if err.Error() != "exit status 1: error couldn't reverse the phase pulser\n" {
 		t.Fatalf("Wrong error value (%s)", err)
@@ -253,8 +255,7 @@ func TestCmdStreamBad(t *testing.T) {
 }
 
 func TestCmdStreamGood(t *testing.T) {
-	cmd := exec.Command("sh", "-c", "echo hello; exit 0")
-	out, err := cmdStream(cmd, nil)
+	out, err := cmdStream(context.Background(), []string{"sh", "-c", "echo hello; exit 0"}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1343,8 +1344,7 @@ func TestPigz(t *testing.T) {
 }
 
 func TestCmdStreamDeadlock(t *testing.T) {
-	cmd := exec.CommandContext(context.Background(), "sh", "-c", "cat >/dev/null & sleep 10")
-	rc, err := cmdStream(cmd, nil)
+	rc, err := cmdStream(context.Background(), []string{"sh", "-c", "cat >/dev/null & sleep 10"}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
