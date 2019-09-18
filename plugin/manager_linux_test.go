@@ -12,8 +12,8 @@ import (
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/plugin/v2"
-	"github.com/opencontainers/runtime-spec/specs-go"
+	v2 "github.com/tiborvass/docker/plugin/v2"
+	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
 	"gotest.tools/skip"
 )

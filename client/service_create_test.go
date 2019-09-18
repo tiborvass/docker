@@ -14,8 +14,8 @@ import (
 	registrytypes "github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/opencontainers/go-digest"
-	"github.com/opencontainers/image-spec/specs-go/v1"
+	digest "github.com/opencontainers/go-digest"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )

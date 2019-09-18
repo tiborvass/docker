@@ -14,11 +14,11 @@ import (
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/image"
-	"github.com/tiborvass/docker/image/v1"
+	v1 "github.com/tiborvass/docker/image/v1"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
 )
 

@@ -15,7 +15,7 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm/runtime"
 	"github.com/tiborvass/docker/pkg/pubsub"
 	"github.com/tiborvass/docker/plugin"
-	"github.com/tiborvass/docker/plugin/v2"
+	v2 "github.com/tiborvass/docker/plugin/v2"
 	"github.com/sirupsen/logrus"
 )
 

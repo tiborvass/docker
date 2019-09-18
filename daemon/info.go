@@ -21,7 +21,7 @@ import (
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/go-connections/sockets"
-	"github.com/docker/go-metrics"
+	metrics "github.com/docker/go-metrics"
 	"github.com/sirupsen/logrus"
 )
 
