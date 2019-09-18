@@ -15,7 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/mount"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )

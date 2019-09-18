@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )
@@ -22,8 +22,8 @@ import (
 var (
 	remoteRepoName  = "dockercli/busybox-by-dgst"
 	repoName        = fmt.Sprintf("%s/%s", privateRegistryURL, remoteRepoName)
-	pushDigestRegex = regexp.MustCompile("[\\S]+: digest: ([\\S]+) size: [0-9]+")
-	digestRegex     = regexp.MustCompile("Digest: ([\\S]+)")
+	pushDigestRegex = regexp.MustCompile(`[\S]+: digest: ([\S]+) size: [0-9]+`)
+	digestRegex     = regexp.MustCompile(`Digest: ([\S]+)`)
 )
 
 func setupImage(c *testing.T) (digest.Digest, error) {

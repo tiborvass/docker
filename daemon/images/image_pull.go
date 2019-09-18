@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/progress"
 	"github.com/tiborvass/docker/registry"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
 )
 

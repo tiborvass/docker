@@ -21,10 +21,10 @@ import (
 	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/pubsub"
 	"github.com/tiborvass/docker/pkg/system"
-	"github.com/tiborvass/docker/plugin/v2"
+	v2 "github.com/tiborvass/docker/plugin/v2"
 	"github.com/tiborvass/docker/registry"
-	"github.com/opencontainers/go-digest"
-	"github.com/opencontainers/runtime-spec/specs-go"
+	digest "github.com/opencontainers/go-digest"
+	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

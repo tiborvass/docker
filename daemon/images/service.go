@@ -15,7 +15,7 @@ import (
 	dockerreference "github.com/tiborvass/docker/reference"
 	"github.com/tiborvass/docker/registry"
 	"github.com/docker/libtrust"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

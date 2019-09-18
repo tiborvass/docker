@@ -36,7 +36,7 @@ import (
 	"github.com/tiborvass/docker/restartmanager"
 	"github.com/tiborvass/docker/volume"
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	agentexec "github.com/docker/swarmkit/agent/exec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

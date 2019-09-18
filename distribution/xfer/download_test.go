@@ -16,7 +16,7 @@ import (
 	"github.com/tiborvass/docker/image"
 	"github.com/tiborvass/docker/layer"
 	"github.com/tiborvass/docker/pkg/progress"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 )
 
 const maxDownloadConcurrency = 3
@@ -26,7 +26,6 @@ type mockLayer struct {
 	diffID    layer.DiffID
 	chainID   layer.ChainID
 	parent    layer.Layer
-	os        string
 }
 
 func (ml *mockLayer) TarStream() (io.ReadCloser, error) {

@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
 	"github.com/tiborvass/docker/pkg/urlutil"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 	"github.com/fluent/fluent-logger-golang/fluent"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

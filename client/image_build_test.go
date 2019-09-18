@@ -13,7 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/docker/go-units"
+	units "github.com/docker/go-units"
 )
 
 func TestImageBuildError(t *testing.T) {

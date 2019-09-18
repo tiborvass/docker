@@ -3,7 +3,7 @@ package plugin // import "github.com/tiborvass/docker/plugin"
 import (
 	"fmt"
 
-	"github.com/tiborvass/docker/plugin/v2"
+	v2 "github.com/tiborvass/docker/plugin/v2"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
 

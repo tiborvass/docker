@@ -8,8 +8,8 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/plugins"
-	"github.com/tiborvass/docker/plugin/v2"
-	"github.com/opencontainers/runtime-spec/specs-go"
+	v2 "github.com/tiborvass/docker/plugin/v2"
+	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

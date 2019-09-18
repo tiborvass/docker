@@ -12,7 +12,7 @@ import (
 	"github.com/containerd/containerd/containers"
 	libcontainerdtypes "github.com/tiborvass/docker/libcontainerd/types"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/opencontainers/runtime-spec/specs-go"
+	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 )
 
