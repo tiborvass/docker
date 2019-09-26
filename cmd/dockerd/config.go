@@ -3,8 +3,10 @@ package main
 import (
 	"runtime"
 
+	"github.com/tiborvass/docker/daemon"
 	"github.com/tiborvass/docker/daemon/config"
 	"github.com/tiborvass/docker/opts"
+	"github.com/tiborvass/docker/plugin/executor/containerd"
 	"github.com/tiborvass/docker/registry"
 	"github.com/spf13/pflag"
 )
@@ -85,7 +87,13 @@ func installCommonConfigFlags(conf *config.Config, flags *pflag.FlagSet) error {
 
 	conf.MaxConcurrentDownloads = &maxConcurrentDownloads
 	conf.MaxConcurrentUploads = &maxConcurrentUploads
-	return nil
+
+	flags.StringVar(&conf.ContainerdNamespace, "containerd-namespace", daemon.ContainersNamespace, "Containerd namespace to use")
+	if err := flags.MarkHidden("containerd-namespace"); err != nil {
+		return err
+	}
+	flags.StringVar(&conf.ContainerdPluginNamespace, "containerd-plugins-namespace", containerd.PluginNamespace, "Containerd namespace to use for plugins")
+	return flags.MarkHidden("containerd-plugins-namespace")
 }
 
 func installRegistryServiceFlags(options *registry.ServiceOptions, flags *pflag.FlagSet) {
