@@ -17,7 +17,6 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/client"
-	"github.com/tiborvass/docker/daemon/images"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -72,7 +71,6 @@ type Daemon struct {
 	init                       bool
 	dockerdBinary              string
 	log                        logT
-	imageService               *images.ImageService
 
 	// swarm related field
 	swarmListenAddr string
@@ -720,9 +718,4 @@ func cleanupRaftDir(t testing.TB, rootPath string) {
 			t.Logf("error removing %v: %v", dir, err)
 		}
 	}
-}
-
-// ImageService returns the Daemon's ImageService
-func (d *Daemon) ImageService() *images.ImageService {
-	return d.imageService
 }
