@@ -12,6 +12,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/network"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/pkg/errors"
 	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
@@ -23,7 +24,9 @@ func TestNetworkInspectError(t *testing.T) {
 	}
 
 	_, err := client.NetworkInspect(context.Background(), "nothing", types.NetworkInspectOptions{})
-	assert.Check(t, is.Error(err, "Error response from daemon: Server error"))
+	if !errdefs.IsSystem(err) {
+		t.Fatalf("expected a Server Error, got %[1]T: %[1]v", err)
+	}
 }
 
 func TestNetworkInspectNotFoundError(t *testing.T) {
