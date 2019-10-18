@@ -3,7 +3,6 @@ package daemon // import "github.com/tiborvass/docker/daemon"
 import (
 	"fmt"
 	"io"
-	"runtime"
 
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/errdefs"
@@ -20,7 +19,7 @@ func (daemon *Daemon) ContainerExport(name string, out io.Writer) error {
 		return err
 	}
 
-	if runtime.GOOS == "windows" && container.OS == "windows" {
+	if isWindows && container.OS == "windows" {
 		return fmt.Errorf("the daemon on this operating system does not support exporting Windows containers")
 	}
 
