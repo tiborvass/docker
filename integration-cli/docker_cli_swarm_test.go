@@ -13,6 +13,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -30,7 +31,6 @@ import (
 	"github.com/docker/swarmkit/ca/keyutils"
 	"github.com/vishvananda/netlink"
 	"gotest.tools/assert"
-	"gotest.tools/fs"
 	"gotest.tools/icmd"
 	"gotest.tools/poll"
 )
@@ -58,29 +58,11 @@ func (s *DockerSwarmSuite) TestSwarmUpdate(c *testing.T) {
 	assert.Equal(c, spec.CAConfig.NodeCertExpiry, 30*time.Hour)
 
 	// passing an external CA (this is without starting a root rotation) does not fail
-	cli.Docker(cli.Args("swarm", "update", "--external-ca", "protocol=cfssl,url=https://something.org",
-		"--external-ca", "protocol=cfssl,url=https://somethingelse.org,cacert=fixtures/https/ca.pem"),
+	cli.Docker(cli.Args("swarm", "update", "--external-ca", "protocol=cfssl,url=https://something.org"),
 		cli.Daemon(d)).Assert(c, icmd.Success)
 
-	expected, err := ioutil.ReadFile("fixtures/https/ca.pem")
-	assert.NilError(c, err)
-
 	spec = getSpec()
-	assert.Equal(c, len(spec.CAConfig.ExternalCAs), 2)
-	assert.Equal(c, spec.CAConfig.ExternalCAs[0].CACert, "")
-	assert.Equal(c, spec.CAConfig.ExternalCAs[1].CACert, string(expected))
-
-	// passing an invalid external CA fails
-	tempFile := fs.NewFile(c, "testfile", fs.WithContent("fakecert"))
-	defer tempFile.Remove()
-
-	result := cli.Docker(cli.Args("swarm", "update",
-		"--external-ca", fmt.Sprintf("protocol=cfssl,url=https://something.org,cacert=%s", tempFile.Path())),
-		cli.Daemon(d))
-	result.Assert(c, icmd.Expected{
-		ExitCode: 125,
-		Err:      "must be in PEM format",
-	})
+	assert.Equal(c, len(spec.CAConfig.ExternalCAs), 1)
 }
 
 func (s *DockerSwarmSuite) TestSwarmInit(c *testing.T) {
@@ -91,32 +73,15 @@ func (s *DockerSwarmSuite) TestSwarmInit(c *testing.T) {
 		return sw.Spec
 	}
 
-	// passing an invalid external CA fails
-	tempFile := fs.NewFile(c, "testfile", fs.WithContent("fakecert"))
-	defer tempFile.Remove()
-
-	result := cli.Docker(cli.Args("swarm", "init", "--cert-expiry", "30h", "--dispatcher-heartbeat", "11s",
-		"--external-ca", fmt.Sprintf("protocol=cfssl,url=https://somethingelse.org,cacert=%s", tempFile.Path())),
-		cli.Daemon(d))
-	result.Assert(c, icmd.Expected{
-		ExitCode: 125,
-		Err:      "must be in PEM format",
-	})
-
 	cli.Docker(cli.Args("swarm", "init", "--cert-expiry", "30h", "--dispatcher-heartbeat", "11s",
-		"--external-ca", "protocol=cfssl,url=https://something.org",
-		"--external-ca", "protocol=cfssl,url=https://somethingelse.org,cacert=fixtures/https/ca.pem"),
+		"--external-ca", "protocol=cfssl,url=https://something.org"),
 		cli.Daemon(d)).Assert(c, icmd.Success)
-
-	expected, err := ioutil.ReadFile("fixtures/https/ca.pem")
-	assert.NilError(c, err)
 
 	spec := getSpec()
 	assert.Equal(c, spec.CAConfig.NodeCertExpiry, 30*time.Hour)
 	assert.Equal(c, spec.Dispatcher.HeartbeatPeriod, 11*time.Second)
-	assert.Equal(c, len(spec.CAConfig.ExternalCAs), 2)
+	assert.Equal(c, len(spec.CAConfig.ExternalCAs), 1)
 	assert.Equal(c, spec.CAConfig.ExternalCAs[0].CACert, "")
-	assert.Equal(c, spec.CAConfig.ExternalCAs[1].CACert, string(expected))
 
 	assert.Assert(c, d.SwarmLeave(c, true) == nil)
 	cli.Docker(cli.Args("swarm", "init"), cli.Daemon(d)).Assert(c, icmd.Success)
@@ -1454,19 +1419,19 @@ func (s *DockerSwarmSuite) TestSwarmManagerAddress(c *testing.T) {
 	d3 := s.AddDaemon(c, true, false)
 
 	// Manager Addresses will always show Node 1's address
-	expectedOutput := fmt.Sprintf("Manager Addresses:\n  127.0.0.1:%d\n", d1.SwarmPort)
+	pattern := regexp.MustCompile(fmt.Sprintf("Manager Addresses:\n +127\\.0\\.0\\.1:%d\n", d1.SwarmPort))
 
 	out, err := d1.Cmd("info")
 	assert.NilError(c, err, out)
-	assert.Assert(c, strings.Contains(out, expectedOutput), out)
+	assert.Assert(c, pattern.MatchString(out), pattern, out)
 
 	out, err = d2.Cmd("info")
 	assert.NilError(c, err, out)
-	assert.Assert(c, strings.Contains(out, expectedOutput), out)
+	assert.Assert(c, pattern.MatchString(out), pattern, out)
 
 	out, err = d3.Cmd("info")
 	assert.NilError(c, err, out)
-	assert.Assert(c, strings.Contains(out, expectedOutput), out)
+	assert.Assert(c, pattern.MatchString(out), pattern, out)
 }
 
 func (s *DockerSwarmSuite) TestSwarmNetworkIPAMOptions(c *testing.T) {
