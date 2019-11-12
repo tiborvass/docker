@@ -2474,22 +2474,6 @@ func (s *DockerSuite) TestRunModeUTSHost(c *testing.T) {
 	assert.Assert(c, strings.Contains(out, runconfig.ErrConflictUTSHostname.Error()))
 }
 
-func (s *DockerSuite) TestRunTLSVerify(c *testing.T) {
-	// Remote daemons use TLS and this test is not applicable when TLS is required.
-	testRequires(c, testEnv.IsLocalDaemon)
-	if out, code, err := dockerCmdWithError("ps"); err != nil || code != 0 {
-		c.Fatalf("Should have worked: %v:\n%v", err, out)
-	}
-
-	// Regardless of whether we specify true or false we need to
-	// test to make sure tls is turned on if --tlsverify is specified at all
-	result := dockerCmdWithResult("--tlsverify=false", "ps")
-	result.Assert(c, icmd.Expected{ExitCode: 1, Err: " connect"})
-
-	result = dockerCmdWithResult("--tlsverify=true", "ps")
-	result.Assert(c, icmd.Expected{ExitCode: 1, Err: "cert"})
-}
-
 func (s *DockerSuite) TestRunPortFromDockerRangeInUse(c *testing.T) {
 	// TODO Windows. Once moved to libnetwork/CNM, this may be able to be
 	// re-instated.

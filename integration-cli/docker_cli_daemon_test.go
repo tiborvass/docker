@@ -1530,13 +1530,12 @@ func (s *DockerDaemonSuite) TestDaemonRestartCleanupNetns(c *testing.T) {
 func (s *DockerDaemonSuite) TestDaemonTLSVerifyIssue13964(c *testing.T) {
 	host := "tcp://localhost:4271"
 	s.d.Start(c, "-H", host)
-	icmd.RunCmd(icmd.Cmd{
+	r := icmd.RunCmd(icmd.Cmd{
 		Command: []string{dockerBinary, "-H", host, "info"},
 		Env:     []string{"DOCKER_TLS_VERIFY=1", "DOCKER_CERT_PATH=fixtures/https"},
-	}).Assert(c, icmd.Expected{
-		ExitCode: 1,
-		Err:      "error during connect",
 	})
+	r.Assert(c, icmd.Expected{ExitCode: 1})
+	assert.Assert(c, strings.Contains(r.Combined(), "error during connect"))
 }
 
 func setupV6(c *testing.T) {
