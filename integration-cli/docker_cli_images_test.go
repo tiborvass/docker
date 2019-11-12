@@ -59,11 +59,11 @@ func (s *DockerSuite) TestImagesOrderedByCreationDate(c *testing.T) {
                 MAINTAINER dockerio3`))
 	id3 := getIDByName(c, "order:test_b")
 
-	out, _ := dockerCmd(c, "images", "-q", "--no-trunc")
+	out, _ := dockerCmd(c, "images", "-q", "--no-trunc", "-f", "reference=order:*")
 	imgs := strings.Split(out, "\n")
-	assert.Equal(c, imgs[0], id3, fmt.Sprintf("First image must be %s, got %s", id3, imgs[0]))
-	assert.Equal(c, imgs[1], id2, fmt.Sprintf("First image must be %s, got %s", id2, imgs[1]))
-	assert.Equal(c, imgs[2], id1, fmt.Sprintf("First image must be %s, got %s", id1, imgs[2]))
+	assert.Equal(c, imgs[0], id3)
+	assert.Equal(c, imgs[1], id2)
+	assert.Equal(c, imgs[2], id1)
 }
 
 func (s *DockerSuite) TestImagesErrorWithInvalidFilterNameTest(c *testing.T) {

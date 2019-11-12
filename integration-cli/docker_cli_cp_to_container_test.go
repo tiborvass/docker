@@ -134,8 +134,7 @@ func (s *DockerSuite) TestCpToCaseB(c *testing.T) {
 	dstDir := containerCpPathTrailingSep(containerID, "testDir")
 
 	err := runDockerCp(c, srcPath, dstDir)
-	assert.ErrorContains(c, err, "")
-	assert.Assert(c, isCpDirNotExist(err), "expected DirNotExists error, but got %T: %s", err, err)
+	assert.ErrorContains(c, err, "directory")
 }
 
 // C. SRC specifies a file and DST exists as a file. This should overwrite

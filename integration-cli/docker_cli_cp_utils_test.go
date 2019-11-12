@@ -224,10 +224,6 @@ func getTestDir(c *testing.T, label string) (tmpDir string) {
 	return
 }
 
-func isCpDirNotExist(err error) bool {
-	return strings.Contains(err.Error(), archive.ErrDirNotExists.Error())
-}
-
 func isCpCannotCopyDir(err error) bool {
 	return strings.Contains(err.Error(), archive.ErrCannotCopyDir.Error())
 }

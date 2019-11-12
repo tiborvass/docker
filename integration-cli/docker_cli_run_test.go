@@ -2484,7 +2484,7 @@ func (s *DockerSuite) TestRunTLSVerify(c *testing.T) {
 	// Regardless of whether we specify true or false we need to
 	// test to make sure tls is turned on if --tlsverify is specified at all
 	result := dockerCmdWithResult("--tlsverify=false", "ps")
-	result.Assert(c, icmd.Expected{ExitCode: 1, Err: "error during connect"})
+	result.Assert(c, icmd.Expected{ExitCode: 1, Err: " connect"})
 
 	result = dockerCmdWithResult("--tlsverify=true", "ps")
 	result.Assert(c, icmd.Expected{ExitCode: 1, Err: "cert"})
