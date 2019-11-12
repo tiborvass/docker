@@ -10,6 +10,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/integration/internal/container"
+	"github.com/docker/docker/runconfig"
 	"github.com/docker/docker/testutil/daemon"
 	"github.com/docker/docker/testutil/request"
 	"gotest.tools/assert"
@@ -86,6 +87,58 @@ func TestNetworkInvalidJSON(t *testing.T) {
 			buf, err = request.ReadBody(body)
 			assert.NilError(t, err)
 			assert.Check(t, is.Contains(string(buf), "got EOF while reading request body"))
+		})
+	}
+}
+
+func TestRunConflictNetwork(t *testing.T) {
+	defer setupTest(t)()
+
+	d := daemon.New(t)
+	d.Start(t, "-b", "none")
+	defer d.Stop(t)
+
+	c := d.NewClientT(t)
+	ctx := context.Background()
+
+	type opt = func(*container.TestContainerConfig)
+
+	testcases := []struct{
+		name string
+		errmsg string
+		opts []opt
+	} {
+		{
+			"ContainerAndLinks",
+			runconfig.ErrConflictContainerNetworkAndLinks.Error(),
+			[]opt{
+				container.WithNetworkMode("container:other"),
+				container.WithLinks("zip:zap"),
+			},
+		},
+		{
+			"HostAndLinks",
+			runconfig.ErrConflictHostNetworkAndLinks.Error(),
+			[]opt{
+				container.WithNetworkMode("host"),
+				container.WithLinks("zip:zap"),
+			},
+		},
+		{
+			"HostAndMac",
+			runconfig.ErrConflictContainerNetworkAndMac.Error(),
+			[]opt{
+				container.WithNetworkMode("host"),
+				func(c *container.TestContainerConfig) {
+					c.Config.MacAddress = "92:d0:c6:0a:29:33"
+				},
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			container.CreateExpectingErr(ctx, t, c, tc.errmsg, tc.opts...)
 		})
 	}
 }

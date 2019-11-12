@@ -47,27 +47,6 @@ func (s *DockerSuite) TestNetHostname(c *testing.T) {
 	assert.Assert(c, strings.Contains(strings.ToLower(out), "not found"))
 }
 
-func (s *DockerSuite) TestConflictContainerNetworkAndLinks(c *testing.T) {
-	testRequires(c, DaemonIsLinux)
-
-	out, _ := dockerCmdWithFail(c, "run", "--net=container:other", "--link=zip:zap", "busybox", "ps")
-	assert.Assert(c, strings.Contains(out, runconfig.ErrConflictContainerNetworkAndLinks.Error()))
-}
-
-func (s *DockerSuite) TestConflictContainerNetworkHostAndLinks(c *testing.T) {
-	testRequires(c, DaemonIsLinux, NotUserNamespace)
-
-	out, _ := dockerCmdWithFail(c, "run", "--net=host", "--link=zip:zap", "busybox", "ps")
-	assert.Assert(c, strings.Contains(out, runconfig.ErrConflictHostNetworkAndLinks.Error()))
-}
-
-func (s *DockerSuite) TestConflictNetworkModeNetHostAndOptions(c *testing.T) {
-	testRequires(c, DaemonIsLinux, NotUserNamespace)
-
-	out, _ := dockerCmdWithFail(c, "run", "--net=host", "--mac-address=92:d0:c6:0a:29:33", "busybox", "ps")
-	assert.Assert(c, strings.Contains(out, runconfig.ErrConflictContainerNetworkAndMac.Error()))
-}
-
 func (s *DockerSuite) TestConflictNetworkModeAndOptions(c *testing.T) {
 	testRequires(c, DaemonIsLinux)
 
