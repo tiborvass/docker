@@ -1,4 +1,4 @@
-// +build linux freebsd openbsd darwin
+// +build linux freebsd openbsd darwin solaris illumos
 
 package client // import "github.com/tiborvass/docker/client"
 
