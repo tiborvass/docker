@@ -3,7 +3,7 @@ package operatingsystem // import "github.com/tiborvass/docker/pkg/parsers/opera
 import (
 	"fmt"
 
-	"github.com/tiborvass/docker/pkg/system"
+	"github.com/Microsoft/hcsshim/osversion"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -52,7 +52,7 @@ func withCurrentVersionRegistryKey(f func(registry.Key) (string, error)) (string
 
 // GetOperatingSystemVersion gets the version of the current operating system, as a string.
 func GetOperatingSystemVersion() (string, error) {
-	version := system.GetOSVersion()
+	version := osversion.Get()
 	return fmt.Sprintf("%d.%d.%d", version.MajorVersion, version.MinorVersion, version.Build), nil
 }
 
