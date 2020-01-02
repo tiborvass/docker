@@ -13,6 +13,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
+	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/urlutil"
 	units "github.com/docker/go-units"
 	"github.com/fluent/fluent-logger-golang/fluent"
@@ -71,17 +72,17 @@ func init() {
 func New(info logger.Info) (logger.Logger, error) {
 	loc, err := parseAddress(info.Config[addressKey])
 	if err != nil {
-		return nil, err
+		return nil, errdefs.InvalidParameter(err)
 	}
 
 	tag, err := loggerutils.ParseLogTag(info, loggerutils.DefaultTemplate)
 	if err != nil {
-		return nil, err
+		return nil, errdefs.InvalidParameter(err)
 	}
 
 	extra, err := info.ExtraAttributes(nil)
 	if err != nil {
-		return nil, err
+		return nil, errdefs.InvalidParameter(err)
 	}
 
 	bufferLimit := defaultBufferLimit
