@@ -14,11 +14,10 @@ import (
 	"time"
 
 	"github.com/docker/distribution/registry/client/transport"
-	"github.com/docker/go-connections/tlsconfig"
-	"github.com/sirupsen/logrus"
-
 	"github.com/tiborvass/docker/pkg/homedir"
 	"github.com/tiborvass/docker/rootless"
+	"github.com/docker/go-connections/tlsconfig"
+	"github.com/sirupsen/logrus"
 )
 
 var (
