@@ -10,7 +10,7 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/pkg/errors"
-	"gotest.tools/skip"
+	"gotest.tools/v3/skip"
 )
 
 const (

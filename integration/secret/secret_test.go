@@ -13,9 +13,9 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/swarm"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/skip"
 )
 
 func TestSecretInspect(t *testing.T) {

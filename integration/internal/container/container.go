@@ -9,7 +9,7 @@ import (
 	"github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 // TestContainerConfig holds container configuration struct that

@@ -17,10 +17,10 @@ import (
 	"github.com/tiborvass/docker/integration/internal/network"
 	"github.com/tiborvass/docker/integration/internal/swarm"
 	"github.com/tiborvass/docker/testutil/daemon"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
-	"gotest.tools/poll"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/poll"
+	"gotest.tools/v3/skip"
 )
 
 func TestServiceCreateInit(t *testing.T) {

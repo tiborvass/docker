@@ -11,8 +11,8 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/pkg/parsers/kernel"
-	"gotest.tools/assert/cmp"
-	"gotest.tools/icmd"
+	"gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/icmd"
 )
 
 // CreateMasterDummy creates a dummy network interface

@@ -10,8 +10,8 @@ import (
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/integration-cli/daemon"
-	"gotest.tools/assert"
-	"gotest.tools/poll"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/poll"
 )
 
 func (s *DockerSwarmSuite) TestAPISwarmListNodes(c *testing.T) {

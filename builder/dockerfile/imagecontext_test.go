@@ -9,7 +9,7 @@ import (
 	"github.com/tiborvass/docker/builder"
 	"github.com/tiborvass/docker/image"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func getMockImageSource(getImageImage builder.Image, getImageLayer builder.ROLayer, getImageError error) *imageSources {

@@ -15,8 +15,8 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
-	"gotest.tools/assert"
-	"gotest.tools/icmd"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/icmd"
 )
 
 func (s *DockerSuite) TestVolumeCLICreate(c *testing.T) {

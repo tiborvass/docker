@@ -16,7 +16,7 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/daemon"
 	"github.com/tiborvass/docker/testutil/fixtures/plugin"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 var (

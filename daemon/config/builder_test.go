@@ -5,8 +5,8 @@ import (
 
 	"github.com/tiborvass/docker/api/types/filters"
 	"github.com/google/go-cmp/cmp"
-	"gotest.tools/assert"
-	"gotest.tools/fs"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/fs"
 )
 
 func TestBuilderGC(t *testing.T) {

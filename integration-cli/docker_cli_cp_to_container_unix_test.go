@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/pkg/system"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func (s *DockerSuite) TestCpToContainerWithPermissions(c *testing.T) {

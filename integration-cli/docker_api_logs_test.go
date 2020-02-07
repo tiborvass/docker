@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/pkg/stdcopy"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func (s *DockerSuite) TestLogsAPIWithStdout(c *testing.T) {

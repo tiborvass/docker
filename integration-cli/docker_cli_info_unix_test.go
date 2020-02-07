@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/client"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func (s *DockerSuite) TestInfoSecurityOptions(c *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"github.com/tiborvass/docker/api/types/filters"
 	swarmtypes "github.com/tiborvass/docker/api/types/swarm"
 	"github.com/tiborvass/docker/client"
-	"gotest.tools/poll"
+	"gotest.tools/v3/poll"
 )
 
 // NoTasksForService verifies that there are no more tasks for the given service

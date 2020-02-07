@@ -17,8 +17,8 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration-cli/checker"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
-	"gotest.tools/poll"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/poll"
 )
 
 // Regression test for #9414

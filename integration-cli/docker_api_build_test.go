@@ -18,8 +18,8 @@ import (
 	"github.com/tiborvass/docker/testutil/fakegit"
 	"github.com/tiborvass/docker/testutil/fakestorage"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func (s *DockerSuite) TestBuildAPIDockerFileRemote(c *testing.T) {

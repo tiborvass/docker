@@ -17,7 +17,7 @@ import (
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 var expectedNetworkInterfaceStats = strings.Split("rx_bytes rx_dropped rx_errors rx_packets tx_bytes tx_dropped tx_errors tx_packets", " ")

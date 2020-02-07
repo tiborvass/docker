@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/testutil/registry"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 // unescapeBackslashSemicolonParens unescapes \;()

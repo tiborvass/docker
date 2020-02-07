@@ -12,8 +12,8 @@ import (
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/testutil/daemon"
 	"github.com/tiborvass/docker/testutil/fakecontext"
-	"gotest.tools/assert"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/skip"
 )
 
 // Finds the output of `readlink /proc/<pid>/ns/cgroup` in build output

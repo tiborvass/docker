@@ -7,7 +7,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/filters"
 	dclient "github.com/tiborvass/docker/client"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 var frozenImages = []string{"busybox:latest", "busybox:glibc", "hello-world:frozen", "debian:jessie"}

@@ -15,7 +15,7 @@ import (
 	"github.com/tiborvass/docker/pkg/plugins/transport"
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/pkg/errors"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 const (

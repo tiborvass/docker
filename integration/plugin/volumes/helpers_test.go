@@ -12,7 +12,7 @@ import (
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/testutil/fixtures/plugin"
 	"github.com/pkg/errors"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 var pluginBuildLock = locker.New()
