@@ -11,8 +11,8 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/testutil"
 	"github.com/tiborvass/docker/testutil/daemon"
-	"gotest.tools/assert"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/skip"
 )
 
 // Ensure we don't regress on CVE-2017-14992.

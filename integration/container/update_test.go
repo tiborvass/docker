@@ -7,9 +7,9 @@ import (
 
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
-	"gotest.tools/poll"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/poll"
 )
 
 func TestUpdateRestartPolicy(t *testing.T) {

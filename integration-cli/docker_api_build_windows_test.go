@@ -8,8 +8,8 @@ import (
 
 	"github.com/tiborvass/docker/testutil/fakecontext"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func (s *DockerSuite) TestBuildWithRecycleBin(c *testing.T) {

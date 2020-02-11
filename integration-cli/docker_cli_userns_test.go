@@ -15,7 +15,7 @@ import (
 
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/pkg/system"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 // user namespaces test: run daemon with remapped root setting

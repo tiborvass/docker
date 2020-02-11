@@ -11,8 +11,8 @@ import (
 
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
-	"gotest.tools/assert"
-	"gotest.tools/icmd"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/icmd"
 )
 
 // This used to work, it test a log of PageSize-1 (gh#4851)

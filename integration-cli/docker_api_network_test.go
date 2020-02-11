@@ -14,7 +14,7 @@ import (
 	"github.com/tiborvass/docker/api/types/network"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func (s *DockerSuite) TestAPINetworkGetDefaults(c *testing.T) {

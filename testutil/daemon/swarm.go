@@ -7,7 +7,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types/swarm"
 	"github.com/pkg/errors"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 const (

@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/pkg/archive"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 type fileType uint32

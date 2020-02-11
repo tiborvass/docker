@@ -10,7 +10,7 @@ import (
 	volumedrivers "github.com/tiborvass/docker/volume/drivers"
 	"github.com/tiborvass/docker/volume/service/opts"
 	volumetestutils "github.com/tiborvass/docker/volume/testutils"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestRestore(t *testing.T) {

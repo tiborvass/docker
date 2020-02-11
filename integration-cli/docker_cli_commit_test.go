@@ -6,7 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/integration-cli/cli"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func (s *DockerSuite) TestCommitAfterContainerIsDone(c *testing.T) {

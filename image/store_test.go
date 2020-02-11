@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/tiborvass/docker/layer"
-	"gotest.tools/assert"
-	"gotest.tools/assert/cmp"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/assert/cmp"
 )
 
 func TestRestore(t *testing.T) {

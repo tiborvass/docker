@@ -9,9 +9,9 @@ import (
 	containertypes "github.com/tiborvass/docker/api/types/container"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/container"
-	"gotest.tools/assert"
-	"gotest.tools/poll"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/poll"
+	"gotest.tools/v3/skip"
 )
 
 // TestHealthCheckWorkdir verifies that health-checks inherit the containers'

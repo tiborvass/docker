@@ -8,8 +8,8 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/integration/internal/container"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"gotest.tools/assert"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/skip"
 )
 
 // Regression test for #35370

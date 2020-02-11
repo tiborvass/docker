@@ -5,7 +5,7 @@ package daemon // import "github.com/tiborvass/docker/daemon"
 import (
 	"testing"
 
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestContainerTopValidatePSArgs(t *testing.T) {

@@ -10,7 +10,7 @@ import (
 
 	"github.com/tiborvass/docker/testutil"
 	"github.com/pkg/errors"
-	"gotest.tools/icmd"
+	"gotest.tools/v3/icmd"
 )
 
 func getPrefixAndSlashFromDaemonPlatform() (prefix, slash string) {

@@ -12,7 +12,7 @@ import (
 	"github.com/tiborvass/docker/api"
 	"github.com/tiborvass/docker/api/types/versions"
 	"github.com/tiborvass/docker/testutil/request"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func (s *DockerSuite) TestAPIOptionsRoute(c *testing.T) {

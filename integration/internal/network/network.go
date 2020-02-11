@@ -6,7 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func createNetwork(ctx context.Context, client client.APIClient, name string, ops ...func(*types.NetworkCreate)) (string, error) {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/api/types/swarm"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 // ConfigConstructor defines a swarm config constructor

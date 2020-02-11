@@ -8,9 +8,9 @@ import (
 
 	"github.com/tiborvass/docker/api/types/registry"
 	"github.com/tiborvass/docker/testutil/daemon"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/skip"
 )
 
 func TestInfoAPI(t *testing.T) {

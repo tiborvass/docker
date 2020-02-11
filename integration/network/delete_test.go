@@ -8,9 +8,9 @@ import (
 	"github.com/tiborvass/docker/api/types/versions"
 	dclient "github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/integration/internal/network"
-	"gotest.tools/assert"
-	is "gotest.tools/assert/cmp"
-	"gotest.tools/skip"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
+	"gotest.tools/v3/skip"
 )
 
 func containsNetwork(nws []types.NetworkResource, networkID string) bool {

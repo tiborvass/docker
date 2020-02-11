@@ -16,7 +16,7 @@ import (
 	"github.com/tiborvass/docker/pkg/archive"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/system"
-	"gotest.tools/skip"
+	"gotest.tools/v3/skip"
 )
 
 func init() {

@@ -12,7 +12,7 @@ import (
 
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/pkg/tailfile"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func TestTailFiles(t *testing.T) {
