@@ -23,6 +23,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/jsonfilelog"
 	"github.com/tiborvass/docker/daemon/logger/local"
+	"github.com/tiborvass/docker/daemon/logger/loggerutils/cache"
 	"github.com/tiborvass/docker/daemon/network"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/image"
@@ -104,8 +105,13 @@ type Container struct {
 	NoNewPrivileges bool
 
 	// Fields here are specific to Windows
-	NetworkSharedContainerID string   `json:"-"`
-	SharedEndpointList       []string `json:"-"`
+	NetworkSharedContainerID string            `json:"-"`
+	SharedEndpointList       []string          `json:"-"`
+	LocalLogCacheMeta        localLogCacheMeta `json:",omitempty"`
+}
+
+type localLogCacheMeta struct {
+	HaveNotifyEnabled bool
 }
 
 // NewBaseContainer creates a new container with its
@@ -414,6 +420,25 @@ func (container *Container) StartLogger() (logger.Logger, error) {
 			}
 		}
 		l = logger.NewRingLogger(l, info, bufferSize)
+	}
+
+	if _, ok := l.(logger.LogReader); !ok {
+		if cache.ShouldUseCache(cfg.Config) {
+			logPath, err := container.GetRootResourcePath("container-cached.log")
+			if err != nil {
+				return nil, err
+			}
+
+			if !container.LocalLogCacheMeta.HaveNotifyEnabled {
+				logrus.WithField("container", container.ID).WithField("driver", container.HostConfig.LogConfig.Type).Info("Configured log driver does not support reads, enabling local file cache for container logs")
+				container.LocalLogCacheMeta.HaveNotifyEnabled = true
+			}
+			info.LogPath = logPath
+			l, err = cache.WithLocalCache(l, info)
+			if err != nil {
+				return nil, errors.Wrap(err, "error setting up local container log cache")
+			}
+		}
 	}
 	return l, nil
 }
