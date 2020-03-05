@@ -9,7 +9,7 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/coreos/go-systemd/journal"
+	"github.com/coreos/go-systemd/v22/journal"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/daemon/logger/loggerutils"
 	"github.com/sirupsen/logrus"

@@ -109,7 +109,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/coreos/go-systemd/journal"
+	"github.com/coreos/go-systemd/v22/journal"
 	"github.com/tiborvass/docker/api/types/backend"
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/sirupsen/logrus"
