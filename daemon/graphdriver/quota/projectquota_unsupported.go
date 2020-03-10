@@ -1,4 +1,4 @@
-// +build linux,exclude_disk_quota
+// +build linux,exclude_disk_quota linux,!cgo
 
 package quota // import "github.com/tiborvass/docker/daemon/graphdriver/quota"
 
