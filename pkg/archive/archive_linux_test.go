@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/reexec"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/moby/sys/mount"
 	rsystem "github.com/opencontainers/runc/libcontainer/system"
 	"github.com/pkg/errors"
 	"golang.org/x/sys/unix"
