@@ -12,8 +12,8 @@ import (
 	mounttypes "github.com/tiborvass/docker/api/types/mount"
 	"github.com/tiborvass/docker/container"
 	"github.com/tiborvass/docker/pkg/fileutils"
-	"github.com/tiborvass/docker/pkg/mount"
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
+	"github.com/moby/sys/mount"
 )
 
 // setupMounts iterates through each of the mount points for a container and

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tiborvass/docker/pkg/mount"
+	"github.com/moby/sys/mount"
 	"gotest.tools/v3/skip"
 )
 

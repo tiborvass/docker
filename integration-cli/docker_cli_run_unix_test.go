@@ -23,9 +23,9 @@ import (
 	"github.com/tiborvass/docker/integration-cli/cli"
 	"github.com/tiborvass/docker/integration-cli/cli/build"
 	"github.com/tiborvass/docker/pkg/homedir"
-	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/sysinfo"
+	"github.com/moby/sys/mount"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/icmd"
 )

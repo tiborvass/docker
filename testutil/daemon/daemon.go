@@ -20,11 +20,11 @@ import (
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/opts"
 	"github.com/tiborvass/docker/pkg/ioutils"
-	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/testutil/request"
 	"github.com/docker/go-connections/sockets"
 	"github.com/docker/go-connections/tlsconfig"
+	"github.com/moby/sys/mount"
 	"github.com/pkg/errors"
 	"gotest.tools/v3/assert"
 )

@@ -1,6 +1,6 @@
 // +build !windows
 
-package mount // import "github.com/tiborvass/docker/pkg/mount"
+package mount
 
 import "golang.org/x/sys/unix"
 

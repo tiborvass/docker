@@ -20,10 +20,11 @@ import (
 	"github.com/tiborvass/docker/oci"
 	"github.com/tiborvass/docker/oci/caps"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/pkg/mount"
 	"github.com/tiborvass/docker/pkg/stringid"
 	"github.com/tiborvass/docker/rootless/specconv"
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
+	"github.com/moby/sys/mount"
+	"github.com/moby/sys/mountinfo"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
 	"github.com/opencontainers/runc/libcontainer/cgroups"
 	"github.com/opencontainers/runc/libcontainer/devices"
@@ -368,7 +369,7 @@ func getSourceMount(source string) (string, string, error) {
 		return "", "", err
 	}
 
-	mi, err := mount.GetMounts(mount.ParentsFilter(sourcePath))
+	mi, err := mountinfo.GetMounts(mountinfo.ParentsFilter(sourcePath))
 	if err != nil {
 		return "", "", err
 	}

@@ -1,4 +1,4 @@
-package mount // import "github.com/tiborvass/docker/pkg/mount"
+package mount
 
 /*
 #include <errno.h>
