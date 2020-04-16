@@ -11,7 +11,7 @@ import (
 	"github.com/tiborvass/docker/daemon/logger"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/stdcopy"
-	"github.com/tiborvass/docker/pkg/term"
+	"github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

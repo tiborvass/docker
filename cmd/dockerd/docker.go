@@ -9,9 +9,9 @@ import (
 	"github.com/tiborvass/docker/dockerversion"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
 	"github.com/tiborvass/docker/pkg/reexec"
-	"github.com/tiborvass/docker/pkg/term"
 	"github.com/tiborvass/docker/rootless"
 	"github.com/moby/buildkit/util/apicaps"
+	"github.com/moby/term"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

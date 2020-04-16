@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/tiborvass/docker/pkg/pools"
-	"github.com/tiborvass/docker/pkg/term"
+	"github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
