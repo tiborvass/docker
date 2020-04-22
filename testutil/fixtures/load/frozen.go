@@ -13,7 +13,7 @@ import (
 	"github.com/tiborvass/docker/api/types"
 	"github.com/tiborvass/docker/client"
 	"github.com/tiborvass/docker/pkg/jsonmessage"
-	"github.com/tiborvass/docker/pkg/term"
+	"github.com/moby/term"
 	"github.com/pkg/errors"
 )
 

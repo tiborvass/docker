@@ -3,7 +3,7 @@ package cli // import "github.com/tiborvass/docker/cli"
 import (
 	"fmt"
 
-	"github.com/tiborvass/docker/pkg/term"
+	"github.com/moby/term"
 	"github.com/spf13/cobra"
 )
 

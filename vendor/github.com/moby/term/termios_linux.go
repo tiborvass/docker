@@ -1,4 +1,4 @@
-package term // import "github.com/tiborvass/docker/pkg/term"
+package term
 
 import (
 	"golang.org/x/sys/unix"
