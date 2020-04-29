@@ -42,6 +42,7 @@ import (
 	"github.com/tiborvass/docker/errdefs"
 	bkconfig "github.com/moby/buildkit/cmd/buildkitd/config"
 	"github.com/moby/buildkit/util/resolver"
+	rsystem "github.com/opencontainers/runc/libcontainer/system"
 	"github.com/sirupsen/logrus"
 
 	// register graph drivers
@@ -56,7 +57,6 @@ import (
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/plugingetter"
-	"github.com/tiborvass/docker/pkg/sysinfo"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
 	"github.com/tiborvass/docker/plugin"
@@ -1026,10 +1026,10 @@ func NewDaemon(ctx context.Context, config *config.Config, pluginStore *plugin.S
 		return nil, err
 	}
 
-	sysInfo := sysinfo.New(false)
+	sysInfo := d.RawSysInfo(false)
 	// Check if Devices cgroup is mounted, it is hard requirement for container security,
 	// on Linux.
-	if runtime.GOOS == "linux" && !sysInfo.CgroupDevicesEnabled {
+	if runtime.GOOS == "linux" && !sysInfo.CgroupDevicesEnabled && !rsystem.RunningInUserNS() {
 		return nil, errors.New("Devices cgroup isn't mounted")
 	}
 
