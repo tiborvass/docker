@@ -82,14 +82,14 @@ func getSupportedNlFamilies() []int {
 		fams = append(fams, syscall.NETLINK_XFRM)
 	}
 	// NETLINK_NETFILTER test
-	if err := loadNfConntrackModules(); err != nil {
-		if checkNfSocket() != nil {
-			logrus.Warnf("Could not load necessary modules for Conntrack: %v", err)
-		} else {
-			fams = append(fams, syscall.NETLINK_NETFILTER)
-		}
-	} else {
+	errmod := loadNfConntrackModules()
+	errsock := checkNfSocket()
+	if errsock == nil {
 		fams = append(fams, syscall.NETLINK_NETFILTER)
+	} else if errmod != nil {
+		logrus.Warnf("Could not load necessary modules for Conntrack: %v", errmod)
+	} else {
+		logrus.Warnf("Cannot use NETLINK_NETFILTER: %v", errsock)
 	}
 
 	return fams
