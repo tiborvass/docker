@@ -37,6 +37,7 @@ hash_files() {
 	done
 }
 
+build_binary() {
 (
 export GOGC=${DOCKER_BUILD_GOGC:-1000}
 
@@ -96,3 +97,6 @@ echo "Created binary: $DEST/$BINARY_FULLNAME"
 ln -sf "$BINARY_FULLNAME" "$DEST/$BINARY_SHORT_NAME$BINARY_EXTENSION"
 
 hash_files "$DEST/$BINARY_FULLNAME"
+}
+
+#build_binary
