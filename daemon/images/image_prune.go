@@ -3,11 +3,13 @@ package images // import "github.com/tiborvass/docker/daemon/images"
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"sync/atomic"
 	"time"
 
 	"github.com/docker/distribution/reference"
 	"github.com/tiborvass/docker/api/types"
+	"github.com/tiborvass/docker/api/types/events"
 	"github.com/tiborvass/docker/api/types/filters"
 	timetypes "github.com/tiborvass/docker/api/types/time"
 	"github.com/tiborvass/docker/errdefs"
@@ -159,7 +161,11 @@ deleteImagesLoop:
 	if canceled {
 		logrus.Debugf("ImagesPrune operation cancelled: %#v", *rep)
 	}
-
+	i.eventsService.Log("prune", events.ImageEventType, events.Actor{
+		Attributes: map[string]string{
+			"reclaimed": strconv.FormatUint(rep.SpaceReclaimed, 10),
+		},
+	})
 	return rep, nil
 }
 
