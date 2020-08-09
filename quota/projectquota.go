@@ -9,7 +9,7 @@
 //       for both xfs/ext4 for kernel version >= v4.5
 //
 
-package quota // import "github.com/tiborvass/docker/daemon/graphdriver/quota"
+package quota // import "github.com/tiborvass/docker/quota"
 
 /*
 #include <stdlib.h>

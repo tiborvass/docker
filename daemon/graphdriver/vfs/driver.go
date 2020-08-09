@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 
 	"github.com/tiborvass/docker/daemon/graphdriver"
-	"github.com/tiborvass/docker/daemon/graphdriver/quota"
 	"github.com/tiborvass/docker/errdefs"
 	"github.com/tiborvass/docker/pkg/containerfs"
 	"github.com/tiborvass/docker/pkg/idtools"
 	"github.com/tiborvass/docker/pkg/parsers"
 	"github.com/tiborvass/docker/pkg/system"
+	"github.com/tiborvass/docker/quota"
 	units "github.com/docker/go-units"
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/pkg/errors"
