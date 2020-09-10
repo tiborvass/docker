@@ -8,10 +8,10 @@ import (
 	"sync"
 
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/tiborvass/docker/pkg/locker"
 	getter "github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/tiborvass/docker/volume"
+	"github.com/moby/locker"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

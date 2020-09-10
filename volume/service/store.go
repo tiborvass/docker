@@ -10,14 +10,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/tiborvass/docker/errdefs"
-	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/volume"
 	"github.com/tiborvass/docker/volume/drivers"
 	volumemounts "github.com/tiborvass/docker/volume/mounts"
 	"github.com/tiborvass/docker/volume/service/opts"
+	"github.com/moby/locker"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	bolt "go.etcd.io/bbolt"
 )
