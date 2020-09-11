@@ -55,7 +55,6 @@ import (
 	"github.com/tiborvass/docker/libcontainerd"
 	libcontainerdtypes "github.com/tiborvass/docker/libcontainerd/types"
 	"github.com/tiborvass/docker/pkg/idtools"
-	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/system"
 	"github.com/tiborvass/docker/pkg/truncindex"
@@ -68,6 +67,7 @@ import (
 	"github.com/docker/libnetwork"
 	"github.com/docker/libnetwork/cluster"
 	nwconfig "github.com/docker/libnetwork/config"
+	"github.com/moby/locker"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/semaphore"
 )

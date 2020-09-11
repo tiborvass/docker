@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/api/types"
-	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/testutil/fixtures/plugin"
+	"github.com/moby/locker"
 	"github.com/pkg/errors"
 	"gotest.tools/v3/assert"
 )
