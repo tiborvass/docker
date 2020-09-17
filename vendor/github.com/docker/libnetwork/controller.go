@@ -53,7 +53,6 @@ import (
 	"time"
 
 	"github.com/tiborvass/docker/pkg/discovery"
-	"github.com/tiborvass/docker/pkg/locker"
 	"github.com/tiborvass/docker/pkg/plugingetter"
 	"github.com/tiborvass/docker/pkg/plugins"
 	"github.com/tiborvass/docker/pkg/stringid"
@@ -70,6 +69,7 @@ import (
 	"github.com/docker/libnetwork/options"
 	"github.com/docker/libnetwork/osl"
 	"github.com/docker/libnetwork/types"
+	"github.com/moby/locker"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
