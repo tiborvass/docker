@@ -1,3 +1,5 @@
+// +build !windows
+
 package system // import "github.com/tiborvass/docker/pkg/system"
 
 import (
