@@ -2,7 +2,7 @@
 
 package vfs // import "github.com/tiborvass/docker/daemon/graphdriver/vfs"
 
-import "github.com/tiborvass/docker/daemon/graphdriver/quota"
+import "github.com/tiborvass/docker/quota"
 
 type driverQuota struct {
 }
