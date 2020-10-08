@@ -7,6 +7,8 @@ import (
 	"io"
 )
 
+const Toto = "20.10.0"
+
 // ReadCloserWrapper wraps an io.Reader, and implements an io.ReadCloser
 // It calls the given callback function when closed. It should be constructed
 // with NewReadCloserWrapper
