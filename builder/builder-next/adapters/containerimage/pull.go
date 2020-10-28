@@ -7,15 +7,18 @@ import (
 	"io"
 	"io/ioutil"
 	"path"
-	"runtime"
+	//"runtime"
+	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/containerd/containerd/content"
-	containerderrors "github.com/containerd/containerd/errdefs"
+	//containerderrors "github.com/containerd/containerd/errdefs"
 	"github.com/containerd/containerd/images"
+	ctdlabels "github.com/containerd/containerd/labels"
+	"github.com/containerd/containerd/leases"
 	"github.com/containerd/containerd/platforms"
+	"github.com/containerd/containerd/snapshots"
 	ctdreference "github.com/containerd/containerd/reference"
 	"github.com/containerd/containerd/remotes"
 	"github.com/containerd/containerd/remotes/docker"
@@ -23,7 +26,7 @@ import (
 	distreference "github.com/docker/distribution/reference"
 	"github.com/docker/docker/distribution"
 	"github.com/docker/docker/distribution/metadata"
-	"github.com/docker/docker/distribution/xfer"
+	//"github.com/docker/docker/distribution/xfer"
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/layer"
 	pkgprogress "github.com/docker/docker/pkg/progress"
@@ -31,17 +34,21 @@ import (
 	"github.com/moby/buildkit/cache"
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/session"
+	"github.com/moby/buildkit/solver"
 	"github.com/moby/buildkit/source"
+	"github.com/moby/buildkit/util/contentutil"
 	"github.com/moby/buildkit/util/flightcontrol"
 	"github.com/moby/buildkit/util/imageutil"
+	"github.com/moby/buildkit/util/leaseutil"
 	"github.com/moby/buildkit/util/progress"
+	"github.com/moby/buildkit/util/progress/controller"
 	"github.com/moby/buildkit/util/resolver"
 	digest "github.com/opencontainers/go-digest"
 	"github.com/opencontainers/image-spec/identity"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
+	//"golang.org/x/time/rate"
 )
 
 // SourceOpt is options for creating the image source
@@ -54,38 +61,23 @@ type SourceOpt struct {
 	ImageStore      image.Store
 	RegistryHosts   docker.RegistryHosts
 	LayerStore      layer.Store
+	LeaseManager    leases.Manager
 }
 
 // Source is the source implementation for accessing container images
 type Source struct {
 	SourceOpt
 	g             flightcontrol.Group
-	resolverCache *resolverCache
 }
 
 // NewSource creates a new image source
 func NewSource(opt SourceOpt) (*Source, error) {
-	is := &Source{
-		SourceOpt:     opt,
-		resolverCache: newResolverCache(),
-	}
-
-	return is, nil
+	return &Source{SourceOpt: opt}, nil
 }
 
 // ID returns image scheme identifier
 func (is *Source) ID() string {
 	return source.DockerImageScheme
-}
-
-func (is *Source) getResolver(hosts docker.RegistryHosts, ref string, sm *session.Manager, g session.Group) remotes.Resolver {
-	if res := is.resolverCache.Get(ref, g); res != nil {
-		return res
-	}
-	auth := resolver.NewSessionAuthenticator(sm, g)
-	r := resolver.New(hosts, auth)
-	r = is.resolverCache.Add(ref, auth, r, g)
-	return r
 }
 
 func (is *Source) resolveLocal(refStr string) (*image.Image, error) {
@@ -110,7 +102,8 @@ func (is *Source) resolveRemote(ctx context.Context, ref string, platform *ocisp
 		dt   []byte
 	}
 	res, err := is.g.Do(ctx, ref, func(ctx context.Context) (interface{}, error) {
-		dgst, dt, err := imageutil.Config(ctx, ref, is.getResolver(is.RegistryHosts, ref, sm, g), is.ContentStore, nil, platform)
+		res := resolver.DefaultPool.GetResolver(is.RegistryHosts, ref, "pull", sm, g)
+		dgst, dt, err := imageutil.Config(ctx, ref, res, is.ContentStore, nil, platform)
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +161,7 @@ func (is *Source) ResolveImageConfig(ctx context.Context, ref string, opt llb.Re
 }
 
 // Resolve returns access to pulling for an identifier
-func (is *Source) Resolve(ctx context.Context, id source.Identifier, sm *session.Manager) (source.SourceInstance, error) {
+func (is *Source) Resolve(ctx context.Context, id source.Identifier, sm *session.Manager, vtx solver.Vertex) (source.SourceInstance, error) {
 	imageIdentifier, ok := id.(*source.ImageIdentifier)
 	if !ok {
 		return nil, errors.Errorf("invalid image identifier %v", id)
@@ -182,45 +175,60 @@ func (is *Source) Resolve(ctx context.Context, id source.Identifier, sm *session
 	p := &puller{
 		src: imageIdentifier,
 		is:  is,
-		//resolver: is.getResolver(is.RegistryHosts, imageIdentifier.Reference.String(), sm, g),
 		platform: platform,
 		sm:       sm,
+		vtx: vtx,
 	}
 	return p, nil
 }
 
 type puller struct {
 	is               *Source
+	ref              string
+	sm               *session.Manager
+	src              *source.ImageIdentifier
+	vtx              solver.Vertex
+
+	cacheKeyOnce     sync.Once
+	cacheKeyErr      error
+	releaseTmpLeases func(context.Context) error
+	descHandlers     cache.DescHandlers
+	//manifest         *pull.PulledManifests
+	manifestRef      string
+	manifestKey      string
+	configKey        string
+
+	// Equivalent of github.com/moby/buildkit/util/pull.Puller
+
+	resolverOnce     sync.Once
+	resolverInstance remotes.Resolver
+	platform         ocispec.Platform
 	resolveOnce      sync.Once
 	resolveLocalOnce sync.Once
-	src              *source.ImageIdentifier
-	desc             ocispec.Descriptor
-	ref              string
 	resolveErr       error
-	resolverInstance remotes.Resolver
-	resolverOnce     sync.Once
+	desc             ocispec.Descriptor
+	configDesc       ocispec.Descriptor
 	config           []byte
-	platform         ocispec.Platform
-	sm               *session.Manager
+	layers           []ocispec.Descriptor
 }
 
 func (p *puller) resolver(g session.Group) remotes.Resolver {
 	p.resolverOnce.Do(func() {
 		if p.resolverInstance == nil {
-			p.resolverInstance = p.is.getResolver(p.is.RegistryHosts, p.src.Reference.String(), p.sm, g)
+			p.resolverInstance = resolver.DefaultPool.GetResolver(p.is.RegistryHosts, p.src.Reference.String(), "pull", p.sm, g)
 		}
 	})
 	return p.resolverInstance
 }
 
-func (p *puller) mainManifestKey(dgst digest.Digest, platform ocispec.Platform) (digest.Digest, error) {
+func mainManifestKey(dgst digest.Digest, platform ocispec.Platform) (digest.Digest, error) {
 	dt, err := json.Marshal(struct {
 		Digest  digest.Digest
 		OS      string
 		Arch    string
 		Variant string `json:",omitempty"`
 	}{
-		Digest:  p.desc.Digest,
+		Digest:  dgst,
 		OS:      platform.OS,
 		Arch:    platform.Architecture,
 		Variant: platform.Variant,
@@ -270,22 +278,19 @@ func (p *puller) resolveLocal() {
 	})
 }
 
-func (p *puller) resolve(ctx context.Context, g session.Group) error {
+func (p *puller) resolve(ctx context.Context, g session.Group /* TODO: remove and rely on resolver(g) instead */) (err error) {
 	p.resolveOnce.Do(func() {
-		resolveProgressDone := oneOffProgress(ctx, "resolve "+p.src.Reference.String())
-
+		// TODO: is this really needed here? Can't we use p.src.Reference.String() in Resolve() below?
 		ref, err := distreference.ParseNormalizedNamed(p.src.Reference.String())
 		if err != nil {
 			p.resolveErr = err
-			_ = resolveProgressDone(err)
 			return
 		}
 
 		if p.desc.Digest == "" && p.config == nil {
-			origRef, desc, err := p.resolver(g).Resolve(ctx, ref.String())
+			origRef, desc, err := p.resolverInstance.Resolve(ctx, ref.String())
 			if err != nil {
 				p.resolveErr = err
-				_ = resolveProgressDone(err)
 				return
 			}
 
@@ -302,64 +307,208 @@ func (p *puller) resolve(ctx context.Context, g session.Group) error {
 			ref, err := distreference.WithDigest(ref, p.desc.Digest)
 			if err != nil {
 				p.resolveErr = err
-				_ = resolveProgressDone(err)
 				return
 			}
 			_, dt, err := p.is.ResolveImageConfig(ctx, ref.String(), llb.ResolveImageConfigOpt{Platform: &p.platform, ResolveMode: resolveModeToString(p.src.ResolveMode)}, p.sm, g)
 			if err != nil {
 				p.resolveErr = err
-				_ = resolveProgressDone(err)
 				return
 			}
 
 			p.config = dt
 		}
-		_ = resolveProgressDone(nil)
 	})
 	return p.resolveErr
 }
 
-func (p *puller) CacheKey(ctx context.Context, g session.Group, index int) (string, bool, error) {
-	p.resolveLocal()
+func (p *puller) CacheKey(ctx context.Context, g session.Group, index int) (string, solver.CacheOpts, bool, error) {
+	// initialize resolver instance
+	p.resolver(g)
 
-	if p.desc.Digest != "" && index == 0 {
-		dgst, err := p.mainManifestKey(p.desc.Digest, p.platform)
+	p.cacheKeyOnce.Do(func() {
+		ctx, done, err := leaseutil.WithLease(ctx, p.is.LeaseManager, leases.WithExpiration(5*time.Minute), leaseutil.MakeTemporary)
 		if err != nil {
-			return "", false, err
+			p.cacheKeyErr = err
+			return
 		}
-		return dgst.String(), false, nil
-	}
+		p.releaseTmpLeases = done
+		imageutil.AddLease(p.releaseTmpLeases)
+		defer func() {
+			if p.cacheKeyErr != nil {
+				p.releaseTmpLeases(ctx)
+			}
+		}()
 
-	if p.config != nil {
-		k := cacheKeyFromConfig(p.config).String()
-		if k == "" {
-			return digest.FromBytes(p.config).String(), true, nil
+		resolveProgressDone := oneOffProgress(ctx, "resolve "+p.src.Reference.String())
+		defer func() {
+			resolveProgressDone(err)
+		}()
+
+		// Follows the equivalent of github.com/moby/buildkit/util/pull.Puller.PullManifests
+
+		p.resolveLocal()
+		if err := p.resolve(ctx, g); err != nil {
+			p.cacheKeyErr = err
+			return
 		}
-		return k, true, nil
-	}
 
-	if err := p.resolve(ctx, g); err != nil {
-		return "", false, err
-	}
+		platform := platforms.Only(p.platform)
 
-	if p.desc.Digest != "" && index == 0 {
-		dgst, err := p.mainManifestKey(p.desc.Digest, p.platform)
+		var mu sync.Mutex // images.Dispatch calls handlers in parallel
+		metadata := make(map[digest.Digest]ocispec.Descriptor)
+
+		var (
+			schema1Converter *schema1.Converter
+			handlers         []images.Handler
+		)
+
+		fetcher, err := p.resolver(g).Fetcher(ctx, p.ref)
 		if err != nil {
-			return "", false, err
+			p.cacheKeyErr = err
+			return
 		}
-		return dgst.String(), false, nil
-	}
 
-	k := cacheKeyFromConfig(p.config).String()
-	if k == "" {
-		dgst, err := p.mainManifestKey(p.desc.Digest, p.platform)
+		if p.desc.MediaType == images.MediaTypeDockerSchema1Manifest {
+			// TODO: fetcher was &pullprogress.FetcherWithProgress{...} in buildkit
+			schema1Converter = schema1.NewConverter(p.is.ContentStore, fetcher)
+			handlers = append(handlers, schema1Converter)
+
+			// TODO: Optimize to do dispatch and integrate pulling with download manager,
+			// leverage existing blob mapping and layer storage
+		} else {
+
+			// TODO: need a wrapper snapshot interface that combines content
+			// and snapshots as 1) buildkit shouldn't have a dependency on contentstore
+			// or 2) cachemanager should manage the contentstore
+			handlers = append(handlers, images.HandlerFunc(func(ctx context.Context, desc ocispec.Descriptor) ([]ocispec.Descriptor, error) {
+				switch desc.MediaType {
+				case images.MediaTypeDockerSchema2Manifest, ocispec.MediaTypeImageManifest,
+					images.MediaTypeDockerSchema2ManifestList, ocispec.MediaTypeImageIndex,
+					images.MediaTypeDockerSchema2Config, ocispec.MediaTypeImageConfig:
+				default:
+					return nil, images.ErrSkipDesc
+				}
+				//ongoing.add(desc)
+				return nil, nil
+			}))
+
+			// Get all the children for a descriptor
+			childrenHandler := images.ChildrenHandler(p.is.ContentStore)
+			// Set any children labels for that content
+			childrenHandler = images.SetChildrenLabels(p.is.ContentStore, childrenHandler)
+			// Filter the children by the platform
+			childrenHandler = images.FilterPlatforms(childrenHandler, platform)
+			// Limit manifests pulled to the best match in an index
+			childrenHandler = images.LimitManifests(childrenHandler, platform, 1)
+
+			handlers = append(handlers,
+				filterLayerBlobs(metadata, &mu),
+				remotes.FetchHandler(p.is.ContentStore, fetcher),
+				childrenHandler,
+			)
+		}
+
+		if err := images.Dispatch(ctx, images.Handlers(handlers...), nil, p.desc); err != nil {
+			p.cacheKeyErr = err
+			return
+		}
+
+		if schema1Converter != nil {
+			p.desc, err = schema1Converter.Convert(ctx)
+			if err != nil {
+				p.cacheKeyErr = err
+				return
+			}
+			// TODO: images.Dispatch
+		}
+
+		for _, desc := range metadata {
+			// TODO: nonlayers
+			switch desc.MediaType {
+			case images.MediaTypeDockerSchema2Config, ocispec.MediaTypeImageConfig:
+				p.configDesc = desc
+			}
+		}
+
+		p.layers, p.cacheKeyErr = getLayers(ctx, p.is.ContentStore, p.desc, platform)
+		if p.cacheKeyErr != nil {
+			return
+		}
+
+		// end of PullManifests
+
+		if len(p.layers) > 0 {
+			pw, _, _ := progress.FromContext(ctx)
+			progressController := &controller.Controller{
+				Writer: pw,
+			}
+			if p.vtx != nil {
+				progressController.Digest = p.vtx.Digest()
+				progressController.Name = p.vtx.Name()
+			}
+
+			p.descHandlers = cache.DescHandlers(make(map[digest.Digest]*cache.DescHandler))
+			for i, desc := range p.layers {
+
+				// Hints for remote/stargz snapshotter for searching for remote snapshots
+				labels := snapshots.FilterInheritedLabels(desc.Annotations)
+				if labels == nil {
+					labels = make(map[string]string)
+				}
+				labels["containerd.io/snapshot/remote/stargz.reference"] = p.ref
+				labels["containerd.io/snapshot/remote/stargz.digest"] = desc.Digest.String()
+				var (
+					layersKey = "containerd.io/snapshot/remote/stargz.layers"
+					layers    string
+				)
+				for _, l := range p.layers[i:]{
+					ls := fmt.Sprintf("%s,", l.Digest.String())
+					// This avoids the label hits the size limitation.
+					// Skipping layers is allowed here and only affects performance.
+					if err := ctdlabels.Validate(layersKey, layers+ls); err != nil {
+						break
+					}
+					layers += ls
+				}
+				labels[layersKey] = strings.TrimSuffix(layers, ",")
+
+				p.descHandlers[desc.Digest] = &cache.DescHandler{
+					Provider:       p,
+					Progress:       progressController,
+					SnapshotLabels: labels,
+				}
+			}
+		}
+		p.manifestRef = p.ref
+		k, err := mainManifestKey(p.desc.Digest, p.platform)
 		if err != nil {
-			return "", false, err
+			p.cacheKeyErr = err
+			return
 		}
-		return dgst.String(), true, nil
+		p.manifestKey = k.String()
+
+		dt, err := content.ReadBlob(ctx, p.is.ContentStore, p.configDesc)
+		if err != nil {
+			p.cacheKeyErr = err
+			return
+		}
+		p.configKey = cacheKeyFromConfig(dt).String()
+
+	})
+	if p.cacheKeyErr != nil {
+		return "", nil, false, p.cacheKeyErr
 	}
 
-	return k, true, nil
+	cacheOpts := solver.CacheOpts(make(map[interface{}]interface{}))
+	for dgst, descHandler := range p.descHandlers {
+		cacheOpts[cache.DescHandlerKey(dgst)] = descHandler
+	}
+
+	cacheDone := index > 0
+	if index == 0 || p.configKey == "" {
+		return p.manifestKey, cacheOpts, cacheDone, nil
+	}
+	return p.configKey, cacheOpts, cacheDone, nil
 }
 
 func (p *puller) getRef(ctx context.Context, diffIDs []layer.DiffID, opts ...cache.RefOption) (cache.ImmutableRef, error) {
@@ -379,8 +528,46 @@ func (p *puller) getRef(ctx context.Context, diffIDs []layer.DiffID, opts ...cac
 	}, parent, opts...)
 }
 
-func (p *puller) Snapshot(ctx context.Context, g session.Group) (cache.ImmutableRef, error) {
+func (p *puller) Snapshot(ctx context.Context, g session.Group) (ir cache.ImmutableRef, err error) {
+	p.resolver(g)
 	p.resolveLocal()
+
+	if len(p.layers) == 0 {
+		return nil, nil
+	}
+	defer p.releaseTmpLeases(ctx)
+
+	var current cache.ImmutableRef
+	defer func() {
+		if err != nil && current != nil {
+			current.Release(context.TODO())
+		}
+	}()
+
+	var parent cache.ImmutableRef
+	for _, layerDesc := range p.layers {
+		parent = current
+		current, err = p.is.CacheAccessor.GetByBlob(ctx, layerDesc, parent, p.descHandlers, cache.WithImageRef(p.manifestRef))
+		if parent != nil {
+			parent.Release(context.TODO())
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// TODO: nonlayers
+	
+	// TODO: markRefLayerTypeWindows?
+
+	if p.src.RecordType != "" && cache.GetRecordType(current) == "" {
+		if err := cache.SetRecordType(current, p.src.RecordType); err != nil {
+			return nil, err
+		}
+	}
+
+	return current, nil
+	/*
 	if err := p.resolve(ctx, g); err != nil {
 		return nil, err
 	}
@@ -403,12 +590,12 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (cache.Immutable
 		}
 	}
 
+	/*
 	ongoing := newJobs(p.ref)
 
 	pctx, stopProgress := context.WithCancel(ctx)
-
 	pw, _, ctx := progress.FromContext(ctx)
-	defer pw.Close()
+	//defer pw.Close()
 
 	progressDone := make(chan struct{})
 	go func() {
@@ -419,96 +606,10 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (cache.Immutable
 		<-progressDone
 	}()
 
-	fetcher, err := p.resolver(g).Fetcher(ctx, p.ref)
-	if err != nil {
-		stopProgress()
-		return nil, err
-	}
 
-	platform := platforms.Only(p.platform)
-	// workaround for GCR bug that requires a request to manifest endpoint for authentication to work.
-	// if current resolver has not used manifests do a dummy request.
-	// in most cases resolver should be cached and extra request is not needed.
-	ensureManifestRequested(ctx, p.resolver(g), p.ref)
+	// TODO: PullManifests for nonlayers
 
-	var (
-		schema1Converter *schema1.Converter
-		handlers         []images.Handler
-	)
-	if p.desc.MediaType == images.MediaTypeDockerSchema1Manifest {
-		schema1Converter = schema1.NewConverter(p.is.ContentStore, fetcher)
-		handlers = append(handlers, schema1Converter)
-
-		// TODO: Optimize to do dispatch and integrate pulling with download manager,
-		// leverage existing blob mapping and layer storage
-	} else {
-
-		// TODO: need a wrapper snapshot interface that combines content
-		// and snapshots as 1) buildkit shouldn't have a dependency on contentstore
-		// or 2) cachemanager should manage the contentstore
-		handlers = append(handlers, images.HandlerFunc(func(ctx context.Context, desc ocispec.Descriptor) ([]ocispec.Descriptor, error) {
-			switch desc.MediaType {
-			case images.MediaTypeDockerSchema2Manifest, ocispec.MediaTypeImageManifest,
-				images.MediaTypeDockerSchema2ManifestList, ocispec.MediaTypeImageIndex,
-				images.MediaTypeDockerSchema2Config, ocispec.MediaTypeImageConfig:
-			default:
-				return nil, images.ErrSkipDesc
-			}
-			ongoing.add(desc)
-			return nil, nil
-		}))
-
-		// Get all the children for a descriptor
-		childrenHandler := images.ChildrenHandler(p.is.ContentStore)
-		// Set any children labels for that content
-		childrenHandler = images.SetChildrenLabels(p.is.ContentStore, childrenHandler)
-		// Filter the children by the platform
-		childrenHandler = images.FilterPlatforms(childrenHandler, platform)
-		// Limit manifests pulled to the best match in an index
-		childrenHandler = images.LimitManifests(childrenHandler, platform, 1)
-
-		handlers = append(handlers,
-			remotes.FetchHandler(p.is.ContentStore, fetcher),
-			childrenHandler,
-		)
-	}
-
-	if err := images.Dispatch(ctx, images.Handlers(handlers...), nil, p.desc); err != nil {
-		stopProgress()
-		return nil, err
-	}
-	defer stopProgress()
-
-	if schema1Converter != nil {
-		p.desc, err = schema1Converter.Convert(ctx)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	mfst, err := images.Manifest(ctx, p.is.ContentStore, p.desc, platform)
-	if err != nil {
-		return nil, err
-	}
-
-	config, err := images.Config(ctx, p.is.ContentStore, p.desc, platform)
-	if err != nil {
-		return nil, err
-	}
-
-	dt, err := content.ReadBlob(ctx, p.is.ContentStore, config)
-	if err != nil {
-		return nil, err
-	}
-
-	var img ocispec.Image
-	if err := json.Unmarshal(dt, &img); err != nil {
-		return nil, err
-	}
-
-	if len(mfst.Layers) != len(img.RootFS.DiffIDs) {
-		return nil, errors.Errorf("invalid config for manifest")
-	}
+	//platform := platforms.Only(p.platform)
 
 	pchan := make(chan pkgprogress.Progress, 10)
 	defer close(pchan)
@@ -542,6 +643,7 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (cache.Immutable
 		}
 	}()
 
+	mfst := p.manifest
 	if len(mfst.Layers) == 0 {
 		return nil, nil
 	}
@@ -549,7 +651,7 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (cache.Immutable
 	layers := make([]xfer.DownloadDescriptor, 0, len(mfst.Layers))
 
 	for i, desc := range mfst.Layers {
-		ongoing.add(desc)
+		//ongoing.add(desc)
 		layers = append(layers, &layerDescriptor{
 			desc:    desc,
 			diffID:  layer.DiffID(img.RootFS.DiffIDs[i]),
@@ -589,6 +691,18 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (cache.Immutable
 	}
 
 	return ref, nil
+	*/
+}
+
+func (p *puller) ReaderAt(ctx context.Context, desc ocispec.Descriptor) (content.ReaderAt, error) {
+	if err := p.resolve(ctx, nil); err != nil {
+		return nil, err
+	}
+	fetcher, err := p.resolverInstance.Fetcher(ctx, p.ref)
+	if err != nil {
+		return nil, err
+	}
+	return contentutil.FromFetcher(fetcher).ReaderAt(ctx, desc)
 }
 
 // Fetch(ctx context.Context, desc ocispec.Descriptor) (io.ReadCloser, error)
@@ -645,178 +759,6 @@ func (ld *layerDescriptor) Registered(diffID layer.DiffID) {
 	ld.is.MetadataStore.Add(diffID, metadata.V2Metadata{Digest: ld.desc.Digest, SourceRepository: ld.ref.Locator})
 }
 
-func showProgress(ctx context.Context, ongoing *jobs, cs content.Store, pw progress.Writer) {
-	var (
-		ticker   = time.NewTicker(100 * time.Millisecond)
-		statuses = map[string]statusInfo{}
-		done     bool
-	)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-		case <-ctx.Done():
-			done = true
-		}
-
-		resolved := "resolved"
-		if !ongoing.isResolved() {
-			resolved = "resolving"
-		}
-		statuses[ongoing.name] = statusInfo{
-			Ref:    ongoing.name,
-			Status: resolved,
-		}
-
-		actives := make(map[string]statusInfo)
-
-		if !done {
-			active, err := cs.ListStatuses(ctx)
-			if err != nil {
-				// log.G(ctx).WithError(err).Error("active check failed")
-				continue
-			}
-			// update status of active entries!
-			for _, active := range active {
-				actives[active.Ref] = statusInfo{
-					Ref:       active.Ref,
-					Status:    "downloading",
-					Offset:    active.Offset,
-					Total:     active.Total,
-					StartedAt: active.StartedAt,
-					UpdatedAt: active.UpdatedAt,
-				}
-			}
-		}
-
-		// now, update the items in jobs that are not in active
-		for _, j := range ongoing.jobs() {
-			refKey := remotes.MakeRefKey(ctx, j.Descriptor)
-			if a, ok := actives[refKey]; ok {
-				started := j.started
-				_ = pw.Write(j.Digest.String(), progress.Status{
-					Action:  a.Status,
-					Total:   int(a.Total),
-					Current: int(a.Offset),
-					Started: &started,
-				})
-				continue
-			}
-
-			if !j.done {
-				info, err := cs.Info(context.TODO(), j.Digest)
-				if err != nil {
-					if containerderrors.IsNotFound(err) {
-						// _ = pw.Write(j.Digest.String(), progress.Status{
-						// 	Action: "waiting",
-						// })
-						continue
-					}
-				} else {
-					j.done = true
-				}
-
-				if done || j.done {
-					started := j.started
-					createdAt := info.CreatedAt
-					_ = pw.Write(j.Digest.String(), progress.Status{
-						Action:    "done",
-						Current:   int(info.Size),
-						Total:     int(info.Size),
-						Completed: &createdAt,
-						Started:   &started,
-					})
-				}
-			}
-		}
-		if done {
-			return
-		}
-	}
-}
-
-// jobs provides a way of identifying the download keys for a particular task
-// encountering during the pull walk.
-//
-// This is very minimal and will probably be replaced with something more
-// featured.
-type jobs struct {
-	name     string
-	added    map[digest.Digest]*job
-	mu       sync.Mutex
-	resolved bool
-}
-
-type job struct {
-	ocispec.Descriptor
-	done    bool
-	started time.Time
-}
-
-func newJobs(name string) *jobs {
-	return &jobs{
-		name:  name,
-		added: make(map[digest.Digest]*job),
-	}
-}
-
-func (j *jobs) add(desc ocispec.Descriptor) {
-	j.mu.Lock()
-	defer j.mu.Unlock()
-
-	if _, ok := j.added[desc.Digest]; ok {
-		return
-	}
-	j.added[desc.Digest] = &job{
-		Descriptor: desc,
-		started:    time.Now(),
-	}
-}
-
-func (j *jobs) jobs() []*job {
-	j.mu.Lock()
-	defer j.mu.Unlock()
-
-	descs := make([]*job, 0, len(j.added))
-	for _, j := range j.added {
-		descs = append(descs, j)
-	}
-	return descs
-}
-
-func (j *jobs) isResolved() bool {
-	j.mu.Lock()
-	defer j.mu.Unlock()
-	return j.resolved
-}
-
-type statusInfo struct {
-	Ref       string
-	Status    string
-	Offset    int64
-	Total     int64
-	StartedAt time.Time
-	UpdatedAt time.Time
-}
-
-func oneOffProgress(ctx context.Context, id string) func(err error) error {
-	pw, _, _ := progress.FromContext(ctx)
-	now := time.Now()
-	st := progress.Status{
-		Started: &now,
-	}
-	_ = pw.Write(id, st)
-	return func(err error) error {
-		// TODO: set error on status
-		now := time.Now()
-		st.Completed = &now
-		_ = pw.Write(id, st)
-		_ = pw.Close()
-		return err
-	}
-}
-
 // cacheKeyFromConfig returns a stable digest from image config. If image config
 // is a known oci image we will use chainID of layers.
 func cacheKeyFromConfig(dt []byte) digest.Digest {
@@ -845,97 +787,6 @@ func resolveModeToString(rm source.ResolveMode) string {
 	return ""
 }
 
-type resolverCache struct {
-	mu sync.Mutex
-	m  map[string]cachedResolver
-}
-
-type cachedResolver struct {
-	counter int64 // needs to be 64bit aligned for 32bit systems
-	timeout time.Time
-	remotes.Resolver
-	auth *resolver.SessionAuthenticator
-}
-
-func (cr *cachedResolver) Resolve(ctx context.Context, ref string) (name string, desc ocispec.Descriptor, err error) {
-	atomic.AddInt64(&cr.counter, 1)
-	return cr.Resolver.Resolve(ctx, ref)
-}
-
-func (r *resolverCache) Add(ref string, auth *resolver.SessionAuthenticator, resolver remotes.Resolver, g session.Group) *cachedResolver {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	ref = r.repo(ref)
-
-	cr, ok := r.m[ref]
-	cr.timeout = time.Now().Add(time.Minute)
-	if ok {
-		cr.auth.AddSession(g)
-		return &cr
-	}
-
-	cr.Resolver = resolver
-	cr.auth = auth
-	r.m[ref] = cr
-	return &cr
-}
-
-func (r *resolverCache) repo(refStr string) string {
-	ref, err := distreference.ParseNormalizedNamed(refStr)
-	if err != nil {
-		return refStr
-	}
-	return ref.Name()
-}
-
-func (r *resolverCache) Get(ref string, g session.Group) *cachedResolver {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	ref = r.repo(ref)
-
-	cr, ok := r.m[ref]
-	if ok {
-		cr.auth.AddSession(g)
-		return &cr
-	}
-	return nil
-}
-
-func (r *resolverCache) clean(now time.Time) {
-	r.mu.Lock()
-	for k, cr := range r.m {
-		if now.After(cr.timeout) {
-			delete(r.m, k)
-		}
-	}
-	r.mu.Unlock()
-}
-
-func newResolverCache() *resolverCache {
-	rc := &resolverCache{
-		m: map[string]cachedResolver{},
-	}
-	t := time.NewTicker(time.Minute)
-	go func() {
-		for {
-			rc.clean(<-t.C)
-		}
-	}()
-	return rc
-}
-
-func ensureManifestRequested(ctx context.Context, res remotes.Resolver, ref string) {
-	cr, ok := res.(*cachedResolver)
-	if !ok {
-		return
-	}
-	if atomic.LoadInt64(&cr.counter) == 0 {
-		res.Resolve(ctx, ref)
-	}
-}
-
 func platformMatches(img *image.Image, p *ocispec.Platform) bool {
 	if img.Architecture != p.Architecture {
 		return false
@@ -944,4 +795,64 @@ func platformMatches(img *image.Image, p *ocispec.Platform) bool {
 		return false
 	}
 	return img.OS == p.OS
+}
+
+// filterLayerBlobs causes layer blobs to be skipped for fetch, which is required to support lazy blobs.
+// It also stores the non-layer blobs (metadata) it encounters in the provided map.
+func filterLayerBlobs(metadata map[digest.Digest]ocispec.Descriptor, mu sync.Locker) images.HandlerFunc {
+       return func(ctx context.Context, desc ocispec.Descriptor) ([]ocispec.Descriptor, error) {
+               switch desc.MediaType {
+               case ocispec.MediaTypeImageLayer, images.MediaTypeDockerSchema2Layer, ocispec.MediaTypeImageLayerGzip, images.MediaTypeDockerSchema2LayerGzip, images.MediaTypeDockerSchema2LayerForeign, images.MediaTypeDockerSchema2LayerForeignGzip:
+                       return nil, images.ErrSkipDesc
+               default:
+                       if metadata != nil {
+                               mu.Lock()
+                               metadata[desc.Digest] = desc
+                               mu.Unlock()
+                       }
+               }
+               return nil, nil
+       }
+}
+
+func oneOffProgress(ctx context.Context, id string) func(err error) error {
+	pw, _, _ := progress.FromContext(ctx)
+	now := time.Now()
+	st := progress.Status{
+		Started: &now,
+	}
+	pw.Write(id, st)
+	return func(err error) error {
+		// TODO: set error on status
+		now := time.Now()
+		st.Completed = &now
+		pw.Write(id, st)
+		pw.Close()
+		return err
+	}
+}
+
+func getLayers(ctx context.Context, provider content.Provider, desc ocispec.Descriptor, platform platforms.MatchComparer) ([]ocispec.Descriptor, error) {
+	manifest, err := images.Manifest(ctx, provider, desc, platform)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	image := images.Image{Target: desc}
+	diffIDs, err := image.RootFS(ctx, provider, platform)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to resolve rootfs")
+	}
+	if len(diffIDs) != len(manifest.Layers) {
+		return nil, errors.Errorf("mismatched image rootfs and manifest layers %+v %+v", diffIDs, manifest.Layers)
+	}
+	layers := make([]ocispec.Descriptor, len(diffIDs))
+	for i := range diffIDs {
+		desc := manifest.Layers[i]
+		if desc.Annotations == nil {
+			desc.Annotations = map[string]string{}
+		}
+		desc.Annotations["containerd.io/uncompressed"] = diffIDs[i].String()
+		layers[i] = desc
+	}
+	return layers, nil
 }

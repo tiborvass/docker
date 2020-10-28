@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/containerd/containerd/content/local"
+	"github.com/containerd/containerd/diff/apply"
 	ctdmetadata "github.com/containerd/containerd/metadata"
 	"github.com/containerd/containerd/platforms"
 	"github.com/containerd/containerd/snapshots"
@@ -34,7 +35,7 @@ import (
 	"github.com/moby/buildkit/frontend/gateway/forwarder"
 	containerdsnapshot "github.com/moby/buildkit/snapshot/containerd"
 	"github.com/moby/buildkit/solver/bboltcachestorage"
-	"github.com/moby/buildkit/util/binfmt_misc"
+	"github.com/moby/buildkit/util/archutil"
 	"github.com/moby/buildkit/util/entitlements"
 	"github.com/moby/buildkit/util/leaseutil"
 	"github.com/moby/buildkit/worker"
@@ -111,6 +112,7 @@ func newController(rt http.RoundTripper, opt Opt) (*control.Controller, error) {
 		PruneRefChecker: refChecker,
 		LeaseManager:    lm,
 		ContentStore:    store,
+		Applier:         apply.NewFileSystemApplier(store),
 	})
 	if err != nil {
 		return nil, err
@@ -125,6 +127,7 @@ func newController(rt http.RoundTripper, opt Opt) (*control.Controller, error) {
 		ReferenceStore:  dist.ReferenceStore,
 		RegistryHosts:   opt.RegistryHosts,
 		LayerStore:      dist.LayerStore,
+		LeaseManager:    lm,
 	})
 	if err != nil {
 		return nil, err
@@ -166,7 +169,7 @@ func newController(rt http.RoundTripper, opt Opt) (*control.Controller, error) {
 		return nil, errors.Errorf("snapshotter doesn't support differ")
 	}
 
-	p, err := parsePlatforms(binfmt_misc.SupportedPlatforms(true))
+	p, err := parsePlatforms(archutil.SupportedPlatforms(true))
 	if err != nil {
 		return nil, err
 	}

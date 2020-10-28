@@ -14,6 +14,7 @@ type Meta struct {
 	Env            []string
 	User           string
 	Cwd            string
+	Hostname       string
 	Tty            bool
 	ReadonlyRootFS bool
 	ExtraHosts     []HostIP
@@ -28,10 +29,16 @@ type Mount struct {
 	Readonly bool
 }
 
+type WinSize struct {
+	Rows uint32
+	Cols uint32
+}
+
 type ProcessInfo struct {
 	Meta           Meta
 	Stdin          io.ReadCloser
 	Stdout, Stderr io.WriteCloser
+	Resize         <-chan WinSize
 }
 
 type Executor interface {
