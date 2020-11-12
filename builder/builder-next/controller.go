@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/containerd/containerd/content/local"
-	"github.com/containerd/containerd/diff/apply"
 	ctdmetadata "github.com/containerd/containerd/metadata"
 	"github.com/containerd/containerd/platforms"
 	"github.com/containerd/containerd/snapshots"
@@ -112,7 +111,6 @@ func newController(rt http.RoundTripper, opt Opt) (*control.Controller, error) {
 		PruneRefChecker: refChecker,
 		LeaseManager:    lm,
 		ContentStore:    store,
-		Applier:         apply.NewFileSystemApplier(store),
 	})
 	if err != nil {
 		return nil, err

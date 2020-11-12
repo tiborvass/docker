@@ -7,13 +7,12 @@ import (
 	"io"
 	"io/ioutil"
 	"path"
-	//"runtime"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/containerd/containerd/content"
-	//containerderrors "github.com/containerd/containerd/errdefs"
 	"github.com/containerd/containerd/images"
 	ctdlabels "github.com/containerd/containerd/labels"
 	"github.com/containerd/containerd/leases"
@@ -26,7 +25,7 @@ import (
 	distreference "github.com/docker/distribution/reference"
 	"github.com/docker/docker/distribution"
 	"github.com/docker/docker/distribution/metadata"
-	//"github.com/docker/docker/distribution/xfer"
+	"github.com/docker/docker/distribution/xfer"
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/layer"
 	pkgprogress "github.com/docker/docker/pkg/progress"
@@ -48,7 +47,7 @@ import (
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	//"golang.org/x/time/rate"
+	"golang.org/x/time/rate"
 )
 
 // SourceOpt is options for creating the image source
@@ -532,71 +531,10 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (ir cache.Immuta
 	p.resolver(g)
 	p.resolveLocal()
 
-	if len(p.layers) == 0 {
-		return nil, nil
-	}
-	defer p.releaseTmpLeases(ctx)
-
-	var current cache.ImmutableRef
-	defer func() {
-		if err != nil && current != nil {
-			current.Release(context.TODO())
-		}
-	}()
-
-	var parent cache.ImmutableRef
-	for _, layerDesc := range p.layers {
-		parent = current
-		current, err = p.is.CacheAccessor.GetByBlob(ctx, layerDesc, parent, p.descHandlers, cache.WithImageRef(p.manifestRef))
-		if parent != nil {
-			parent.Release(context.TODO())
-		}
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// TODO: nonlayers
-	
-	// TODO: markRefLayerTypeWindows?
-
-	if p.src.RecordType != "" && cache.GetRecordType(current) == "" {
-		if err := cache.SetRecordType(current, p.src.RecordType); err != nil {
-			return nil, err
-		}
-	}
-
-	return current, nil
-	/*
-	if err := p.resolve(ctx, g); err != nil {
-		return nil, err
-	}
-
-	if p.config != nil {
-		img, err := p.is.ImageStore.Get(image.ID(digest.FromBytes(p.config)))
-		if err == nil {
-			if len(img.RootFS.DiffIDs) == 0 {
-				return nil, nil
-			}
-			l, err := p.is.LayerStore.Get(img.RootFS.ChainID())
-			if err == nil {
-				layer.ReleaseAndLog(p.is.LayerStore, l)
-				ref, err := p.getRef(ctx, img.RootFS.DiffIDs, cache.WithDescription(fmt.Sprintf("from local %s", p.ref)))
-				if err != nil {
-					return nil, err
-				}
-				return ref, nil
-			}
-		}
-	}
-
-	/*
-	ongoing := newJobs(p.ref)
-
-	pctx, stopProgress := context.WithCancel(ctx)
 	pw, _, ctx := progress.FromContext(ctx)
-	//defer pw.Close()
+	defer pw.Close()
 
+	/*
 	progressDone := make(chan struct{})
 	go func() {
 		showProgress(pctx, ongoing, p.is.ContentStore, pw)
@@ -605,11 +543,7 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (ir cache.Immuta
 	defer func() {
 		<-progressDone
 	}()
-
-
-	// TODO: PullManifests for nonlayers
-
-	//platform := platforms.Only(p.platform)
+	*/
 
 	pchan := make(chan pkgprogress.Progress, 10)
 	defer close(pchan)
@@ -643,55 +577,88 @@ func (p *puller) Snapshot(ctx context.Context, g session.Group) (ir cache.Immuta
 		}
 	}()
 
-	mfst := p.manifest
-	if len(mfst.Layers) == 0 {
+
+	if len(p.layers) == 0 {
 		return nil, nil
 	}
+	// TODO: do i still need this?
+	defer p.releaseTmpLeases(ctx)
 
-	layers := make([]xfer.DownloadDescriptor, 0, len(mfst.Layers))
+	if p.config != nil {
+		img, err := p.is.ImageStore.Get(image.ID(digest.FromBytes(p.config)))
+		if err == nil {
+			if len(img.RootFS.DiffIDs) == 0 {
+				return nil, nil
+			}
+			l, err := p.is.LayerStore.Get(img.RootFS.ChainID())
+			if err == nil {
+				layer.ReleaseAndLog(p.is.LayerStore, l)
+				ref, err := p.getRef(ctx, img.RootFS.DiffIDs, cache.WithDescription(fmt.Sprintf("from local %s", p.ref)))
+				if err != nil {
+					return nil, err
+				}
+				return ref, nil
+			}
+		}
+	}
 
-	for i, desc := range mfst.Layers {
-		//ongoing.add(desc)
+	fetcher, err := p.resolver(g).Fetcher(ctx, p.ref)
+	if err != nil {
+		p.cacheKeyErr = err
+		return
+	}
+
+	layers := make([]xfer.DownloadDescriptor, 0, len(p.layers))
+
+	for _, layerDesc := range p.layers {
+		// hack to get diffID
+		s, ok := layerDesc.Annotations["containerd.io/uncompressed"]
+		if !ok {
+			panic("yolo")
+		}
+		diffID := digest.FromString(s)
+
 		layers = append(layers, &layerDescriptor{
-			desc:    desc,
-			diffID:  layer.DiffID(img.RootFS.DiffIDs[i]),
+			desc: layerDesc,
+			diffID:  layer.DiffID(diffID),
 			fetcher: fetcher,
-			ref:     p.src.Reference,
-			is:      p.is,
+			ref: p.src.Reference,
+			is: p.is,
 		})
 	}
 
+	// TODO somehow figure out when progress is done
+	/*
 	defer func() {
 		<-progressDone
-		for _, desc := range mfst.Layers {
+		for _, desc := range p.layers {
 			p.is.ContentStore.Delete(context.TODO(), desc.Digest)
 		}
 	}()
+	*/
 
 	r := image.NewRootFS()
 	rootFS, release, err := p.is.DownloadManager.Download(ctx, *r, runtime.GOOS, layers, pkgprogress.ChanOutput(pchan))
-	stopProgress()
+	//TODO: stopProgress()?
 	if err != nil {
 		return nil, err
 	}
 
-	ref, err := p.getRef(ctx, rootFS.DiffIDs, cache.WithDescription(fmt.Sprintf("pulled from %s", p.ref)))
+	ref, err := p.getRef(ctx, rootFS.DiffIDs, cache.WithDescription(fmt.Sprintf("pulled from %s", p.ref)), p.descHandlers)
 	release()
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: handle windows layers for cross platform builds
+	// TODO: markRefLayerTypeWindows?
 
 	if p.src.RecordType != "" && cache.GetRecordType(ref) == "" {
 		if err := cache.SetRecordType(ref, p.src.RecordType); err != nil {
-			ref.Release(context.TODO())
 			return nil, err
 		}
 	}
 
 	return ref, nil
-	*/
 }
 
 func (p *puller) ReaderAt(ctx context.Context, desc ocispec.Descriptor) (content.ReaderAt, error) {

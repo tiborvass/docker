@@ -510,6 +510,7 @@ func (sr *immutableRef) extract(ctx context.Context, dhs DescHandlers) error {
 		if err != nil {
 			return nil, err
 		}
+
 		_, err = sr.cm.Applier.Apply(ctx, desc, mounts)
 		if err != nil {
 			unmount()

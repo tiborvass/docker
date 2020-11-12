@@ -105,7 +105,7 @@ func (cm *cacheManager) GetByBlob(ctx context.Context, desc ocispec.Descriptor, 
 	blobChainID := imagespecidentity.ChainID([]digest.Digest{desc.Digest, diffID})
 
 	descHandlers := descHandlersOf(opts...)
-	if descHandlers == nil || descHandlers[desc.Digest] == nil {
+	if desc.Digest != "" && (descHandlers == nil || descHandlers[desc.Digest] == nil) {
 		if _, err := cm.ContentStore.Info(ctx, desc.Digest); errors.Is(err, errdefs.ErrNotFound) {
 			return nil, NeedsRemoteProvidersError([]digest.Digest{desc.Digest})
 		} else if err != nil {
@@ -345,6 +345,10 @@ func (cm *cacheManager) getRecord(ctx context.Context, id string, opts ...RefOpt
 		dhs := descHandlersOf(opts...)
 		for {
 			blob := digest.Digest(getBlob(rec.md))
+			if blob == "" {
+				//panic("toto")
+				break
+			}
 			if isLazy, err := rec.isLazy(ctx); err != nil {
 				return err
 			} else if isLazy && dhs[blob] == nil {
