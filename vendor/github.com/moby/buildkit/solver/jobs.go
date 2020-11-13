@@ -230,6 +230,7 @@ type Job struct {
 	pw     progress.Writer
 	span   opentracing.Span
 	values sync.Map
+	id     string
 
 	progressCloser func()
 	SessionID      string
@@ -429,6 +430,7 @@ func (jl *Solver) NewJob(id string) (*Job, error) {
 		pw:             pw,
 		progressCloser: progressCloser,
 		span:           (&opentracing.NoopTracer{}).StartSpan(""),
+		id:             id,
 	}
 	jl.jobs[id] = j
 
@@ -513,6 +515,8 @@ func (j *Job) Discard() error {
 		}
 		st.mu.Unlock()
 	}
+
+	delete(j.list.jobs, j.id)
 	return nil
 }
 
@@ -596,7 +600,7 @@ func (s *sharedOp) LoadCache(ctx context.Context, rec *CacheRecord) (Result, err
 	// no cache hit. start evaluating the node
 	span, ctx := tracing.StartSpan(ctx, "load cache: "+s.st.vtx.Name())
 	notifyStarted(ctx, &s.st.clientVertex, true)
-	res, err := s.Cache().Load(ctx, rec)
+	res, err := s.Cache().Load(withAncestorCacheOpts(ctx, s.st), rec)
 	tracing.FinishWithError(span, err)
 	notifyCompleted(ctx, &s.st.clientVertex, err, true)
 	return res, err
@@ -619,7 +623,7 @@ func (s *sharedOp) CalcSlowCache(ctx context.Context, index Index, f ResultBased
 		}
 		s.slowMu.Unlock()
 		ctx = opentracing.ContextWithSpan(progress.WithProgress(ctx, s.st.mpw), s.st.mspan)
-		key, err := f(ctx, res)
+		key, err := f(withAncestorCacheOpts(ctx, s.st), res, s.st)
 		complete := true
 		if err != nil {
 			select {
@@ -666,6 +670,7 @@ func (s *sharedOp) CacheMap(ctx context.Context, index int) (resp *cacheMapResp,
 			return nil, s.cacheErr
 		}
 		ctx = opentracing.ContextWithSpan(progress.WithProgress(ctx, s.st.mpw), s.st.mspan)
+		ctx = withAncestorCacheOpts(ctx, s.st)
 		if len(s.st.vtx.Inputs()) == 0 {
 			// no cache hit. start evaluating the node
 			span, ctx := tracing.StartSpan(ctx, "cache request: "+s.st.vtx.Name())
@@ -721,6 +726,7 @@ func (s *sharedOp) Exec(ctx context.Context, inputs []Result) (outputs []Result,
 		}
 
 		ctx = opentracing.ContextWithSpan(progress.WithProgress(ctx, s.st.mpw), s.st.mspan)
+		ctx = withAncestorCacheOpts(ctx, s.st)
 
 		// no cache hit. start evaluating the node
 		span, ctx := tracing.StartSpan(ctx, s.st.vtx.Name())
